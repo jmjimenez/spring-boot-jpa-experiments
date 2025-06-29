@@ -4,17 +4,15 @@ import es.jmjg.experiments.application.PostService;
 import es.jmjg.experiments.domain.Post;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,22 +20,19 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(PostController.class)
 class PostControllerTest {
 
-    @Mock
-    PostService postService;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @InjectMocks
-    PostController postController;
+    @Autowired
+    private PostService postService;
 
-    MockMvc mockMvc;
-
-    List<Post> posts = new ArrayList<>();
+    List<Post> posts;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(postController).build();
         posts = List.of(
             new Post(1,1,"Hello, World!", "This is my first post."),
             new Post(2,1,"Second Post", "This is my second post.")
@@ -91,7 +86,7 @@ class PostControllerTest {
             ]
             """;
 
-        Mockito.doReturn(posts).when(postService).findAll();
+        doReturn(posts).when(postService).findAll();
 
         ResultActions resultActions = mockMvc.perform(get("/api/posts"))
             .andExpect(status().isOk())
@@ -193,5 +188,14 @@ class PostControllerTest {
             .andExpect(status().isNoContent());
 
         verify(postService, times(1)).deleteById(1);
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        @Primary
+        public PostService postService() {
+            return mock(PostService.class);
+        }
     }
 }
