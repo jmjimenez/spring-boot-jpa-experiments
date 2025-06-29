@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.test.web.servlet.MockMvc;
@@ -72,6 +73,34 @@ class PostControllerTest {
     }
 
     @Test
+    void shouldFindAllPostsV2() throws Exception {
+        String jsonResponse = """
+            [
+                {
+                    "id":1,
+                    "userId":1,
+                    "title":"Hello, World!",
+                    "body":"This is my first post."
+                },
+                {
+                    "id":2,
+                    "userId":1,
+                    "title":"Second Post",
+                    "body":"This is my second post."
+                }
+            ]
+            """;
+
+        Mockito.doReturn(posts).when(postService).findAll();
+
+        ResultActions resultActions = mockMvc.perform(get("/api/posts"))
+            .andExpect(status().isOk())
+            .andExpect(content().json(jsonResponse));
+
+        JSONAssert.assertEquals(jsonResponse, resultActions.andReturn().getResponse().getContentAsString(), false);
+    }
+
+    @Test
     void shouldFindPostWhenGivenValidId() throws Exception {
         Post post = new Post(1,1,"Test Title", "Test Body");
         when(postService.findById(1)).thenReturn(Optional.of(post));
@@ -87,6 +116,14 @@ class PostControllerTest {
         mockMvc.perform(get("/api/posts/1"))
             .andExpect(status().isOk())
             .andExpect(content().json(json));
+    }
+
+    @Test
+    void shouldNotFindPostWhenGivenInvalidId() throws Exception {
+        when(postService.findById(1)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/posts/1"))
+            .andExpect(status().isNotFound());
     }
 
     @Test
