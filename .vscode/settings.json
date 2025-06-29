@@ -1,0 +1,70 @@
+{
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-21",
+            "path": "~/.sdkman/candidates/java/current",
+            "default": true
+        }
+    ],
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "path": "/bin/bash",
+            "args": [
+                "-l"
+            ]
+        },
+        "zsh": {
+            "path": "/bin/zsh",
+            "args": [
+                "-l"
+            ]
+        }
+    },
+    "terminal.integrated.env.linux": {
+        "JAVA_HOME": "${env:JAVA_HOME}"
+    },
+    "java.import.maven.enabled": true,
+    "java.import.gradle.enabled": false,
+    "java.project.sourcePaths": [
+        "src/main/java"
+    ],
+    "java.project.testSourcePaths": [
+        "src/test/java"
+    ],
+    "java.project.outputPath": "target/classes",
+    "java.project.testOutputPath": "target/test-classes",
+    "java.test.config": {
+        "vmargs": [
+            "--enable-preview"
+        ],
+        "env": {
+            "SPRING_PROFILES_ACTIVE": "test",
+            "DEFAULT_PROFILE": "test"
+        }
+    },
+    "java.test.defaultConfig": "default",
+    "java.test.additionalVmArgs": [
+        "--enable-preview"
+    ],
+    "java.test.console": "integratedTerminal",
+    "java.test.editor.enableShortcuts": true,
+    "java.test.runner": "junit",
+    "java.test.workingDirectory": "${workspaceFolder}",
+    "java.test.consoleOptions": "openOnSessionStart",
+    "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
+    "java.format.settings.profile": "GoogleStyle",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    "files.exclude": {
+        "**/target": true,
+        "**/.mvn": true,
+        "**/mvnw": true,
+        "**/mvnw.cmd": true
+    }
+}
