@@ -134,7 +134,7 @@ class PostControllerTest {
             }
             """.formatted(post.getId(), post.getUserId(), post.getTitle(), post.getBody());
 
-        ResultActions action = mockMvc.perform(post("/api/posts")
+        mockMvc.perform(post("/api/posts")
             .contentType("application/json")
             .content(json))
                 .andExpect(status().isCreated())
