@@ -15,6 +15,7 @@ import lombok.Setter;
 @Setter
 public class Post {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     Integer userId;
     @NotEmpty

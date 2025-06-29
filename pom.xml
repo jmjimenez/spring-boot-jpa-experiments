@@ -170,6 +170,7 @@
                 <configuration>
                     <argLine>
                         -Dmockito.mock.maker=org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker
+                        -Dspring.profiles.active=test
                     </argLine>
                 </configuration>
             </plugin>

@@ -2,17 +2,21 @@ package es.jmjg.experiments;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.Posts;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 @Component
+@Profile({"dev", "test"})
 class PostDataLoader implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(PostDataLoader.class);
@@ -31,7 +35,12 @@ class PostDataLoader implements CommandLineRunner {
             log.info("Loading posts into database from JSON: {}", POSTS_JSON);
             try (InputStream inputStream = TypeReference.class.getResourceAsStream(POSTS_JSON)) {
                 Posts response = objectMapper.readValue(inputStream, Posts.class);
-                postRepository.saveAll(response.posts());
+                List<Post> posts = response.posts();
+                
+                // Set IDs to null so Hibernate uses auto-generated IDs
+                posts.forEach(post -> post.setId(null));
+                
+                postRepository.saveAll(posts);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to read JSON data", e);
             }

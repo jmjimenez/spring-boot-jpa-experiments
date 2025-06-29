@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
 public class PostRepositoryTest {
 
     @Container
@@ -31,7 +33,7 @@ public class PostRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        List<Post> posts = List.of(new Post(1,1,"Hello, World!", "This is my first post!"));
+        List<Post> posts = List.of(new Post(null, 1, "Hello, World!", "This is my first post!"));
         postRepository.saveAll(posts);
     }
 
