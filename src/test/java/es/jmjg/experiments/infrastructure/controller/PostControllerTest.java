@@ -1,24 +1,24 @@
 package es.jmjg.experiments.infrastructure.controller;
 
-import es.jmjg.experiments.application.PostService;
-import es.jmjg.experiments.domain.Post;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import es.jmjg.experiments.application.PostService;
+import es.jmjg.experiments.domain.Post;
+import es.jmjg.experiments.domain.User;
 
 @WebMvcTest(PostController.class)
 class PostControllerTest {
@@ -33,159 +33,210 @@ class PostControllerTest {
 
     @BeforeEach
     void setUp() {
-        posts = List.of(
-            new Post(1,1,"Hello, World!", "This is my first post."),
-            new Post(2,1,"Second Post", "This is my second post.")
-        );
+        User user = new User();
+        user.setId(1);
+        user.setName("John Doe");
+        user.setEmail("john@example.com");
+        user.setUsername("johndoe");
+
+        Post post1 = new Post();
+        post1.setId(1);
+        post1.setUser(user);
+        post1.setTitle("Hello, World!");
+        post1.setBody("This is my first post.");
+
+        Post post2 = new Post();
+        post2.setId(2);
+        post2.setUser(user);
+        post2.setTitle("Second Post");
+        post2.setBody("This is my second post.");
+
+        posts = List.of(post1, post2);
     }
 
     @Test
     void shouldFindAllPosts() throws Exception {
         String jsonResponse = """
-            [
-                {
-                    "id":1,
-                    "userId":1,
-                    "title":"Hello, World!",
-                    "body":"This is my first post."
-                },
-                {
-                    "id":2,
-                    "userId":1,
-                    "title":"Second Post",
-                    "body":"This is my second post."
-                }
-            ]
-            """;
+                [
+                    {
+                        "id":1,
+                        "userId":1,
+                        "title":"Hello, World!",
+                        "body":"This is my first post."
+                    },
+                    {
+                        "id":2,
+                        "userId":1,
+                        "title":"Second Post",
+                        "body":"This is my second post."
+                    }
+                ]
+                """;
 
         when(postService.findAll()).thenReturn(posts);
 
-        ResultActions resultActions = mockMvc.perform(get("/api/posts"))
-            .andExpect(status().isOk())
-            .andExpect(content().json(jsonResponse));
+        ResultActions resultActions = mockMvc.perform(get("/api/posts")).andExpect(status().isOk())
+                .andExpect(content().json(jsonResponse));
 
-        JSONAssert.assertEquals(jsonResponse, resultActions.andReturn().getResponse().getContentAsString(), false);
+        JSONAssert.assertEquals(jsonResponse,
+                resultActions.andReturn().getResponse().getContentAsString(), false);
     }
 
     @Test
     void shouldFindAllPostsV2() throws Exception {
         String jsonResponse = """
-            [
-                {
-                    "id":1,
-                    "userId":1,
-                    "title":"Hello, World!",
-                    "body":"This is my first post."
-                },
-                {
-                    "id":2,
-                    "userId":1,
-                    "title":"Second Post",
-                    "body":"This is my second post."
-                }
-            ]
-            """;
+                [
+                    {
+                        "id":1,
+                        "userId":1,
+                        "title":"Hello, World!",
+                        "body":"This is my first post."
+                    },
+                    {
+                        "id":2,
+                        "userId":1,
+                        "title":"Second Post",
+                        "body":"This is my second post."
+                    }
+                ]
+                """;
 
         doReturn(posts).when(postService).findAll();
 
-        ResultActions resultActions = mockMvc.perform(get("/api/posts"))
-            .andExpect(status().isOk())
-            .andExpect(content().json(jsonResponse));
+        ResultActions resultActions = mockMvc.perform(get("/api/posts")).andExpect(status().isOk())
+                .andExpect(content().json(jsonResponse));
 
-        JSONAssert.assertEquals(jsonResponse, resultActions.andReturn().getResponse().getContentAsString(), false);
+        JSONAssert.assertEquals(jsonResponse,
+                resultActions.andReturn().getResponse().getContentAsString(), false);
     }
 
     @Test
     void shouldFindPostWhenGivenValidId() throws Exception {
-        Post post = new Post(1,1,"Test Title", "Test Body");
+        User user = new User();
+        user.setId(1);
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        user.setUsername("testuser");
+
+        Post post = new Post();
+        post.setId(1);
+        post.setUser(user);
+        post.setTitle("Test Title");
+        post.setBody("Test Body");
+
         when(postService.findById(1)).thenReturn(Optional.of(post));
         String json = """
-            {
-                "id":%d,
-                "userId":%d,
-                "title":"%s",
-                "body":"%s"
-            }
-            """.formatted(post.getId(), post.getUserId(), post.getTitle(), post.getBody());
+                {
+                    "id":%d,
+                    "userId":%d,
+                    "title":"%s",
+                    "body":"%s"
+                }
+                """.formatted(post.getId(), post.getUserId(), post.getTitle(), post.getBody());
 
-        mockMvc.perform(get("/api/posts/1"))
-            .andExpect(status().isOk())
-            .andExpect(content().json(json));
+        mockMvc.perform(get("/api/posts/1")).andExpect(status().isOk())
+                .andExpect(content().json(json));
     }
 
     @Test
     void shouldNotFindPostWhenGivenInvalidId() throws Exception {
         when(postService.findById(1)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/posts/1"))
-            .andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/posts/1")).andExpect(status().isNotFound());
     }
 
     @Test
     void shouldCreateNewPostWhenGivenValidID() throws Exception {
-        Post post = new Post(3,1,"This is my brand new post", "TEST BODY");
+        User user = new User();
+        user.setId(1);
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        user.setUsername("testuser");
+
+        Post post = new Post();
+        post.setId(3);
+        post.setUser(user);
+        post.setTitle("This is my brand new post");
+        post.setBody("TEST BODY");
+
         when(postService.save(any(Post.class))).thenReturn(post);
         String json = """
-            {
-                "id":%d,
-                "userId":%d,
-                "title":"%s",
-                "body":"%s"
-            }
-            """.formatted(post.getId(), post.getUserId(), post.getTitle(), post.getBody());
+                {
+                    "id":%d,
+                    "userId":%d,
+                    "title":"%s",
+                    "body":"%s"
+                }
+                """.formatted(post.getId(), post.getUserId(), post.getTitle(), post.getBody());
 
-        mockMvc.perform(post("/api/posts")
-            .contentType("application/json")
-            .content(json))
-                .andExpect(status().isCreated())
-                .andExpect(content().json(json));
+        mockMvc.perform(post("/api/posts").contentType("application/json").content(json))
+                .andExpect(status().isCreated()).andExpect(content().json(json));
     }
 
     @Test
     void shouldUpdatePostWhenGivenValidPost() throws Exception {
-        Post updated = new Post(1,1,"This is my brand new post", "UPDATED BODY");
+        User user = new User();
+        user.setId(1);
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        user.setUsername("testuser");
+
+        Post updated = new Post();
+        updated.setId(1);
+        updated.setUser(user);
+        updated.setTitle("This is my brand new post");
+        updated.setBody("UPDATED BODY");
+
         when(postService.update(eq(1), any(Post.class))).thenReturn(updated);
         String requestBody = """
-            {
-                "id":%d,
-                "userId":%d,
-                "title":"%s",
-                "body":"%s"
-            }
-            """.formatted(updated.getId(), updated.getUserId(), updated.getTitle(), updated.getBody());
+                {
+                    "id":%d,
+                    "userId":%d,
+                    "title":"%s",
+                    "body":"%s"
+                }
+                """.formatted(updated.getId(), updated.getUserId(), updated.getTitle(),
+                updated.getBody());
 
-        mockMvc.perform(put("/api/posts/1")
-                .contentType("application/json")
-                .content(requestBody))
-            .andExpect(status().isOk())
-            .andExpect(content().json(requestBody));
+        mockMvc.perform(put("/api/posts/1").contentType("application/json").content(requestBody))
+                .andExpect(status().isOk()).andExpect(content().json(requestBody));
     }
 
     @Test
     void shouldNotUpdateAndThrowNotFoundWhenGivenAnInvalidPostID() throws Exception {
-        Post updated = new Post(50,1,"This is my brand new post", "UPDATED BODY");
-        when(postService.update(eq(999), any(Post.class))).thenThrow(new RuntimeException("Post not found with id: 999"));
-        String json = """
-            {
-                "id":%d,
-                "userId":%d,
-                "title":"%s",
-                "body":"%s"
-            }
-            """.formatted(updated.getId(), updated.getUserId(), updated.getTitle(), updated.getBody());
+        User user = new User();
+        user.setId(1);
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        user.setUsername("testuser");
 
-        mockMvc.perform(put("/api/posts/999")
-                .contentType("application/json")
-                .content(json))
-            .andExpect(status().isNotFound());
+        Post updated = new Post();
+        updated.setId(50);
+        updated.setUser(user);
+        updated.setTitle("This is my brand new post");
+        updated.setBody("UPDATED BODY");
+
+        when(postService.update(eq(999), any(Post.class)))
+                .thenThrow(new RuntimeException("Post not found with id: 999"));
+        String json = """
+                {
+                    "id":%d,
+                    "userId":%d,
+                    "title":"%s",
+                    "body":"%s"
+                }
+                """.formatted(updated.getId(), updated.getUserId(), updated.getTitle(),
+                updated.getBody());
+
+        mockMvc.perform(put("/api/posts/999").contentType("application/json").content(json))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldDeletePostWhenGivenValidID() throws Exception {
         doNothing().when(postService).deleteById(1);
 
-        mockMvc.perform(delete("/api/posts/1"))
-            .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/posts/1")).andExpect(status().isNoContent());
 
         verify(postService, times(1)).deleteById(1);
     }
