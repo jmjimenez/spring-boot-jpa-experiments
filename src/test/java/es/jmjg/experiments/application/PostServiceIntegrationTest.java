@@ -1,7 +1,8 @@
 package es.jmjg.experiments.application;
 
-import es.jmjg.experiments.domain.Post;
-import es.jmjg.experiments.infrastructure.repository.PostRepository;
+import static org.assertj.core.api.Assertions.*;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +11,12 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.testcontainers.junit.jupiter.Container;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import es.jmjg.experiments.domain.Post;
+import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.infrastructure.repository.PostRepository;
+import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
 @Testcontainers
 @SpringBootTest
@@ -35,8 +33,12 @@ class PostServiceIntegrationTest {
     private PostRepository postRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private Environment environment;
 
+    private User testUser;
     private Post testPost1;
     private Post testPost2;
 
@@ -44,10 +46,25 @@ class PostServiceIntegrationTest {
     void setUp() {
         // Clear the database before each test
         postRepository.deleteAll();
-        
-        // Create test data without predefined IDs
-        testPost1 = new Post(null, 1, "Test Post 1", "Test Body 1");
-        testPost2 = new Post(null, 1, "Test Post 2", "Test Body 2");
+        userRepository.deleteAll();
+
+        // Create a test user
+        testUser = new User();
+        testUser.setName("Test User");
+        testUser.setEmail("test@example.com");
+        testUser.setUsername("testuser");
+        testUser = userRepository.save(testUser);
+
+        // Create test posts associated with the user
+        testPost1 = new Post();
+        testPost1.setUser(testUser);
+        testPost1.setTitle("Test Post 1");
+        testPost1.setBody("Test Body 1");
+
+        testPost2 = new Post();
+        testPost2.setUser(testUser);
+        testPost2.setTitle("Test Post 2");
+        testPost2.setBody("Test Body 2");
     }
 
     @Test
@@ -75,8 +92,8 @@ class PostServiceIntegrationTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result).hasSize(2);
-        assertThat(result).extracting("title")
-                .containsExactlyInAnyOrder("Test Post 1", "Test Post 2");
+        assertThat(result).extracting("title").containsExactlyInAnyOrder("Test Post 1",
+                "Test Post 2");
     }
 
     @Test
@@ -101,7 +118,7 @@ class PostServiceIntegrationTest {
         assertThat(result).isPresent();
         assertThat(result.get().getTitle()).isEqualTo("Test Post 1");
         assertThat(result.get().getBody()).isEqualTo("Test Body 1");
-        assertThat(result.get().getUserId()).isEqualTo(1);
+        assertThat(result.get().getUserId()).isEqualTo(testUser.getId());
     }
 
     @Test
@@ -116,7 +133,10 @@ class PostServiceIntegrationTest {
     @Test
     void save_ShouldSaveAndReturnPost() {
         // Given
-        Post newPost = new Post(null, 1, "New Post", "New Body");
+        Post newPost = new Post();
+        newPost.setUser(testUser);
+        newPost.setTitle("New Post");
+        newPost.setBody("New Body");
 
         // When
         Post result = postService.save(newPost);
@@ -126,7 +146,7 @@ class PostServiceIntegrationTest {
         assertThat(result.getId()).isNotNull();
         assertThat(result.getTitle()).isEqualTo("New Post");
         assertThat(result.getBody()).isEqualTo("New Body");
-        assertThat(result.getUserId()).isEqualTo(1);
+        assertThat(result.getUserId()).isEqualTo(testUser.getId());
 
         // Verify it was actually saved to the database
         Optional<Post> savedPost = postRepository.findById(result.getId());
@@ -180,7 +200,9 @@ class PostServiceIntegrationTest {
     void update_WhenPostExists_ShouldUpdateAndReturnPost() {
         // Given
         Post savedPost = postRepository.save(testPost1);
-        Post updateData = new Post(null, 2, "Updated Title", "Updated Body");
+        Post updateData = new Post();
+        updateData.setTitle("Updated Title");
+        updateData.setBody("Updated Body");
 
         // When
         Post result = postService.update(savedPost.getId(), updateData);
@@ -188,7 +210,8 @@ class PostServiceIntegrationTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(savedPost.getId());
-        assertThat(result.getUserId()).isEqualTo(1); // Should preserve original userId
+        assertThat(result.getUserId()).isEqualTo(testUser.getId()); // Should preserve original
+                                                                    // userId
         assertThat(result.getTitle()).isEqualTo("Updated Title");
         assertThat(result.getBody()).isEqualTo("Updated Body");
 
@@ -202,28 +225,35 @@ class PostServiceIntegrationTest {
     @Test
     void update_WhenPostDoesNotExist_ShouldThrowRuntimeException() {
         // Given
-        Post updateData = new Post(null, 1, "Updated Title", "Updated Body");
+        Post updateData = new Post();
+        updateData.setTitle("Updated Title");
+        updateData.setBody("Updated Body");
 
         // When & Then
         assertThatThrownBy(() -> postService.update(999, updateData))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Post not found with id: 999");
+                .isInstanceOf(RuntimeException.class).hasMessage("Post not found with id: 999");
     }
 
     @Test
     void update_ShouldPreserveOriginalIdAndUserId() {
         // Given
-        Post originalPost = new Post(null, 5, "Original Title", "Original Body");
+        Post originalPost = new Post();
+        originalPost.setUser(testUser);
+        originalPost.setTitle("Original Title");
+        originalPost.setBody("Original Body");
         Post savedPost = postRepository.save(originalPost);
-        
-        Post updateData = new Post(999, 999, "Updated Title", "Updated Body"); // Different ID and userId
+
+        Post updateData = new Post();
+        updateData.setTitle("Updated Title");
+        updateData.setBody("Updated Body");
 
         // When
         Post result = postService.update(savedPost.getId(), updateData);
 
         // Then
         assertThat(result.getId()).isEqualTo(savedPost.getId()); // Should preserve original ID
-        assertThat(result.getUserId()).isEqualTo(5); // Should preserve original userId
+        assertThat(result.getUserId()).isEqualTo(testUser.getId()); // Should preserve original
+                                                                    // userId
         assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
         assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
     }
@@ -231,7 +261,10 @@ class PostServiceIntegrationTest {
     @Test
     void fullCrudWorkflow_ShouldWorkCorrectly() {
         // Create
-        Post newPost = new Post(null, 1, "Workflow Post", "Workflow Body");
+        Post newPost = new Post();
+        newPost.setUser(testUser);
+        newPost.setTitle("Workflow Post");
+        newPost.setBody("Workflow Body");
         Post createdPost = postService.save(newPost);
         assertThat(createdPost.getId()).isNotNull();
         assertThat(createdPost.getTitle()).isEqualTo("Workflow Post");
@@ -242,10 +275,13 @@ class PostServiceIntegrationTest {
         assertThat(foundPost.get().getTitle()).isEqualTo("Workflow Post");
 
         // Update
-        Post updateData = new Post(null, 2, "Updated Workflow Post", "Updated Workflow Body");
+        Post updateData = new Post();
+        updateData.setTitle("Updated Workflow Post");
+        updateData.setBody("Updated Workflow Body");
         Post updatedPost = postService.update(createdPost.getId(), updateData);
         assertThat(updatedPost.getTitle()).isEqualTo("Updated Workflow Post");
-        assertThat(updatedPost.getUserId()).isEqualTo(1); // Should preserve original userId
+        assertThat(updatedPost.getUserId()).isEqualTo(testUser.getId()); // Should preserve original
+                                                                         // userId
 
         // Delete
         postService.deleteById(createdPost.getId());

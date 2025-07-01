@@ -1,22 +1,20 @@
 package es.jmjg.experiments.application;
 
-import es.jmjg.experiments.domain.Post;
-import es.jmjg.experiments.infrastructure.repository.PostRepository;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import es.jmjg.experiments.domain.Post;
+import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.infrastructure.repository.PostRepository;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
@@ -33,8 +31,11 @@ class PostServiceTest {
 
     @BeforeEach
     void setUp() {
+        User user = new User(1, "Test User", "test@example.com", "testuser", null);
         testPost1 = new Post(1, 1, "Test Post 1", "Test Body 1");
+        testPost1.setUser(user);
         testPost2 = new Post(2, 1, "Test Post 2", "Test Body 2");
+        testPost2.setUser(user);
         testPosts = Arrays.asList(testPost1, testPost2);
     }
 
@@ -146,12 +147,16 @@ class PostServiceTest {
     void update_WhenPostExists_ShouldUpdateAndReturnPost() {
         // Given
         Integer postId = 1;
+        User user = new User(1, "Test User", "test@example.com", "testuser", null);
         Post existingPost = new Post(1, 1, "Original Title", "Original Body");
+        existingPost.setUser(user);
         Post updateData = new Post(null, 1, "Updated Title", "Updated Body");
-        Post expectedUpdatedPost = new Post(1, 1, "Updated Title", "Updated Body");
-        
+
         when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-        when(postRepository.save(any(Post.class))).thenReturn(expectedUpdatedPost);
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
+            Post savedPost = invocation.getArgument(0);
+            return savedPost;
+        });
 
         // When
         Post result = postService.update(postId, updateData);
@@ -162,7 +167,7 @@ class PostServiceTest {
         assertThat(result.getUserId()).isEqualTo(1);
         assertThat(result.getTitle()).isEqualTo("Updated Title");
         assertThat(result.getBody()).isEqualTo("Updated Body");
-        
+
         verify(postRepository, times(1)).findById(postId);
         verify(postRepository, times(1)).save(any(Post.class));
     }
@@ -176,9 +181,9 @@ class PostServiceTest {
 
         // When & Then
         assertThatThrownBy(() -> postService.update(postId, updateData))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessage("Post not found with id: " + postId);
-        
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Post not found with id: " + postId);
+
         verify(postRepository, times(1)).findById(postId);
         verify(postRepository, never()).save(any(Post.class));
     }
@@ -187,9 +192,11 @@ class PostServiceTest {
     void update_ShouldPreserveOriginalIdAndUserId() {
         // Given
         Integer postId = 1;
+        User user = new User(5, "Test User", "test@example.com", "testuser", null);
         Post existingPost = new Post(1, 5, "Original Title", "Original Body");
-        Post updateData = new Post(999, 999, "Updated Title", "Updated Body"); // Different ID and userId
-        
+        existingPost.setUser(user);
+        Post updateData = new Post(999, 999, "Updated Title", "Updated Body"); // Different ID and
+
         when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
             Post savedPost = invocation.getArgument(0);
@@ -204,8 +211,8 @@ class PostServiceTest {
         assertThat(result.getUserId()).isEqualTo(5); // Should preserve original userId
         assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
         assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
-        
+
         verify(postRepository, times(1)).findById(postId);
         verify(postRepository, times(1)).save(any(Post.class));
     }
-} 
+}
