@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
+import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
@@ -22,20 +23,22 @@ class PostServiceTest {
     @Mock
     private PostRepository postRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private PostService postService;
 
     private Post testPost1;
     private Post testPost2;
     private List<Post> testPosts;
+    private User testUser;
 
     @BeforeEach
     void setUp() {
-        User user = new User(1, "Test User", "test@example.com", "testuser", null);
-        testPost1 = new Post(1, 1, "Test Post 1", "Test Body 1");
-        testPost1.setUser(user);
-        testPost2 = new Post(2, 1, "Test Post 2", "Test Body 2");
-        testPost2.setUser(user);
+        testUser = new User(1, "Test User", "test@example.com", "testuser", null);
+        testPost1 = new Post(1, testUser, "Test Post 1", "Test Body 1");
+        testPost2 = new Post(2, testUser, "Test Post 2", "Test Body 2");
         testPosts = Arrays.asList(testPost1, testPost2);
     }
 
@@ -86,8 +89,9 @@ class PostServiceTest {
     @Test
     void save_ShouldSaveAndReturnPost() {
         // Given
-        Post newPost = new Post(null, 1, "New Post", "New Body");
-        Post savedPost = new Post(3, 1, "New Post", "New Body");
+        Post newPost = new Post(null, testUser, "New Post", "New Body");
+        Post savedPost = new Post(3, testUser, "New Post", "New Body");
+
         when(postRepository.save(any(Post.class))).thenReturn(savedPost);
 
         // When
@@ -98,6 +102,42 @@ class PostServiceTest {
         assertThat(result.getId()).isEqualTo(3);
         assertThat(result.getTitle()).isEqualTo("New Post");
         assertThat(result.getBody()).isEqualTo("New Body");
+        verify(postRepository, times(1)).save(newPost);
+    }
+
+    @Test
+    void save_WhenPostAlreadyHasUser_ShouldNotFetchUser() {
+        // Given
+        Post newPost = new Post(null, testUser, "New Post", "New Body");
+        Post savedPost = new Post(3, testUser, "New Post", "New Body");
+
+        when(postRepository.save(any(Post.class))).thenReturn(savedPost);
+
+        // When
+        Post result = postService.save(newPost);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(3);
+        verify(userRepository, never()).findById(any());
+        verify(postRepository, times(1)).save(newPost);
+    }
+
+    @Test
+    void save_WhenUserIdIsNull_ShouldNotFetchUser() {
+        // Given
+        Post newPost = new Post(null, null, "New Post", "New Body");
+        Post savedPost = new Post(3, null, "New Post", "New Body");
+
+        when(postRepository.save(any(Post.class))).thenReturn(savedPost);
+
+        // When
+        Post result = postService.save(newPost);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(3);
+        verify(userRepository, never()).findById(any());
         verify(postRepository, times(1)).save(newPost);
     }
 
@@ -148,9 +188,8 @@ class PostServiceTest {
         // Given
         Integer postId = 1;
         User user = new User(1, "Test User", "test@example.com", "testuser", null);
-        Post existingPost = new Post(1, 1, "Original Title", "Original Body");
-        existingPost.setUser(user);
-        Post updateData = new Post(null, 1, "Updated Title", "Updated Body");
+        Post existingPost = new Post(1, user, "Original Title", "Original Body");
+        Post updateData = new Post(null, user, "Updated Title", "Updated Body");
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
@@ -176,7 +215,7 @@ class PostServiceTest {
     void update_WhenPostDoesNotExist_ShouldThrowRuntimeException() {
         // Given
         Integer postId = 999;
-        Post updateData = new Post(null, 1, "Updated Title", "Updated Body");
+        Post updateData = new Post(null, testUser, "Updated Title", "Updated Body");
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
         // When & Then
@@ -193,9 +232,8 @@ class PostServiceTest {
         // Given
         Integer postId = 1;
         User user = new User(5, "Test User", "test@example.com", "testuser", null);
-        Post existingPost = new Post(1, 5, "Original Title", "Original Body");
-        existingPost.setUser(user);
-        Post updateData = new Post(999, 999, "Updated Title", "Updated Body"); // Different ID and
+        Post existingPost = new Post(1, user, "Original Title", "Original Body");
+        Post updateData = new Post(999, user, "Updated Title", "Updated Body"); // Different ID and
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {

@@ -1,46 +1,42 @@
 package es.jmjg.experiments.infrastructure.repository;
 
-import es.jmjg.experiments.domain.Post;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import es.jmjg.experiments.TestContainersConfig;
+import es.jmjg.experiments.domain.Post;
+import es.jmjg.experiments.domain.User;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
-@Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-public class PostRepositoryTest {
-
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0");
+public class PostRepositoryTest extends TestContainersConfig {
 
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
-        List<Post> posts = List.of(new Post(null, 1, "Hello, World!", "This is my first post!"));
+        User user = new User(null, "Test User", "test@example.com", "testuser", null);
+        user = userRepository.save(user);
+        List<Post> posts = List.of(new Post(null, user, "Hello, World!", "This is my first post!"));
         postRepository.saveAll(posts);
     }
 
     @Test
     void connectionEstablished() {
-        assertThat(postgres.isCreated()).isTrue();
-        assertThat(postgres.isRunning()).isTrue();
+        assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
+        assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
     }
 
     @Test

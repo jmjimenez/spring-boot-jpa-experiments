@@ -1,6 +1,6 @@
 {
     "java.debug.settings.onBuildFailureProceed": true,
-    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.configuration.updateBuildConfiguration": "automatic",
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.runtimes": [
         {
@@ -66,5 +66,6 @@
         "**/.mvn": true,
         "**/mvnw": true,
         "**/mvnw.cmd": true
-    }
+    },
+    "java.debug.settings.showQualifiedNames": false
 }

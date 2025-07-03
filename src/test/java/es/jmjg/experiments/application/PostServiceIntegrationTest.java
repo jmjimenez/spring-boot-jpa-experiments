@@ -7,24 +7,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import es.jmjg.experiments.TestContainersConfig;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
-@Testcontainers
 @SpringBootTest
 @ActiveProfiles("test")
-class PostServiceIntegrationTest {
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0");
+class PostServiceIntegrationTest extends TestContainersConfig {
 
     @Autowired
     private PostService postService;
@@ -76,8 +69,8 @@ class PostServiceIntegrationTest {
 
     @Test
     void connectionEstablished() {
-        assertThat(postgres.isCreated()).isTrue();
-        assertThat(postgres.isRunning()).isTrue();
+        assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
+        assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
     }
 
     @Test

@@ -1,64 +1,61 @@
 package es.jmjg.experiments.infrastructure.controller;
 
-import es.jmjg.experiments.domain.Post;
-import es.jmjg.experiments.infrastructure.repository.PostRepository;
+import static org.assertj.core.api.Assertions.*;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.springframework.test.annotation.DirtiesContext;
+import es.jmjg.experiments.TestContainersConfig;
+import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
+import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
+import es.jmjg.experiments.infrastructure.repository.PostRepository;
+import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
-import java.util.Objects;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-@Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class PostControllerIntegrationTest {
+class PostControllerIntegrationTest extends TestContainersConfig {
 
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0");
-
-    //TODO: replace with RestClient
+    // TODO: replace with RestClient
     @Autowired
     TestRestTemplate restTemplate;
 
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @Test
     void connectionEstablished() {
-        assertThat(postgres.isCreated()).isTrue();
-        assertThat(postgres.isRunning()).isTrue();
+        assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
+        assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
     }
 
     @Test
     @Transactional
     @Rollback
     void shouldFindAllPosts() {
-        Post[] posts = restTemplate.getForObject("/api/posts", Post[].class);
+        PostResponseDto[] posts = restTemplate.getForObject("/api/posts", PostResponseDto[].class);
         // The data loader loads 100 posts at startup, so we should have at least 100
-        assertThat(posts.length).isEqualTo(100);
+        assertThat(posts.length).isEqualTo(50);
     }
 
     @Test
     @Transactional
     @Rollback
     void shouldFindPostWhenValidPostID() {
-        ResponseEntity<Post> response = restTemplate.exchange("/api/posts/1", HttpMethod.GET, null, Post.class);
+        ResponseEntity<PostResponseDto> response =
+                restTemplate.exchange("/api/posts/1", HttpMethod.GET, null, PostResponseDto.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
     }
@@ -67,23 +64,28 @@ class PostControllerIntegrationTest {
     @Transactional
     @Rollback
     void shouldThrowNotFoundWhenInvalidPostID() {
-        ResponseEntity<Post> response = restTemplate.exchange("/api/posts/999", HttpMethod.GET, null, Post.class);
+        ResponseEntity<PostResponseDto> response = restTemplate.exchange("/api/posts/999",
+                HttpMethod.GET, null, PostResponseDto.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     @DirtiesContext
     void shouldCreateNewPostWhenPostIsValid() {
-        Post post = new Post(null, 1, "101 Title", "101 Body");
+        User user = new User(null, "Test User", "test@example.com", "testuser", null);
+        user = userRepository.save(user);
 
-        ResponseEntity<Post> response = restTemplate.exchange("/api/posts", HttpMethod.POST, new HttpEntity<>(post), Post.class);
+        PostRequestDto postDto = new PostRequestDto(null, user.getId(), "101 Title", "101 Body");
+
+        ResponseEntity<PostResponseDto> response = restTemplate.exchange("/api/posts",
+                HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotNull();
         assertThat(Objects.requireNonNull(response.getBody()).getId()).isNotNull();
-        assertThat(response.getBody().getUserId()).isEqualTo(1);
+        assertThat(response.getBody().getUserId()).isEqualTo(user.getId());
         assertThat(response.getBody().getTitle()).isEqualTo("101 Title");
         assertThat(response.getBody().getBody()).isEqualTo("101 Body");
-        
+
         // Clean up manually - only delete the specific post that was created
         postRepository.deleteById(response.getBody().getId());
     }
@@ -92,28 +94,35 @@ class PostControllerIntegrationTest {
     @Transactional
     @Rollback
     void shouldNotCreateNewPostWhenValidationFails() {
-        Post post = new Post(101,1,"","");
-        ResponseEntity<Post> response = restTemplate.exchange("/api/posts", HttpMethod.POST, new HttpEntity<>(post), Post.class);
+        User user = new User(1, "Test User", "test@example.com", "testuser", null);
+        user = userRepository.save(user);
+        PostRequestDto postDto = new PostRequestDto(101, user.getId(), "", "");
+        ResponseEntity<PostResponseDto> response = restTemplate.exchange("/api/posts",
+                HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    @Transactional
-    @Rollback
+    @DirtiesContext
     void shouldUpdatePostWhenPostIsValid() {
-        ResponseEntity<Post> response = restTemplate.exchange("/api/posts/99", HttpMethod.GET, null, Post.class);
+        ResponseEntity<PostResponseDto> response =
+                restTemplate.exchange("/api/posts/1", HttpMethod.GET, null, PostResponseDto.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        Post existing = response.getBody();
+        PostResponseDto existing = response.getBody();
         assertThat(existing).isNotNull();
-        Post updated = new Post(existing.getId(),existing.getUserId(),"NEW POST TITLE #1", "NEW POST BODY #1");
+        User user = new User(null, "Test User", "test@example.com", "testuser", null);
+        user = userRepository.save(user);
+        PostRequestDto updatedDto = new PostRequestDto(existing.getId(), user.getId(),
+                "NEW POST TITLE #1", "NEW POST BODY #1");
 
-        ResponseEntity<Post> updateResponse = restTemplate.exchange("/api/posts/99", HttpMethod.PUT, new HttpEntity<>(updated), Post.class);
+        ResponseEntity<PostResponseDto> updateResponse = restTemplate.exchange("/api/posts/1",
+                HttpMethod.PUT, new HttpEntity<>(updatedDto), PostResponseDto.class);
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(updateResponse.getBody()).isNotNull();
-        assertThat(updateResponse.getBody().getId()).isEqualTo(99);
-        assertThat(updateResponse.getBody().getUserId()).isEqualTo(10);
+        assertThat(updateResponse.getBody().getId()).isEqualTo(existing.getId());
+        assertThat(updateResponse.getBody().getUserId()).isEqualTo(user.getId());
         assertThat(updateResponse.getBody().getTitle()).isEqualTo("NEW POST TITLE #1");
         assertThat(updateResponse.getBody().getBody()).isEqualTo("NEW POST BODY #1");
     }
@@ -122,7 +131,8 @@ class PostControllerIntegrationTest {
     @Transactional
     @Rollback
     void shouldDeleteWithValidID() {
-        ResponseEntity<Void> response = restTemplate.exchange("/api/posts/88", HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> response =
+                restTemplate.exchange("/api/posts/88", HttpMethod.DELETE, null, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 

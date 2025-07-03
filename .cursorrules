@@ -1,0 +1,13 @@
+# Cursor Rules
+# This file contains context information that will be automatically included in your conversations with AI assistants.
+
+# IMPORTANT: All guidelines must start with # or they will be ignored as comments
+
+# Project Guidelines:
+# This is a Spring Boot project with JPA
+# Use Spring Boot best practices
+# The project uses Java 21 - use the most advanced features when possible
+# The project uses Maven for dependency management
+# Include unit tests and integration tests when possible, differentiate them by name
+# Use hexagonal architecture guidelines, splitting domain, infrastructure and application layers
+# If any questions are not correct, don't hesitate to correct or ask for additional information 

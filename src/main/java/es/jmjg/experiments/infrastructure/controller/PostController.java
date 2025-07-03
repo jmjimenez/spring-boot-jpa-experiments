@@ -1,48 +1,86 @@
 package es.jmjg.experiments.infrastructure.controller;
 
-import es.jmjg.experiments.application.PostService;
-import es.jmjg.experiments.domain.Post;
-import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
-import jakarta.validation.Valid;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import es.jmjg.experiments.application.PostService;
+import es.jmjg.experiments.domain.Post;
+import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
+import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
+import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
+import jakarta.validation.Valid;
 
-import java.util.List;
-import java.util.Optional;
-
+// TODO: add exception handling
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
 
     private static final Logger log = LoggerFactory.getLogger(PostController.class);
     private final PostService postService;
+    private final PostMapper postMapper;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, PostMapper postMapper) {
         this.postService = postService;
+        this.postMapper = postMapper;
     }
 
     @GetMapping("")
-    List<Post> findAll() {
-        return postService.findAll();
+    @Transactional(readOnly = true)
+    List<PostResponseDto> findAll() {
+        List<Post> posts = postService.findAll();
+        return postMapper.toResponseDtoList(posts);
     }
 
     @GetMapping("/{id}")
-    Optional<Post> findById(@PathVariable Integer id) {
-        return Optional.ofNullable(postService.findById(id).orElseThrow(PostNotFoundException::new));
+    PostResponseDto findById(@PathVariable Integer id) {
+        Post post = postService.findById(id).orElseThrow(PostNotFoundException::new);
+        return postMapper.toResponseDto(post);
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    Post save(@RequestBody @Valid Post post) {
-        return postService.save(post);
+    PostResponseDto save(@RequestBody @Valid PostRequestDto postDto) {
+        // Convert DTO to domain entity
+        Post post = postMapper.toDomain(postDto);
+        // Set up the user relationship based on userId from DTO
+        Post savedPost;
+        if (postDto.getUserId() != null) {
+            // The PostService will handle setting up the user relationship
+            // We need to modify the Post entity to temporarily hold userId
+            // For now, let's create a custom save method that accepts userId
+            savedPost = postService.saveWithUserId(post, postDto.getUserId());
+        } else {
+            savedPost = postService.save(post);
+        }
+        return postMapper.toResponseDto(savedPost);
     }
 
     @PutMapping("/{id}")
-    Post update(@PathVariable Integer id, @RequestBody Post post) {
+    PostResponseDto update(@PathVariable Integer id, @RequestBody @Valid PostRequestDto postDto) {
         try {
-            return postService.update(id, post);
+            // Convert DTO to domain entity
+            Post post = postMapper.toDomain(postDto);
+
+            // Set up the user relationship based on userId from DTO
+            if (postDto.getUserId() != null) {
+                Post updatedPost = postService.updateWithUserId(id, post, postDto.getUserId());
+                return postMapper.toResponseDto(updatedPost);
+            } else {
+                Post updatedPost = postService.update(id, post);
+                return postMapper.toResponseDto(updatedPost);
+            }
         } catch (RuntimeException e) {
             throw new PostNotFoundException();
         }

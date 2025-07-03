@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import es.jmjg.experiments.application.PostService;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
 
 @WebMvcTest(PostController.class)
 class PostControllerTest {
@@ -159,8 +160,19 @@ class PostControllerTest {
         post.setTitle("This is my brand new post");
         post.setBody("TEST BODY");
 
-        when(postService.save(any(Post.class))).thenReturn(post);
-        String json = """
+        when(postService.saveWithUserId(any(Post.class), eq(1))).thenReturn(post);
+
+        // Request body should be a PostDto (without id, since it's a new post)
+        String requestBody = """
+                {
+                    "userId":%d,
+                    "title":"%s",
+                    "body":"%s"
+                }
+                """.formatted(user.getId(), post.getTitle(), post.getBody());
+
+        // Expected response should include the generated id
+        String expectedResponse = """
                 {
                     "id":%d,
                     "userId":%d,
@@ -169,8 +181,8 @@ class PostControllerTest {
                 }
                 """.formatted(post.getId(), post.getUserId(), post.getTitle(), post.getBody());
 
-        mockMvc.perform(post("/api/posts").contentType("application/json").content(json))
-                .andExpect(status().isCreated()).andExpect(content().json(json));
+        mockMvc.perform(post("/api/posts").contentType("application/json").content(requestBody))
+                .andExpect(status().isCreated()).andExpect(content().json(expectedResponse));
     }
 
     @Test
@@ -187,7 +199,7 @@ class PostControllerTest {
         updated.setTitle("This is my brand new post");
         updated.setBody("UPDATED BODY");
 
-        when(postService.update(eq(1), any(Post.class))).thenReturn(updated);
+        when(postService.updateWithUserId(eq(1), any(Post.class), eq(1))).thenReturn(updated);
         String requestBody = """
                 {
                     "id":%d,
@@ -216,7 +228,7 @@ class PostControllerTest {
         updated.setTitle("This is my brand new post");
         updated.setBody("UPDATED BODY");
 
-        when(postService.update(eq(999), any(Post.class)))
+        when(postService.updateWithUserId(eq(999), any(Post.class), eq(1)))
                 .thenThrow(new RuntimeException("Post not found with id: 999"));
         String json = """
                 {
@@ -247,6 +259,11 @@ class PostControllerTest {
         @Primary
         public PostService postService() {
             return mock(PostService.class);
+        }
+
+        @Bean
+        public PostMapper postMapper() {
+            return new PostMapper();
         }
     }
 }

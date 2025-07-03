@@ -5,15 +5,19 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import es.jmjg.experiments.domain.Post;
+import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
+import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
 @Service
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
@@ -28,7 +32,32 @@ public class PostService {
 
     @Transactional
     public Post save(Post post) {
-        return postRepository.save(post);
+        // If the post has a userId but no user relationship, set up the relationship
+        if (post.getUser() == null && post.getUserId() != null) {
+            Optional<User> user = userRepository.findById(post.getUserId());
+            if (user.isPresent()) {
+                post.setUser(user.get());
+            }
+        }
+        Post savedPost = postRepository.save(post);
+
+        // Fetch the saved post with user relationship loaded to ensure getUserId() works
+        return postRepository.findById(savedPost.getId()).orElse(savedPost);
+    }
+
+    @Transactional
+    public Post saveWithUserId(Post post, Integer userId) {
+        // Set up the user relationship based on userId
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            post.setUser(user.get());
+        } else {
+            throw new RuntimeException("User not found with id: " + userId);
+        }
+        Post savedPost = postRepository.save(post);
+
+        // Fetch the saved post with user relationship loaded to ensure getUserId() works
+        return postRepository.findById(savedPost.getId()).orElse(savedPost);
     }
 
     @Transactional(readOnly = true)
@@ -48,7 +77,34 @@ public class PostService {
             Post existingPost = existing.get();
             existingPost.setTitle(post.getTitle());
             existingPost.setBody(post.getBody());
-            // Preserve the original user relationship
+
+            // Update user relationship if a new user is provided
+            if (post.getUser() != null) {
+                existingPost.setUser(post.getUser());
+            }
+
+            return postRepository.save(existingPost);
+        } else {
+            throw new RuntimeException("Post not found with id: " + id);
+        }
+    }
+
+    @Transactional
+    public Post updateWithUserId(Integer id, Post post, Integer userId) {
+        Optional<Post> existing = postRepository.findById(id);
+        if (existing.isPresent()) {
+            Post existingPost = existing.get();
+            existingPost.setTitle(post.getTitle());
+            existingPost.setBody(post.getBody());
+
+            // Set up the user relationship based on userId
+            Optional<User> user = userRepository.findById(userId);
+            if (user.isPresent()) {
+                existingPost.setUser(user.get());
+            } else {
+                throw new RuntimeException("User not found with id: " + userId);
+            }
+
             return postRepository.save(existingPost);
         } else {
             throw new RuntimeException("Post not found with id: " + id);
