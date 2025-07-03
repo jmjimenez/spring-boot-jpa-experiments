@@ -58,44 +58,32 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    @Transactional
     public Post update(Integer id, Post post) {
-        Optional<Post> existing = postRepository.findById(id);
-        if (existing.isPresent()) {
-            Post existingPost = existing.get();
-            existingPost.setTitle(post.getTitle());
-            existingPost.setBody(post.getBody());
-
-            // Update user relationship if a new user is provided
-            if (post.getUser() != null) {
-                existingPost.setUser(post.getUser());
-            }
-
-            return postRepository.save(existingPost);
-        } else {
-            throw new RuntimeException("Post not found with id: " + id);
-        }
+        return update(id, post, null);
     }
 
     @Transactional
-    public Post updateWithUserId(Integer id, Post post, Integer userId) {
+    public Post update(Integer id, Post post, Integer userId) {
         Optional<Post> existing = postRepository.findById(id);
-        if (existing.isPresent()) {
-            Post existingPost = existing.get();
-            existingPost.setTitle(post.getTitle());
-            existingPost.setBody(post.getBody());
+        if (existing.isEmpty()) {
+            throw new RuntimeException("Post not found with id: " + id);
+        }
 
-            // Set up the user relationship based on userId
+        Post existingPost = existing.get();
+        existingPost.setTitle(post.getTitle());
+        existingPost.setBody(post.getBody());
+
+        if (userId != null) {
             Optional<User> user = userRepository.findById(userId);
             if (user.isPresent()) {
                 existingPost.setUser(user.get());
             } else {
                 throw new RuntimeException("User not found with id: " + userId);
             }
-
-            return postRepository.save(existingPost);
-        } else {
-            throw new RuntimeException("Post not found with id: " + id);
+        } else if (post.getUser() != null) {
+            existingPost.setUser(post.getUser());
         }
+
+        return postRepository.save(existingPost);
     }
 }

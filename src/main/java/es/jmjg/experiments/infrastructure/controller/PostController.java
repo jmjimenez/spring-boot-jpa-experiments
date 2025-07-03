@@ -65,14 +65,8 @@ public class PostController {
             // Convert DTO to domain entity
             Post post = postMapper.toDomain(postDto);
 
-            // Set up the user relationship based on userId from DTO
-            if (postDto.getUserId() != null) {
-                Post updatedPost = postService.updateWithUserId(id, post, postDto.getUserId());
-                return postMapper.toResponseDto(updatedPost);
-            } else {
-                Post updatedPost = postService.update(id, post);
-                return postMapper.toResponseDto(updatedPost);
-            }
+            Post updatedPost = postService.update(id, post, postDto.getUserId());
+            return postMapper.toResponseDto(updatedPost);
         } catch (RuntimeException e) {
             throw new PostNotFoundException();
         }

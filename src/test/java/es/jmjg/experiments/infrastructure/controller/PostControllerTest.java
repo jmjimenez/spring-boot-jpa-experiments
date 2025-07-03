@@ -199,7 +199,7 @@ class PostControllerTest {
         updated.setTitle("This is my brand new post");
         updated.setBody("UPDATED BODY");
 
-        when(postService.updateWithUserId(eq(1), any(Post.class), eq(1))).thenReturn(updated);
+        when(postService.update(eq(1), any(Post.class), eq(1))).thenReturn(updated);
         String requestBody = """
                 {
                     "id":%d,
@@ -228,7 +228,7 @@ class PostControllerTest {
         updated.setTitle("This is my brand new post");
         updated.setBody("UPDATED BODY");
 
-        when(postService.updateWithUserId(eq(999), any(Post.class), eq(1)))
+        when(postService.update(eq(999), any(Post.class), eq(1)))
                 .thenThrow(new RuntimeException("Post not found with id: 999"));
         String json = """
                 {
