@@ -30,29 +30,20 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    @Transactional
     public Post save(Post post) {
-        // If the post has a userId but no user relationship, set up the relationship
-        if (post.getUser() == null && post.getUserId() != null) {
-            Optional<User> user = userRepository.findById(post.getUserId());
-            if (user.isPresent()) {
-                post.setUser(user.get());
-            }
-        }
-        Post savedPost = postRepository.save(post);
-
-        // Fetch the saved post with user relationship loaded to ensure getUserId() works
-        return postRepository.findById(savedPost.getId()).orElse(savedPost);
+        return save(post, null);
     }
 
     @Transactional
-    public Post saveWithUserId(Post post, Integer userId) {
-        // Set up the user relationship based on userId
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            post.setUser(user.get());
-        } else {
-            throw new RuntimeException("User not found with id: " + userId);
+    public Post save(Post post, Integer userId) {
+        // If the post has a userId but no user relationship, set up the relationship
+        if (userId != null) {
+            Optional<User> user = userRepository.findById(userId);
+            if (user.isPresent()) {
+                post.setUser(user.get());
+            } else {
+                throw new RuntimeException("User not found with id: " + userId);
+            }
         }
         Post savedPost = postRepository.save(post);
 

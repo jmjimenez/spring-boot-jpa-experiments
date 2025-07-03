@@ -111,7 +111,7 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         assertThat(result).isPresent();
         assertThat(result.get().getTitle()).isEqualTo("Test Post 1");
         assertThat(result.get().getBody()).isEqualTo("Test Body 1");
-        assertThat(result.get().getUserId()).isEqualTo(testUser.getId());
+        assertThat(result.get().getUser().getId()).isEqualTo(testUser.getId());
     }
 
     @Test
@@ -139,7 +139,7 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         assertThat(result.getId()).isNotNull();
         assertThat(result.getTitle()).isEqualTo("New Post");
         assertThat(result.getBody()).isEqualTo("New Body");
-        assertThat(result.getUserId()).isEqualTo(testUser.getId());
+        assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
 
         // Verify it was actually saved to the database
         Optional<Post> savedPost = postRepository.findById(result.getId());
@@ -203,8 +203,8 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(savedPost.getId());
-        assertThat(result.getUserId()).isEqualTo(testUser.getId()); // Should preserve original
-                                                                    // userId
+        assertThat(result.getUser().getId()).isEqualTo(testUser.getId()); // Should preserve original
+                                                                           // userId
         assertThat(result.getTitle()).isEqualTo("Updated Title");
         assertThat(result.getBody()).isEqualTo("Updated Body");
 
@@ -245,8 +245,8 @@ class PostServiceIntegrationTest extends TestContainersConfig {
 
         // Then
         assertThat(result.getId()).isEqualTo(savedPost.getId()); // Should preserve original ID
-        assertThat(result.getUserId()).isEqualTo(testUser.getId()); // Should preserve original
-                                                                    // userId
+        assertThat(result.getUser().getId()).isEqualTo(testUser.getId()); // Should preserve original
+                                                                           // userId
         assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
         assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
     }
@@ -273,8 +273,8 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         updateData.setBody("Updated Workflow Body");
         Post updatedPost = postService.update(createdPost.getId(), updateData);
         assertThat(updatedPost.getTitle()).isEqualTo("Updated Workflow Post");
-        assertThat(updatedPost.getUserId()).isEqualTo(testUser.getId()); // Should preserve original
-                                                                         // userId
+        assertThat(updatedPost.getUser().getId()).isEqualTo(testUser.getId()); // Should preserve original
+                                                                                // userId
 
         // Delete
         postService.deleteById(createdPost.getId());

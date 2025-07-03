@@ -203,7 +203,7 @@ class PostServiceTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1);
-        assertThat(result.getUserId()).isEqualTo(1);
+        assertThat(result.getUser().getId()).isEqualTo(1);
         assertThat(result.getTitle()).isEqualTo("Updated Title");
         assertThat(result.getBody()).isEqualTo("Updated Body");
 
@@ -246,7 +246,7 @@ class PostServiceTest {
 
         // Then
         assertThat(result.getId()).isEqualTo(1); // Should preserve original ID
-        assertThat(result.getUserId()).isEqualTo(5); // Should preserve original userId
+        assertThat(result.getUser().getId()).isEqualTo(5); // Should preserve original userId
         assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
         assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
 

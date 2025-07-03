@@ -133,7 +133,7 @@ class PostControllerTest {
                     "title":"%s",
                     "body":"%s"
                 }
-                """.formatted(post.getId(), post.getUserId(), post.getTitle(), post.getBody());
+                """.formatted(post.getId(), post.getUser().getId(), post.getTitle(), post.getBody());
 
         mockMvc.perform(get("/api/posts/1")).andExpect(status().isOk())
                 .andExpect(content().json(json));
@@ -160,7 +160,7 @@ class PostControllerTest {
         post.setTitle("This is my brand new post");
         post.setBody("TEST BODY");
 
-        when(postService.saveWithUserId(any(Post.class), eq(1))).thenReturn(post);
+        when(postService.save(any(Post.class), eq(1))).thenReturn(post);
 
         // Request body should be a PostDto (without id, since it's a new post)
         String requestBody = """
@@ -179,7 +179,7 @@ class PostControllerTest {
                     "title":"%s",
                     "body":"%s"
                 }
-                """.formatted(post.getId(), post.getUserId(), post.getTitle(), post.getBody());
+                """.formatted(post.getId(), post.getUser().getId(), post.getTitle(), post.getBody());
 
         mockMvc.perform(post("/api/posts").contentType("application/json").content(requestBody))
                 .andExpect(status().isCreated()).andExpect(content().json(expectedResponse));
@@ -207,7 +207,7 @@ class PostControllerTest {
                     "title":"%s",
                     "body":"%s"
                 }
-                """.formatted(updated.getId(), updated.getUserId(), updated.getTitle(),
+                """.formatted(updated.getId(), updated.getUser().getId(), updated.getTitle(),
                 updated.getBody());
 
         mockMvc.perform(put("/api/posts/1").contentType("application/json").content(requestBody))
@@ -237,7 +237,7 @@ class PostControllerTest {
                     "title":"%s",
                     "body":"%s"
                 }
-                """.formatted(updated.getId(), updated.getUserId(), updated.getTitle(),
+                """.formatted(updated.getId(), updated.getUser().getId(), updated.getTitle(),
                 updated.getBody());
 
         mockMvc.perform(put("/api/posts/999").contentType("application/json").content(json))

@@ -41,9 +41,4 @@ public class Post {
         this.title = title;
         this.body = body;
     }
-
-    // Getter for backward compatibility
-    public Integer getUserId() {
-        return user != null ? user.getId() : null;
-    }
 }

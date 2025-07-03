@@ -55,15 +55,7 @@ public class PostController {
         // Convert DTO to domain entity
         Post post = postMapper.toDomain(postDto);
         // Set up the user relationship based on userId from DTO
-        Post savedPost;
-        if (postDto.getUserId() != null) {
-            // The PostService will handle setting up the user relationship
-            // We need to modify the Post entity to temporarily hold userId
-            // For now, let's create a custom save method that accepts userId
-            savedPost = postService.saveWithUserId(post, postDto.getUserId());
-        } else {
-            savedPost = postService.save(post);
-        }
+        Post savedPost = postService.save(post, postDto.getUserId());
         return postMapper.toResponseDto(savedPost);
     }
 
