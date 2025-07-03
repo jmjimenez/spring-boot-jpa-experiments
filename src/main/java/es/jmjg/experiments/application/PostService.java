@@ -45,10 +45,7 @@ public class PostService {
                 throw new RuntimeException("User not found with id: " + userId);
             }
         }
-        Post savedPost = postRepository.save(post);
-
-        // Fetch the saved post with user relationship loaded to ensure getUserId() works
-        return postRepository.findById(savedPost.getId()).orElse(savedPost);
+        return postRepository.save(post);
     }
 
     @Transactional(readOnly = true)
