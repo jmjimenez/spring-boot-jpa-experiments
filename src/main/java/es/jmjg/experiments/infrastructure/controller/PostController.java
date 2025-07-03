@@ -20,10 +20,18 @@ import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
 import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
 import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/posts")
+@Tag(name = "Posts", description = "Post management operations")
 public class PostController {
 
     private static final Logger log = LoggerFactory.getLogger(PostController.class);
@@ -37,19 +45,38 @@ public class PostController {
 
     @GetMapping("")
     @Transactional(readOnly = true)
+    @Operation(summary = "Get all posts", description = "Retrieves a list of all posts")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved posts",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PostResponseDto.class)))})
     List<PostResponseDto> findAll() {
         List<Post> posts = postService.findAll();
         return postMapper.toResponseDtoList(posts);
     }
 
     @GetMapping("/{id}")
-    PostResponseDto findById(@PathVariable Integer id) {
+    @Operation(summary = "Get post by ID", description = "Retrieves a specific post by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved post",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PostResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Post not found")})
+    PostResponseDto findById(
+            @Parameter(description = "ID of the post to retrieve") @PathVariable Integer id) {
         Post post = postService.findById(id).orElseThrow(PostNotFoundException::new);
         return postMapper.toResponseDto(post);
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create a new post",
+            description = "Creates a new post with the provided data")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Post created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PostResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")})
     PostResponseDto save(@RequestBody @Valid PostRequestDto postDto) {
         Post post = postMapper.toDomain(postDto);
         Post savedPost = postService.save(post, postDto.getUserId());
@@ -57,6 +84,14 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a post",
+            description = "Updates an existing post with the provided data")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Post updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PostResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Post not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")})
     PostResponseDto update(@PathVariable Integer id, @RequestBody @Valid PostRequestDto postDto) {
         Post post = postMapper.toDomain(postDto);
         Post updatedPost = postService.update(id, post, postDto.getUserId());
@@ -65,6 +100,10 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a post", description = "Deletes a post by its ID")
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "204", description = "Post deleted successfully"),
+                    @ApiResponse(responseCode = "404", description = "Post not found")})
     void delete(@PathVariable Integer id) {
         postService.deleteById(id);
     }

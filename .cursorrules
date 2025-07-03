@@ -10,4 +10,14 @@
 # The project uses Maven for dependency management
 # Include unit tests and integration tests when possible, differentiate them by name
 # Use hexagonal architecture guidelines, splitting domain, infrastructure and application layers
-# If any questions are not correct, don't hesitate to correct or ask for additional information 
+# If any questions are not correct, don't hesitate to correct or ask for additional information
+
+# CRITICAL DEVELOPMENT PRACTICES:
+# ALWAYS verify dependency compatibility before making claims - check official documentation, GitHub issues, and release notes
+# NEVER assume compatibility issues without proper research - use official sources and recent information
+# When dealing with version conflicts, check the latest releases and official compatibility matrices
+# For Spring Boot compatibility issues, verify against the official Spring Boot compatibility matrix
+# For third-party libraries, check their GitHub issues, releases, and official documentation
+# If unsure about compatibility, say "I need to research this" rather than making assumptions
+# Always provide sources when making compatibility claims
+# When suggesting dependency changes, verify the change works before recommending it 
