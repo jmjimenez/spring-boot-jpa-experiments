@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import es.jmjg.experiments.application.exception.PostNotFound;
+import es.jmjg.experiments.application.exception.UserNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
@@ -42,7 +44,7 @@ public class PostService {
             if (user.isPresent()) {
                 post.setUser(user.get());
             } else {
-                throw new RuntimeException("User not found with id: " + userId);
+                throw new UserNotFound(userId);
             }
         }
         return postRepository.save(post);
@@ -66,7 +68,7 @@ public class PostService {
     public Post update(Integer id, Post post, Integer userId) {
         Optional<Post> existing = postRepository.findById(id);
         if (existing.isEmpty()) {
-            throw new RuntimeException("Post not found with id: " + id);
+            throw new PostNotFound(id);
         }
 
         Post existingPost = existing.get();
@@ -78,7 +80,7 @@ public class PostService {
             if (user.isPresent()) {
                 existingPost.setUser(user.get());
             } else {
-                throw new RuntimeException("User not found with id: " + userId);
+                throw new UserNotFound(userId);
             }
         } else if (post.getUser() != null) {
             existingPost.setUser(post.getUser());

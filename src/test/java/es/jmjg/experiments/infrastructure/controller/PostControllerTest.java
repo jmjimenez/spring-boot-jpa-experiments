@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import es.jmjg.experiments.application.PostService;
+import es.jmjg.experiments.application.exception.PostNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
@@ -229,7 +230,7 @@ class PostControllerTest {
         updated.setBody("UPDATED BODY");
 
         when(postService.update(eq(999), any(Post.class), eq(1)))
-                .thenThrow(new RuntimeException("Post not found with id: 999"));
+                .thenThrow(new PostNotFound("Post not found with id: 999"));
         String json = """
                 {
                     "id":%d,

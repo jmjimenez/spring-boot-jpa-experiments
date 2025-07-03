@@ -22,7 +22,6 @@ import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundExcep
 import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
 import jakarta.validation.Valid;
 
-// TODO: add exception handling
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
@@ -52,24 +51,16 @@ public class PostController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     PostResponseDto save(@RequestBody @Valid PostRequestDto postDto) {
-        // Convert DTO to domain entity
         Post post = postMapper.toDomain(postDto);
-        // Set up the user relationship based on userId from DTO
         Post savedPost = postService.save(post, postDto.getUserId());
         return postMapper.toResponseDto(savedPost);
     }
 
     @PutMapping("/{id}")
     PostResponseDto update(@PathVariable Integer id, @RequestBody @Valid PostRequestDto postDto) {
-        try {
-            // Convert DTO to domain entity
-            Post post = postMapper.toDomain(postDto);
-
-            Post updatedPost = postService.update(id, post, postDto.getUserId());
-            return postMapper.toResponseDto(updatedPost);
-        } catch (RuntimeException e) {
-            throw new PostNotFoundException();
-        }
+        Post post = postMapper.toDomain(postDto);
+        Post updatedPost = postService.update(id, post, postDto.getUserId());
+        return postMapper.toResponseDto(updatedPost);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
