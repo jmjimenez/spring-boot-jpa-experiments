@@ -14,8 +14,8 @@ public class PostMapper {
         if (post == null) {
             return null;
         }
-        return new PostResponseDto(post.getId(), post.getUser().getId(), post.getTitle(),
-                post.getBody());
+        return new PostResponseDto(post.getId(), post.getUuid(), post.getUser().getId(),
+                post.getTitle(), post.getBody());
     }
 
     public List<PostResponseDto> toResponseDtoList(List<Post> posts) {
@@ -29,7 +29,11 @@ public class PostMapper {
         if (postRequestDto == null) {
             return null;
         }
-        return new Post(postRequestDto.getId(), null, postRequestDto.getTitle(),
-                postRequestDto.getBody());
+        Post post = new Post();
+        post.setId(postRequestDto.getId());
+        post.setUuid(postRequestDto.getUuid());
+        post.setTitle(postRequestDto.getTitle());
+        post.setBody(postRequestDto.getBody());
+        return post;
     }
 }

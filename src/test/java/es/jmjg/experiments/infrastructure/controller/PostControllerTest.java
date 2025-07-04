@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -43,12 +44,14 @@ class PostControllerTest {
 
         Post post1 = new Post();
         post1.setId(1);
+        post1.setUuid(UUID.randomUUID());
         post1.setUser(user);
         post1.setTitle("Hello, World!");
         post1.setBody("This is my first post.");
 
         Post post2 = new Post();
         post2.setId(2);
+        post2.setUuid(UUID.randomUUID());
         post2.setUser(user);
         post2.setTitle("Second Post");
         post2.setBody("This is my second post.");
@@ -62,18 +65,20 @@ class PostControllerTest {
                 [
                     {
                         "id":1,
+                        "uuid":"%s",
                         "userId":1,
                         "title":"Hello, World!",
                         "body":"This is my first post."
                     },
                     {
                         "id":2,
+                        "uuid":"%s",
                         "userId":1,
                         "title":"Second Post",
                         "body":"This is my second post."
                     }
                 ]
-                """;
+                """.formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
 
         when(postService.findAll()).thenReturn(posts);
 
@@ -90,18 +95,20 @@ class PostControllerTest {
                 [
                     {
                         "id":1,
+                        "uuid":"%s",
                         "userId":1,
                         "title":"Hello, World!",
                         "body":"This is my first post."
                     },
                     {
                         "id":2,
+                        "uuid":"%s",
                         "userId":1,
                         "title":"Second Post",
                         "body":"This is my second post."
                     }
                 ]
-                """;
+                """.formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
 
         doReturn(posts).when(postService).findAll();
 
@@ -122,6 +129,7 @@ class PostControllerTest {
 
         Post post = new Post();
         post.setId(1);
+        post.setUuid(UUID.randomUUID());
         post.setUser(user);
         post.setTitle("Test Title");
         post.setBody("Test Body");
@@ -130,11 +138,13 @@ class PostControllerTest {
         String json = """
                 {
                     "id":%d,
+                    "uuid":"%s",
                     "userId":%d,
                     "title":"%s",
                     "body":"%s"
                 }
-                """.formatted(post.getId(), post.getUser().getId(), post.getTitle(), post.getBody());
+                """.formatted(post.getId(), post.getUuid(), post.getUser().getId(), post.getTitle(),
+                post.getBody());
 
         mockMvc.perform(get("/api/posts/1")).andExpect(status().isOk())
                 .andExpect(content().json(json));
@@ -157,6 +167,7 @@ class PostControllerTest {
 
         Post post = new Post();
         post.setId(3);
+        post.setUuid(UUID.randomUUID());
         post.setUser(user);
         post.setTitle("This is my brand new post");
         post.setBody("TEST BODY");
@@ -166,21 +177,24 @@ class PostControllerTest {
         // Request body should be a PostDto (without id, since it's a new post)
         String requestBody = """
                 {
+                    "uuid":"%s",
                     "userId":%d,
                     "title":"%s",
                     "body":"%s"
                 }
-                """.formatted(user.getId(), post.getTitle(), post.getBody());
+                """.formatted(post.getUuid(), user.getId(), post.getTitle(), post.getBody());
 
         // Expected response should include the generated id
         String expectedResponse = """
                 {
                     "id":%d,
+                    "uuid":"%s",
                     "userId":%d,
                     "title":"%s",
                     "body":"%s"
                 }
-                """.formatted(post.getId(), post.getUser().getId(), post.getTitle(), post.getBody());
+                """.formatted(post.getId(), post.getUuid(), post.getUser().getId(), post.getTitle(),
+                post.getBody());
 
         mockMvc.perform(post("/api/posts").contentType("application/json").content(requestBody))
                 .andExpect(status().isCreated()).andExpect(content().json(expectedResponse));
@@ -196,6 +210,7 @@ class PostControllerTest {
 
         Post updated = new Post();
         updated.setId(1);
+        updated.setUuid(UUID.randomUUID());
         updated.setUser(user);
         updated.setTitle("This is my brand new post");
         updated.setBody("UPDATED BODY");
@@ -204,12 +219,13 @@ class PostControllerTest {
         String requestBody = """
                 {
                     "id":%d,
+                    "uuid":"%s",
                     "userId":%d,
                     "title":"%s",
                     "body":"%s"
                 }
-                """.formatted(updated.getId(), updated.getUser().getId(), updated.getTitle(),
-                updated.getBody());
+                """.formatted(updated.getId(), updated.getUuid(), updated.getUser().getId(),
+                updated.getTitle(), updated.getBody());
 
         mockMvc.perform(put("/api/posts/1").contentType("application/json").content(requestBody))
                 .andExpect(status().isOk()).andExpect(content().json(requestBody));
@@ -225,6 +241,7 @@ class PostControllerTest {
 
         Post updated = new Post();
         updated.setId(50);
+        updated.setUuid(UUID.randomUUID());
         updated.setUser(user);
         updated.setTitle("This is my brand new post");
         updated.setBody("UPDATED BODY");
@@ -234,12 +251,13 @@ class PostControllerTest {
         String json = """
                 {
                     "id":%d,
+                    "uuid":"%s",
                     "userId":%d,
                     "title":"%s",
                     "body":"%s"
                 }
-                """.formatted(updated.getId(), updated.getUser().getId(), updated.getTitle(),
-                updated.getBody());
+                """.formatted(updated.getId(), updated.getUuid(), updated.getUser().getId(),
+                updated.getTitle(), updated.getBody());
 
         mockMvc.perform(put("/api/posts/999").contentType("application/json").content(json))
                 .andExpect(status().isNotFound());

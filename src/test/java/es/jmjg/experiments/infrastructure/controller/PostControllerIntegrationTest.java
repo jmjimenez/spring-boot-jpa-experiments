@@ -75,7 +75,8 @@ class PostControllerIntegrationTest extends TestContainersConfig {
         User user = new User(null, "Test User", "test@example.com", "testuser", null);
         user = userRepository.save(user);
 
-        PostRequestDto postDto = new PostRequestDto(null, user.getId(), "101 Title", "101 Body");
+        PostRequestDto postDto = new PostRequestDto(null, java.util.UUID.randomUUID(), user.getId(),
+                "101 Title", "101 Body");
 
         ResponseEntity<PostResponseDto> response = restTemplate.exchange("/api/posts",
                 HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
@@ -96,7 +97,8 @@ class PostControllerIntegrationTest extends TestContainersConfig {
     void shouldNotCreateNewPostWhenValidationFails() {
         User user = new User(1, "Test User", "test@example.com", "testuser", null);
         user = userRepository.save(user);
-        PostRequestDto postDto = new PostRequestDto(101, user.getId(), "", "");
+        PostRequestDto postDto =
+                new PostRequestDto(101, java.util.UUID.randomUUID(), user.getId(), "", "");
         ResponseEntity<PostResponseDto> response = restTemplate.exchange("/api/posts",
                 HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
 
@@ -114,8 +116,8 @@ class PostControllerIntegrationTest extends TestContainersConfig {
         assertThat(existing).isNotNull();
         User user = new User(null, "Test User", "test@example.com", "testuser", null);
         user = userRepository.save(user);
-        PostRequestDto updatedDto = new PostRequestDto(existing.getId(), user.getId(),
-                "NEW POST TITLE #1", "NEW POST BODY #1");
+        PostRequestDto updatedDto = new PostRequestDto(existing.getId(),
+                java.util.UUID.randomUUID(), user.getId(), "NEW POST TITLE #1", "NEW POST BODY #1");
 
         ResponseEntity<PostResponseDto> updateResponse = restTemplate.exchange("/api/posts/1",
                 HttpMethod.PUT, new HttpEntity<>(updatedDto), PostResponseDto.class);

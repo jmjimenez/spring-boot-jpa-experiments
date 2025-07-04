@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,9 @@ public class PostRepositoryTest extends TestContainersConfig {
     void setUp() {
         User user = new User(null, "Test User", "test@example.com", "testuser", null);
         user = userRepository.save(user);
-        List<Post> posts = List.of(new Post(null, user, "Hello, World!", "This is my first post!"));
+        UUID postUuid = UUID.randomUUID();
+        List<Post> posts =
+                List.of(new Post(null, postUuid, user, "Hello, World!", "This is my first post!"));
         postRepository.saveAll(posts);
     }
 

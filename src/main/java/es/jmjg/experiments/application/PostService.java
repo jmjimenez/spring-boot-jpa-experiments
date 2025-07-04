@@ -75,6 +75,11 @@ public class PostService {
         existingPost.setTitle(post.getTitle());
         existingPost.setBody(post.getBody());
 
+        // Only update UUID if provided (to avoid overwriting existing UUID)
+        if (post.getUuid() != null) {
+            existingPost.setUuid(post.getUuid());
+        }
+
         if (userId != null) {
             Optional<User> user = userRepository.findById(userId);
             if (user.isPresent()) {

@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.repository.dataloader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -52,13 +53,18 @@ class UserAndPostDataLoader implements CommandLineRunner {
                     User savedUser = userRepository.save(user);
 
                     // Create and save the posts for this user
-                    List<Post> posts = userWithPosts.posts();
-                    for (Post post : posts) {
+                    List<PostData> postDataList = userWithPosts.posts();
+                    for (PostData postData : postDataList) {
+                        Post post = new Post();
                         post.setId(null); // Let Hibernate generate the ID
+                        post.setUuid(UUID.fromString(postData.id())); // Map JSON "id" to entity
+                                                                      // "uuid"
                         post.setUser(savedUser); // Set the relationship
-                    }
+                        post.setTitle(postData.title());
+                        post.setBody(postData.body());
 
-                    postRepository.saveAll(posts);
+                        postRepository.save(post);
+                    }
                 }
 
                 log.info("Successfully loaded {} users and their posts", usersWithPosts.size());
@@ -70,9 +76,13 @@ class UserAndPostDataLoader implements CommandLineRunner {
 
     // Static inner classes for JSON deserialization
     public static record UserWithPosts(Integer id, String name, String email, String username,
-            List<Post> posts) {
+            List<PostData> posts) {
     }
 
     public static record UsersWithPosts(List<UserWithPosts> users) {
+    }
+
+    // Separate record for post data from JSON (to avoid conflicts with entity structure)
+    public static record PostData(String id, String title, String body) {
     }
 }

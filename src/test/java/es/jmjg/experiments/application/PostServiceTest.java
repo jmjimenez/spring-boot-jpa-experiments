@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,12 +36,16 @@ class PostServiceTest {
     private Post testPost2;
     private List<Post> testPosts;
     private User testUser;
+    private UUID testUuid1;
+    private UUID testUuid2;
 
     @BeforeEach
     void setUp() {
         testUser = new User(1, "Test User", "test@example.com", "testuser", null);
-        testPost1 = new Post(1, testUser, "Test Post 1", "Test Body 1");
-        testPost2 = new Post(2, testUser, "Test Post 2", "Test Body 2");
+        testUuid1 = UUID.randomUUID();
+        testUuid2 = UUID.randomUUID();
+        testPost1 = new Post(1, testUuid1, testUser, "Test Post 1", "Test Body 1");
+        testPost2 = new Post(2, testUuid2, testUser, "Test Post 2", "Test Body 2");
         testPosts = Arrays.asList(testPost1, testPost2);
     }
 
@@ -91,8 +96,9 @@ class PostServiceTest {
     @Test
     void save_ShouldSaveAndReturnPost() {
         // Given
-        Post newPost = new Post(null, testUser, "New Post", "New Body");
-        Post savedPost = new Post(3, testUser, "New Post", "New Body");
+        UUID newUuid = UUID.randomUUID();
+        Post newPost = new Post(null, newUuid, testUser, "New Post", "New Body");
+        Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
 
         when(postRepository.save(any(Post.class))).thenReturn(savedPost);
 
@@ -110,8 +116,9 @@ class PostServiceTest {
     @Test
     void save_WhenPostAlreadyHasUser_ShouldNotFetchUser() {
         // Given
-        Post newPost = new Post(null, testUser, "New Post", "New Body");
-        Post savedPost = new Post(3, testUser, "New Post", "New Body");
+        UUID newUuid = UUID.randomUUID();
+        Post newPost = new Post(null, newUuid, testUser, "New Post", "New Body");
+        Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
 
         when(postRepository.save(any(Post.class))).thenReturn(savedPost);
 
@@ -128,8 +135,9 @@ class PostServiceTest {
     @Test
     void save_WhenUserIdIsNull_ShouldNotFetchUser() {
         // Given
-        Post newPost = new Post(null, null, "New Post", "New Body");
-        Post savedPost = new Post(3, null, "New Post", "New Body");
+        UUID newUuid = UUID.randomUUID();
+        Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
+        Post savedPost = new Post(3, newUuid, null, "New Post", "New Body");
 
         when(postRepository.save(any(Post.class))).thenReturn(savedPost);
 
@@ -190,8 +198,10 @@ class PostServiceTest {
         // Given
         Integer postId = 1;
         User user = new User(1, "Test User", "test@example.com", "testuser", null);
-        Post existingPost = new Post(1, user, "Original Title", "Original Body");
-        Post updateData = new Post(null, user, "Updated Title", "Updated Body");
+        UUID existingUuid = UUID.randomUUID();
+        UUID updateUuid = UUID.randomUUID();
+        Post existingPost = new Post(1, existingUuid, user, "Original Title", "Original Body");
+        Post updateData = new Post(null, updateUuid, user, "Updated Title", "Updated Body");
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
@@ -217,7 +227,8 @@ class PostServiceTest {
     void update_WhenPostDoesNotExist_ShouldThrowPostNotFound() {
         // Given
         Integer postId = 999;
-        Post updateData = new Post(null, testUser, "Updated Title", "Updated Body");
+        UUID updateUuid = UUID.randomUUID();
+        Post updateData = new Post(null, updateUuid, testUser, "Updated Title", "Updated Body");
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
         // When & Then
@@ -233,8 +244,12 @@ class PostServiceTest {
         // Given
         Integer postId = 1;
         User user = new User(5, "Test User", "test@example.com", "testuser", null);
-        Post existingPost = new Post(1, user, "Original Title", "Original Body");
-        Post updateData = new Post(999, user, "Updated Title", "Updated Body"); // Different ID and
+        UUID existingUuid = UUID.randomUUID();
+        UUID updateUuid = UUID.randomUUID();
+        Post existingPost = new Post(1, existingUuid, user, "Original Title", "Original Body");
+        Post updateData = new Post(999, updateUuid, user, "Updated Title", "Updated Body"); // Different
+                                                                                            // ID
+                                                                                            // and
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
         when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
@@ -259,7 +274,8 @@ class PostServiceTest {
     void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
         // Given
         Integer userId = 999;
-        Post newPost = new Post(null, null, "New Post", "New Body");
+        UUID newUuid = UUID.randomUUID();
+        Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         // When & Then
@@ -275,8 +291,10 @@ class PostServiceTest {
         // Given
         Integer postId = 1;
         Integer userId = 999;
-        Post existingPost = new Post(1, testUser, "Original Title", "Original Body");
-        Post updateData = new Post(null, null, "Updated Title", "Updated Body");
+        UUID existingUuid = UUID.randomUUID();
+        UUID updateUuid = UUID.randomUUID();
+        Post existingPost = new Post(1, existingUuid, testUser, "Original Title", "Original Body");
+        Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -294,8 +312,9 @@ class PostServiceTest {
     void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
         // Given
         Integer userId = 1;
-        Post newPost = new Post(null, null, "New Post", "New Body");
-        Post savedPost = new Post(3, testUser, "New Post", "New Body");
+        UUID newUuid = UUID.randomUUID();
+        Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
+        Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(postRepository.save(any(Post.class))).thenReturn(savedPost);
@@ -318,8 +337,10 @@ class PostServiceTest {
         Integer postId = 1;
         Integer userId = 2;
         User newUser = new User(2, "New User", "new@example.com", "newuser", null);
-        Post existingPost = new Post(1, testUser, "Original Title", "Original Body");
-        Post updateData = new Post(null, null, "Updated Title", "Updated Body");
+        UUID existingUuid = UUID.randomUUID();
+        UUID updateUuid = UUID.randomUUID();
+        Post existingPost = new Post(1, existingUuid, testUser, "Original Title", "Original Body");
+        Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
         when(userRepository.findById(userId)).thenReturn(Optional.of(newUser));

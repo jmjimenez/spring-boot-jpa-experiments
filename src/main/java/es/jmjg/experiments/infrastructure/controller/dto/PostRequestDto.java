@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.dto;
 
+import java.util.UUID;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostRequestDto {
     private Integer id;
+
+    @NotNull(message = "UUID is required")
+    private UUID uuid;
 
     @NotNull(message = "User ID is required")
     private Integer userId;
