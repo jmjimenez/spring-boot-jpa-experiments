@@ -21,3 +21,13 @@
 # If unsure about compatibility, say "I need to research this" rather than making assumptions
 # Always provide sources when making compatibility claims
 # When suggesting dependency changes, verify the change works before recommending it 
+
+# CODE CHANGE PRACTICES:
+# ONLY make changes that directly support the requested feature or fix
+# NEVER refactor unrelated code unless explicitly requested
+# PRESERVE existing formatting, indentation, and line breaks exactly as they are
+# DON'T "clean up" or "improve" code that wasn't part of the request
+# FOCUS on minimal, atomic changes that achieve the specific goal
+# AVOID changing import ordering, spacing, or formatting unless necessary for the feature
+# KEEP commits and changes focused on a single concern
+# DON'T introduce "while I was here" improvements or formatting changes 
