@@ -48,9 +48,14 @@ public class PostController {
         @Transactional(readOnly = true)
         @Operation(summary = "Get all posts", description = "Retrieves a list of all posts")
         @ApiResponses(value = {
-                @ApiResponse(responseCode = "200", description = "Successfully retrieved posts",
-                        content = @Content(mediaType = "application/json",
-                                        schema = @Schema(implementation = PostResponseDto.class)))})
+                @ApiResponse(
+                        responseCode = "200", 
+                        description = "Successfully retrieved posts",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = PostResponseDto.class))
+                )
+        })
         List<PostResponseDto> findAll() {
                 List<Post> posts = postService.findAll();
                 return postMapper.toResponseDtoList(posts);
@@ -59,10 +64,16 @@ public class PostController {
         @GetMapping("/{id}")
         @Operation(summary = "Get post by ID", description = "Retrieves a specific post by its ID")
         @ApiResponses(value = {
-                @ApiResponse(responseCode = "200", description = "Successfully retrieved post",
-                        content = @Content(mediaType = "application/json",
-                                        schema = @Schema(implementation = PostResponseDto.class))),
-                        @ApiResponse(responseCode = "404", description = "Post not found")})
+                @ApiResponse(
+                        responseCode = "200", 
+                        description = "Successfully retrieved post",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = PostResponseDto.class)
+                        )
+                ),
+                @ApiResponse(responseCode = "404", description = "Post not found")
+        })
         PostResponseDto findById(
                 @Parameter(description = "ID of the post to retrieve") @PathVariable Integer id) {
                 Post post = postService.findById(id).orElseThrow(PostNotFoundException::new);
@@ -71,12 +82,16 @@ public class PostController {
 
         @GetMapping("/search")
         @Transactional(readOnly = true)
-        @Operation(summary = "Search posts by content",
-                        description = "Finds posts containing specified words")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200",
+        @Operation(summary = "Search posts by content", description = "Finds posts containing specified words")
+        @ApiResponses(value = {
+                @ApiResponse(
+                        responseCode = "200",
                         description = "Successfully retrieved matching posts",
-                        content = @Content(mediaType = "application/json",
-                                        schema = @Schema(implementation = PostResponseDto.class)))})
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = PostResponseDto.class))
+                        )
+        })
         List<PostResponseDto> searchPosts(@Parameter(
                         description = "Search terms to find in post content") @RequestParam String q,
                         @Parameter(description = "Maximum number of results to return") @RequestParam(
@@ -90,13 +105,21 @@ public class PostController {
 
         @PostMapping("")
         @ResponseStatus(HttpStatus.CREATED)
-        @Operation(summary = "Create a new post",
-                        description = "Creates a new post with the provided data")
+        @Operation(summary = "Create a new post", description = "Creates a new post with the provided data")
         @ApiResponses(value = {
-                @ApiResponse(responseCode = "201", description = "Post created successfully",
-                        content = @Content(mediaType = "application/json",
-                                        schema = @Schema(implementation = PostResponseDto.class))),
-                        @ApiResponse(responseCode = "400", description = "Invalid input data")})
+                @ApiResponse(
+                        responseCode = "201", 
+                        description = "Post created successfully",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = PostResponseDto.class)
+                        )
+                ),
+                @ApiResponse(
+                        responseCode = "400", 
+                        description = "Invalid input data"
+                )
+        })
         PostResponseDto save(@RequestBody @Valid PostRequestDto postDto) {
                 Post post = postMapper.toDomain(postDto);
                 Post savedPost = postService.save(post, postDto.getUserId());
@@ -104,14 +127,19 @@ public class PostController {
         }
 
         @PutMapping("/{id}")
-        @Operation(summary = "Update a post",
-                        description = "Updates an existing post with the provided data")
+        @Operation(summary = "Update a post", description = "Updates an existing post with the provided data") 
         @ApiResponses(value = {
-                @ApiResponse(responseCode = "200", description = "Post updated successfully",
-                        content = @Content(mediaType = "application/json",
-                                        schema = @Schema(implementation = PostResponseDto.class))),
-                        @ApiResponse(responseCode = "404", description = "Post not found"),
-                        @ApiResponse(responseCode = "400", description = "Invalid input data")})
+                @ApiResponse(
+                        responseCode = "200", 
+                        description = "Post updated successfully",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = PostResponseDto.class)
+                        )
+                ),
+                @ApiResponse(responseCode = "404", description = "Post not found"),
+                @ApiResponse(responseCode = "400", description = "Invalid input data")
+        })
         PostResponseDto update(@PathVariable Integer id, @RequestBody @Valid PostRequestDto postDto) {
                 Post post = postMapper.toDomain(postDto);
                 Post updatedPost = postService.update(id, post, postDto.getUserId());
@@ -121,9 +149,10 @@ public class PostController {
         @ResponseStatus(HttpStatus.NO_CONTENT)
         @DeleteMapping("/{id}")
         @Operation(summary = "Delete a post", description = "Deletes a post by its ID")
-        @ApiResponses(
-                value = {@ApiResponse(responseCode = "204", description = "Post deleted successfully"),
-                        @ApiResponse(responseCode = "404", description = "Post not found")})
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "204", description = "Post deleted successfully"),
+                @ApiResponse(responseCode = "404", description = "Post not found")
+        })
         void delete(@PathVariable Integer id) {
                 postService.deleteById(id);
         }
