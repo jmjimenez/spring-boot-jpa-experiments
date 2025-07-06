@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import es.jmjg.experiments.application.FindPosts;
 import es.jmjg.experiments.application.PostService;
 import es.jmjg.experiments.application.exception.PostNotFound;
 import es.jmjg.experiments.domain.Post;
@@ -31,6 +32,9 @@ class PostControllerTest {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private FindPosts findPosts;
 
     List<Post> posts;
 
@@ -272,12 +276,72 @@ class PostControllerTest {
         verify(postService, times(1)).deleteById(1);
     }
 
+    @Test
+    void shouldSearchPostsWhenGivenValidQuery() throws Exception {
+        User user = new User();
+        user.setId(1);
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        user.setUsername("testuser");
+
+        Post searchResult1 = new Post();
+        searchResult1.setId(1);
+        searchResult1.setUuid(UUID.randomUUID());
+        searchResult1.setUser(user);
+        searchResult1.setTitle("Spring Boot Tutorial");
+        searchResult1.setBody("This is a tutorial about Spring Boot.");
+
+        Post searchResult2 = new Post();
+        searchResult2.setId(2);
+        searchResult2.setUuid(UUID.randomUUID());
+        searchResult2.setUser(user);
+        searchResult2.setTitle("JPA Best Practices");
+        searchResult2.setBody("Learn about JPA and Spring Boot integration.");
+
+        List<Post> searchResults = List.of(searchResult1, searchResult2);
+
+        when(findPosts.find("Spring", 10)).thenReturn(searchResults);
+
+        String expectedResponse = """
+                [
+                    {
+                        "id":%d,
+                        "uuid":"%s",
+                        "userId":%d,
+                        "title":"%s",
+                        "body":"%s"
+                    },
+                    {
+                        "id":%d,
+                        "uuid":"%s",
+                        "userId":%d,
+                        "title":"%s",
+                        "body":"%s"
+                    }
+                ]
+                """.formatted(searchResult1.getId(), searchResult1.getUuid(),
+                searchResult1.getUser().getId(), searchResult1.getTitle(), searchResult1.getBody(),
+                searchResult2.getId(), searchResult2.getUuid(), searchResult2.getUser().getId(),
+                searchResult2.getTitle(), searchResult2.getBody());
+
+        mockMvc.perform(get("/api/posts/search").param("q", "Spring").param("limit", "10"))
+                .andExpect(status().isOk()).andExpect(content().json(expectedResponse));
+
+        verify(findPosts, times(1)).find("Spring", 10);
+    }
+
     @TestConfiguration
     static class TestConfig {
         @Bean
         @Primary
         public PostService postService() {
             return mock(PostService.class);
+        }
+
+        @Bean
+        @Primary
+        public FindPosts findPosts() {
+            return mock(FindPosts.class);
         }
 
         @Bean
