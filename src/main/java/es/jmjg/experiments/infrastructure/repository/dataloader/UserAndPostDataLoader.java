@@ -34,43 +34,56 @@ class UserAndPostDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepository.count() == 0 && postRepository.count() == 0) {
-            String USERS_AND_POSTS_JSON = "/data/users-and-posts.json";
-            log.info("Loading users and posts into database from JSON: {}", USERS_AND_POSTS_JSON);
-            try (InputStream inputStream =
-                    TypeReference.class.getResourceAsStream(USERS_AND_POSTS_JSON)) {
-                UsersWithPosts response = objectMapper.readValue(inputStream, UsersWithPosts.class);
-                List<UserWithPosts> usersWithPosts = response.users();
-
-                for (UserWithPosts userWithPosts : usersWithPosts) {
-                    // Create and save the user
-                    User user = new User();
-                    user.setId(null); // Let Hibernate generate the ID
-                    user.setName(userWithPosts.name());
-                    user.setEmail(userWithPosts.email());
-                    user.setUsername(userWithPosts.username());
-
-                    User savedUser = userRepository.save(user);
-
-                    // Create and save the posts for this user
-                    List<PostData> postDataList = userWithPosts.posts();
-                    for (PostData postData : postDataList) {
-                        Post post = new Post();
-                        post.setId(null); // Let Hibernate generate the ID
-                        post.setUuid(UUID.fromString(postData.id())); // Map JSON "id" to entity
-                                                                      // "uuid"
-                        post.setUser(savedUser); // Set the relationship
-                        post.setTitle(postData.title());
-                        post.setBody(postData.body());
-
-                        postRepository.save(post);
+        try {
+            if (userRepository.count() == 0 && postRepository.count() == 0) {
+                String USERS_AND_POSTS_JSON = "/data/users-and-posts.json";
+                log.info("Loading users and posts into database from JSON: {}",
+                        USERS_AND_POSTS_JSON);
+                try (InputStream inputStream =
+                        TypeReference.class.getResourceAsStream(USERS_AND_POSTS_JSON)) {
+                    if (inputStream == null) {
+                        log.warn("Could not find JSON data file: {}", USERS_AND_POSTS_JSON);
+                        return;
                     }
-                }
 
-                log.info("Successfully loaded {} users and their posts", usersWithPosts.size());
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read JSON data", e);
+                    UsersWithPosts response =
+                            objectMapper.readValue(inputStream, UsersWithPosts.class);
+                    List<UserWithPosts> usersWithPosts = response.users();
+
+                    for (UserWithPosts userWithPosts : usersWithPosts) {
+                        // Create and save the user
+                        User user = new User();
+                        user.setId(null); // Let Hibernate generate the ID
+                        user.setName(userWithPosts.name());
+                        user.setEmail(userWithPosts.email());
+                        user.setUsername(userWithPosts.username());
+
+                        User savedUser = userRepository.save(user);
+
+                        // Create and save the posts for this user
+                        List<PostData> postDataList = userWithPosts.posts();
+                        for (PostData postData : postDataList) {
+                            Post post = new Post();
+                            post.setId(null); // Let Hibernate generate the ID
+                            post.setUuid(UUID.fromString(postData.id())); // Map JSON "id" to entity
+                                                                          // "uuid"
+                            post.setUser(savedUser); // Set the relationship
+                            post.setTitle(postData.title());
+                            post.setBody(postData.body());
+
+                            postRepository.save(post);
+                        }
+                    }
+
+                    log.info("Successfully loaded {} users and their posts", usersWithPosts.size());
+                } catch (IOException e) {
+                    log.error("Failed to read JSON data", e);
+                    // Don't throw RuntimeException to avoid context loading failure
+                }
             }
+        } catch (Exception e) {
+            log.error("Error during data loading", e);
+            // Don't throw RuntimeException to avoid context loading failure
         }
     }
 

@@ -14,8 +14,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import es.jmjg.experiments.TestContainersConfig;
 import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
@@ -23,6 +23,7 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class PostControllerIntegrationTest extends TestContainersConfig {
 
     // TODO: replace with RestClient

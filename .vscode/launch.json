@@ -10,20 +10,6 @@
             "args": "",
             "envFile": "${workspaceFolder}/.env",
             "vmArgs": "--enable-preview"
-        },
-        {
-            "type": "java",
-            "name": "Run Tests with Preview Features",
-            "request": "launch",
-            "mainClass": "org.junit.platform.console.ConsoleLauncher",
-            "projectName": "experiments",
-            "args": [
-                "--class-path",
-                "${workspaceFolder}/target/test-classes",
-                "--select-class",
-                "es.jmjg.experiments.infrastructure.controller.PostControllerTest"
-            ],
-            "vmArgs": "--enable-preview"
         }
     ]
 }

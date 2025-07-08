@@ -9,15 +9,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import es.jmjg.experiments.TestContainersConfig;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class PostServiceIntegrationTest extends TestContainersConfig {
 
     @Autowired

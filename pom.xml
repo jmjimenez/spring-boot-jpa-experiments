@@ -32,6 +32,17 @@
 		<modelmapper.version>3.2.0</modelmapper.version>
 		<springdoc.version>2.8.9</springdoc.version>
 	</properties>
+	
+	<profiles>
+		<profile>
+			<id>integration-tests</id>
+			<build>
+				<plugins>
+					
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -169,11 +180,25 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			 <plugin>
+			             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.3</version>
                 <configuration>
+                    <argLine>
+                        -Dmockito.mock.maker=org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker
+                        -Dspring.profiles.active=test
+                    </argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
+                <configuration>
+                    <includes>
+                        <include>**/*IntegrationTest.java</include>
+                    </includes>
                     <argLine>
                         -Dmockito.mock.maker=org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker
                         -Dspring.profiles.active=test

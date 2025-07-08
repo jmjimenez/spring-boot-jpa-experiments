@@ -1,4 +1,4 @@
-package es.jmjg.experiments;
+package es.jmjg.experiments.infrastructure.config;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -10,8 +10,14 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class TestContainersConfig {
 
     @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0")
-            .withDatabaseName("blog").withUsername("blog").withPassword("secret_password");
+    static PostgreSQLContainer<?> postgres =
+            new PostgreSQLContainer<>("postgres:16.0").withDatabaseName("blog").withUsername("blog")
+                    .withPassword("secret_password").withReuse(true).withExposedPorts(5432);
+
+    static {
+        // Ensure container is started before any tests run
+        postgres.start();
+    }
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -23,5 +29,9 @@ public class TestContainersConfig {
 
     public static PostgreSQLContainer<?> getPostgresContainer() {
         return postgres;
+    }
+
+    public static int getMappedPort() {
+        return postgres.getMappedPort(5432);
     }
 }
