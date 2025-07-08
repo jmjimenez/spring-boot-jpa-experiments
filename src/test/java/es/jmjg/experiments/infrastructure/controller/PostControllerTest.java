@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import es.jmjg.experiments.application.FindPosts;
 import es.jmjg.experiments.application.PostService;
+import es.jmjg.experiments.application.SavePost;
 import es.jmjg.experiments.application.UpdatePost;
 import es.jmjg.experiments.application.exception.PostNotFound;
 import es.jmjg.experiments.domain.Post;
@@ -39,6 +40,9 @@ class PostControllerTest {
 
     @Autowired
     private UpdatePost updatePost;
+
+    @Autowired
+    private SavePost savePost;
 
     List<Post> posts;
 
@@ -180,7 +184,7 @@ class PostControllerTest {
         post.setTitle("This is my brand new post");
         post.setBody("TEST BODY");
 
-        when(postService.save(any(Post.class), eq(1))).thenReturn(post);
+        when(savePost.save(any(Post.class), eq(1))).thenReturn(post);
 
         // Request body should be a PostDto (without id, since it's a new post)
         String requestBody = """
@@ -352,6 +356,12 @@ class PostControllerTest {
         @Primary
         public UpdatePost updatePost() {
             return mock(UpdatePost.class);
+        }
+
+        @Bean
+        @Primary
+        public SavePost savePost() {
+            return mock(SavePost.class);
         }
 
         @Bean

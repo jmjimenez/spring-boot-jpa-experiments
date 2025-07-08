@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import es.jmjg.experiments.application.FindPosts;
 import es.jmjg.experiments.application.PostService;
+import es.jmjg.experiments.application.SavePost;
 import es.jmjg.experiments.application.UpdatePost;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
@@ -42,13 +43,15 @@ public class PostController {
         private final PostMapper postMapper;
         private final FindPosts findPosts;
         private final UpdatePost updatePost;
+        private final SavePost savePost;
 
         public PostController(PostService postService, PostMapper postMapper, FindPosts findPosts,
-                        UpdatePost updatePost) {
+                        UpdatePost updatePost, SavePost savePost) {
                 this.postService = postService;
                 this.postMapper = postMapper;
                 this.findPosts = findPosts;
                 this.updatePost = updatePost;
+                this.savePost = savePost;
         }
 
         @GetMapping("")
@@ -106,7 +109,7 @@ public class PostController {
                         @ApiResponse(responseCode = "400", description = "Invalid input data")})
         PostResponseDto save(@RequestBody @Valid PostRequestDto postDto) {
                 Post post = postMapper.toDomain(postDto);
-                Post savedPost = postService.save(post, postDto.getUserId());
+                Post savedPost = savePost.save(post, postDto.getUserId());
                 return postMapper.toResponseDto(savedPost);
         }
 

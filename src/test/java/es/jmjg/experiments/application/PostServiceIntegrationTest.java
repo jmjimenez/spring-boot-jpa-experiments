@@ -128,30 +128,7 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         assertThat(result).isEmpty();
     }
 
-    @Test
-    void save_ShouldSaveAndReturnPost() {
-        // Given
-        Post newPost = new Post();
-        newPost.setUuid(UUID.randomUUID());
-        newPost.setUser(testUser);
-        newPost.setTitle("New Post");
-        newPost.setBody("New Body");
 
-        // When
-        Post result = postService.save(newPost);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("New Post");
-        assertThat(result.getBody()).isEqualTo("New Body");
-        assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
-
-        // Verify it was actually saved to the database
-        Optional<Post> savedPost = postRepository.findById(result.getId());
-        assertThat(savedPost).isPresent();
-        assertThat(savedPost.get().getTitle()).isEqualTo("New Post");
-    }
 
     @Test
     void findByTitle_WhenPostExists_ShouldReturnPost() {
@@ -197,26 +174,4 @@ class PostServiceIntegrationTest extends TestContainersConfig {
 
 
 
-    @Test
-    void fullCrudWorkflow_ShouldWorkCorrectly() {
-        // Create
-        Post newPost = new Post();
-        newPost.setUuid(UUID.randomUUID());
-        newPost.setUser(testUser);
-        newPost.setTitle("Workflow Post");
-        newPost.setBody("Workflow Body");
-        Post createdPost = postService.save(newPost);
-        assertThat(createdPost.getId()).isNotNull();
-        assertThat(createdPost.getTitle()).isEqualTo("Workflow Post");
-
-        // Read
-        Optional<Post> foundPost = postService.findById(createdPost.getId());
-        assertThat(foundPost).isPresent();
-        assertThat(foundPost.get().getTitle()).isEqualTo("Workflow Post");
-
-        // Delete
-        postService.deleteById(createdPost.getId());
-        Optional<Post> deletedPost = postService.findById(createdPost.getId());
-        assertThat(deletedPost).isEmpty();
-    }
 }

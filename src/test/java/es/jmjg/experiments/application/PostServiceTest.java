@@ -1,7 +1,6 @@
 package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import es.jmjg.experiments.application.exception.UserNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
@@ -92,63 +90,7 @@ class PostServiceTest {
         verify(postRepository, times(1)).findById(postId);
     }
 
-    @Test
-    void save_ShouldSaveAndReturnPost() {
-        // Given
-        UUID newUuid = UUID.randomUUID();
-        Post newPost = new Post(null, newUuid, testUser, "New Post", "New Body");
-        Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
 
-        when(postRepository.save(any(Post.class))).thenReturn(savedPost);
-
-        // When
-        Post result = postService.save(newPost);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(3);
-        assertThat(result.getTitle()).isEqualTo("New Post");
-        assertThat(result.getBody()).isEqualTo("New Body");
-        verify(postRepository, times(1)).save(newPost);
-    }
-
-    @Test
-    void save_WhenPostAlreadyHasUser_ShouldNotFetchUser() {
-        // Given
-        UUID newUuid = UUID.randomUUID();
-        Post newPost = new Post(null, newUuid, testUser, "New Post", "New Body");
-        Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
-
-        when(postRepository.save(any(Post.class))).thenReturn(savedPost);
-
-        // When
-        Post result = postService.save(newPost);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(3);
-        verify(userRepository, never()).findById(any());
-        verify(postRepository, times(1)).save(newPost);
-    }
-
-    @Test
-    void save_WhenUserIdIsNull_ShouldNotFetchUser() {
-        // Given
-        UUID newUuid = UUID.randomUUID();
-        Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
-        Post savedPost = new Post(3, newUuid, null, "New Post", "New Body");
-
-        when(postRepository.save(any(Post.class))).thenReturn(savedPost);
-
-        // When
-        Post result = postService.save(newPost);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(3);
-        verify(userRepository, never()).findById(any());
-        verify(postRepository, times(1)).save(newPost);
-    }
 
     @Test
     void findByTitle_WhenPostExists_ShouldReturnPost() {
@@ -192,48 +134,6 @@ class PostServiceTest {
         verify(postRepository, times(1)).deleteById(postId);
     }
 
-
-
-    @Test
-    void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
-        // Given
-        Integer userId = 999;
-        UUID newUuid = UUID.randomUUID();
-        Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThatThrownBy(() -> postService.save(newPost, userId)).isInstanceOf(UserNotFound.class)
-                .hasMessage("User not found with id: " + userId);
-
-        verify(userRepository, times(1)).findById(userId);
-        verify(postRepository, never()).save(any(Post.class));
-    }
-
-
-
-    @Test
-    void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
-        // Given
-        Integer userId = 1;
-        UUID newUuid = UUID.randomUUID();
-        Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
-        Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
-        when(postRepository.save(any(Post.class))).thenReturn(savedPost);
-
-        // When
-        Post result = postService.save(newPost, userId);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(3);
-        assertThat(result.getUser()).isEqualTo(testUser);
-
-        verify(userRepository, times(1)).findById(userId);
-        verify(postRepository, times(1)).save(any(Post.class));
-    }
 
 
 }
