@@ -29,6 +29,9 @@ class PostServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UpdatePost updatePost;
+
     @InjectMocks
     private PostService postService;
 
@@ -198,16 +201,11 @@ class PostServiceTest {
         // Given
         Integer postId = 1;
         User user = new User(1, "Test User", "test@example.com", "testuser", null);
-        UUID existingUuid = UUID.randomUUID();
         UUID updateUuid = UUID.randomUUID();
-        Post existingPost = new Post(1, existingUuid, user, "Original Title", "Original Body");
         Post updateData = new Post(null, updateUuid, user, "Updated Title", "Updated Body");
+        Post expectedResult = new Post(1, updateUuid, user, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-            Post savedPost = invocation.getArgument(0);
-            return savedPost;
-        });
+        when(updatePost.update(postId, updateData)).thenReturn(expectedResult);
 
         // When
         Post result = postService.update(postId, updateData);
@@ -219,8 +217,7 @@ class PostServiceTest {
         assertThat(result.getTitle()).isEqualTo("Updated Title");
         assertThat(result.getBody()).isEqualTo("Updated Body");
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(postRepository, times(1)).save(any(Post.class));
+        verify(updatePost, times(1)).update(postId, updateData);
     }
 
     @Test
@@ -229,14 +226,13 @@ class PostServiceTest {
         Integer postId = 999;
         UUID updateUuid = UUID.randomUUID();
         Post updateData = new Post(null, updateUuid, testUser, "Updated Title", "Updated Body");
-        when(postRepository.findById(postId)).thenReturn(Optional.empty());
+        when(updatePost.update(postId, updateData)).thenThrow(new PostNotFound(postId));
 
         // When & Then
         assertThatThrownBy(() -> postService.update(postId, updateData))
                 .isInstanceOf(PostNotFound.class).hasMessage("Post not found with id: " + postId);
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(postRepository, never()).save(any(Post.class));
+        verify(updatePost, times(1)).update(postId, updateData);
     }
 
     @Test
@@ -244,18 +240,12 @@ class PostServiceTest {
         // Given
         Integer postId = 1;
         User user = new User(5, "Test User", "test@example.com", "testuser", null);
-        UUID existingUuid = UUID.randomUUID();
         UUID updateUuid = UUID.randomUUID();
-        Post existingPost = new Post(1, existingUuid, user, "Original Title", "Original Body");
         Post updateData = new Post(999, updateUuid, user, "Updated Title", "Updated Body"); // Different
                                                                                             // ID
-                                                                                            // and
+        Post expectedResult = new Post(1, updateUuid, user, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-            Post savedPost = invocation.getArgument(0);
-            return savedPost;
-        });
+        when(updatePost.update(postId, updateData)).thenReturn(expectedResult);
 
         // When
         Post result = postService.update(postId, updateData);
@@ -266,8 +256,7 @@ class PostServiceTest {
         assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
         assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(postRepository, times(1)).save(any(Post.class));
+        verify(updatePost, times(1)).update(postId, updateData);
     }
 
     @Test
@@ -291,21 +280,16 @@ class PostServiceTest {
         // Given
         Integer postId = 1;
         Integer userId = 999;
-        UUID existingUuid = UUID.randomUUID();
         UUID updateUuid = UUID.randomUUID();
-        Post existingPost = new Post(1, existingUuid, testUser, "Original Title", "Original Body");
         Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        when(updatePost.update(postId, updateData, userId)).thenThrow(new UserNotFound(userId));
 
         // When & Then
         assertThatThrownBy(() -> postService.update(postId, updateData, userId))
                 .isInstanceOf(UserNotFound.class).hasMessage("User not found with id: " + userId);
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(userRepository, times(1)).findById(userId);
-        verify(postRepository, never()).save(any(Post.class));
+        verify(updatePost, times(1)).update(postId, updateData, userId);
     }
 
     @Test
@@ -337,17 +321,11 @@ class PostServiceTest {
         Integer postId = 1;
         Integer userId = 2;
         User newUser = new User(2, "New User", "new@example.com", "newuser", null);
-        UUID existingUuid = UUID.randomUUID();
         UUID updateUuid = UUID.randomUUID();
-        Post existingPost = new Post(1, existingUuid, testUser, "Original Title", "Original Body");
         Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
+        Post expectedResult = new Post(1, updateUuid, newUser, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(newUser));
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-            Post savedPost = invocation.getArgument(0);
-            return savedPost;
-        });
+        when(updatePost.update(postId, updateData, userId)).thenReturn(expectedResult);
 
         // When
         Post result = postService.update(postId, updateData, userId);
@@ -359,8 +337,6 @@ class PostServiceTest {
         assertThat(result.getTitle()).isEqualTo("Updated Title");
         assertThat(result.getBody()).isEqualTo("Updated Body");
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(userRepository, times(1)).findById(userId);
-        verify(postRepository, times(1)).save(any(Post.class));
+        verify(updatePost, times(1)).update(postId, updateData, userId);
     }
 }

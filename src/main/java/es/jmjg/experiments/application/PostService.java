@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import es.jmjg.experiments.application.exception.PostNotFound;
 import es.jmjg.experiments.application.exception.UserNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -16,10 +15,13 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final UpdatePost updatePost;
 
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository,
+            UpdatePost updatePost) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.updatePost = updatePost;
     }
 
     @Transactional(readOnly = true)
@@ -61,36 +63,10 @@ public class PostService {
     }
 
     public Post update(Integer id, Post post) {
-        return update(id, post, null);
+        return updatePost.update(id, post);
     }
 
-    @Transactional
     public Post update(Integer id, Post post, Integer userId) {
-        Optional<Post> existing = postRepository.findById(id);
-        if (existing.isEmpty()) {
-            throw new PostNotFound(id);
-        }
-
-        Post existingPost = existing.get();
-        existingPost.setTitle(post.getTitle());
-        existingPost.setBody(post.getBody());
-
-        // Only update UUID if provided (to avoid overwriting existing UUID)
-        if (post.getUuid() != null) {
-            existingPost.setUuid(post.getUuid());
-        }
-
-        if (userId != null) {
-            Optional<User> user = userRepository.findById(userId);
-            if (user.isPresent()) {
-                existingPost.setUser(user.get());
-            } else {
-                throw new UserNotFound(userId);
-            }
-        } else if (post.getUser() != null) {
-            existingPost.setUser(post.getUser());
-        }
-
-        return postRepository.save(existingPost);
+        return updatePost.update(id, post, userId);
     }
 }
