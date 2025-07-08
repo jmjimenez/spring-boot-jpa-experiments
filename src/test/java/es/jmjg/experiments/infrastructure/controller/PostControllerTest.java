@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import es.jmjg.experiments.application.FindPosts;
 import es.jmjg.experiments.application.PostService;
+import es.jmjg.experiments.application.UpdatePost;
 import es.jmjg.experiments.application.exception.PostNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -35,6 +36,9 @@ class PostControllerTest {
 
     @Autowired
     private FindPosts findPosts;
+
+    @Autowired
+    private UpdatePost updatePost;
 
     List<Post> posts;
 
@@ -219,7 +223,7 @@ class PostControllerTest {
         updated.setTitle("This is my brand new post");
         updated.setBody("UPDATED BODY");
 
-        when(postService.update(eq(1), any(Post.class), eq(1))).thenReturn(updated);
+        when(updatePost.update(eq(1), any(Post.class), eq(1))).thenReturn(updated);
         String requestBody = """
                 {
                     "id":%d,
@@ -250,7 +254,7 @@ class PostControllerTest {
         updated.setTitle("This is my brand new post");
         updated.setBody("UPDATED BODY");
 
-        when(postService.update(eq(999), any(Post.class), eq(1)))
+        when(updatePost.update(eq(999), any(Post.class), eq(1)))
                 .thenThrow(new PostNotFound("Post not found with id: 999"));
         String json = """
                 {
@@ -342,6 +346,12 @@ class PostControllerTest {
         @Primary
         public FindPosts findPosts() {
             return mock(FindPosts.class);
+        }
+
+        @Bean
+        @Primary
+        public UpdatePost updatePost() {
+            return mock(UpdatePost.class);
         }
 
         @Bean

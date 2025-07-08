@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import es.jmjg.experiments.application.FindPosts;
 import es.jmjg.experiments.application.PostService;
+import es.jmjg.experiments.application.UpdatePost;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
@@ -40,11 +41,14 @@ public class PostController {
         private final PostService postService;
         private final PostMapper postMapper;
         private final FindPosts findPosts;
+        private final UpdatePost updatePost;
 
-        public PostController(PostService postService, PostMapper postMapper, FindPosts findPosts) {
+        public PostController(PostService postService, PostMapper postMapper, FindPosts findPosts,
+                        UpdatePost updatePost) {
                 this.postService = postService;
                 this.postMapper = postMapper;
                 this.findPosts = findPosts;
+                this.updatePost = updatePost;
         }
 
         @GetMapping("")
@@ -118,7 +122,7 @@ public class PostController {
         PostResponseDto update(@PathVariable Integer id,
                         @RequestBody @Valid PostRequestDto postDto) {
                 Post post = postMapper.toDomain(postDto);
-                Post updatedPost = postService.update(id, post, postDto.getUserId());
+                Post updatedPost = updatePost.update(id, post, postDto.getUserId());
                 return postMapper.toResponseDto(updatedPost);
         }
 
