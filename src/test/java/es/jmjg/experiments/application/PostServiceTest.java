@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import es.jmjg.experiments.application.exception.PostNotFound;
 import es.jmjg.experiments.application.exception.UserNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -28,9 +27,6 @@ class PostServiceTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private UpdatePost updatePost;
 
     @InjectMocks
     private PostService postService;
@@ -196,68 +192,7 @@ class PostServiceTest {
         verify(postRepository, times(1)).deleteById(postId);
     }
 
-    @Test
-    void update_WhenPostExists_ShouldUpdateAndReturnPost() {
-        // Given
-        Integer postId = 1;
-        User user = new User(1, "Test User", "test@example.com", "testuser", null);
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(null, updateUuid, user, "Updated Title", "Updated Body");
-        Post expectedResult = new Post(1, updateUuid, user, "Updated Title", "Updated Body");
 
-        when(updatePost.update(postId, updateData)).thenReturn(expectedResult);
-
-        // When
-        Post result = postService.update(postId, updateData);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(1);
-        assertThat(result.getUser().getId()).isEqualTo(1);
-        assertThat(result.getTitle()).isEqualTo("Updated Title");
-        assertThat(result.getBody()).isEqualTo("Updated Body");
-
-        verify(updatePost, times(1)).update(postId, updateData);
-    }
-
-    @Test
-    void update_WhenPostDoesNotExist_ShouldThrowPostNotFound() {
-        // Given
-        Integer postId = 999;
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(null, updateUuid, testUser, "Updated Title", "Updated Body");
-        when(updatePost.update(postId, updateData)).thenThrow(new PostNotFound(postId));
-
-        // When & Then
-        assertThatThrownBy(() -> postService.update(postId, updateData))
-                .isInstanceOf(PostNotFound.class).hasMessage("Post not found with id: " + postId);
-
-        verify(updatePost, times(1)).update(postId, updateData);
-    }
-
-    @Test
-    void update_ShouldPreserveOriginalIdAndUserId() {
-        // Given
-        Integer postId = 1;
-        User user = new User(5, "Test User", "test@example.com", "testuser", null);
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(999, updateUuid, user, "Updated Title", "Updated Body"); // Different
-                                                                                            // ID
-        Post expectedResult = new Post(1, updateUuid, user, "Updated Title", "Updated Body");
-
-        when(updatePost.update(postId, updateData)).thenReturn(expectedResult);
-
-        // When
-        Post result = postService.update(postId, updateData);
-
-        // Then
-        assertThat(result.getId()).isEqualTo(1); // Should preserve original ID
-        assertThat(result.getUser().getId()).isEqualTo(5); // Should preserve original userId
-        assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
-        assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
-
-        verify(updatePost, times(1)).update(postId, updateData);
-    }
 
     @Test
     void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
@@ -275,22 +210,7 @@ class PostServiceTest {
         verify(postRepository, never()).save(any(Post.class));
     }
 
-    @Test
-    void update_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
-        // Given
-        Integer postId = 1;
-        Integer userId = 999;
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
 
-        when(updatePost.update(postId, updateData, userId)).thenThrow(new UserNotFound(userId));
-
-        // When & Then
-        assertThatThrownBy(() -> postService.update(postId, updateData, userId))
-                .isInstanceOf(UserNotFound.class).hasMessage("User not found with id: " + userId);
-
-        verify(updatePost, times(1)).update(postId, updateData, userId);
-    }
 
     @Test
     void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
@@ -315,28 +235,5 @@ class PostServiceTest {
         verify(postRepository, times(1)).save(any(Post.class));
     }
 
-    @Test
-    void update_WhenUserIdProvidedAndUserExists_ShouldUpdateUserAndSave() {
-        // Given
-        Integer postId = 1;
-        Integer userId = 2;
-        User newUser = new User(2, "New User", "new@example.com", "newuser", null);
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
-        Post expectedResult = new Post(1, updateUuid, newUser, "Updated Title", "Updated Body");
 
-        when(updatePost.update(postId, updateData, userId)).thenReturn(expectedResult);
-
-        // When
-        Post result = postService.update(postId, updateData, userId);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(1);
-        assertThat(result.getUser()).isEqualTo(newUser);
-        assertThat(result.getTitle()).isEqualTo("Updated Title");
-        assertThat(result.getBody()).isEqualTo("Updated Body");
-
-        verify(updatePost, times(1)).update(postId, updateData, userId);
-    }
 }

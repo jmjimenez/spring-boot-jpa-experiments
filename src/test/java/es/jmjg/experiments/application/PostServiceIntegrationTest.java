@@ -195,73 +195,7 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         postService.deleteById(999);
     }
 
-    @Test
-    void update_WhenPostExists_ShouldUpdateAndReturnPost() {
-        // Given
-        Post savedPost = postRepository.save(testPost1);
-        Post updateData = new Post();
-        updateData.setUuid(UUID.randomUUID());
-        updateData.setTitle("Updated Title");
-        updateData.setBody("Updated Body");
 
-        // When
-        Post result = postService.update(savedPost.getId(), updateData);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(savedPost.getId());
-        assertThat(result.getUser().getId()).isEqualTo(testUser.getId()); // Should preserve
-                                                                          // original
-                                                                          // userId
-        assertThat(result.getTitle()).isEqualTo("Updated Title");
-        assertThat(result.getBody()).isEqualTo("Updated Body");
-
-        // Verify it was actually updated in the database
-        Optional<Post> updatedPost = postRepository.findById(savedPost.getId());
-        assertThat(updatedPost).isPresent();
-        assertThat(updatedPost.get().getTitle()).isEqualTo("Updated Title");
-        assertThat(updatedPost.get().getBody()).isEqualTo("Updated Body");
-    }
-
-    @Test
-    void update_WhenPostDoesNotExist_ShouldThrowRuntimeException() {
-        // Given
-        Post updateData = new Post();
-        updateData.setUuid(UUID.randomUUID());
-        updateData.setTitle("Updated Title");
-        updateData.setBody("Updated Body");
-
-        // When & Then
-        assertThatThrownBy(() -> postService.update(999, updateData))
-                .isInstanceOf(RuntimeException.class).hasMessage("Post not found with id: 999");
-    }
-
-    @Test
-    void update_ShouldPreserveOriginalIdAndUserId() {
-        // Given
-        Post originalPost = new Post();
-        originalPost.setUuid(UUID.randomUUID());
-        originalPost.setUser(testUser);
-        originalPost.setTitle("Original Title");
-        originalPost.setBody("Original Body");
-        Post savedPost = postRepository.save(originalPost);
-
-        Post updateData = new Post();
-        updateData.setUuid(UUID.randomUUID());
-        updateData.setTitle("Updated Title");
-        updateData.setBody("Updated Body");
-
-        // When
-        Post result = postService.update(savedPost.getId(), updateData);
-
-        // Then
-        assertThat(result.getId()).isEqualTo(savedPost.getId()); // Should preserve original ID
-        assertThat(result.getUser().getId()).isEqualTo(testUser.getId()); // Should preserve
-                                                                          // original
-                                                                          // userId
-        assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
-        assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
-    }
 
     @Test
     void fullCrudWorkflow_ShouldWorkCorrectly() {
@@ -279,17 +213,6 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         Optional<Post> foundPost = postService.findById(createdPost.getId());
         assertThat(foundPost).isPresent();
         assertThat(foundPost.get().getTitle()).isEqualTo("Workflow Post");
-
-        // Update
-        Post updateData = new Post();
-        updateData.setUuid(UUID.randomUUID());
-        updateData.setTitle("Updated Workflow Post");
-        updateData.setBody("Updated Workflow Body");
-        Post updatedPost = postService.update(createdPost.getId(), updateData);
-        assertThat(updatedPost.getTitle()).isEqualTo("Updated Workflow Post");
-        assertThat(updatedPost.getUser().getId()).isEqualTo(testUser.getId()); // Should preserve
-                                                                               // original
-                                                                               // userId
 
         // Delete
         postService.deleteById(createdPost.getId());

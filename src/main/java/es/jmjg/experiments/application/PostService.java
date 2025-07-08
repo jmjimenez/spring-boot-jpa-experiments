@@ -15,13 +15,10 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final UpdatePost updatePost;
 
-    public PostService(PostRepository postRepository, UserRepository userRepository,
-            UpdatePost updatePost) {
+    public PostService(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
-        this.updatePost = updatePost;
     }
 
     @Transactional(readOnly = true)
@@ -60,13 +57,5 @@ public class PostService {
     @Transactional
     public void deleteById(Integer id) {
         postRepository.deleteById(id);
-    }
-
-    public Post update(Integer id, Post post) {
-        return updatePost.update(id, post);
-    }
-
-    public Post update(Integer id, Post post, Integer userId) {
-        return updatePost.update(id, post, userId);
     }
 }
