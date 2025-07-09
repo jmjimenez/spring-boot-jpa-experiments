@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import es.jmjg.experiments.application.FindPostById;
 import es.jmjg.experiments.application.FindPosts;
 import es.jmjg.experiments.application.PostService;
 import es.jmjg.experiments.application.SavePost;
@@ -43,6 +44,9 @@ class PostControllerTest {
 
     @Autowired
     private SavePost savePost;
+
+    @Autowired
+    private FindPostById findPostById;
 
     List<Post> posts;
 
@@ -146,7 +150,7 @@ class PostControllerTest {
         post.setTitle("Test Title");
         post.setBody("Test Body");
 
-        when(postService.findById(1)).thenReturn(Optional.of(post));
+        when(findPostById.findById(1)).thenReturn(Optional.of(post));
         String json = """
                 {
                     "id":%d,
@@ -164,7 +168,7 @@ class PostControllerTest {
 
     @Test
     void shouldNotFindPostWhenGivenInvalidId() throws Exception {
-        when(postService.findById(1)).thenReturn(Optional.empty());
+        when(findPostById.findById(1)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/posts/1")).andExpect(status().isNotFound());
     }
@@ -362,6 +366,12 @@ class PostControllerTest {
         @Primary
         public SavePost savePost() {
             return mock(SavePost.class);
+        }
+
+        @Bean
+        @Primary
+        public FindPostById findPostById() {
+            return mock(FindPostById.class);
         }
 
         @Bean

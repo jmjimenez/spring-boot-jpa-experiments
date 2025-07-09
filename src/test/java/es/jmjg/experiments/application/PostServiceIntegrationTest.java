@@ -104,30 +104,6 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         assertThat(result).isEmpty();
     }
 
-    @Test
-    void findById_WhenPostExists_ShouldReturnPost() {
-        // Given
-        Post savedPost = postRepository.save(testPost1);
-
-        // When
-        Optional<Post> result = postService.findById(savedPost.getId());
-
-        // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getTitle()).isEqualTo("Test Post 1");
-        assertThat(result.get().getBody()).isEqualTo("Test Body 1");
-        assertThat(result.get().getUser().getId()).isEqualTo(testUser.getId());
-    }
-
-    @Test
-    void findById_WhenPostDoesNotExist_ShouldReturnEmpty() {
-        // When
-        Optional<Post> result = postService.findById(999);
-
-        // Then
-        assertThat(result).isEmpty();
-    }
-
 
 
     @Test

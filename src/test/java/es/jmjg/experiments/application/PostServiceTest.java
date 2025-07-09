@@ -61,34 +61,7 @@ class PostServiceTest {
         verify(postRepository, times(1)).findAll();
     }
 
-    @Test
-    void findById_WhenPostExists_ShouldReturnPost() {
-        // Given
-        Integer postId = 1;
-        when(postRepository.findById(postId)).thenReturn(Optional.of(testPost1));
 
-        // When
-        Optional<Post> result = postService.findById(postId);
-
-        // Then
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(testPost1);
-        verify(postRepository, times(1)).findById(postId);
-    }
-
-    @Test
-    void findById_WhenPostDoesNotExist_ShouldReturnEmpty() {
-        // Given
-        Integer postId = 999;
-        when(postRepository.findById(postId)).thenReturn(Optional.empty());
-
-        // When
-        Optional<Post> result = postService.findById(postId);
-
-        // Then
-        assertThat(result).isEmpty();
-        verify(postRepository, times(1)).findById(postId);
-    }
 
 
 

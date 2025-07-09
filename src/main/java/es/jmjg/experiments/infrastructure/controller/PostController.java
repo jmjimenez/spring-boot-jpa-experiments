@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import es.jmjg.experiments.application.FindPostById;
 import es.jmjg.experiments.application.FindPosts;
 import es.jmjg.experiments.application.PostService;
 import es.jmjg.experiments.application.SavePost;
@@ -44,14 +45,16 @@ public class PostController {
         private final FindPosts findPosts;
         private final UpdatePost updatePost;
         private final SavePost savePost;
+        private final FindPostById findPostById;
 
         public PostController(PostService postService, PostMapper postMapper, FindPosts findPosts,
-                        UpdatePost updatePost, SavePost savePost) {
+                        UpdatePost updatePost, SavePost savePost, FindPostById findPostById) {
                 this.postService = postService;
                 this.postMapper = postMapper;
                 this.findPosts = findPosts;
                 this.updatePost = updatePost;
                 this.savePost = savePost;
+                this.findPostById = findPostById;
         }
 
         @GetMapping("")
@@ -75,7 +78,7 @@ public class PostController {
                         @ApiResponse(responseCode = "404", description = "Post not found")})
         PostResponseDto findById(@Parameter(
                         description = "ID of the post to retrieve") @PathVariable Integer id) {
-                Post post = postService.findById(id).orElseThrow(PostNotFoundException::new);
+                Post post = findPostById.findById(id).orElseThrow(PostNotFoundException::new);
                 return postMapper.toResponseDto(post);
         }
 
