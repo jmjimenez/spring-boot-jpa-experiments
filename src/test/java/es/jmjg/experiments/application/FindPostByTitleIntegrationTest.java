@@ -80,9 +80,9 @@ class FindPostByTitleIntegrationTest extends TestContainersConfig {
 
         // Then
         assertThat(result).isPresent();
-        assertThat(result.get().getTitle()).isEqualTo("Test Post");
-        assertThat(result.get().getBody()).isEqualTo("Test Body");
-        assertThat(result.get().getUser().getId()).isEqualTo(testUser.getId());
+        assertThat(result.get().getTitle()).isEqualTo(savedPost.getTitle());
+        assertThat(result.get().getBody()).isEqualTo(savedPost.getBody());
+        assertThat(result.get().getUser().getId()).isEqualTo(savedPost.getUser().getId());
     }
 
     @Test
@@ -127,13 +127,13 @@ class FindPostByTitleIntegrationTest extends TestContainersConfig {
         Post savedPost = postRepository.save(testPost);
 
         // When
-        Optional<Post> result = findPostByTitle.findByTitle("  Test Post  ");
+        Optional<Post> result = findPostByTitle.findByTitle("  " + savedPost.getTitle() + "  ");
 
         // Then
         assertThat(result).isPresent();
-        assertThat(result.get().getTitle()).isEqualTo("Test Post");
-        assertThat(result.get().getBody()).isEqualTo("Test Body");
-        assertThat(result.get().getUser().getId()).isEqualTo(testUser.getId());
+        assertThat(result.get().getTitle()).isEqualTo(savedPost.getTitle());
+        assertThat(result.get().getBody()).isEqualTo(savedPost.getBody());
+        assertThat(result.get().getUser().getId()).isEqualTo(savedPost.getUser().getId());
     }
 
     @Test
@@ -149,11 +149,11 @@ class FindPostByTitleIntegrationTest extends TestContainersConfig {
         postRepository.save(testPost2);
 
         // When
-        Optional<Post> result = findPostByTitle.findByTitle("Test Post");
+        Optional<Post> result = findPostByTitle.findByTitle(savedPost1.getTitle());
 
         // Then
         assertThat(result).isPresent();
-        assertThat(result.get().getTitle()).isEqualTo("Test Post");
-        assertThat(result.get().getBody()).isEqualTo("Test Body");
+        assertThat(result.get().getTitle()).isEqualTo(savedPost1.getTitle());
+        assertThat(result.get().getBody()).isEqualTo(savedPost1.getBody());
     }
 }
