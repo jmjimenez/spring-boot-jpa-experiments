@@ -1,7 +1,5 @@
 package es.jmjg.experiments.application;
 
-import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,16 +17,4 @@ class PostServiceTest {
 
 
 
-    @Test
-    void deleteById_ShouldCallRepositoryDelete() {
-        // Given
-        Integer postId = 1;
-        doNothing().when(postRepository).deleteById(postId);
-
-        // When
-        postService.deleteById(postId);
-
-        // Then
-        verify(postRepository, times(1)).deleteById(postId);
-    }
 }

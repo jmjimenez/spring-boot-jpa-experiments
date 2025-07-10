@@ -18,10 +18,10 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class PostServiceIntegrationTest extends TestContainersConfig {
+class DeletePostByIdIntegrationTest extends TestContainersConfig {
 
     @Autowired
-    private PostService postService;
+    private DeletePostById deletePostById;
 
     @Autowired
     private PostRepository postRepository;
@@ -69,6 +69,22 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
     }
 
+    @Test
+    void deleteById_ShouldDeletePost() {
+        // Given
+        Post savedPost = postRepository.save(testPost1);
+        assertThat(postRepository.findById(savedPost.getId())).isPresent();
 
+        // When
+        deletePostById.deleteById(savedPost.getId());
 
+        // Then
+        assertThat(postRepository.findById(savedPost.getId())).isEmpty();
+    }
+
+    @Test
+    void deleteById_WhenPostDoesNotExist_ShouldNotThrowException() {
+        // When & Then - should not throw any exception
+        deletePostById.deleteById(999);
+    }
 }

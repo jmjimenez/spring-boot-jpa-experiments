@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import es.jmjg.experiments.application.DeletePostById;
 import es.jmjg.experiments.application.FindAllPosts;
 import es.jmjg.experiments.application.FindPostById;
 import es.jmjg.experiments.application.FindPosts;
@@ -36,6 +37,9 @@ class PostControllerTest {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private DeletePostById deletePostById;
 
     @Autowired
     private FindPosts findPosts;
@@ -285,11 +289,11 @@ class PostControllerTest {
 
     @Test
     void shouldDeletePostWhenGivenValidID() throws Exception {
-        doNothing().when(postService).deleteById(1);
+        doNothing().when(deletePostById).deleteById(1);
 
         mockMvc.perform(delete("/api/posts/1")).andExpect(status().isNoContent());
 
-        verify(postService, times(1)).deleteById(1);
+        verify(deletePostById, times(1)).deleteById(1);
     }
 
     @Test
@@ -352,6 +356,12 @@ class PostControllerTest {
         @Primary
         public PostService postService() {
             return mock(PostService.class);
+        }
+
+        @Bean
+        @Primary
+        public DeletePostById deletePostById() {
+            return mock(DeletePostById.class);
         }
 
         @Bean

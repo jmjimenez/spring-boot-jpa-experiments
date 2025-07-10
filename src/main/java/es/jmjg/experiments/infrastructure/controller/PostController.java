@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import es.jmjg.experiments.application.DeletePostById;
 import es.jmjg.experiments.application.FindAllPosts;
 import es.jmjg.experiments.application.FindPostById;
 import es.jmjg.experiments.application.FindPosts;
@@ -48,10 +49,11 @@ public class PostController {
         private final SavePost savePost;
         private final FindPostById findPostById;
         private final FindAllPosts findAllPosts;
+        private final DeletePostById deletePostById;
 
         public PostController(PostService postService, PostMapper postMapper, FindPosts findPosts,
                         UpdatePost updatePost, SavePost savePost, FindPostById findPostById,
-                        FindAllPosts findAllPosts) {
+                        FindAllPosts findAllPosts, DeletePostById deletePostById) {
                 this.postService = postService;
                 this.postMapper = postMapper;
                 this.findPosts = findPosts;
@@ -59,6 +61,7 @@ public class PostController {
                 this.savePost = savePost;
                 this.findPostById = findPostById;
                 this.findAllPosts = findAllPosts;
+                this.deletePostById = deletePostById;
         }
 
         @GetMapping("")
@@ -144,6 +147,6 @@ public class PostController {
                                         description = "Post deleted successfully"),
                         @ApiResponse(responseCode = "404", description = "Post not found")})
         void delete(@PathVariable Integer id) {
-                postService.deleteById(id);
+                deletePostById.deleteById(id);
         }
 }
