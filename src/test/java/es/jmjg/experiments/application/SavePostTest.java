@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import es.jmjg.experiments.application.exception.InvalidRequest;
 import es.jmjg.experiments.application.exception.UserNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -76,22 +77,17 @@ class SavePostTest {
     }
 
     @Test
-    void save_WhenUserIdIsNull_ShouldNotFetchUser() {
+    void save_WhenPostHasNoUser_ShouldThrowInvalidRequest() {
         // Given
         UUID newUuid = UUID.randomUUID();
         Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
-        Post savedPost = new Post(3, newUuid, null, "New Post", "New Body");
 
-        when(postRepository.save(any(Post.class))).thenReturn(savedPost);
+        // When & Then
+        assertThatThrownBy(() -> savePost.save(newPost)).isInstanceOf(InvalidRequest.class)
+                .hasMessage("Post must have a user");
 
-        // When
-        Post result = savePost.save(newPost);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(3);
         verify(userRepository, never()).findById(any());
-        verify(postRepository, times(1)).save(newPost);
+        verify(postRepository, never()).save(any(Post.class));
     }
 
     @Test
@@ -152,5 +148,25 @@ class SavePostTest {
         verify(postRepository, times(1)).save(newPost);
         // Verify that the user was set on the post before saving
         assertThat(newPost.getUser()).isEqualTo(testUser);
+    }
+
+    @Test
+    void save_WhenUserIdIsNullButPostHasUser_ShouldSaveSuccessfully() {
+        // Given
+        UUID newUuid = UUID.randomUUID();
+        Post newPost = new Post(null, newUuid, testUser, "New Post", "New Body");
+        Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
+
+        when(postRepository.save(any(Post.class))).thenReturn(savedPost);
+
+        // When
+        Post result = savePost.save(newPost, null);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(3);
+        assertThat(result.getUser()).isEqualTo(testUser);
+        verify(userRepository, never()).findById(any());
+        verify(postRepository, times(1)).save(newPost);
     }
 }

@@ -3,6 +3,7 @@ package es.jmjg.experiments.application;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import es.jmjg.experiments.application.exception.InvalidRequest;
 import es.jmjg.experiments.application.exception.UserNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -26,6 +27,11 @@ public class SavePost {
 
     @Transactional
     public Post save(Post post, Integer userId) {
+        // Validate that a user is required for creating a post
+        if (userId == null && post.getUser() == null) {
+            throw new InvalidRequest("Post must have a user");
+        }
+
         // If the post has a userId but no user relationship, set up the relationship
         if (userId != null) {
             Optional<User> user = userRepository.findById(userId);

@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import es.jmjg.experiments.application.exception.InvalidRequest;
 import es.jmjg.experiments.application.exception.UserNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -97,28 +98,19 @@ class SavePostIntegrationTest extends TestContainersConfig {
     }
 
     @Test
-    void save_WhenPostHasNoUser_ShouldSaveWithoutUser() {
+    void save_WhenPostHasNoUser_ShouldThrowInvalidRequest() {
         // Given
         Post newPost = new Post();
         newPost.setUuid(UUID.randomUUID());
         newPost.setTitle("New Post");
         newPost.setBody("New Body");
 
-        // When
-        Post result = savePost.save(newPost);
+        // When & Then
+        assertThatThrownBy(() -> savePost.save(newPost)).isInstanceOf(InvalidRequest.class)
+                .hasMessage("Post must have a user");
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("New Post");
-        assertThat(result.getBody()).isEqualTo("New Body");
-        assertThat(result.getUser()).isNull();
-
-        // Verify it was actually saved to the database
-        Optional<Post> savedPost = postRepository.findById(result.getId());
-        assertThat(savedPost).isPresent();
-        assertThat(savedPost.get().getTitle()).isEqualTo("New Post");
-        assertThat(savedPost.get().getUser()).isNull();
+        // Verify no post was saved
+        assertThat(postRepository.count()).isZero();
     }
 
     @Test
@@ -164,27 +156,19 @@ class SavePostIntegrationTest extends TestContainersConfig {
     }
 
     @Test
-    void save_WhenUserIdIsNull_ShouldSaveWithoutFetchingUser() {
+    void save_WhenUserIdIsNull_ShouldThrowInvalidRequest() {
         // Given
         Post newPost = new Post();
         newPost.setUuid(UUID.randomUUID());
         newPost.setTitle("New Post");
         newPost.setBody("New Body");
 
-        // When
-        Post result = savePost.save(newPost, null);
+        // When & Then
+        assertThatThrownBy(() -> savePost.save(newPost, null)).isInstanceOf(InvalidRequest.class)
+                .hasMessage("Post must have a user");
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("New Post");
-        assertThat(result.getBody()).isEqualTo("New Body");
-        assertThat(result.getUser()).isNull();
-
-        // Verify it was actually saved to the database
-        Optional<Post> savedPost = postRepository.findById(result.getId());
-        assertThat(savedPost).isPresent();
-        assertThat(savedPost.get().getUser()).isNull();
+        // Verify no post was saved
+        assertThat(postRepository.count()).isZero();
     }
 
     @Test

@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import es.jmjg.experiments.application.exception.InvalidRequest;
 import es.jmjg.experiments.application.exception.PostNotFound;
 import es.jmjg.experiments.application.exception.UserNotFound;
 
@@ -70,6 +71,20 @@ public class GlobalExceptionHandler {
                 .message(ex.getMessage()).path(request.getDescription(false)).build();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidRequest.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidRequest(InvalidRequest ex,
+            WebRequest request) {
+
+        log.warn("Invalid request: {}", ex.getMessage());
+
+        ApiErrorResponse errorResponse = ApiErrorResponse.builder().timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase()).message(ex.getMessage())
+                .path(request.getDescription(false)).build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

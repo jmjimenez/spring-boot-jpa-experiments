@@ -9,6 +9,7 @@ TRUNCATE TABLE Users CASCADE;
 
 -- Reset the sequence to start from 1
 ALTER SEQUENCE users_id_seq RESTART WITH 1;
+ALTER SEQUENCE post_id_seq RESTART WITH 1;
 
 -- Insert Users
 INSERT INTO
