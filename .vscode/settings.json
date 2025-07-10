@@ -67,5 +67,8 @@
         "**/mvnw": true,
         "**/mvnw.cmd": true
     },
-    "java.debug.settings.showQualifiedNames": false
+    "java.debug.settings.showQualifiedNames": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
 }
