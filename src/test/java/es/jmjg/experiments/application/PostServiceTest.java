@@ -26,9 +26,6 @@ class PostServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private FindAllPosts findAllPosts;
-
     @InjectMocks
     private PostService postService;
 
@@ -49,20 +46,7 @@ class PostServiceTest {
         testPosts = Arrays.asList(testPost1, testPost2);
     }
 
-    @Test
-    void findAll_ShouldReturnAllPosts() {
-        // Given
-        when(findAllPosts.findAll()).thenReturn(testPosts);
 
-        // When
-        List<Post> result = postService.findAll();
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(2);
-        assertThat(result).containsExactly(testPost1, testPost2);
-        verify(findAllPosts, times(1)).findAll();
-    }
 
     @Test
     void findByTitle_WhenPostExists_ShouldReturnPost() {

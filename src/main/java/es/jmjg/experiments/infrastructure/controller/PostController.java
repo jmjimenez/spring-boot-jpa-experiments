@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import es.jmjg.experiments.application.FindAllPosts;
 import es.jmjg.experiments.application.FindPostById;
 import es.jmjg.experiments.application.FindPosts;
 import es.jmjg.experiments.application.PostService;
@@ -46,15 +47,18 @@ public class PostController {
         private final UpdatePost updatePost;
         private final SavePost savePost;
         private final FindPostById findPostById;
+        private final FindAllPosts findAllPosts;
 
         public PostController(PostService postService, PostMapper postMapper, FindPosts findPosts,
-                        UpdatePost updatePost, SavePost savePost, FindPostById findPostById) {
+                        UpdatePost updatePost, SavePost savePost, FindPostById findPostById,
+                        FindAllPosts findAllPosts) {
                 this.postService = postService;
                 this.postMapper = postMapper;
                 this.findPosts = findPosts;
                 this.updatePost = updatePost;
                 this.savePost = savePost;
                 this.findPostById = findPostById;
+                this.findAllPosts = findAllPosts;
         }
 
         @GetMapping("")
@@ -65,7 +69,7 @@ public class PostController {
                         content = @Content(mediaType = "application/json",
                                         schema = @Schema(implementation = PostResponseDto.class)))})
         List<PostResponseDto> findAll() {
-                List<Post> posts = postService.findAll();
+                List<Post> posts = findAllPosts.findAll();
                 return postMapper.toResponseDtoList(posts);
         }
 

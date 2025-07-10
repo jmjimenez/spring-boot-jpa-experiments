@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import es.jmjg.experiments.application.FindAllPosts;
 import es.jmjg.experiments.application.FindPostById;
 import es.jmjg.experiments.application.FindPosts;
 import es.jmjg.experiments.application.PostService;
@@ -47,6 +48,9 @@ class PostControllerTest {
 
     @Autowired
     private FindPostById findPostById;
+
+    @Autowired
+    private FindAllPosts findAllPosts;
 
     List<Post> posts;
 
@@ -96,7 +100,7 @@ class PostControllerTest {
                 ]
                 """.formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
 
-        when(postService.findAll()).thenReturn(posts);
+        when(findAllPosts.findAll()).thenReturn(posts);
 
         ResultActions resultActions = mockMvc.perform(get("/api/posts")).andExpect(status().isOk())
                 .andExpect(content().json(jsonResponse));
@@ -126,7 +130,7 @@ class PostControllerTest {
                 ]
                 """.formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
 
-        doReturn(posts).when(postService).findAll();
+        doReturn(posts).when(findAllPosts).findAll();
 
         ResultActions resultActions = mockMvc.perform(get("/api/posts")).andExpect(status().isOk())
                 .andExpect(content().json(jsonResponse));
@@ -372,6 +376,12 @@ class PostControllerTest {
         @Primary
         public FindPostById findPostById() {
             return mock(FindPostById.class);
+        }
+
+        @Bean
+        @Primary
+        public FindAllPosts findAllPosts() {
+            return mock(FindAllPosts.class);
         }
 
         @Bean
