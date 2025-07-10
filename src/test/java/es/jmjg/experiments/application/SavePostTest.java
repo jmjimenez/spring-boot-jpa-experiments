@@ -29,15 +29,11 @@ class SavePostTest {
     @InjectMocks
     private SavePost savePost;
 
-    private Post testPost;
     private User testUser;
-    private UUID testUuid;
 
     @BeforeEach
     void setUp() {
         testUser = new User(1, "Test User", "test@example.com", "testuser", null);
-        testUuid = UUID.randomUUID();
-        testPost = new Post(1, testUuid, testUser, "Test Post", "Test Body");
     }
 
     @Test
