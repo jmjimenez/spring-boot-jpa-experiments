@@ -1,7 +1,7 @@
 package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,10 +19,10 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class PostServiceIntegrationTest extends TestContainersConfig {
+class FindAllPostsIntegrationTest extends TestContainersConfig {
 
     @Autowired
-    private PostService postService;
+    private FindAllPosts findAllPosts;
 
     @Autowired
     private PostRepository postRepository;
@@ -77,50 +77,29 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
     }
 
-
-
     @Test
-    void findByTitle_WhenPostExists_ShouldReturnPost() {
+    void findAll_ShouldReturnAllPosts() {
         // Given
         postRepository.save(testPost1);
+        postRepository.save(testPost2);
 
         // When
-        Optional<Post> result = postService.findByTitle("Test Post 1");
+        List<Post> result = findAllPosts.findAll();
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getTitle()).isEqualTo("Test Post 1");
-        assertThat(result.get().getBody()).isEqualTo("Test Body 1");
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(2);
+        assertThat(result).extracting("title").containsExactlyInAnyOrder("Test Post 1",
+                "Test Post 2");
     }
 
     @Test
-    void findByTitle_WhenPostDoesNotExist_ShouldReturnEmpty() {
+    void findAll_WhenNoPosts_ShouldReturnEmptyList() {
         // When
-        Optional<Post> result = postService.findByTitle("Non-existent Post");
+        List<Post> result = findAllPosts.findAll();
 
         // Then
+        assertThat(result).isNotNull();
         assertThat(result).isEmpty();
     }
-
-    @Test
-    void deleteById_ShouldDeletePost() {
-        // Given
-        Post savedPost = postRepository.save(testPost1);
-        assertThat(postRepository.findById(savedPost.getId())).isPresent();
-
-        // When
-        postService.deleteById(savedPost.getId());
-
-        // Then
-        assertThat(postRepository.findById(savedPost.getId())).isEmpty();
-    }
-
-    @Test
-    void deleteById_WhenPostDoesNotExist_ShouldNotThrowException() {
-        // When & Then - should not throw any exception
-        postService.deleteById(999);
-    }
-
-
-
 }

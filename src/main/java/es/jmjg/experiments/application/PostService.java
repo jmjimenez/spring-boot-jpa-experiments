@@ -11,14 +11,16 @@ import es.jmjg.experiments.infrastructure.repository.PostRepository;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final FindAllPosts findAllPosts;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, FindAllPosts findAllPosts) {
         this.postRepository = postRepository;
+        this.findAllPosts = findAllPosts;
     }
 
     @Transactional(readOnly = true)
     public List<Post> findAll() {
-        return postRepository.findAll();
+        return findAllPosts.findAll();
     }
 
     @Transactional(readOnly = true)

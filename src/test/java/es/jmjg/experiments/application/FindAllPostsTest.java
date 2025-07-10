@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,22 +14,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
-import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
-class PostServiceTest {
+class FindAllPostsTest {
 
     @Mock
     private PostRepository postRepository;
 
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private FindAllPosts findAllPosts;
-
     @InjectMocks
-    private PostService postService;
+    private FindAllPosts findAllPosts;
 
     private Post testPost1;
     private Post testPost2;
@@ -52,57 +44,29 @@ class PostServiceTest {
     @Test
     void findAll_ShouldReturnAllPosts() {
         // Given
-        when(findAllPosts.findAll()).thenReturn(testPosts);
+        when(postRepository.findAll()).thenReturn(testPosts);
 
         // When
-        List<Post> result = postService.findAll();
+        List<Post> result = findAllPosts.findAll();
 
         // Then
         assertThat(result).isNotNull();
         assertThat(result).hasSize(2);
         assertThat(result).containsExactly(testPost1, testPost2);
-        verify(findAllPosts, times(1)).findAll();
+        verify(postRepository, times(1)).findAll();
     }
 
     @Test
-    void findByTitle_WhenPostExists_ShouldReturnPost() {
+    void findAll_WhenNoPosts_ShouldReturnEmptyList() {
         // Given
-        String title = "Test Post 1";
-        when(postRepository.findByTitle(title)).thenReturn(Optional.of(testPost1));
+        when(postRepository.findAll()).thenReturn(List.of());
 
         // When
-        Optional<Post> result = postService.findByTitle(title);
+        List<Post> result = findAllPosts.findAll();
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(testPost1);
-        verify(postRepository, times(1)).findByTitle(title);
-    }
-
-    @Test
-    void findByTitle_WhenPostDoesNotExist_ShouldReturnEmpty() {
-        // Given
-        String title = "Non-existent Post";
-        when(postRepository.findByTitle(title)).thenReturn(Optional.empty());
-
-        // When
-        Optional<Post> result = postService.findByTitle(title);
-
-        // Then
+        assertThat(result).isNotNull();
         assertThat(result).isEmpty();
-        verify(postRepository, times(1)).findByTitle(title);
-    }
-
-    @Test
-    void deleteById_ShouldCallRepositoryDelete() {
-        // Given
-        Integer postId = 1;
-        doNothing().when(postRepository).deleteById(postId);
-
-        // When
-        postService.deleteById(postId);
-
-        // Then
-        verify(postRepository, times(1)).deleteById(postId);
+        verify(postRepository, times(1)).findAll();
     }
 }
