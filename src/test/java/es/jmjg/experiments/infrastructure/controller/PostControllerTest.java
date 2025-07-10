@@ -21,7 +21,6 @@ import es.jmjg.experiments.application.DeletePostById;
 import es.jmjg.experiments.application.FindAllPosts;
 import es.jmjg.experiments.application.FindPostById;
 import es.jmjg.experiments.application.FindPosts;
-import es.jmjg.experiments.application.PostService;
 import es.jmjg.experiments.application.SavePost;
 import es.jmjg.experiments.application.UpdatePost;
 import es.jmjg.experiments.application.exception.PostNotFound;
@@ -34,9 +33,6 @@ class PostControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private PostService postService;
 
     @Autowired
     private DeletePostById deletePostById;
@@ -352,12 +348,6 @@ class PostControllerTest {
 
     @TestConfiguration
     static class TestConfig {
-        @Bean
-        @Primary
-        public PostService postService() {
-            return mock(PostService.class);
-        }
-
         @Bean
         @Primary
         public DeletePostById deletePostById() {

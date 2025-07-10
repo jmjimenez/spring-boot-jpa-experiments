@@ -19,7 +19,6 @@ import es.jmjg.experiments.application.DeletePostById;
 import es.jmjg.experiments.application.FindAllPosts;
 import es.jmjg.experiments.application.FindPostById;
 import es.jmjg.experiments.application.FindPosts;
-import es.jmjg.experiments.application.PostService;
 import es.jmjg.experiments.application.SavePost;
 import es.jmjg.experiments.application.UpdatePost;
 import es.jmjg.experiments.domain.Post;
@@ -42,7 +41,6 @@ import jakarta.validation.Valid;
 public class PostController {
 
         private static final Logger log = LoggerFactory.getLogger(PostController.class);
-        private final PostService postService;
         private final PostMapper postMapper;
         private final FindPosts findPosts;
         private final UpdatePost updatePost;
@@ -51,10 +49,9 @@ public class PostController {
         private final FindAllPosts findAllPosts;
         private final DeletePostById deletePostById;
 
-        public PostController(PostService postService, PostMapper postMapper, FindPosts findPosts,
-                        UpdatePost updatePost, SavePost savePost, FindPostById findPostById,
-                        FindAllPosts findAllPosts, DeletePostById deletePostById) {
-                this.postService = postService;
+        public PostController(PostMapper postMapper, FindPosts findPosts, UpdatePost updatePost,
+                        SavePost savePost, FindPostById findPostById, FindAllPosts findAllPosts,
+                        DeletePostById deletePostById) {
                 this.postMapper = postMapper;
                 this.findPosts = findPosts;
                 this.updatePost = updatePost;
