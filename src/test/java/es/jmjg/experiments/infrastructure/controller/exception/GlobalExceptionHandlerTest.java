@@ -33,11 +33,12 @@ class GlobalExceptionHandlerTest {
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getStatus()).isEqualTo(404);
-        assertThat(response.getBody().getError()).isEqualTo("Not Found");
-        assertThat(response.getBody().getMessage()).isEqualTo("Post with id 1 not found");
-        assertThat(response.getBody().getPath()).isEqualTo("uri=/api/posts/1");
+        assertThat(response.getBody()).isNotNull().satisfies(body -> {
+            assertThat(body.getStatus()).isEqualTo(404);
+            assertThat(body.getError()).isEqualTo("Not Found");
+            assertThat(body.getMessage()).isEqualTo("Post with id 1 not found");
+            assertThat(body.getPath()).isEqualTo("uri=/api/posts/1");
+        });
     }
 
     @Test
@@ -51,11 +52,12 @@ class GlobalExceptionHandlerTest {
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getStatus()).isEqualTo(500);
-        assertThat(response.getBody().getError()).isEqualTo("Internal Server Error");
-        assertThat(response.getBody().getMessage()).isEqualTo("An unexpected error occurred");
-        assertThat(response.getBody().getPath()).isEqualTo("uri=/api/posts/1");
+        assertThat(response.getBody()).isNotNull().satisfies(body -> {
+            assertThat(body.getStatus()).isEqualTo(500);
+            assertThat(body.getError()).isEqualTo("Internal Server Error");
+            assertThat(body.getMessage()).isEqualTo("An unexpected error occurred");
+            assertThat(body.getPath()).isEqualTo("uri=/api/posts/1");
+        });
     }
 
     @Test
@@ -69,9 +71,10 @@ class GlobalExceptionHandlerTest {
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getStatus()).isEqualTo(404);
-        assertThat(response.getBody().getError()).isEqualTo("Not Found");
-        assertThat(response.getBody().getMessage()).isEqualTo("Post not found");
+        assertThat(response.getBody()).isNotNull().satisfies(body -> {
+            assertThat(body.getStatus()).isEqualTo(404);
+            assertThat(body.getError()).isEqualTo("Not Found");
+            assertThat(body.getMessage()).isEqualTo("Post not found");
+        });
     }
 }
