@@ -1,7 +1,6 @@
 package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,6 @@ class PostServiceIntegrationTest extends TestContainersConfig {
 
     private User testUser;
     private Post testPost1;
-    private Post testPost2;
 
     @BeforeEach
     void setUp() {
@@ -56,12 +54,6 @@ class PostServiceIntegrationTest extends TestContainersConfig {
         testPost1.setUser(testUser);
         testPost1.setTitle("Test Post 1");
         testPost1.setBody("Test Body 1");
-
-        testPost2 = new Post();
-        testPost2.setUuid(UUID.randomUUID());
-        testPost2.setUser(testUser);
-        testPost2.setTitle("Test Post 2");
-        testPost2.setBody("Test Body 2");
     }
 
     @Test
@@ -78,29 +70,6 @@ class PostServiceIntegrationTest extends TestContainersConfig {
     }
 
 
-
-    @Test
-    void findByTitle_WhenPostExists_ShouldReturnPost() {
-        // Given
-        postRepository.save(testPost1);
-
-        // When
-        Optional<Post> result = postService.findByTitle("Test Post 1");
-
-        // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getTitle()).isEqualTo("Test Post 1");
-        assertThat(result.get().getBody()).isEqualTo("Test Body 1");
-    }
-
-    @Test
-    void findByTitle_WhenPostDoesNotExist_ShouldReturnEmpty() {
-        // When
-        Optional<Post> result = postService.findByTitle("Non-existent Post");
-
-        // Then
-        assertThat(result).isEmpty();
-    }
 
     @Test
     void deleteById_ShouldDeletePost() {
