@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.exception;
+package es.jmjg.experiments.application.post.exception;
 
 /**
  * Exception thrown when an invalid request is made in the application layer.

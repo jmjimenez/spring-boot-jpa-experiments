@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application;
+package es.jmjg.experiments.application.post;
 
 import java.util.List;
 import org.springframework.data.domain.PageRequest;

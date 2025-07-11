@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.exception;
+package es.jmjg.experiments.application.post.exception;
 
 /**
  * Exception thrown when a post is not found in the application layer.

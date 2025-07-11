@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application;
+package es.jmjg.experiments.application.post;
 
 import java.util.Optional;
 import org.springframework.stereotype.Service;

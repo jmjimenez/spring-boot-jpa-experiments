@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application;
+package es.jmjg.experiments.application.user;
 
 import java.util.List;
 import java.util.Optional;

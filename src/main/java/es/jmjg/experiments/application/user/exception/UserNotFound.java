@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.exception;
+package es.jmjg.experiments.application.user.exception;
 
 /**
  * Exception thrown when a user is not found in the application layer.

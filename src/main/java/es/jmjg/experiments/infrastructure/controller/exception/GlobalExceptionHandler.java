@@ -12,9 +12,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import es.jmjg.experiments.application.exception.InvalidRequest;
-import es.jmjg.experiments.application.exception.PostNotFound;
-import es.jmjg.experiments.application.exception.UserNotFound;
+import es.jmjg.experiments.application.post.exception.InvalidRequest;
+import es.jmjg.experiments.application.post.exception.PostNotFound;
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

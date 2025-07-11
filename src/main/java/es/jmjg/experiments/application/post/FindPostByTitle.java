@@ -1,22 +1,25 @@
-package es.jmjg.experiments.application;
+package es.jmjg.experiments.application.post;
 
-import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 
 @Service
-public class FindAllPosts {
+public class FindPostByTitle {
 
     private final PostRepository postRepository;
 
-    public FindAllPosts(PostRepository postRepository) {
+    public FindPostByTitle(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
     @Transactional(readOnly = true)
-    public List<Post> findAll() {
-        return postRepository.findAll();
+    public Optional<Post> findByTitle(String title) {
+        if (title == null || title.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        return postRepository.findByTitle(title.trim());
     }
 }
