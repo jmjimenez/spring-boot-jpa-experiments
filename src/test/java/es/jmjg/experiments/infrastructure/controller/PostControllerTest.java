@@ -12,9 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import es.jmjg.experiments.application.post.DeletePostById;
@@ -26,9 +24,9 @@ import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
-import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
 
 @WebMvcTest(PostController.class)
+@Import(ControllerTestConfig.class)
 class PostControllerTest {
 
     @Autowired
@@ -344,49 +342,5 @@ class PostControllerTest {
                 .andExpect(status().isOk()).andExpect(content().json(expectedResponse));
 
         verify(findPosts, times(1)).find("Spring", 10);
-    }
-
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        @Primary
-        public DeletePostById deletePostById() {
-            return mock(DeletePostById.class);
-        }
-
-        @Bean
-        @Primary
-        public FindPosts findPosts() {
-            return mock(FindPosts.class);
-        }
-
-        @Bean
-        @Primary
-        public UpdatePost updatePost() {
-            return mock(UpdatePost.class);
-        }
-
-        @Bean
-        @Primary
-        public SavePost savePost() {
-            return mock(SavePost.class);
-        }
-
-        @Bean
-        @Primary
-        public FindPostById findPostById() {
-            return mock(FindPostById.class);
-        }
-
-        @Bean
-        @Primary
-        public FindAllPosts findAllPosts() {
-            return mock(FindAllPosts.class);
-        }
-
-        @Bean
-        public PostMapper postMapper() {
-            return new PostMapper();
-        }
     }
 }
