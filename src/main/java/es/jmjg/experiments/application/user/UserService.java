@@ -2,10 +2,9 @@ package es.jmjg.experiments.application.user;
 
 import java.util.List;
 import java.util.Optional;
-
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
@@ -43,6 +42,14 @@ public class UserService {
     return userRepository.findByUsername(username);
   }
 
+  @Transactional(readOnly = true)
+  public Optional<User> findByUuid(UUID uuid) {
+    if (uuid == null) {
+      return Optional.empty();
+    }
+    return userRepository.findByUuid(uuid);
+  }
+
   @Transactional
   public void deleteById(Integer id) {
     userRepository.deleteById(id);
@@ -56,6 +63,10 @@ public class UserService {
       existingUser.setName(user.getName());
       existingUser.setEmail(user.getEmail());
       existingUser.setUsername(user.getUsername());
+      // Only update UUID if provided (to avoid overwriting existing UUID)
+      if (user.getUuid() != null) {
+        existingUser.setUuid(user.getUuid());
+      }
       return userRepository.save(existingUser);
     } else {
       throw new RuntimeException("User not found with id: " + id);

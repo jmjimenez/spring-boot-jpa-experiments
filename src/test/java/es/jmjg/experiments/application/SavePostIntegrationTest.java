@@ -1,10 +1,8 @@
 package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
-
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
@@ -27,13 +24,17 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class SavePostIntegrationTest extends TestContainersConfig {
 
-  @Autowired private SavePost savePost;
+  @Autowired
+  private SavePost savePost;
 
-  @Autowired private PostRepository postRepository;
+  @Autowired
+  private PostRepository postRepository;
 
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-  @Autowired private Environment environment;
+  @Autowired
+  private Environment environment;
 
   private User testUser;
   private Post testPost;
@@ -46,6 +47,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
 
     // Create a test user
     testUser = new User();
+    testUser.setUuid(UUID.randomUUID());
     testUser.setName("Test User");
     testUser.setEmail("test@example.com");
     testUser.setUsername("testuser");
@@ -106,8 +108,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
     newPost.setBody("New Body");
 
     // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost))
-        .isInstanceOf(InvalidRequest.class)
+    assertThatThrownBy(() -> savePost.save(newPost)).isInstanceOf(InvalidRequest.class)
         .hasMessage("Post must have a user");
 
     // Verify no post was saved
@@ -165,8 +166,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
     newPost.setBody("New Body");
 
     // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost, null))
-        .isInstanceOf(InvalidRequest.class)
+    assertThatThrownBy(() -> savePost.save(newPost, null)).isInstanceOf(InvalidRequest.class)
         .hasMessage("Post must have a user");
 
     // Verify no post was saved

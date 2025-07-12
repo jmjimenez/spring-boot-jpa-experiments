@@ -2,18 +2,15 @@ package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -22,9 +19,11 @@ import es.jmjg.experiments.infrastructure.repository.PostRepository;
 @ExtendWith(MockitoExtension.class)
 class FindAllPostsTest {
 
-  @Mock private PostRepository postRepository;
+  @Mock
+  private PostRepository postRepository;
 
-  @InjectMocks private FindAllPosts findAllPosts;
+  @InjectMocks
+  private FindAllPosts findAllPosts;
 
   private Post testPost1;
   private Post testPost2;
@@ -35,7 +34,7 @@ class FindAllPostsTest {
 
   @BeforeEach
   void setUp() {
-    testUser = new User(1, "Test User", "test@example.com", "testuser", null);
+    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
     testUuid1 = UUID.randomUUID();
     testUuid2 = UUID.randomUUID();
     testPost1 = new Post(1, testUuid1, testUser, "Test Post 1", "Test Body 1");

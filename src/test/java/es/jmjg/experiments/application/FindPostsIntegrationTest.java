@@ -1,11 +1,9 @@
 package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
 import es.jmjg.experiments.application.post.FindPosts;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -27,13 +24,17 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FindPostsIntegrationTest extends TestContainersConfig {
 
-  @Autowired private FindPosts findPosts;
+  @Autowired
+  private FindPosts findPosts;
 
-  @Autowired private PostRepository postRepository;
+  @Autowired
+  private PostRepository postRepository;
 
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-  @Autowired private Environment environment;
+  @Autowired
+  private Environment environment;
 
   private User testUser;
   private Post springBootPost;
@@ -54,6 +55,7 @@ class FindPostsIntegrationTest extends TestContainersConfig {
 
     // Create test data for each test
     testUser = new User();
+    testUser.setUuid(UUID.randomUUID());
     testUser.setName("Test User");
     testUser.setEmail("test@example.com");
     testUser.setUsername("testuser");
@@ -80,7 +82,7 @@ class FindPostsIntegrationTest extends TestContainersConfig {
     tutorialPost.setUuid(UUID.randomUUID());
     tutorialPost.setUser(testUser);
     tutorialPost.setTitle("Java Programming Guide");
-    tutorialPost.setBody("Complete tutorial on Java programming language");
+    tutorialPost.setBody("Complete guide to Java programming language and best practices");
     tutorialPost = postRepository.save(tutorialPost);
     testCreatedPosts.add(tutorialPost);
 
@@ -88,7 +90,7 @@ class FindPostsIntegrationTest extends TestContainersConfig {
     javaPost.setUuid(UUID.randomUUID());
     javaPost.setUser(testUser);
     javaPost.setTitle("Advanced Java Features");
-    javaPost.setBody("Exploring advanced features in Java 21");
+    javaPost.setBody("Exploring advanced features in Java 21 and modern development");
     javaPost = postRepository.save(javaPost);
     testCreatedPosts.add(javaPost);
   }
@@ -125,9 +127,8 @@ class FindPostsIntegrationTest extends TestContainersConfig {
     assertThat(result).isNotNull();
     assertThat(result).hasSize(2); // Both Spring Boot Tutorial and JPA Best Practices contain
     // "Spring"
-    assertThat(result)
-        .extracting("title")
-        .containsExactlyInAnyOrder("Spring Boot Tutorial", "JPA Best Practices");
+    assertThat(result).extracting("title").containsExactlyInAnyOrder("Spring Boot Tutorial",
+        "JPA Best Practices");
   }
 
   @Test
@@ -151,9 +152,8 @@ class FindPostsIntegrationTest extends TestContainersConfig {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(2);
-    assertThat(result)
-        .extracting("title")
-        .containsExactlyInAnyOrder("Java Programming Guide", "Advanced Java Features");
+    assertThat(result).extracting("title").containsExactlyInAnyOrder("Java Programming Guide",
+        "Advanced Java Features");
   }
 
   @Test
@@ -165,9 +165,8 @@ class FindPostsIntegrationTest extends TestContainersConfig {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(2); // Both posts contain "spring" in their content
-    assertThat(result)
-        .extracting("title")
-        .containsExactlyInAnyOrder("Spring Boot Tutorial", "JPA Best Practices");
+    assertThat(result).extracting("title").containsExactlyInAnyOrder("Spring Boot Tutorial",
+        "JPA Best Practices");
   }
 
   @Test
@@ -180,9 +179,8 @@ class FindPostsIntegrationTest extends TestContainersConfig {
     assertThat(result).isNotNull();
     assertThat(result).hasSize(2); // Both Spring Boot Tutorial and JPA Best Practices contain
     // "Boot"
-    assertThat(result)
-        .extracting("title")
-        .containsExactlyInAnyOrder("Spring Boot Tutorial", "JPA Best Practices");
+    assertThat(result).extracting("title").containsExactlyInAnyOrder("Spring Boot Tutorial",
+        "JPA Best Practices");
   }
 
   @Test
@@ -263,9 +261,8 @@ class FindPostsIntegrationTest extends TestContainersConfig {
     assertThat(result).isNotNull();
     assertThat(result).hasSize(2); // Both Spring Boot Tutorial and JPA Best Practices contain
     // "Spring"
-    assertThat(result)
-        .extracting("title")
-        .containsExactlyInAnyOrder("Spring Boot Tutorial", "JPA Best Practices");
+    assertThat(result).extracting("title").containsExactlyInAnyOrder("Spring Boot Tutorial",
+        "JPA Best Practices");
   }
 
   @Test
@@ -277,9 +274,8 @@ class FindPostsIntegrationTest extends TestContainersConfig {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(2); // Both posts contain "Spring" in their content
-    assertThat(result)
-        .extracting("title")
-        .containsExactlyInAnyOrder("Spring Boot Tutorial", "JPA Best Practices");
+    assertThat(result).extracting("title").containsExactlyInAnyOrder("Spring Boot Tutorial",
+        "JPA Best Practices");
   }
 
   @Test
@@ -292,8 +288,7 @@ class FindPostsIntegrationTest extends TestContainersConfig {
     assertThat(result).isNotNull();
     assertThat(result).hasSize(2);
     // Both posts contain "with" in their body
-    assertThat(result)
-        .extracting("title")
-        .containsExactlyInAnyOrder("Spring Boot Tutorial", "JPA Best Practices");
+    assertThat(result).extracting("title").containsExactlyInAnyOrder("Spring Boot Tutorial",
+        "JPA Best Practices");
   }
 }

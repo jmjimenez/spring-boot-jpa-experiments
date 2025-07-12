@@ -3,17 +3,14 @@ package es.jmjg.experiments.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -22,9 +19,11 @@ import es.jmjg.experiments.infrastructure.repository.PostRepository;
 @ExtendWith(MockitoExtension.class)
 class FindPostByUuidTest {
 
-  @Mock private PostRepository postRepository;
+  @Mock
+  private PostRepository postRepository;
 
-  @InjectMocks private FindPostByUuid findPostByUuid;
+  @InjectMocks
+  private FindPostByUuid findPostByUuid;
 
   private Post testPost;
   private User testUser;
@@ -32,7 +31,7 @@ class FindPostByUuidTest {
 
   @BeforeEach
   void setUp() {
-    testUser = new User(1, "Test User", "test@example.com", "testuser", null);
+    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
     testUuid = UUID.randomUUID();
     testPost = new Post(1, testUuid, testUser, "Test Post", "Test Body");
   }

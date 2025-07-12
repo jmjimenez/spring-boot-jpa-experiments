@@ -4,11 +4,9 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -17,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
 import es.jmjg.experiments.application.post.DeletePostById;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
@@ -32,19 +29,26 @@ import es.jmjg.experiments.domain.User;
 @Import(ControllerTestConfig.class)
 class PostControllerTest {
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-  @Autowired private DeletePostById deletePostById;
+  @Autowired
+  private DeletePostById deletePostById;
 
-  @Autowired private FindPosts findPosts;
+  @Autowired
+  private FindPosts findPosts;
 
-  @Autowired private UpdatePost updatePost;
+  @Autowired
+  private UpdatePost updatePost;
 
-  @Autowired private SavePost savePost;
+  @Autowired
+  private SavePost savePost;
 
-  @Autowired private FindPostByUuid findPostByUuid;
+  @Autowired
+  private FindPostByUuid findPostByUuid;
 
-  @Autowired private FindAllPosts findAllPosts;
+  @Autowired
+  private FindAllPosts findAllPosts;
 
   List<Post> posts;
 
@@ -52,6 +56,7 @@ class PostControllerTest {
   void setUp() {
     User user = new User();
     user.setId(1);
+    user.setUuid(UUID.randomUUID());
     user.setName("John Doe");
     user.setEmail("john@example.com");
     user.setUsername("johndoe");
@@ -75,78 +80,69 @@ class PostControllerTest {
 
   @Test
   void shouldFindAllPosts() throws Exception {
-    String jsonResponse =
-        """
-                [
-                    {
-                        "id":1,
-                        "uuid":"%s",
-                        "userId":1,
-                        "title":"Hello, World!",
-                        "body":"This is my first post."
-                    },
-                    {
-                        "id":2,
-                        "uuid":"%s",
-                        "userId":1,
-                        "title":"Second Post",
-                        "body":"This is my second post."
-                    }
-                ]
-                """
-            .formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
+    String jsonResponse = """
+        [
+            {
+                "id":1,
+                "uuid":"%s",
+                "userId":1,
+                "title":"Hello, World!",
+                "body":"This is my first post."
+            },
+            {
+                "id":2,
+                "uuid":"%s",
+                "userId":1,
+                "title":"Second Post",
+                "body":"This is my second post."
+            }
+        ]
+        """.formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
 
     when(findAllPosts.findAll()).thenReturn(posts);
 
-    ResultActions resultActions =
-        mockMvc
-            .perform(get("/api/posts"))
-            .andExpect(status().isOk())
-            .andExpect(content().json(jsonResponse));
+    ResultActions resultActions = mockMvc.perform(get("/api/posts")).andExpect(status().isOk())
+        .andExpect(content().json(jsonResponse));
 
-    JSONAssert.assertEquals(
-        jsonResponse, resultActions.andReturn().getResponse().getContentAsString(), false);
+    JSONAssert.assertEquals(jsonResponse,
+        resultActions.andReturn().getResponse().getContentAsString(), false);
   }
 
   @Test
   void shouldFindAllPostsV2() throws Exception {
-    String jsonResponse =
-        """
-                [
-                    {
-                        "id":1,
-                        "uuid":"%s",
-                        "userId":1,
-                        "title":"Hello, World!",
-                        "body":"This is my first post."
-                    },
-                    {
-                        "id":2,
-                        "uuid":"%s",
-                        "userId":1,
-                        "title":"Second Post",
-                        "body":"This is my second post."
-                    }
-                ]
-                """
-            .formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
+    String jsonResponse = """
+        [
+            {
+                "id":1,
+                "uuid":"%s",
+                "userId":1,
+                "title":"Hello, World!",
+                "body":"This is my first post."
+            },
+            {
+                "id":2,
+                "uuid":"%s",
+                "userId":1,
+                "title":"Second Post",
+                "body":"This is my second post."
+            }
+        ]
+        """.formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
 
     doReturn(posts).when(findAllPosts).findAll();
 
-    ResultActions resultActions =
-        mockMvc
-            .perform(get("/api/posts"))
-            .andExpect(status().isOk())
-            .andExpect(content().json(jsonResponse));
+    ResultActions resultActions = mockMvc.perform(get("/api/posts")).andExpect(status().isOk())
+        .andExpect(content().json(jsonResponse));
 
-    JSONAssert.assertEquals(
-        jsonResponse, resultActions.andReturn().getResponse().getContentAsString(), false);
+    JSONAssert.assertEquals(jsonResponse,
+        resultActions.andReturn().getResponse().getContentAsString(), false);
   }
 
   @Test
   void shouldFindPostWhenGivenValidUuid() throws Exception {
     User user = new User();
     user.setId(1);
+    user.setUuid(UUID.randomUUID());
     user.setName("Test User");
     user.setEmail("test@example.com");
     user.setUsername("testuser");
@@ -160,26 +156,18 @@ class PostControllerTest {
     post.setBody("Test Body");
 
     when(findPostByUuid.findByUuid(uuid)).thenReturn(Optional.of(post));
-    String json =
-        """
-                {
-                    "id":%d,
-                    "uuid":"%s",
-                    "userId":%d,
-                    "title":"%s",
-                    "body":"%s"
-                }
-                """
-            .formatted(
-                post.getId(),
-                post.getUuid(),
-                post.getUser().getId(),
-                post.getTitle(),
-                post.getBody());
+    String json = """
+        {
+            "id":%d,
+            "uuid":"%s",
+            "userId":%d,
+            "title":"%s",
+            "body":"%s"
+        }
+        """.formatted(post.getId(), post.getUuid(), post.getUser().getId(), post.getTitle(),
+        post.getBody());
 
-    mockMvc
-        .perform(get("/api/posts/" + uuid))
-        .andExpect(status().isOk())
+    mockMvc.perform(get("/api/posts/" + uuid)).andExpect(status().isOk())
         .andExpect(content().json(json));
   }
 
@@ -195,6 +183,7 @@ class PostControllerTest {
   void shouldCreateNewPostWhenGivenValidID() throws Exception {
     User user = new User();
     user.setId(1);
+    user.setUuid(UUID.randomUUID());
     user.setName("Test User");
     user.setEmail("test@example.com");
     user.setUsername("testuser");
@@ -209,45 +198,36 @@ class PostControllerTest {
     when(savePost.save(any(Post.class), eq(1))).thenReturn(post);
 
     // Request body should be a PostDto (without id, since it's a new post)
-    String requestBody =
-        """
-                {
-                    "uuid":"%s",
-                    "userId":%d,
-                    "title":"%s",
-                    "body":"%s"
-                }
-                """
-            .formatted(post.getUuid(), user.getId(), post.getTitle(), post.getBody());
+    String requestBody = """
+        {
+            "uuid":"%s",
+            "userId":%d,
+            "title":"%s",
+            "body":"%s"
+        }
+        """.formatted(post.getUuid(), user.getId(), post.getTitle(), post.getBody());
 
     // Expected response should include the generated id
-    String expectedResponse =
-        """
-                {
-                    "id":%d,
-                    "uuid":"%s",
-                    "userId":%d,
-                    "title":"%s",
-                    "body":"%s"
-                }
-                """
-            .formatted(
-                post.getId(),
-                post.getUuid(),
-                post.getUser().getId(),
-                post.getTitle(),
-                post.getBody());
+    String expectedResponse = """
+        {
+            "id":%d,
+            "uuid":"%s",
+            "userId":%d,
+            "title":"%s",
+            "body":"%s"
+        }
+        """.formatted(post.getId(), post.getUuid(), post.getUser().getId(), post.getTitle(),
+        post.getBody());
 
-    mockMvc
-        .perform(post("/api/posts").contentType("application/json").content(requestBody))
-        .andExpect(status().isCreated())
-        .andExpect(content().json(expectedResponse));
+    mockMvc.perform(post("/api/posts").contentType("application/json").content(requestBody))
+        .andExpect(status().isCreated()).andExpect(content().json(expectedResponse));
   }
 
   @Test
   void shouldUpdatePostWhenGivenValidPost() throws Exception {
     User user = new User();
     user.setId(1);
+    user.setUuid(UUID.randomUUID());
     user.setName("Test User");
     user.setEmail("test@example.com");
     user.setUsername("testuser");
@@ -260,33 +240,26 @@ class PostControllerTest {
     updated.setBody("UPDATED BODY");
 
     when(updatePost.update(eq(1), any(Post.class), eq(1))).thenReturn(updated);
-    String requestBody =
-        """
-                {
-                    "id":%d,
-                    "uuid":"%s",
-                    "userId":%d,
-                    "title":"%s",
-                    "body":"%s"
-                }
-                """
-            .formatted(
-                updated.getId(),
-                updated.getUuid(),
-                updated.getUser().getId(),
-                updated.getTitle(),
-                updated.getBody());
+    String requestBody = """
+        {
+            "id":%d,
+            "uuid":"%s",
+            "userId":%d,
+            "title":"%s",
+            "body":"%s"
+        }
+        """.formatted(updated.getId(), updated.getUuid(), updated.getUser().getId(),
+        updated.getTitle(), updated.getBody());
 
-    mockMvc
-        .perform(put("/api/posts/1").contentType("application/json").content(requestBody))
-        .andExpect(status().isOk())
-        .andExpect(content().json(requestBody));
+    mockMvc.perform(put("/api/posts/1").contentType("application/json").content(requestBody))
+        .andExpect(status().isOk()).andExpect(content().json(requestBody));
   }
 
   @Test
   void shouldNotUpdateAndThrowNotFoundWhenGivenAnInvalidPostID() throws Exception {
     User user = new User();
     user.setId(1);
+    user.setUuid(UUID.randomUUID());
     user.setName("Test User");
     user.setEmail("test@example.com");
     user.setUsername("testuser");
@@ -300,25 +273,18 @@ class PostControllerTest {
 
     when(updatePost.update(eq(999), any(Post.class), eq(1)))
         .thenThrow(new PostNotFound("Post not found with id: 999"));
-    String json =
-        """
-                {
-                    "id":%d,
-                    "uuid":"%s",
-                    "userId":%d,
-                    "title":"%s",
-                    "body":"%s"
-                }
-                """
-            .formatted(
-                updated.getId(),
-                updated.getUuid(),
-                updated.getUser().getId(),
-                updated.getTitle(),
-                updated.getBody());
+    String json = """
+        {
+            "id":%d,
+            "uuid":"%s",
+            "userId":%d,
+            "title":"%s",
+            "body":"%s"
+        }
+        """.formatted(updated.getId(), updated.getUuid(), updated.getUser().getId(),
+        updated.getTitle(), updated.getBody());
 
-    mockMvc
-        .perform(put("/api/posts/999").contentType("application/json").content(json))
+    mockMvc.perform(put("/api/posts/999").contentType("application/json").content(json))
         .andExpect(status().isNotFound());
   }
 
@@ -335,6 +301,7 @@ class PostControllerTest {
   void shouldSearchPostsWhenGivenValidQuery() throws Exception {
     User user = new User();
     user.setId(1);
+    user.setUuid(UUID.randomUUID());
     user.setName("Test User");
     user.setEmail("test@example.com");
     user.setUsername("testuser");
@@ -357,41 +324,30 @@ class PostControllerTest {
 
     when(findPosts.find("Spring", 10)).thenReturn(searchResults);
 
-    String expectedResponse =
-        """
-                [
-                    {
-                        "id":%d,
-                        "uuid":"%s",
-                        "userId":%d,
-                        "title":"%s",
-                        "body":"%s"
-                    },
-                    {
-                        "id":%d,
-                        "uuid":"%s",
-                        "userId":%d,
-                        "title":"%s",
-                        "body":"%s"
-                    }
-                ]
-                """
-            .formatted(
-                searchResult1.getId(),
-                searchResult1.getUuid(),
-                searchResult1.getUser().getId(),
-                searchResult1.getTitle(),
-                searchResult1.getBody(),
-                searchResult2.getId(),
-                searchResult2.getUuid(),
-                searchResult2.getUser().getId(),
-                searchResult2.getTitle(),
-                searchResult2.getBody());
+    String expectedResponse = """
+        [
+            {
+                "id":%d,
+                "uuid":"%s",
+                "userId":%d,
+                "title":"%s",
+                "body":"%s"
+            },
+            {
+                "id":%d,
+                "uuid":"%s",
+                "userId":%d,
+                "title":"%s",
+                "body":"%s"
+            }
+        ]
+        """.formatted(searchResult1.getId(), searchResult1.getUuid(),
+        searchResult1.getUser().getId(), searchResult1.getTitle(), searchResult1.getBody(),
+        searchResult2.getId(), searchResult2.getUuid(), searchResult2.getUser().getId(),
+        searchResult2.getTitle(), searchResult2.getBody());
 
-    mockMvc
-        .perform(get("/api/posts/search").param("q", "Spring").param("limit", "10"))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedResponse));
+    mockMvc.perform(get("/api/posts/search").param("q", "Spring").param("limit", "10"))
+        .andExpect(status().isOk()).andExpect(content().json(expectedResponse));
 
     verify(findPosts, times(1)).find("Spring", 10);
   }
