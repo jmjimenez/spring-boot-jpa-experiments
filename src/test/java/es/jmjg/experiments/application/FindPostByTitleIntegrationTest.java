@@ -71,7 +71,7 @@ class FindPostByTitleIntegrationTest extends TestContainersConfig {
   @Test
   void findByTitle_WhenTitleExists_ShouldReturnPost() {
     // Given
-    Post savedPost = postRepository.save(testPost);
+    postRepository.save(testPost);
 
     // When
     Optional<Post> result = findPostByTitle.findByTitle("Test Post");

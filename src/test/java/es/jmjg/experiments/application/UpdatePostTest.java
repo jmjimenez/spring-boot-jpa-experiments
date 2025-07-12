@@ -33,12 +33,11 @@ class UpdatePostTest {
 
   private User testUser;
   private Post testPost;
-  private UUID testUuid;
+  
 
   @BeforeEach
   void setUp() {
     testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
-    testUuid = UUID.randomUUID();
     testPost = new Post(1, UUID.randomUUID(), testUser, "Test Post", "Test Body");
   }
 

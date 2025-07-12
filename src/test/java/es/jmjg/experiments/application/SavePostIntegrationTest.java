@@ -37,7 +37,6 @@ class SavePostIntegrationTest extends TestContainersConfig {
   @Autowired private Environment environment;
 
   private User testUser;
-  private Post testPost;
 
   @BeforeEach
   void setUp() {
@@ -52,9 +51,6 @@ class SavePostIntegrationTest extends TestContainersConfig {
     testUser.setEmail("test@example.com");
     testUser.setUsername("testuser");
     testUser = userRepository.save(testUser);
-
-    // Create test post
-    testPost = PostFactory.createBasicPost(testUser);
   }
 
   @Test

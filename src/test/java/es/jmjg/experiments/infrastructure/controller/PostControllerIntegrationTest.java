@@ -58,8 +58,7 @@ class PostControllerIntegrationTest extends TestContainersConfig {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto[] posts = response.getBody();
-    assertThat(posts).isNotNull();
-    assertThat(posts.length).isGreaterThan(0);
+    assertThat(posts).isNotNull().satisfies(p -> assertThat(p.length).isGreaterThan(0));
   }
 
   @Test
@@ -70,8 +69,7 @@ class PostControllerIntegrationTest extends TestContainersConfig {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto post = response.getBody();
-    assertThat(post).isNotNull();
-    assertThat(post.getTitle()).isEqualTo("qui est esse");
+    assertThat(post).isNotNull().satisfies(p -> assertThat(p.getTitle()).isEqualTo("qui est esse"));
   }
 
   @Test
@@ -161,8 +159,9 @@ class PostControllerIntegrationTest extends TestContainersConfig {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto post = response.getBody();
-    assertThat(post).isNotNull();
-    assertThat(post.getTitle()).isEqualTo("Updated Title");
-    assertThat(post.getBody()).isEqualTo("Updated Body");
+    assertThat(post).isNotNull().satisfies(p -> {
+      assertThat(p.getTitle()).isEqualTo("Updated Title");
+      assertThat(p.getBody()).isEqualTo("Updated Body");
+    });
   }
 }

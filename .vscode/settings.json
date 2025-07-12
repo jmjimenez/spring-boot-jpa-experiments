@@ -55,17 +55,24 @@
   "java.test.runner": "junit",
   "java.test.workingDirectory": "${workspaceFolder}",
   "java.test.consoleOptions": "openOnSessionStart",
-  "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
-  "java.format.settings.profile": "GoogleStyle",
-  "java.format.enabled": true,
-  "java.format.onType.enabled": true,
-  "java.format.comments.enabled": true,
+  // Disable built-in Java formatter to avoid conflicts with Spotless
+  "java.format.enabled": false,
+  "java.format.onType.enabled": false,
+  "java.format.comments.enabled": false,
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "editor.formatOnType": true,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
+  // Auto-run Spotless on save for Java files
+  "[java]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file"
+  },
+  // Configure auto-save to trigger Spotless
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
   "files.exclude": {
     "**/target": true,
     "**/.mvn": true,

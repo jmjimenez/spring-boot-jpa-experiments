@@ -1,43 +1,86 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Run All Tests",
-            "type": "shell",
-            "command": "mvn",
-            "args": [
-                "test",
-                "-Dspring.profiles.active=test",
-                "-DDEFAULT_PROFILE=test"
-            ],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Run Integration Tests Only",
-            "type": "shell",
-            "command": "mvn",
-            "args": [
-                "test",
-                "-P",
-                "integration-tests",
-                "-Dspring.profiles.active=test",
-                "-DDEFAULT_PROFILE=test"
-            ],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "problemMatcher": []
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run All Tests",
+      "type": "shell",
+      "command": "mvn",
+      "args": [
+        "test",
+        "-Dspring.profiles.active=test",
+        "-DDEFAULT_PROFILE=test"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Integration Tests Only",
+      "type": "shell",
+      "command": "mvn",
+      "args": [
+        "test",
+        "-P",
+        "integration-tests",
+        "-Dspring.profiles.active=test",
+        "-DDEFAULT_PROFILE=test"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Spotless Apply",
+      "type": "shell",
+      "command": "mvn",
+      "args": [
+        "spotless:apply",
+        "-DspotlessFiles=${file}"
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "JAVA_HOME": "/home/josej/.sdkman/candidates/java/current"
         }
-    ]
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Spotless Check",
+      "type": "shell",
+      "command": "mvn",
+      "args": [
+        "spotless:check"
+      ],
+      "group": "test",
+      "options": {
+        "env": {
+          "JAVA_HOME": "/home/josej/.sdkman/candidates/java/current"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
 }
