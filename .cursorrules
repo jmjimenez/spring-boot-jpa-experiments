@@ -12,6 +12,53 @@
 # Use hexagonal architecture guidelines, splitting domain, infrastructure and application layers
 # If any questions are not correct, don't hesitate to correct or ask for additional information
 
+# GOOGLE JAVA STYLE GUIDE COMPLIANCE FOR NEW CODE:
+# ALWAYS follow Google Java Style Guide for all new code written
+# Use 2-space indentation (not 4-space)
+# Use 100 character line length limit
+# Use camelCase for variable and method names
+# Use PascalCase for class names
+# Use UPPER_SNAKE_CASE for constants
+# Use descriptive names that are clear and meaningful
+# Use braces for all control structures (if, else, for, while, do-while)
+# Place opening braces on the same line as the declaration
+# Place closing braces on their own line
+# Use spaces around operators and after commas
+# Use blank lines to separate logical sections
+# Use single blank line between methods
+# Use two blank lines between classes
+# Import statements should be ordered: static imports first, then regular imports
+# Use wildcard imports sparingly and only for static imports
+# Use @Override annotation when overriding methods
+# Use @SuppressWarnings only when necessary and document why
+# Use final keyword for variables that won't be reassigned
+# Use private fields and methods when possible
+# Use public methods only when necessary for the API
+# Use package-private (default) access when appropriate
+# Use meaningful parameter names in method signatures
+# If a method declaration is too long, split parameters one per line
+# Use var for local variables when the type is obvious from the context
+# Use try-with-resources for AutoCloseable resources
+# Use Optional for methods that might return null
+# Use Stream API when it improves readability
+# Use method chaining when it improves readability
+# Use builder pattern for complex object construction
+# Use immutable objects when possible
+# Use defensive copying for mutable parameters
+# Use null checks at the beginning of methods
+# Use early returns to reduce nesting
+# Use meaningful exception messages
+# Use specific exception types rather than generic Exception
+# Use logging instead of System.out.println
+# Use proper JavaDoc for public APIs
+# Use @param, @return, and @throws tags in JavaDoc
+# Use consistent formatting for arrays and collections
+# Use enum for constants that represent a fixed set of values
+# Use record for simple data carriers (Java 14+)
+# Use sealed classes/interfaces when appropriate (Java 17+)
+# Use pattern matching in switch expressions when appropriate (Java 17+)
+# Use text blocks for multi-line strings (Java 15+)
+
 # CRITICAL DEVELOPMENT PRACTICES:
 # ALWAYS verify dependency compatibility before making claims - check official documentation, GitHub issues, and release notes
 # NEVER assume compatibility issues without proper research - use official sources and recent information

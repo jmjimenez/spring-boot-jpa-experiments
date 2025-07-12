@@ -1,15 +1,13 @@
 package es.jmjg.experiments.application.post.exception;
 
-/**
- * Exception thrown when an invalid request is made in the application layer.
- */
+/** Exception thrown when an invalid request is made in the application layer. */
 public class InvalidRequest extends RuntimeException {
 
-    public InvalidRequest(String message) {
-        super(message);
-    }
+  public InvalidRequest(String message) {
+    super(message);
+  }
 
-    public InvalidRequest(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public InvalidRequest(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

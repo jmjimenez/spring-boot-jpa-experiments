@@ -1,7 +1,9 @@
 package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
+
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
 import es.jmjg.experiments.application.post.DeletePostById;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
@@ -21,71 +24,67 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class DeletePostByIdIntegrationTest extends TestContainersConfig {
 
-    @Autowired
-    private DeletePostById deletePostById;
+  @Autowired private DeletePostById deletePostById;
 
-    @Autowired
-    private PostRepository postRepository;
+  @Autowired private PostRepository postRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private Environment environment;
+  @Autowired private Environment environment;
 
-    private User testUser;
-    private Post testPost1;
+  private User testUser;
+  private Post testPost1;
 
-    @BeforeEach
-    void setUp() {
-        // Clear the database before each test
-        postRepository.deleteAll();
-        userRepository.deleteAll();
+  @BeforeEach
+  void setUp() {
+    // Clear the database before each test
+    postRepository.deleteAll();
+    userRepository.deleteAll();
 
-        // Create a test user
-        testUser = new User();
-        testUser.setName("Test User");
-        testUser.setEmail("test@example.com");
-        testUser.setUsername("testuser");
-        testUser = userRepository.save(testUser);
+    // Create a test user
+    testUser = new User();
+    testUser.setName("Test User");
+    testUser.setEmail("test@example.com");
+    testUser.setUsername("testuser");
+    testUser = userRepository.save(testUser);
 
-        // Create test posts associated with the user
-        testPost1 = new Post();
-        testPost1.setUuid(UUID.randomUUID());
-        testPost1.setUser(testUser);
-        testPost1.setTitle("Test Post 1");
-        testPost1.setBody("Test Body 1");
-    }
+    // Create test posts associated with the user
+    testPost1 = new Post();
+    testPost1.setUuid(UUID.randomUUID());
+    testPost1.setUser(testUser);
+    testPost1.setTitle("Test Post 1");
+    testPost1.setBody("Test Body 1");
+  }
 
-    @Test
-    void shouldUseTestProfile() {
-        // Verify that the test profile is active
-        String[] activeProfiles = environment.getActiveProfiles();
-        assertThat(activeProfiles).contains("test");
-    }
+  @Test
+  void shouldUseTestProfile() {
+    // Verify that the test profile is active
+    String[] activeProfiles = environment.getActiveProfiles();
+    assertThat(activeProfiles).contains("test");
+  }
 
-    @Test
-    void connectionEstablished() {
-        assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-        assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
-    }
+  @Test
+  void connectionEstablished() {
+    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
+    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
+  }
 
-    @Test
-    void deleteById_ShouldDeletePost() {
-        // Given
-        Post savedPost = postRepository.save(testPost1);
-        assertThat(postRepository.findById(savedPost.getId())).isPresent();
+  @Test
+  void deleteById_ShouldDeletePost() {
+    // Given
+    Post savedPost = postRepository.save(testPost1);
+    assertThat(postRepository.findById(savedPost.getId())).isPresent();
 
-        // When
-        deletePostById.deleteById(savedPost.getId());
+    // When
+    deletePostById.deleteById(savedPost.getId());
 
-        // Then
-        assertThat(postRepository.findById(savedPost.getId())).isEmpty();
-    }
+    // Then
+    assertThat(postRepository.findById(savedPost.getId())).isEmpty();
+  }
 
-    @Test
-    void deleteById_WhenPostDoesNotExist_ShouldNotThrowException() {
-        // When & Then - should not throw any exception
-        deletePostById.deleteById(999);
-    }
+  @Test
+  void deleteById_WhenPostDoesNotExist_ShouldNotThrowException() {
+    // When & Then - should not throw any exception
+    deletePostById.deleteById(999);
+  }
 }

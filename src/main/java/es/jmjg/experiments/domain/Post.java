@@ -1,7 +1,9 @@
 package es.jmjg.experiments.domain;
 
 import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,30 +25,29 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Post {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @NotNull
-    @Column(name = "uuid", unique = true, nullable = false)
-    private UUID uuid;
+  @NotNull
+  @Column(name = "uuid", unique = true, nullable = false)
+  private UUID uuid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  @JsonIgnore
+  private User user;
 
-    @NotEmpty
-    String title;
-    @NotEmpty
-    String body;
+  @NotEmpty private String title;
 
-    // Constructor with UUID
-    public Post(Integer id, UUID uuid, User user, String title, String body) {
-        this.id = id;
-        this.uuid = uuid;
-        this.user = user;
-        this.title = title;
-        this.body = body;
-    }
+  @NotEmpty private String body;
+
+  // Constructor with UUID
+  public Post(Integer id, UUID uuid, User user, String title, String body) {
+    this.id = id;
+    this.uuid = uuid;
+    this.user = user;
+    this.title = title;
+    this.body = body;
+  }
 }

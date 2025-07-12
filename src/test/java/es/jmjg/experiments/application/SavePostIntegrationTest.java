@@ -1,8 +1,10 @@
 package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
@@ -24,176 +27,174 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class SavePostIntegrationTest extends TestContainersConfig {
 
-    @Autowired
-    private SavePost savePost;
+  @Autowired private SavePost savePost;
 
-    @Autowired
-    private PostRepository postRepository;
+  @Autowired private PostRepository postRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private Environment environment;
+  @Autowired private Environment environment;
 
-    private User testUser;
-    private Post testPost;
+  private User testUser;
+  private Post testPost;
 
-    @BeforeEach
-    void setUp() {
-        // Clear the database before each test
-        postRepository.deleteAll();
-        userRepository.deleteAll();
+  @BeforeEach
+  void setUp() {
+    // Clear the database before each test
+    postRepository.deleteAll();
+    userRepository.deleteAll();
 
-        // Create a test user
-        testUser = new User();
-        testUser.setName("Test User");
-        testUser.setEmail("test@example.com");
-        testUser.setUsername("testuser");
-        testUser = userRepository.save(testUser);
+    // Create a test user
+    testUser = new User();
+    testUser.setName("Test User");
+    testUser.setEmail("test@example.com");
+    testUser.setUsername("testuser");
+    testUser = userRepository.save(testUser);
 
-        // Create test post
-        testPost = new Post();
-        testPost.setUuid(UUID.randomUUID());
-        testPost.setUser(testUser);
-        testPost.setTitle("Test Post");
-        testPost.setBody("Test Body");
-    }
+    // Create test post
+    testPost = new Post();
+    testPost.setUuid(UUID.randomUUID());
+    testPost.setUser(testUser);
+    testPost.setTitle("Test Post");
+    testPost.setBody("Test Body");
+  }
 
-    @Test
-    void shouldUseTestProfile() {
-        // Verify that the test profile is active
-        String[] activeProfiles = environment.getActiveProfiles();
-        assertThat(activeProfiles).contains("test");
-    }
+  @Test
+  void shouldUseTestProfile() {
+    // Verify that the test profile is active
+    String[] activeProfiles = environment.getActiveProfiles();
+    assertThat(activeProfiles).contains("test");
+  }
 
-    @Test
-    void connectionEstablished() {
-        assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-        assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
-    }
+  @Test
+  void connectionEstablished() {
+    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
+    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
+  }
 
-    @Test
-    void save_ShouldSaveAndReturnPost() {
-        // Given
-        Post newPost = new Post();
-        newPost.setUuid(UUID.randomUUID());
-        newPost.setUser(testUser);
-        newPost.setTitle("New Post");
-        newPost.setBody("New Body");
+  @Test
+  void save_ShouldSaveAndReturnPost() {
+    // Given
+    Post newPost = new Post();
+    newPost.setUuid(UUID.randomUUID());
+    newPost.setUser(testUser);
+    newPost.setTitle("New Post");
+    newPost.setBody("New Body");
 
-        // When
-        Post result = savePost.save(newPost);
+    // When
+    Post result = savePost.save(newPost);
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("New Post");
-        assertThat(result.getBody()).isEqualTo("New Body");
-        assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isNotNull();
+    assertThat(result.getTitle()).isEqualTo("New Post");
+    assertThat(result.getBody()).isEqualTo("New Body");
+    assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
 
-        // Verify it was actually saved to the database
-        Optional<Post> savedPost = postRepository.findById(result.getId());
-        assertThat(savedPost).isPresent();
-        assertThat(savedPost.get().getTitle()).isEqualTo("New Post");
-    }
+    // Verify it was actually saved to the database
+    Optional<Post> savedPost = postRepository.findById(result.getId());
+    assertThat(savedPost).isPresent();
+    assertThat(savedPost.get().getTitle()).isEqualTo("New Post");
+  }
 
-    @Test
-    void save_WhenPostHasNoUser_ShouldThrowInvalidRequest() {
-        // Given
-        Post newPost = new Post();
-        newPost.setUuid(UUID.randomUUID());
-        newPost.setTitle("New Post");
-        newPost.setBody("New Body");
+  @Test
+  void save_WhenPostHasNoUser_ShouldThrowInvalidRequest() {
+    // Given
+    Post newPost = new Post();
+    newPost.setUuid(UUID.randomUUID());
+    newPost.setTitle("New Post");
+    newPost.setBody("New Body");
 
-        // When & Then
-        assertThatThrownBy(() -> savePost.save(newPost)).isInstanceOf(InvalidRequest.class)
-                .hasMessage("Post must have a user");
+    // When & Then
+    assertThatThrownBy(() -> savePost.save(newPost))
+        .isInstanceOf(InvalidRequest.class)
+        .hasMessage("Post must have a user");
 
-        // Verify no post was saved
-        assertThat(postRepository.count()).isZero();
-    }
+    // Verify no post was saved
+    assertThat(postRepository.count()).isZero();
+  }
 
-    @Test
-    void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
-        // Given
-        Post newPost = new Post();
-        newPost.setUuid(UUID.randomUUID());
-        newPost.setTitle("New Post");
-        newPost.setBody("New Body");
+  @Test
+  void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
+    // Given
+    Post newPost = new Post();
+    newPost.setUuid(UUID.randomUUID());
+    newPost.setTitle("New Post");
+    newPost.setBody("New Body");
 
-        // When
-        Post result = savePost.save(newPost, testUser.getId());
+    // When
+    Post result = savePost.save(newPost, testUser.getId());
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("New Post");
-        assertThat(result.getBody()).isEqualTo("New Body");
-        assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isNotNull();
+    assertThat(result.getTitle()).isEqualTo("New Post");
+    assertThat(result.getBody()).isEqualTo("New Body");
+    assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
 
-        // Verify it was actually saved to the database
-        Optional<Post> savedPost = postRepository.findById(result.getId());
-        assertThat(savedPost).isPresent();
-        assertThat(savedPost.get().getUser().getId()).isEqualTo(testUser.getId());
-    }
+    // Verify it was actually saved to the database
+    Optional<Post> savedPost = postRepository.findById(result.getId());
+    assertThat(savedPost).isPresent();
+    assertThat(savedPost.get().getUser().getId()).isEqualTo(testUser.getId());
+  }
 
-    @Test
-    void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
-        // Given
-        Post newPost = new Post();
-        newPost.setUuid(UUID.randomUUID());
-        newPost.setTitle("New Post");
-        newPost.setBody("New Body");
-        Integer nonExistentUserId = 999;
+  @Test
+  void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
+    // Given
+    Post newPost = new Post();
+    newPost.setUuid(UUID.randomUUID());
+    newPost.setTitle("New Post");
+    newPost.setBody("New Body");
+    Integer nonExistentUserId = 999;
 
-        // When & Then
-        assertThatThrownBy(() -> savePost.save(newPost, nonExistentUserId))
-                .isInstanceOf(UserNotFound.class)
-                .hasMessage("User not found with id: " + nonExistentUserId);
+    // When & Then
+    assertThatThrownBy(() -> savePost.save(newPost, nonExistentUserId))
+        .isInstanceOf(UserNotFound.class)
+        .hasMessage("User not found with id: " + nonExistentUserId);
 
-        // Verify no post was saved
-        assertThat(postRepository.count()).isZero();
-    }
+    // Verify no post was saved
+    assertThat(postRepository.count()).isZero();
+  }
 
-    @Test
-    void save_WhenUserIdIsNull_ShouldThrowInvalidRequest() {
-        // Given
-        Post newPost = new Post();
-        newPost.setUuid(UUID.randomUUID());
-        newPost.setTitle("New Post");
-        newPost.setBody("New Body");
+  @Test
+  void save_WhenUserIdIsNull_ShouldThrowInvalidRequest() {
+    // Given
+    Post newPost = new Post();
+    newPost.setUuid(UUID.randomUUID());
+    newPost.setTitle("New Post");
+    newPost.setBody("New Body");
 
-        // When & Then
-        assertThatThrownBy(() -> savePost.save(newPost, null)).isInstanceOf(InvalidRequest.class)
-                .hasMessage("Post must have a user");
+    // When & Then
+    assertThatThrownBy(() -> savePost.save(newPost, null))
+        .isInstanceOf(InvalidRequest.class)
+        .hasMessage("Post must have a user");
 
-        // Verify no post was saved
-        assertThat(postRepository.count()).isZero();
-    }
+    // Verify no post was saved
+    assertThat(postRepository.count()).isZero();
+  }
 
-    @Test
-    void save_WhenPostAlreadyHasUserAndUserIdProvided_ShouldKeepExistingUser() {
-        // Given
-        Post newPost = new Post();
-        newPost.setUuid(UUID.randomUUID());
-        newPost.setUser(testUser);
-        newPost.setTitle("New Post");
-        newPost.setBody("New Body");
+  @Test
+  void save_WhenPostAlreadyHasUserAndUserIdProvided_ShouldKeepExistingUser() {
+    // Given
+    Post newPost = new Post();
+    newPost.setUuid(UUID.randomUUID());
+    newPost.setUser(testUser);
+    newPost.setTitle("New Post");
+    newPost.setBody("New Body");
 
-        // When
-        Post result = savePost.save(newPost, testUser.getId());
+    // When
+    Post result = savePost.save(newPost, testUser.getId());
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("New Post");
-        assertThat(result.getBody()).isEqualTo("New Body");
-        assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isNotNull();
+    assertThat(result.getTitle()).isEqualTo("New Post");
+    assertThat(result.getBody()).isEqualTo("New Body");
+    assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
 
-        // Verify it was actually saved to the database
-        Optional<Post> savedPost = postRepository.findById(result.getId());
-        assertThat(savedPost).isPresent();
-        assertThat(savedPost.get().getUser().getId()).isEqualTo(testUser.getId());
-    }
+    // Verify it was actually saved to the database
+    Optional<Post> savedPost = postRepository.findById(result.getId());
+    assertThat(savedPost).isPresent();
+    assertThat(savedPost.get().getUser().getId()).isEqualTo(testUser.getId());
+  }
 }

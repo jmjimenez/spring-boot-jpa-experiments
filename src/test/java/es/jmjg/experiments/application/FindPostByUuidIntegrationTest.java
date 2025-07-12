@@ -2,7 +2,7 @@ package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import es.jmjg.experiments.application.post.FindAllPosts;
+import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
@@ -22,10 +22,11 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
+// TODO: review parameters in DirtiesContext
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class FindAllPostsIntegrationTest extends TestContainersConfig {
+class FindPostByUuidIntegrationTest extends TestContainersConfig {
 
-  @Autowired private FindAllPosts findAllPosts;
+  @Autowired private FindPostByUuid findPostByUuid;
 
   @Autowired private PostRepository postRepository;
 
@@ -34,12 +35,13 @@ class FindAllPostsIntegrationTest extends TestContainersConfig {
   @Autowired private Environment environment;
 
   private User testUser;
-  private Post testPost1;
-  private Post testPost2;
+  private Post testPost;
+  private UUID testUuid;
 
   @BeforeEach
   void setUp() {
     // Clear the database before each test
+    // TODO: review if this is needed
     postRepository.deleteAll();
     userRepository.deleteAll();
 
@@ -50,18 +52,13 @@ class FindAllPostsIntegrationTest extends TestContainersConfig {
     testUser.setUsername("testuser");
     testUser = userRepository.save(testUser);
 
-    // Create test posts associated with the user
-    testPost1 = new Post();
-    testPost1.setUuid(UUID.randomUUID());
-    testPost1.setUser(testUser);
-    testPost1.setTitle("Test Post 1");
-    testPost1.setBody("Test Body 1");
-
-    testPost2 = new Post();
-    testPost2.setUuid(UUID.randomUUID());
-    testPost2.setUser(testUser);
-    testPost2.setTitle("Test Post 2");
-    testPost2.setBody("Test Body 2");
+    // Create test post associated with the user
+    testUuid = UUID.randomUUID();
+    testPost = new Post();
+    testPost.setUuid(testUuid);
+    testPost.setUser(testUser);
+    testPost.setTitle("Test Post");
+    testPost.setBody("Test Body");
   }
 
   @Test
@@ -78,27 +75,36 @@ class FindAllPostsIntegrationTest extends TestContainersConfig {
   }
 
   @Test
-  void findAll_ShouldReturnAllPosts() {
+  void findByUuid_WhenPostExists_ShouldReturnPost() {
     // Given
-    postRepository.save(testPost1);
-    postRepository.save(testPost2);
+    postRepository.save(testPost);
 
     // When
-    List<Post> result = findAllPosts.findAll();
+    Optional<Post> result = findPostByUuid.findByUuid(testUuid);
 
     // Then
-    assertThat(result).isNotNull();
-    assertThat(result).hasSize(2);
-    assertThat(result).extracting("title").containsExactlyInAnyOrder("Test Post 1", "Test Post 2");
+    assertThat(result).isPresent();
+    assertThat(result.get().getTitle()).isEqualTo("Test Post");
+    assertThat(result.get().getBody()).isEqualTo("Test Body");
+    assertThat(result.get().getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(result.get().getUuid()).isEqualTo(testUuid);
   }
 
   @Test
-  void findAll_WhenNoPosts_ShouldReturnEmptyList() {
+  void findByUuid_WhenPostDoesNotExist_ShouldReturnEmpty() {
     // When
-    List<Post> result = findAllPosts.findAll();
+    Optional<Post> result = findPostByUuid.findByUuid(UUID.randomUUID());
 
     // Then
-    assertThat(result).isNotNull();
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void findByUuid_WhenUuidIsNull_ShouldReturnEmpty() {
+    // When
+    Optional<Post> result = findPostByUuid.findByUuid(null);
+
+    // Then
     assertThat(result).isEmpty();
   }
 }

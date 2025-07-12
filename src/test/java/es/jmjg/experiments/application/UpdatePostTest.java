@@ -3,14 +3,17 @@ package es.jmjg.experiments.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
@@ -22,220 +25,231 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @ExtendWith(MockitoExtension.class)
 class UpdatePostTest {
 
-    @Mock
-    private PostRepository postRepository;
+  @Mock private PostRepository postRepository;
 
-    @Mock
-    private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-    @InjectMocks
-    private UpdatePost updatePost;
+  @InjectMocks private UpdatePost updatePost;
 
-    private User testUser;
-    private Post testPost;
-    private UUID testUuid;
+  private User testUser;
+  private Post testPost;
+  private UUID testUuid;
 
-    @BeforeEach
-    void setUp() {
-        testUser = new User(1, "Test User", "test@example.com", "testuser", null);
-        testUuid = UUID.randomUUID();
-        testPost = new Post(1, testUuid, testUser, "Test Post", "Test Body");
-    }
+  @BeforeEach
+  void setUp() {
+    testUser = new User(1, "Test User", "test@example.com", "testuser", null);
+    testUuid = UUID.randomUUID();
+    testPost = new Post(1, testUuid, testUser, "Test Post", "Test Body");
+  }
 
-    @Test
-    void update_WhenPostExists_ShouldUpdateAndReturnPost() {
-        // Given
-        Integer postId = 1;
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(null, updateUuid, testUser, "Updated Title", "Updated Body");
+  @Test
+  void update_WhenPostExists_ShouldUpdateAndReturnPost() {
+    // Given
+    Integer postId = 1;
+    UUID updateUuid = UUID.randomUUID();
+    Post updateData = new Post(null, updateUuid, testUser, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-            Post savedPost = invocation.getArgument(0);
-            return savedPost;
-        });
+    when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
-        // When
-        Post result = updatePost.update(postId, updateData);
+    // When
+    Post result = updatePost.update(postId, updateData);
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(1);
-        assertThat(result.getUser().getId()).isEqualTo(1);
-        assertThat(result.getTitle()).isEqualTo("Updated Title");
-        assertThat(result.getBody()).isEqualTo("Updated Body");
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(1);
+    assertThat(result.getUser().getId()).isEqualTo(1);
+    assertThat(result.getTitle()).isEqualTo("Updated Title");
+    assertThat(result.getBody()).isEqualTo("Updated Body");
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(postRepository, times(1)).save(any(Post.class));
-    }
+    verify(postRepository, times(1)).findById(postId);
+    verify(postRepository, times(1)).save(any(Post.class));
+  }
 
-    @Test
-    void update_WhenPostDoesNotExist_ShouldThrowPostNotFound() {
-        // Given
-        Integer postId = 999;
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(null, updateUuid, testUser, "Updated Title", "Updated Body");
-        when(postRepository.findById(postId)).thenReturn(Optional.empty());
+  @Test
+  void update_WhenPostDoesNotExist_ShouldThrowPostNotFound() {
+    // Given
+    Integer postId = 999;
+    UUID updateUuid = UUID.randomUUID();
+    Post updateData = new Post(null, updateUuid, testUser, "Updated Title", "Updated Body");
+    when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
-        // When & Then
-        assertThatThrownBy(() -> updatePost.update(postId, updateData))
-                .isInstanceOf(PostNotFound.class).hasMessage("Post not found with id: " + postId);
+    // When & Then
+    assertThatThrownBy(() -> updatePost.update(postId, updateData))
+        .isInstanceOf(PostNotFound.class)
+        .hasMessage("Post not found with id: " + postId);
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(postRepository, never()).save(any(Post.class));
-    }
+    verify(postRepository, times(1)).findById(postId);
+    verify(postRepository, never()).save(any(Post.class));
+  }
 
-    @Test
-    void update_ShouldPreserveOriginalIdAndUserId() {
-        // Given
-        Integer postId = 1;
-        User user = new User(5, "Test User", "test@example.com", "testuser", null);
-        UUID existingUuid = UUID.randomUUID();
-        UUID updateUuid = UUID.randomUUID();
-        Post existingPost = new Post(1, existingUuid, user, "Original Title", "Original Body");
-        Post updateData = new Post(999, updateUuid, user, "Updated Title", "Updated Body"); // Different
-                                                                                            // ID
+  @Test
+  void update_ShouldPreserveOriginalIdAndUserId() {
+    // Given
+    Integer postId = 1;
+    User user = new User(5, "Test User", "test@example.com", "testuser", null);
+    UUID existingUuid = UUID.randomUUID();
+    UUID updateUuid = UUID.randomUUID();
+    Post existingPost = new Post(1, existingUuid, user, "Original Title", "Original Body");
+    Post updateData = new Post(999, updateUuid, user, "Updated Title", "Updated Body"); // Different
+    // ID
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-            Post savedPost = invocation.getArgument(0);
-            return savedPost;
-        });
+    when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
-        // When
-        Post result = updatePost.update(postId, updateData);
+    // When
+    Post result = updatePost.update(postId, updateData);
 
-        // Then
-        assertThat(result.getId()).isEqualTo(1); // Should preserve original ID
-        assertThat(result.getUser().getId()).isEqualTo(5); // Should preserve original userId
-        assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
-        assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
+    // Then
+    assertThat(result.getId()).isEqualTo(1); // Should preserve original ID
+    assertThat(result.getUser().getId()).isEqualTo(5); // Should preserve original userId
+    assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
+    assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(postRepository, times(1)).save(any(Post.class));
-    }
+    verify(postRepository, times(1)).findById(postId);
+    verify(postRepository, times(1)).save(any(Post.class));
+  }
 
-    @Test
-    void update_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
-        // Given
-        Integer postId = 1;
-        Integer userId = 999;
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
+  @Test
+  void update_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
+    // Given
+    Integer postId = 1;
+    Integer userId = 999;
+    UUID updateUuid = UUID.randomUUID();
+    Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
+    when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        // When & Then
-        assertThatThrownBy(() -> updatePost.update(postId, updateData, userId))
-                .isInstanceOf(UserNotFound.class).hasMessage("User not found with id: " + userId);
+    // When & Then
+    assertThatThrownBy(() -> updatePost.update(postId, updateData, userId))
+        .isInstanceOf(UserNotFound.class)
+        .hasMessage("User not found with id: " + userId);
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(userRepository, times(1)).findById(userId);
-        verify(postRepository, never()).save(any(Post.class));
-    }
+    verify(postRepository, times(1)).findById(postId);
+    verify(userRepository, times(1)).findById(userId);
+    verify(postRepository, never()).save(any(Post.class));
+  }
 
-    @Test
-    void update_WhenUserIdProvidedAndUserExists_ShouldUpdateUserAndSave() {
-        // Given
-        Integer postId = 1;
-        Integer userId = 2;
-        User newUser = new User(2, "New User", "new@example.com", "newuser", null);
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
+  @Test
+  void update_WhenUserIdProvidedAndUserExists_ShouldUpdateUserAndSave() {
+    // Given
+    Integer postId = 1;
+    Integer userId = 2;
+    User newUser = new User(2, "New User", "new@example.com", "newuser", null);
+    UUID updateUuid = UUID.randomUUID();
+    Post updateData = new Post(null, updateUuid, null, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(newUser));
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-            Post savedPost = invocation.getArgument(0);
-            return savedPost;
-        });
+    when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
+    when(userRepository.findById(userId)).thenReturn(Optional.of(newUser));
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
-        // When
-        Post result = updatePost.update(postId, updateData, userId);
+    // When
+    Post result = updatePost.update(postId, updateData, userId);
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(1);
-        assertThat(result.getUser()).isEqualTo(newUser);
-        assertThat(result.getTitle()).isEqualTo("Updated Title");
-        assertThat(result.getBody()).isEqualTo("Updated Body");
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(1);
+    assertThat(result.getUser()).isEqualTo(newUser);
+    assertThat(result.getTitle()).isEqualTo("Updated Title");
+    assertThat(result.getBody()).isEqualTo("Updated Body");
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(userRepository, times(1)).findById(userId);
-        verify(postRepository, times(1)).save(any(Post.class));
-    }
+    verify(postRepository, times(1)).findById(postId);
+    verify(userRepository, times(1)).findById(userId);
+    verify(postRepository, times(1)).save(any(Post.class));
+  }
 
-    @Test
-    void update_WhenPostHasUser_ShouldUsePostUser() {
-        // Given
-        Integer postId = 1;
-        User postUser = new User(3, "Post User", "post@example.com", "postuser", null);
-        UUID updateUuid = UUID.randomUUID();
-        Post updateData = new Post(null, updateUuid, postUser, "Updated Title", "Updated Body");
+  @Test
+  void update_WhenPostHasUser_ShouldUsePostUser() {
+    // Given
+    Integer postId = 1;
+    User postUser = new User(3, "Post User", "post@example.com", "postuser", null);
+    UUID updateUuid = UUID.randomUUID();
+    Post updateData = new Post(null, updateUuid, postUser, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-            Post savedPost = invocation.getArgument(0);
-            return savedPost;
-        });
+    when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
-        // When
-        Post result = updatePost.update(postId, updateData);
+    // When
+    Post result = updatePost.update(postId, updateData);
 
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getUser()).isEqualTo(postUser);
-        assertThat(result.getTitle()).isEqualTo("Updated Title");
-        assertThat(result.getBody()).isEqualTo("Updated Body");
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getUser()).isEqualTo(postUser);
+    assertThat(result.getTitle()).isEqualTo("Updated Title");
+    assertThat(result.getBody()).isEqualTo("Updated Body");
 
-        verify(postRepository, times(1)).findById(postId);
-        verify(userRepository, never()).findById(any());
-        verify(postRepository, times(1)).save(any(Post.class));
-    }
+    verify(postRepository, times(1)).findById(postId);
+    verify(userRepository, never()).findById(any());
+    verify(postRepository, times(1)).save(any(Post.class));
+  }
 
-    @Test
-    void update_WhenUuidProvided_ShouldUpdateUuid() {
-        // Given
-        Integer postId = 1;
-        UUID newUuid = UUID.randomUUID();
-        Post updateData = new Post(null, newUuid, testUser, "Updated Title", "Updated Body");
+  @Test
+  void update_WhenUuidProvided_ShouldUpdateUuid() {
+    // Given
+    Integer postId = 1;
+    UUID newUuid = UUID.randomUUID();
+    Post updateData = new Post(null, newUuid, testUser, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-            Post savedPost = invocation.getArgument(0);
-            return savedPost;
-        });
+    when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
-        // When
-        Post result = updatePost.update(postId, updateData);
+    // When
+    Post result = updatePost.update(postId, updateData);
 
-        // Then
-        assertThat(result.getUuid()).isEqualTo(newUuid);
-        verify(postRepository, times(1)).findById(postId);
-        verify(postRepository, times(1)).save(any(Post.class));
-    }
+    // Then
+    assertThat(result.getUuid()).isEqualTo(newUuid);
+    verify(postRepository, times(1)).findById(postId);
+    verify(postRepository, times(1)).save(any(Post.class));
+  }
 
-    @Test
-    void update_WhenUuidNotProvided_ShouldPreserveOriginalUuid() {
-        // Given
-        Integer postId = 1;
-        UUID originalUuid = UUID.randomUUID();
-        Post existingPost = new Post(1, originalUuid, testUser, "Original Title", "Original Body");
-        Post updateData = new Post(null, null, testUser, "Updated Title", "Updated Body");
+  @Test
+  void update_WhenUuidNotProvided_ShouldPreserveOriginalUuid() {
+    // Given
+    Integer postId = 1;
+    UUID originalUuid = UUID.randomUUID();
+    Post existingPost = new Post(1, originalUuid, testUser, "Original Title", "Original Body");
+    Post updateData = new Post(null, null, testUser, "Updated Title", "Updated Body");
 
-        when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-            Post savedPost = invocation.getArgument(0);
-            return savedPost;
-        });
+    when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
-        // When
-        Post result = updatePost.update(postId, updateData);
+    // When
+    Post result = updatePost.update(postId, updateData);
 
-        // Then
-        assertThat(result.getUuid()).isEqualTo(originalUuid);
-        verify(postRepository, times(1)).findById(postId);
-        verify(postRepository, times(1)).save(any(Post.class));
-    }
+    // Then
+    assertThat(result.getUuid()).isEqualTo(originalUuid);
+    verify(postRepository, times(1)).findById(postId);
+    verify(postRepository, times(1)).save(any(Post.class));
+  }
 }

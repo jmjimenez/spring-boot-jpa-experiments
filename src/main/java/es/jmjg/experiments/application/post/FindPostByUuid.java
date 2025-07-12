@@ -1,6 +1,7 @@
 package es.jmjg.experiments.application.post;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,16 +10,19 @@ import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 
 @Service
-public class FindAllPosts {
+public class FindPostByUuid {
 
   private final PostRepository postRepository;
 
-  public FindAllPosts(PostRepository postRepository) {
+  public FindPostByUuid(PostRepository postRepository) {
     this.postRepository = postRepository;
   }
 
   @Transactional(readOnly = true)
-  public List<Post> findAll() {
-    return postRepository.findAll();
+  public Optional<Post> findByUuid(UUID uuid) {
+    if (uuid == null) {
+      return Optional.empty();
+    }
+    return postRepository.findByUuid(uuid);
   }
 }

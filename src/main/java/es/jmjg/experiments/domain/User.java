@@ -1,7 +1,7 @@
 package es.jmjg.experiments.domain;
 
-
 import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,18 +23,19 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @NotEmpty
-    String name;
+  @NotEmpty private String name;
 
-    @NotEmpty
-    String email;
+  @NotEmpty private String email;
 
-    String username;
+  private String username;
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-    private List<Post> posts;
+  @OneToMany(
+      mappedBy = "user",
+      cascade = {CascadeType.ALL},
+      fetch = FetchType.LAZY)
+  private List<Post> posts;
 }

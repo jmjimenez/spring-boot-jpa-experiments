@@ -1,6 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.dto;
 
 import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponseDto {
-    private Integer id;
-    private UUID uuid;
-    private Integer userId;
-    private String title;
-    private String body;
+  private Integer id;
+  private UUID uuid;
+  private Integer userId;
+  private String title;
+  private String body;
 }
