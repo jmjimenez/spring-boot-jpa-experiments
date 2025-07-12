@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS Post (
     id SERIAL PRIMARY KEY,
     uuid UUID NOT NULL UNIQUE,
     user_id INT NOT NULL,
-    title varchar(250) NOT NULL,
+    title varchar(250) NOT NULL UNIQUE,
     body text NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users (id)
 );

@@ -1,8 +1,10 @@
 package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
@@ -18,23 +21,20 @@ import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.shared.PostFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class SavePostIntegrationTest extends TestContainersConfig {
 
-  @Autowired
-  private SavePost savePost;
+  @Autowired private SavePost savePost;
 
-  @Autowired
-  private PostRepository postRepository;
+  @Autowired private PostRepository postRepository;
 
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-  @Autowired
-  private Environment environment;
+  @Autowired private Environment environment;
 
   private User testUser;
   private Post testPost;
@@ -54,11 +54,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
     testUser = userRepository.save(testUser);
 
     // Create test post
-    testPost = new Post();
-    testPost.setUuid(UUID.randomUUID());
-    testPost.setUser(testUser);
-    testPost.setTitle("Test Post");
-    testPost.setBody("Test Body");
+    testPost = PostFactory.createBasicPost(testUser);
   }
 
   @Test
@@ -77,11 +73,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
   @Test
   void save_ShouldSaveAndReturnPost() {
     // Given
-    Post newPost = new Post();
-    newPost.setUuid(UUID.randomUUID());
-    newPost.setUser(testUser);
-    newPost.setTitle("New Post");
-    newPost.setBody("New Body");
+    Post newPost = PostFactory.createPost(testUser, "New Post", "New Body");
 
     // When
     Post result = savePost.save(newPost);
@@ -102,13 +94,11 @@ class SavePostIntegrationTest extends TestContainersConfig {
   @Test
   void save_WhenPostHasNoUser_ShouldThrowInvalidRequest() {
     // Given
-    Post newPost = new Post();
-    newPost.setUuid(UUID.randomUUID());
-    newPost.setTitle("New Post");
-    newPost.setBody("New Body");
+    Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
 
     // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost)).isInstanceOf(InvalidRequest.class)
+    assertThatThrownBy(() -> savePost.save(newPost))
+        .isInstanceOf(InvalidRequest.class)
         .hasMessage("Post must have a user");
 
     // Verify no post was saved
@@ -118,10 +108,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
   @Test
   void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
     // Given
-    Post newPost = new Post();
-    newPost.setUuid(UUID.randomUUID());
-    newPost.setTitle("New Post");
-    newPost.setBody("New Body");
+    Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
 
     // When
     Post result = savePost.save(newPost, testUser.getId());
@@ -142,10 +129,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
   @Test
   void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
     // Given
-    Post newPost = new Post();
-    newPost.setUuid(UUID.randomUUID());
-    newPost.setTitle("New Post");
-    newPost.setBody("New Body");
+    Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
     Integer nonExistentUserId = 999;
 
     // When & Then
@@ -160,13 +144,11 @@ class SavePostIntegrationTest extends TestContainersConfig {
   @Test
   void save_WhenUserIdIsNull_ShouldThrowInvalidRequest() {
     // Given
-    Post newPost = new Post();
-    newPost.setUuid(UUID.randomUUID());
-    newPost.setTitle("New Post");
-    newPost.setBody("New Body");
+    Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
 
     // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost, null)).isInstanceOf(InvalidRequest.class)
+    assertThatThrownBy(() -> savePost.save(newPost, null))
+        .isInstanceOf(InvalidRequest.class)
         .hasMessage("Post must have a user");
 
     // Verify no post was saved
@@ -176,11 +158,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
   @Test
   void save_WhenPostAlreadyHasUserAndUserIdProvided_ShouldKeepExistingUser() {
     // Given
-    Post newPost = new Post();
-    newPost.setUuid(UUID.randomUUID());
-    newPost.setUser(testUser);
-    newPost.setTitle("New Post");
-    newPost.setBody("New Body");
+    Post newPost = PostFactory.createPost(testUser, "New Post", "New Body");
 
     // When
     Post result = savePost.save(newPost, testUser.getId());

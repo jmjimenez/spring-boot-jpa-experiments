@@ -3,14 +3,17 @@ package es.jmjg.experiments.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
@@ -22,14 +25,11 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @ExtendWith(MockitoExtension.class)
 class SavePostTest {
 
-  @Mock
-  private PostRepository postRepository;
+  @Mock private PostRepository postRepository;
 
-  @Mock
-  private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-  @InjectMocks
-  private SavePost savePost;
+  @InjectMocks private SavePost savePost;
 
   private User testUser;
 
@@ -84,7 +84,8 @@ class SavePostTest {
     Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
 
     // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost)).isInstanceOf(InvalidRequest.class)
+    assertThatThrownBy(() -> savePost.save(newPost))
+        .isInstanceOf(InvalidRequest.class)
         .hasMessage("Post must have a user");
 
     verify(userRepository, never()).findById(any());
@@ -126,7 +127,8 @@ class SavePostTest {
     when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
     // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost, userId)).isInstanceOf(UserNotFound.class)
+    assertThatThrownBy(() -> savePost.save(newPost, userId))
+        .isInstanceOf(UserNotFound.class)
         .hasMessage("User not found with id: " + userId);
 
     verify(userRepository, times(1)).findById(userId);

@@ -1,8 +1,10 @@
 package es.jmjg.experiments.application;
 
 import static org.assertj.core.api.Assertions.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.shared.PostFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -23,21 +27,16 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FindPostByUuidIntegrationTest extends TestContainersConfig {
 
-  @Autowired
-  private FindPostByUuid findPostByUuid;
+  @Autowired private FindPostByUuid findPostByUuid;
 
-  @Autowired
-  private PostRepository postRepository;
+  @Autowired private PostRepository postRepository;
 
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-  @Autowired
-  private Environment environment;
+  @Autowired private Environment environment;
 
   private User testUser;
   private Post testPost;
-  private UUID testUuid;
 
   @BeforeEach
   void setUp() {
@@ -54,13 +53,8 @@ class FindPostByUuidIntegrationTest extends TestContainersConfig {
     testUser.setUsername("testuser");
     testUser = userRepository.save(testUser);
 
-    // Create test post associated with the user
-    testUuid = UUID.randomUUID();
-    testPost = new Post();
-    testPost.setUuid(testUuid);
-    testPost.setUser(testUser);
-    testPost.setTitle("Test Post");
-    testPost.setBody("Test Body");
+    // Create test post
+    testPost = PostFactory.createBasicPost(testUser);
   }
 
   @Test
@@ -82,14 +76,14 @@ class FindPostByUuidIntegrationTest extends TestContainersConfig {
     postRepository.save(testPost);
 
     // When
-    Optional<Post> result = findPostByUuid.findByUuid(testUuid);
+    Optional<Post> result = findPostByUuid.findByUuid(testPost.getUuid());
 
     // Then
     assertThat(result).isPresent();
     assertThat(result.get().getTitle()).isEqualTo("Test Post");
     assertThat(result.get().getBody()).isEqualTo("Test Body");
     assertThat(result.get().getUser().getId()).isEqualTo(testUser.getId());
-    assertThat(result.get().getUuid()).isEqualTo(testUuid);
+    assertThat(result.get().getUuid()).isEqualTo(testPost.getUuid());
   }
 
   @Test

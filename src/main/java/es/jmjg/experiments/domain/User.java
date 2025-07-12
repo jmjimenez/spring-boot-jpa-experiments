@@ -2,6 +2,7 @@ package es.jmjg.experiments.domain;
 
 import java.util.List;
 import java.util.UUID;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,15 +32,16 @@ public class User {
   @Column(name = "uuid", unique = true, nullable = false)
   private UUID uuid;
 
-  @NotEmpty
-  private String name;
+  @NotEmpty private String name;
 
-  @NotEmpty
-  private String email;
+  @NotEmpty private String email;
 
   private String username;
 
-  @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+  @OneToMany(
+      mappedBy = "user",
+      cascade = {CascadeType.ALL},
+      fetch = FetchType.LAZY)
   private List<Post> posts;
 
   // Constructor with UUID

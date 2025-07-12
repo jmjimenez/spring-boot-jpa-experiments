@@ -38,7 +38,9 @@ public class Post {
   @JsonIgnore
   private User user;
 
-  @NotEmpty private String title;
+  @NotEmpty
+  @Column(name = "title", unique = true, nullable = false)
+  private String title;
 
   @NotEmpty private String body;
 

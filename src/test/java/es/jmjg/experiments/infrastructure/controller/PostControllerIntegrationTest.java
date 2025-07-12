@@ -1,7 +1,9 @@
 package es.jmjg.experiments.infrastructure.controller;
 
 import static org.assertj.core.api.Assertions.*;
+
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
@@ -27,17 +30,13 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class PostControllerIntegrationTest extends TestContainersConfig {
 
-  @Autowired
-  private TestRestTemplate restTemplate;
+  @Autowired private TestRestTemplate restTemplate;
 
-  @Autowired
-  private PostRepository postRepository;
+  @Autowired private PostRepository postRepository;
 
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-  @Autowired
-  private Environment environment;
+  @Autowired private Environment environment;
 
   @Test
   void shouldUseTestProfile() {
@@ -65,14 +64,14 @@ class PostControllerIntegrationTest extends TestContainersConfig {
 
   @Test
   void shouldReturnPostByUuid() {
-    ResponseEntity<PostResponseDto> response = restTemplate
-        .getForEntity("/api/posts/550e8400-e29b-41d4-a716-446655440007", PostResponseDto.class);
+    ResponseEntity<PostResponseDto> response =
+        restTemplate.getForEntity(
+            "/api/posts/550e8400-e29b-41d4-a716-446655440007", PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto post = response.getBody();
     assertThat(post).isNotNull();
-    assertThat(post.getTitle())
-        .isEqualTo("qui est esse");
+    assertThat(post.getTitle()).isEqualTo("qui est esse");
   }
 
   @Test
@@ -104,19 +103,23 @@ class PostControllerIntegrationTest extends TestContainersConfig {
     PostRequestDto postDto =
         new PostRequestDto(null, java.util.UUID.randomUUID(), userId, "101 Title", "101 Body");
 
-    ResponseEntity<PostResponseDto> response = restTemplate.exchange("/api/posts", HttpMethod.POST,
-        new HttpEntity<>(postDto), PostResponseDto.class);
+    ResponseEntity<PostResponseDto> response =
+        restTemplate.exchange(
+            "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     PostResponseDto post = response.getBody();
     assertThat(post).isNotNull();
 
-    assertThat(post).isNotNull().satisfies(body -> {
-      assertThat(body.getId()).isNotNull();
-      assertThat(body.getUserId()).isEqualTo(userId);
-      assertThat(body.getTitle()).isEqualTo("101 Title");
-      assertThat(body.getBody()).isEqualTo("101 Body");
-    });
+    assertThat(post)
+        .isNotNull()
+        .satisfies(
+            body -> {
+              assertThat(body.getId()).isNotNull();
+              assertThat(body.getUserId()).isEqualTo(userId);
+              assertThat(body.getTitle()).isEqualTo("101 Title");
+              assertThat(body.getBody()).isEqualTo("101 Body");
+            });
 
     // Clean up manually - only delete the specific post that was created
     if (post != null) {
@@ -133,8 +136,9 @@ class PostControllerIntegrationTest extends TestContainersConfig {
     user = userRepository.save(user);
     PostRequestDto postDto =
         new PostRequestDto(101, java.util.UUID.randomUUID(), user.getId(), "", "");
-    ResponseEntity<PostResponseDto> response = restTemplate.exchange("/api/posts", HttpMethod.POST,
-        new HttpEntity<>(postDto), PostResponseDto.class);
+    ResponseEntity<PostResponseDto> response =
+        restTemplate.exchange(
+            "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
   }
@@ -147,11 +151,13 @@ class PostControllerIntegrationTest extends TestContainersConfig {
     user = userRepository.save(user);
     final Integer userId = user.getId();
 
-    PostRequestDto postDto = new PostRequestDto(null, java.util.UUID.randomUUID(), userId,
-        "Updated Title", "Updated Body");
+    PostRequestDto postDto =
+        new PostRequestDto(
+            null, java.util.UUID.randomUUID(), userId, "Updated Title", "Updated Body");
 
-    ResponseEntity<PostResponseDto> response = restTemplate.exchange("/api/posts/1", HttpMethod.PUT,
-        new HttpEntity<>(postDto), PostResponseDto.class);
+    ResponseEntity<PostResponseDto> response =
+        restTemplate.exchange(
+            "/api/posts/1", HttpMethod.PUT, new HttpEntity<>(postDto), PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto post = response.getBody();

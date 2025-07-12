@@ -3,14 +3,17 @@ package es.jmjg.experiments.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
@@ -22,14 +25,11 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @ExtendWith(MockitoExtension.class)
 class UpdatePostTest {
 
-  @Mock
-  private PostRepository postRepository;
+  @Mock private PostRepository postRepository;
 
-  @Mock
-  private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-  @InjectMocks
-  private UpdatePost updatePost;
+  @InjectMocks private UpdatePost updatePost;
 
   private User testUser;
   private Post testPost;
@@ -49,10 +49,12 @@ class UpdatePostTest {
     Post updateData = new Post(null, UUID.randomUUID(), testUser, "Updated Title", "Updated Body");
 
     when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-    when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-      Post savedPost = invocation.getArgument(0);
-      return savedPost;
-    });
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
     // When
     Post result = updatePost.update(postId, updateData);
@@ -75,7 +77,8 @@ class UpdatePostTest {
     when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
     // When & Then
-    assertThatThrownBy(() -> updatePost.update(postId, updateData)).isInstanceOf(PostNotFound.class)
+    assertThatThrownBy(() -> updatePost.update(postId, updateData))
+        .isInstanceOf(PostNotFound.class)
         .hasMessage("Post not found with id: " + postId);
 
     verify(postRepository, times(1)).findById(postId);
@@ -94,10 +97,12 @@ class UpdatePostTest {
     // ID
 
     when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-    when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-      Post savedPost = invocation.getArgument(0);
-      return savedPost;
-    });
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
     // When
     Post result = updatePost.update(postId, updateData);
@@ -122,10 +127,12 @@ class UpdatePostTest {
 
     when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-    when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-      Post savedPost = invocation.getArgument(0);
-      return savedPost;
-    });
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
     // When
     Post result = updatePost.update(postId, updateData, userId);
@@ -153,7 +160,8 @@ class UpdatePostTest {
 
     // When & Then
     assertThatThrownBy(() -> updatePost.update(postId, updateData, userId))
-        .isInstanceOf(UserNotFound.class).hasMessage("User not found with id: " + userId);
+        .isInstanceOf(UserNotFound.class)
+        .hasMessage("User not found with id: " + userId);
 
     verify(postRepository, times(1)).findById(postId);
     verify(userRepository, times(1)).findById(userId);
@@ -170,10 +178,12 @@ class UpdatePostTest {
     Post updateData = new Post(null, updateUuid, postUser, "Updated Title", "Updated Body");
 
     when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-    when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-      Post savedPost = invocation.getArgument(0);
-      return savedPost;
-    });
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
     // When
     Post result = updatePost.update(postId, updateData);
@@ -197,10 +207,12 @@ class UpdatePostTest {
     Post updateData = new Post(null, newUuid, testUser, "Updated Title", "Updated Body");
 
     when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-    when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-      Post savedPost = invocation.getArgument(0);
-      return savedPost;
-    });
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
     // When
     Post result = updatePost.update(postId, updateData);
@@ -220,10 +232,12 @@ class UpdatePostTest {
     Post updateData = new Post(null, null, testUser, "Updated Title", "Updated Body");
 
     when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-    when(postRepository.save(any(Post.class))).thenAnswer(invocation -> {
-      Post savedPost = invocation.getArgument(0);
-      return savedPost;
-    });
+    when(postRepository.save(any(Post.class)))
+        .thenAnswer(
+            invocation -> {
+              Post savedPost = invocation.getArgument(0);
+              return savedPost;
+            });
 
     // When
     Post result = updatePost.update(postId, updateData);
