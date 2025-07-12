@@ -55,22 +55,23 @@
   "java.test.runner": "junit",
   "java.test.workingDirectory": "${workspaceFolder}",
   "java.test.consoleOptions": "openOnSessionStart",
-  // Disable built-in Java formatter to avoid conflicts with Spotless
-  "java.format.enabled": false,
-  "java.format.onType.enabled": false,
-  "java.format.comments.enabled": false,
+  // Enable standard Java formatting
+  "java.format.enabled": true,
+  "java.format.onType.enabled": true,
+  "java.format.comments.enabled": true,
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "editor.formatOnType": true,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
-  // Auto-run Spotless on save for Java files
+  // Java-specific formatting settings
   "[java]": {
     "editor.formatOnSave": true,
-    "editor.formatOnSaveMode": "file"
+    "editor.formatOnSaveMode": "file",
+    "editor.defaultFormatter": "redhat.java"
   },
-  // Configure auto-save to trigger Spotless
+  // Configure auto-save
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
   "files.exclude": {

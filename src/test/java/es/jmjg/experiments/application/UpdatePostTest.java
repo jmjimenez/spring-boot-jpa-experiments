@@ -33,7 +33,6 @@ class UpdatePostTest {
 
   private User testUser;
   private Post testPost;
-  
 
   @BeforeEach
   void setUp() {

@@ -159,9 +159,12 @@ class PostControllerIntegrationTest extends TestContainersConfig {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto post = response.getBody();
-    assertThat(post).isNotNull().satisfies(p -> {
-      assertThat(p.getTitle()).isEqualTo("Updated Title");
-      assertThat(p.getBody()).isEqualTo("Updated Body");
-    });
+    assertThat(post)
+        .isNotNull()
+        .satisfies(
+            p -> {
+              assertThat(p.getTitle()).isEqualTo("Updated Title");
+              assertThat(p.getBody()).isEqualTo("Updated Body");
+            });
   }
 }
