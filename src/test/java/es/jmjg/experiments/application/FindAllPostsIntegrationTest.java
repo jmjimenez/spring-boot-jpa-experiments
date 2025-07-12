@@ -3,7 +3,6 @@ package es.jmjg.experiments.application;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,19 +19,24 @@ import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
 import es.jmjg.experiments.shared.PostFactory;
+import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FindAllPostsIntegrationTest extends TestContainersConfig {
 
-  @Autowired private FindAllPosts findAllPosts;
+  @Autowired
+  private FindAllPosts findAllPosts;
 
-  @Autowired private PostRepository postRepository;
+  @Autowired
+  private PostRepository postRepository;
 
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-  @Autowired private Environment environment;
+  @Autowired
+  private Environment environment;
 
   private User testUser;
   private Post testPost1;
@@ -45,12 +49,7 @@ class FindAllPostsIntegrationTest extends TestContainersConfig {
     userRepository.deleteAll();
 
     // Create a test user
-    testUser = new User();
-    testUser.setUuid(UUID.randomUUID());
-    testUser.setName("Test User");
-    testUser.setEmail("test@example.com");
-    testUser.setUsername("testuser");
-    testUser = userRepository.save(testUser);
+    testUser = userRepository.save(UserFactory.createBasicUser());
 
     // Create test posts
     testPost1 = PostFactory.createBasicPost(testUser);
