@@ -30,13 +30,17 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class PostControllerIntegrationTest extends TestContainersConfig {
 
-  @Autowired private TestRestTemplate restTemplate;
+  @Autowired
+  private TestRestTemplate restTemplate;
 
-  @Autowired private PostRepository postRepository;
+  @Autowired
+  private PostRepository postRepository;
 
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-  @Autowired private Environment environment;
+  @Autowired
+  private Environment environment;
 
   @Test
   void shouldUseTestProfile() {
@@ -53,8 +57,7 @@ class PostControllerIntegrationTest extends TestContainersConfig {
 
   @Test
   void shouldReturnAllPosts() {
-    ResponseEntity<PostResponseDto[]> response =
-        restTemplate.getForEntity("/api/posts", PostResponseDto[].class);
+    ResponseEntity<PostResponseDto[]> response = restTemplate.getForEntity("/api/posts", PostResponseDto[].class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto[] posts = response.getBody();
@@ -63,9 +66,8 @@ class PostControllerIntegrationTest extends TestContainersConfig {
 
   @Test
   void shouldReturnPostByUuid() {
-    ResponseEntity<PostResponseDto> response =
-        restTemplate.getForEntity(
-            "/api/posts/550e8400-e29b-41d4-a716-446655440007", PostResponseDto.class);
+    ResponseEntity<PostResponseDto> response = restTemplate.getForEntity(
+        "/api/posts/550e8400-e29b-41d4-a716-446655440007", PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto post = response.getBody();
@@ -75,15 +77,15 @@ class PostControllerIntegrationTest extends TestContainersConfig {
   @Test
   void shouldReturnNotFoundForInvalidUuid() {
     String randomUuid = java.util.UUID.randomUUID().toString();
-    ResponseEntity<PostResponseDto> response =
-        restTemplate.getForEntity("/api/posts/" + randomUuid, PostResponseDto.class);
+    ResponseEntity<PostResponseDto> response = restTemplate.getForEntity("/api/posts/" + randomUuid,
+        PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
   void shouldSearchPosts() {
-    ResponseEntity<PostResponseDto[]> response =
-        restTemplate.getForEntity("/api/posts/search?q=Spring&limit=5", PostResponseDto[].class);
+    ResponseEntity<PostResponseDto[]> response = restTemplate.getForEntity("/api/posts/search?q=Spring&limit=5",
+        PostResponseDto[].class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto[] posts = response.getBody();
@@ -93,17 +95,14 @@ class PostControllerIntegrationTest extends TestContainersConfig {
   @Test
   @DirtiesContext
   void shouldCreateNewPostWhenPostIsValid() {
-    User user =
-        new User(null, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
+    User user = new User(null, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
     user = userRepository.save(user);
-    final Integer userId = user.getId();
+    final UUID userUuid = user.getUuid();
 
-    PostRequestDto postDto =
-        new PostRequestDto(null, java.util.UUID.randomUUID(), userId, "101 Title", "101 Body");
+    PostRequestDto postDto = new PostRequestDto(null, java.util.UUID.randomUUID(), userUuid, "101 Title", "101 Body");
 
-    ResponseEntity<PostResponseDto> response =
-        restTemplate.exchange(
-            "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
+    ResponseEntity<PostResponseDto> response = restTemplate.exchange(
+        "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     PostResponseDto post = response.getBody();
@@ -114,7 +113,7 @@ class PostControllerIntegrationTest extends TestContainersConfig {
         .satisfies(
             body -> {
               assertThat(body.getId()).isNotNull();
-              assertThat(body.getUserId()).isEqualTo(userId);
+              assertThat(body.getUserId()).isEqualTo(userUuid);
               assertThat(body.getTitle()).isEqualTo("101 Title");
               assertThat(body.getBody()).isEqualTo("101 Body");
             });
@@ -132,11 +131,9 @@ class PostControllerIntegrationTest extends TestContainersConfig {
   void shouldNotCreateNewPostWhenValidationFails() {
     User user = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
     user = userRepository.save(user);
-    PostRequestDto postDto =
-        new PostRequestDto(101, java.util.UUID.randomUUID(), user.getId(), "", "");
-    ResponseEntity<PostResponseDto> response =
-        restTemplate.exchange(
-            "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
+    PostRequestDto postDto = new PostRequestDto(101, java.util.UUID.randomUUID(), user.getUuid(), "", "");
+    ResponseEntity<PostResponseDto> response = restTemplate.exchange(
+        "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
   }
@@ -144,18 +141,15 @@ class PostControllerIntegrationTest extends TestContainersConfig {
   @Test
   @DirtiesContext
   void shouldUpdatePostWhenPostExists() {
-    User user =
-        new User(null, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
+    User user = new User(null, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
     user = userRepository.save(user);
-    final Integer userId = user.getId();
+    final UUID userUuid = user.getUuid();
 
-    PostRequestDto postDto =
-        new PostRequestDto(
-            null, java.util.UUID.randomUUID(), userId, "Updated Title", "Updated Body");
+    PostRequestDto postDto = new PostRequestDto(
+        null, java.util.UUID.randomUUID(), userUuid, "Updated Title", "Updated Body");
 
-    ResponseEntity<PostResponseDto> response =
-        restTemplate.exchange(
-            "/api/posts/1", HttpMethod.PUT, new HttpEntity<>(postDto), PostResponseDto.class);
+    ResponseEntity<PostResponseDto> response = restTemplate.exchange(
+        "/api/posts/1", HttpMethod.PUT, new HttpEntity<>(postDto), PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto post = response.getBody();

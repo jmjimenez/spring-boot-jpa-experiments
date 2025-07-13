@@ -77,20 +77,21 @@ class PostControllerTest {
             {
                 "id":1,
                 "uuid":"%s",
-                "userId":1,
+                "userId":"%s",
                 "title":"Hello, World!",
                 "body":"This is my first post."
             },
             {
                 "id":2,
                 "uuid":"%s",
-                "userId":1,
+                "userId":"%s",
                 "title":"Second Post",
                 "body":"This is my second post."
             }
         ]
         """
-        .formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
+        .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid(), posts.get(1).getUuid(),
+            posts.get(1).getUser().getUuid());
 
     when(findAllPosts.findAll()).thenReturn(posts);
 
@@ -110,20 +111,21 @@ class PostControllerTest {
             {
                 "id":1,
                 "uuid":"%s",
-                "userId":1,
+                "userId":"%s",
                 "title":"Hello, World!",
                 "body":"This is my first post."
             },
             {
                 "id":2,
                 "uuid":"%s",
-                "userId":1,
+                "userId":"%s",
                 "title":"Second Post",
                 "body":"This is my second post."
             }
         ]
         """
-        .formatted(posts.get(0).getUuid(), posts.get(1).getUuid());
+        .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid(), posts.get(1).getUuid(),
+            posts.get(1).getUser().getUuid());
 
     doReturn(posts).when(findAllPosts).findAll();
 
@@ -149,7 +151,7 @@ class PostControllerTest {
         {
             "id":%d,
             "uuid":"%s",
-            "userId":%d,
+            "userId":"%s",
             "title":"%s",
             "body":"%s"
         }
@@ -157,7 +159,7 @@ class PostControllerTest {
         .formatted(
             post.getId(),
             post.getUuid(),
-            post.getUser().getId(),
+            post.getUser().getUuid(),
             post.getTitle(),
             post.getBody());
 
@@ -182,25 +184,25 @@ class PostControllerTest {
     Post post = PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
     post.setId(3);
 
-    when(savePost.save(any(Post.class), eq(1))).thenReturn(post);
+    when(savePost.save(any(Post.class), eq(user.getUuid()))).thenReturn(post);
 
     // Request body should be a PostDto (without id, since it's a new post)
     String requestBody = """
         {
             "uuid":"%s",
-            "userId":%d,
+            "userId":"%s",
             "title":"%s",
             "body":"%s"
         }
         """
-        .formatted(post.getUuid(), user.getId(), post.getTitle(), post.getBody());
+        .formatted(post.getUuid(), user.getUuid(), post.getTitle(), post.getBody());
 
     // Expected response should include the generated id
     String expectedResponse = """
         {
             "id":%d,
             "uuid":"%s",
-            "userId":%d,
+            "userId":"%s",
             "title":"%s",
             "body":"%s"
         }
@@ -208,7 +210,7 @@ class PostControllerTest {
         .formatted(
             post.getId(),
             post.getUuid(),
-            post.getUser().getId(),
+            post.getUser().getUuid(),
             post.getTitle(),
             post.getBody());
 
@@ -226,12 +228,12 @@ class PostControllerTest {
         user, UUID.randomUUID(), "This is my brand new post", "UPDATED BODY");
     updated.setId(1);
 
-    when(updatePost.update(eq(1), any(Post.class), eq(1))).thenReturn(updated);
+    when(updatePost.update(eq(1), any(Post.class), eq(user.getUuid()))).thenReturn(updated);
     String requestBody = """
         {
             "id":%d,
             "uuid":"%s",
-            "userId":%d,
+            "userId":"%s",
             "title":"%s",
             "body":"%s"
         }
@@ -239,7 +241,7 @@ class PostControllerTest {
         .formatted(
             updated.getId(),
             updated.getUuid(),
-            updated.getUser().getId(),
+            updated.getUser().getUuid(),
             updated.getTitle(),
             updated.getBody());
 
@@ -265,13 +267,13 @@ class PostControllerTest {
     updated.setTitle("This is my brand new post");
     updated.setBody("UPDATED BODY");
 
-    when(updatePost.update(eq(999), any(Post.class), eq(1)))
+    when(updatePost.update(eq(999), any(Post.class), eq(user.getUuid())))
         .thenThrow(new PostNotFound("Post not found with id: 999"));
     String json = """
         {
             "id":%d,
             "uuid":"%s",
-            "userId":%d,
+            "userId":"%s",
             "title":"%s",
             "body":"%s"
         }
@@ -279,7 +281,7 @@ class PostControllerTest {
         .formatted(
             updated.getId(),
             updated.getUuid(),
-            updated.getUser().getId(),
+            updated.getUser().getUuid(),
             updated.getTitle(),
             updated.getBody());
 
@@ -322,20 +324,21 @@ class PostControllerTest {
             {
                 "id":1,
                 "uuid":"%s",
-                "userId":1,
+                "userId":"%s",
                 "title":"Spring Boot Tutorial",
                 "body":"Learn Spring Boot"
             },
             {
                 "id":2,
                 "uuid":"%s",
-                "userId":1,
+                "userId":"%s",
                 "title":"JPA Best Practices",
                 "body":"Learn JPA"
             }
         ]
         """
-        .formatted(searchResult1.getUuid(), searchResult2.getUuid());
+        .formatted(searchResult1.getUuid(), searchResult1.getUser().getUuid(), searchResult2.getUuid(),
+            searchResult2.getUser().getUuid());
 
     mockMvc
         .perform(get("/api/posts/search?q=Spring&limit=10"))

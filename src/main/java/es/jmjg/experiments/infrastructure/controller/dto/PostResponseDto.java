@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class PostResponseDto {
   private Integer id;
   private UUID uuid;
-  private Integer userId;
+  private UUID userId;
   private String title;
   private String body;
 }

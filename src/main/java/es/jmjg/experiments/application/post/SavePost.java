@@ -1,6 +1,7 @@
 package es.jmjg.experiments.application.post;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,19 +29,19 @@ public class SavePost {
   }
 
   @Transactional
-  public Post save(Post post, Integer userId) {
+  public Post save(Post post, UUID userUuid) {
     // Validate that a user is required for creating a post
-    if (userId == null && post.getUser() == null) {
+    if (userUuid == null && post.getUser() == null) {
       throw new InvalidRequest("Post must have a user");
     }
 
-    // If the post has a userId but no user relationship, set up the relationship
-    if (userId != null) {
-      Optional<User> user = userRepository.findById(userId);
+    // If the post has a userUuid but no user relationship, set up the relationship
+    if (userUuid != null) {
+      Optional<User> user = userRepository.findByUuid(userUuid);
       if (user.isPresent()) {
         post.setUser(user.get());
       } else {
-        throw new UserNotFound(userId);
+        throw new UserNotFound(userUuid);
       }
     }
     return postRepository.save(post);

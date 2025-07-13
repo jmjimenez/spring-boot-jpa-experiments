@@ -18,7 +18,7 @@ public class PostRequestDto {
   private UUID uuid;
 
   @NotNull(message = "User ID is required")
-  private Integer userId;
+  private UUID userId;
 
   @NotEmpty(message = "Title is required")
   private String title;

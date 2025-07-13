@@ -25,11 +25,14 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @ExtendWith(MockitoExtension.class)
 class UpdatePostTest {
 
-  @Mock private PostRepository postRepository;
+  @Mock
+  private PostRepository postRepository;
 
-  @Mock private UserRepository userRepository;
+  @Mock
+  private UserRepository userRepository;
 
-  @InjectMocks private UpdatePost updatePost;
+  @InjectMocks
+  private UpdatePost updatePost;
 
   private User testUser;
   private Post testPost;
@@ -119,12 +122,12 @@ class UpdatePostTest {
   void update_WhenUserIdProvidedAndUserExists_ShouldUpdateUser() {
     // Given
     Integer postId = 1;
-    Integer userId = 5;
-    User user = new User(5, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
+    UUID userUuid = UUID.randomUUID();
+    User user = new User(5, userUuid, "Test User", "test@example.com", "testuser", null);
     Post updateData = new Post(null, UUID.randomUUID(), testUser, "Updated Title", "Updated Body");
 
     when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(userRepository.findByUuid(userUuid)).thenReturn(Optional.of(user));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
             invocation -> {
@@ -133,7 +136,7 @@ class UpdatePostTest {
             });
 
     // When
-    Post result = updatePost.update(postId, updateData, userId);
+    Post result = updatePost.update(postId, updateData, userUuid);
 
     // Then
     assertThat(result).isNotNull();
@@ -142,7 +145,7 @@ class UpdatePostTest {
     assertThat(result.getBody()).isEqualTo("Updated Body");
 
     verify(postRepository, times(1)).findById(postId);
-    verify(userRepository, times(1)).findById(userId);
+    verify(userRepository, times(1)).findByUuid(userUuid);
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
@@ -150,19 +153,19 @@ class UpdatePostTest {
   void update_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
     // Given
     Integer postId = 1;
-    Integer userId = 999;
+    UUID nonExistentUserUuid = UUID.randomUUID();
     Post updateData = new Post(null, UUID.randomUUID(), testUser, "Updated Title", "Updated Body");
 
     when(postRepository.findById(postId)).thenReturn(Optional.of(testPost));
-    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    when(userRepository.findByUuid(nonExistentUserUuid)).thenReturn(Optional.empty());
 
     // When & Then
-    assertThatThrownBy(() -> updatePost.update(postId, updateData, userId))
+    assertThatThrownBy(() -> updatePost.update(postId, updateData, nonExistentUserUuid))
         .isInstanceOf(UserNotFound.class)
-        .hasMessage("User not found with id: " + userId);
+        .hasMessage("User not found with uuid: " + nonExistentUserUuid);
 
     verify(postRepository, times(1)).findById(postId);
-    verify(userRepository, times(1)).findById(userId);
+    verify(userRepository, times(1)).findByUuid(nonExistentUserUuid);
     verify(postRepository, never()).save(any());
   }
 
@@ -170,8 +173,7 @@ class UpdatePostTest {
   void update_WhenPostHasUser_ShouldUsePostUser() {
     // Given
     Integer postId = 1;
-    User postUser =
-        new User(3, UUID.randomUUID(), "Post User", "post@example.com", "postuser", null);
+    User postUser = new User(3, UUID.randomUUID(), "Post User", "post@example.com", "postuser", null);
     UUID updateUuid = UUID.randomUUID();
     Post updateData = new Post(null, updateUuid, postUser, "Updated Title", "Updated Body");
 

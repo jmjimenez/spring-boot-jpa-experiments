@@ -1,6 +1,7 @@
 package es.jmjg.experiments.application.post;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,7 @@ public class UpdatePost {
   }
 
   @Transactional
-  public Post update(Integer id, Post post, Integer userId) {
+  public Post update(Integer id, Post post, UUID userUuid) {
     Optional<Post> existing = postRepository.findById(id);
     if (existing.isEmpty()) {
       throw new PostNotFound(id);
@@ -43,12 +44,12 @@ public class UpdatePost {
       existingPost.setUuid(post.getUuid());
     }
 
-    if (userId != null) {
-      Optional<User> user = userRepository.findById(userId);
+    if (userUuid != null) {
+      Optional<User> user = userRepository.findByUuid(userUuid);
       if (user.isPresent()) {
         existingPost.setUser(user.get());
       } else {
-        throw new UserNotFound(userId);
+        throw new UserNotFound(userUuid);
       }
     } else if (post.getUser() != null) {
       existingPost.setUser(post.getUser());

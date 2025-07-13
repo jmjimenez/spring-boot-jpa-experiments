@@ -106,7 +106,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
     Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
 
     // When
-    Post result = savePost.save(newPost, testUser.getId());
+    Post result = savePost.save(newPost, testUser.getUuid());
 
     // Then
     assertThat(result).isNotNull();
@@ -125,12 +125,12 @@ class SavePostIntegrationTest extends TestContainersConfig {
   void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
     // Given
     Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
-    Integer nonExistentUserId = 999;
+    java.util.UUID nonExistentUserUuid = java.util.UUID.randomUUID();
 
     // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost, nonExistentUserId))
+    assertThatThrownBy(() -> savePost.save(newPost, nonExistentUserUuid))
         .isInstanceOf(UserNotFound.class)
-        .hasMessage("User not found with id: " + nonExistentUserId);
+        .hasMessage("User not found with uuid: " + nonExistentUserUuid);
 
     // Verify no post was saved
     assertThat(postRepository.count()).isZero();
@@ -156,7 +156,7 @@ class SavePostIntegrationTest extends TestContainersConfig {
     Post newPost = PostFactory.createPost(testUser, "New Post", "New Body");
 
     // When
-    Post result = savePost.save(newPost, testUser.getId());
+    Post result = savePost.save(newPost, testUser.getUuid());
 
     // Then
     assertThat(result).isNotNull();

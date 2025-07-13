@@ -17,7 +17,7 @@ public class PostMapper {
       return null;
     }
     return new PostResponseDto(
-        post.getId(), post.getUuid(), post.getUser().getId(), post.getTitle(), post.getBody());
+        post.getId(), post.getUuid(), post.getUser().getUuid(), post.getTitle(), post.getBody());
   }
 
   public List<PostResponseDto> toResponseDtoList(List<Post> posts) {

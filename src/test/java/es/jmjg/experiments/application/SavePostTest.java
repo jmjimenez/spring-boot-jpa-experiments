@@ -25,11 +25,14 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 @ExtendWith(MockitoExtension.class)
 class SavePostTest {
 
-  @Mock private PostRepository postRepository;
+  @Mock
+  private PostRepository postRepository;
 
-  @Mock private UserRepository userRepository;
+  @Mock
+  private UserRepository userRepository;
 
-  @InjectMocks private SavePost savePost;
+  @InjectMocks
+  private SavePost savePost;
 
   private User testUser;
 
@@ -95,16 +98,16 @@ class SavePostTest {
   @Test
   void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
     // Given
-    Integer userId = 1;
+    UUID userUuid = testUser.getUuid();
     UUID newUuid = UUID.randomUUID();
     Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
     Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
 
-    when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUuid(userUuid)).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(savedPost);
 
     // When
-    Post result = savePost.save(newPost, userId);
+    Post result = savePost.save(newPost, userUuid);
 
     // Then
     assertThat(result).isNotNull();
@@ -113,25 +116,25 @@ class SavePostTest {
     assertThat(result.getBody()).isEqualTo("New Body");
     assertThat(result.getUser()).isEqualTo(testUser);
 
-    verify(userRepository, times(1)).findById(userId);
+    verify(userRepository, times(1)).findByUuid(userUuid);
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
   @Test
   void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
     // Given
-    Integer userId = 999;
+    UUID nonExistentUserUuid = UUID.randomUUID();
     UUID newUuid = UUID.randomUUID();
     Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
 
-    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    when(userRepository.findByUuid(nonExistentUserUuid)).thenReturn(Optional.empty());
 
     // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost, userId))
+    assertThatThrownBy(() -> savePost.save(newPost, nonExistentUserUuid))
         .isInstanceOf(UserNotFound.class)
-        .hasMessage("User not found with id: " + userId);
+        .hasMessage("User not found with uuid: " + nonExistentUserUuid);
 
-    verify(userRepository, times(1)).findById(userId);
+    verify(userRepository, times(1)).findByUuid(nonExistentUserUuid);
     verify(postRepository, never()).save(any());
   }
 }
