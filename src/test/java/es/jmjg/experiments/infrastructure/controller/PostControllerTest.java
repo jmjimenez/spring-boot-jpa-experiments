@@ -27,6 +27,7 @@ import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
