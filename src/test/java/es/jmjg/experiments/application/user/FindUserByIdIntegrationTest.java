@@ -2,7 +2,6 @@ package es.jmjg.experiments.application.user;
 
 import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +17,10 @@ import es.jmjg.experiments.shared.UserFactory;
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class FindUserByUsernameIntegrationTest extends TestContainersConfig {
+class FindUserByIdIntegrationTest extends TestContainersConfig {
 
   @Autowired
-  private FindUserByUsername findUserByUsername;
+  private FindUserById findUserById;
 
   @Autowired
   private UserRepository userRepository;
@@ -30,14 +29,11 @@ class FindUserByUsernameIntegrationTest extends TestContainersConfig {
   private Environment environment;
 
   private User testUser;
-  private String testUsername;
 
   @BeforeEach
   void setUp() {
     userRepository.deleteAll();
-    testUsername = "testuser";
-    testUser =
-        UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", testUsername);
+    testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
   }
 
   @Test
@@ -53,54 +49,50 @@ class FindUserByUsernameIntegrationTest extends TestContainersConfig {
   }
 
   @Test
-  void findByUsername_WhenUserExists_ShouldReturnUser() {
+  void findById_WhenUserExists_ShouldReturnUser() {
     // Given
     User savedUser = userRepository.save(testUser);
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername(testUsername);
+    Optional<User> result = findUserById.findById(savedUser.getId());
 
     // Then
     assertThat(result).isPresent();
     assertThat(result.get().getName()).isEqualTo("Test User");
     assertThat(result.get().getEmail()).isEqualTo("test@example.com");
-    assertThat(result.get().getUsername()).isEqualTo(testUsername);
+    assertThat(result.get().getUsername()).isEqualTo("testuser");
     assertThat(result.get().getUuid()).isEqualTo(testUser.getUuid());
     assertThat(result.get().getId()).isEqualTo(savedUser.getId());
   }
 
   @Test
-  void findByUsername_WhenUserDoesNotExist_ShouldReturnEmpty() {
+  void findById_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUsername.findByUsername("nonexistentuser");
+    Optional<User> result = findUserById.findById(999);
 
     // Then
     assertThat(result).isEmpty();
   }
 
   @Test
-  void findByUsername_WhenUsernameIsNull_ShouldReturnEmpty() {
-    // When
-    Optional<User> result = findUserByUsername.findByUsername(null);
-
-    // Then
-    assertThat(result).isEmpty();
+  void findById_WhenIdIsNull_ShouldThrowException() {
+    // When & Then
+    assertThatThrownBy(() -> findUserById.findById(null))
+        .isInstanceOf(org.springframework.dao.InvalidDataAccessApiUsageException.class)
+        .hasMessageContaining("The given id must not be null");
   }
 
   @Test
-  void findByUsername_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
+  void findById_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
     // Given
-    String secondUsername = "seconduser";
-    User secondUser =
-        UserFactory.createUser(UUID.randomUUID(), "Second User", "second@example.com",
-            secondUsername);
+    User secondUser = UserFactory.createUser("Second User", "second@example.com", "seconduser");
 
     User savedFirstUser = userRepository.save(testUser);
     User savedSecondUser = userRepository.save(secondUser);
 
     // When
-    Optional<User> firstResult = findUserByUsername.findByUsername(testUsername);
-    Optional<User> secondResult = findUserByUsername.findByUsername(secondUsername);
+    Optional<User> firstResult = findUserById.findById(savedFirstUser.getId());
+    Optional<User> secondResult = findUserById.findById(savedSecondUser.getId());
 
     // Then
     assertThat(firstResult).isPresent();
@@ -113,7 +105,7 @@ class FindUserByUsernameIntegrationTest extends TestContainersConfig {
   }
 
   @Test
-  void findByUsername_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
+  void findById_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given
     User savedUser = userRepository.save(testUser);
     savedUser.setName("Updated Test User");
@@ -121,55 +113,71 @@ class FindUserByUsernameIntegrationTest extends TestContainersConfig {
     userRepository.save(savedUser);
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername(testUsername);
+    Optional<User> result = findUserById.findById(savedUser.getId());
 
     // Then
     assertThat(result).isPresent();
     assertThat(result.get().getName()).isEqualTo("Updated Test User");
     assertThat(result.get().getEmail()).isEqualTo("updated@example.com");
-    assertThat(result.get().getUsername()).isEqualTo(testUsername);
+    assertThat(result.get().getUsername()).isEqualTo("testuser");
     assertThat(result.get().getUuid()).isEqualTo(testUser.getUuid());
   }
 
   @Test
-  void findByUsername_WhenUsernameIsEmpty_ShouldReturnEmpty() {
+  void findById_WhenIdIsZero_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUsername.findByUsername("");
+    Optional<User> result = findUserById.findById(0);
 
     // Then
     assertThat(result).isEmpty();
   }
 
   @Test
-  void findByUsername_WhenUsernameIsBlank_ShouldReturnEmpty() {
+  void findById_WhenIdIsNegative_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUsername.findByUsername("   ");
+    Optional<User> result = findUserById.findById(-1);
 
     // Then
     assertThat(result).isEmpty();
   }
 
   @Test
-  void findByUsername_WhenUsernameCaseSensitive_ShouldReturnCorrectUser() {
+  void findById_WhenUserIsDeleted_ShouldReturnEmpty() {
     // Given
-    userRepository.save(testUser);
+    User savedUser = userRepository.save(testUser);
+    Integer userId = savedUser.getId();
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername("TESTUSER");
+    Optional<User> resultBeforeDelete = findUserById.findById(userId);
+    userRepository.deleteById(userId);
+    Optional<User> resultAfterDelete = findUserById.findById(userId);
 
     // Then
-    assertThat(result).isEmpty(); // Username search is case-sensitive
+    assertThat(resultBeforeDelete).isPresent();
+    assertThat(resultAfterDelete).isEmpty();
   }
 
   @Test
-  void findByUsername_WhenUsernameWithSpaces_ShouldReturnEmpty() {
+  void findById_WhenMultipleUsersWithSameName_ShouldReturnCorrectUser() {
     // Given
-    userRepository.save(testUser);
+    User secondUser = UserFactory.createUser("Test User", "test2@example.com", "testuser2");
+
+    User savedFirstUser = userRepository.save(testUser);
+    User savedSecondUser = userRepository.save(secondUser);
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername(" testuser ");
+    Optional<User> firstResult = findUserById.findById(savedFirstUser.getId());
+    Optional<User> secondResult = findUserById.findById(savedSecondUser.getId());
 
     // Then
-    assertThat(result).isEmpty();
+    assertThat(firstResult).isPresent();
+    assertThat(firstResult.get().getName()).isEqualTo("Test User");
+    assertThat(firstResult.get().getEmail()).isEqualTo("test@example.com");
+    assertThat(firstResult.get().getId()).isEqualTo(savedFirstUser.getId());
+
+    assertThat(secondResult).isPresent();
+    assertThat(secondResult.get().getName()).isEqualTo("Test User");
+    assertThat(secondResult.get().getEmail()).isEqualTo("test2@example.com");
+    assertThat(secondResult.get().getId()).isEqualTo(savedSecondUser.getId());
   }
 }
