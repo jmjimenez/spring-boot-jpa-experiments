@@ -1,6 +1,8 @@
-package es.jmjg.experiments.application;
+package es.jmjg.experiments.application.post;
 
 import static org.assertj.core.api.Assertions.*;
+
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +12,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import es.jmjg.experiments.application.post.DeletePostById;
+import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
@@ -22,10 +24,10 @@ import es.jmjg.experiments.shared.UserFactory;
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class DeletePostByIdIntegrationTest extends TestContainersConfig {
+class FindAllPostsIntegrationTest extends TestContainersConfig {
 
   @Autowired
-  private DeletePostById deletePostById;
+  private FindAllPosts findAllPosts;
 
   @Autowired
   private PostRepository postRepository;
@@ -38,6 +40,7 @@ class DeletePostByIdIntegrationTest extends TestContainersConfig {
 
   private User testUser;
   private Post testPost1;
+  private Post testPost2;
 
   @BeforeEach
   void setUp() {
@@ -48,8 +51,9 @@ class DeletePostByIdIntegrationTest extends TestContainersConfig {
     // Create a test user
     testUser = userRepository.save(UserFactory.createBasicUser());
 
-    // Create test posts associated with the user
+    // Create test posts
     testPost1 = PostFactory.createBasicPost(testUser);
+    testPost2 = PostFactory.createPost(testUser, "Another Post", "Another Body");
   }
 
   @Test
@@ -66,21 +70,29 @@ class DeletePostByIdIntegrationTest extends TestContainersConfig {
   }
 
   @Test
-  void deleteById_ShouldDeletePost() {
+  void findAll_ShouldReturnAllPosts() {
     // Given
-    Post savedPost = postRepository.save(testPost1);
-    assertThat(postRepository.findById(savedPost.getId())).isPresent();
+    postRepository.save(testPost1);
+    postRepository.save(testPost2);
 
     // When
-    deletePostById.deleteById(savedPost.getId());
+    List<Post> result = findAllPosts.findAll();
 
     // Then
-    assertThat(postRepository.findById(savedPost.getId())).isEmpty();
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(2);
+    assertThat(result)
+        .extracting("title")
+        .containsExactlyInAnyOrder(testPost1.getTitle(), testPost2.getTitle());
   }
 
   @Test
-  void deleteById_WhenPostDoesNotExist_ShouldNotThrowException() {
-    // When & Then - should not throw any exception
-    deletePostById.deleteById(999);
+  void findAll_WhenNoPosts_ShouldReturnEmptyList() {
+    // When
+    List<Post> result = findAllPosts.findAll();
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).isEmpty();
   }
 }

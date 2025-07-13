@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application;
+package es.jmjg.experiments.application.post;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;

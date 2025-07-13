@@ -1,9 +1,6 @@
-package es.jmjg.experiments.application;
+package es.jmjg.experiments.application.post;
 
 import static org.assertj.core.api.Assertions.*;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import es.jmjg.experiments.application.post.FindPostByUuid;
+import es.jmjg.experiments.application.post.DeletePostById;
 import es.jmjg.experiments.domain.Post;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
@@ -24,12 +21,11 @@ import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-// TODO: review parameters in DirtiesContext
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class FindPostByUuidIntegrationTest extends TestContainersConfig {
+class DeletePostByIdIntegrationTest extends TestContainersConfig {
 
   @Autowired
-  private FindPostByUuid findPostByUuid;
+  private DeletePostById deletePostById;
 
   @Autowired
   private PostRepository postRepository;
@@ -41,20 +37,19 @@ class FindPostByUuidIntegrationTest extends TestContainersConfig {
   private Environment environment;
 
   private User testUser;
-  private Post testPost;
+  private Post testPost1;
 
   @BeforeEach
   void setUp() {
     // Clear the database before each test
-    // TODO: review if this is needed
     postRepository.deleteAll();
     userRepository.deleteAll();
 
     // Create a test user
     testUser = userRepository.save(UserFactory.createBasicUser());
 
-    // Create test post
-    testPost = PostFactory.createBasicPost(testUser);
+    // Create test posts associated with the user
+    testPost1 = PostFactory.createBasicPost(testUser);
   }
 
   @Test
@@ -71,36 +66,21 @@ class FindPostByUuidIntegrationTest extends TestContainersConfig {
   }
 
   @Test
-  void findByUuid_WhenPostExists_ShouldReturnPost() {
+  void deleteById_ShouldDeletePost() {
     // Given
-    postRepository.save(testPost);
+    Post savedPost = postRepository.save(testPost1);
+    assertThat(postRepository.findById(savedPost.getId())).isPresent();
 
     // When
-    Optional<Post> result = findPostByUuid.findByUuid(testPost.getUuid());
+    deletePostById.deleteById(savedPost.getId());
 
     // Then
-    assertThat(result).isPresent();
-    assertThat(result.get().getTitle()).isEqualTo("Test Post");
-    assertThat(result.get().getBody()).isEqualTo("Test Body");
-    assertThat(result.get().getUser().getId()).isEqualTo(testUser.getId());
-    assertThat(result.get().getUuid()).isEqualTo(testPost.getUuid());
+    assertThat(postRepository.findById(savedPost.getId())).isEmpty();
   }
 
   @Test
-  void findByUuid_WhenPostDoesNotExist_ShouldReturnEmpty() {
-    // When
-    Optional<Post> result = findPostByUuid.findByUuid(UUID.randomUUID());
-
-    // Then
-    assertThat(result).isEmpty();
-  }
-
-  @Test
-  void findByUuid_WhenUuidIsNull_ShouldReturnEmpty() {
-    // When
-    Optional<Post> result = findPostByUuid.findByUuid(null);
-
-    // Then
-    assertThat(result).isEmpty();
+  void deleteById_WhenPostDoesNotExist_ShouldNotThrowException() {
+    // When & Then - should not throw any exception
+    deletePostById.deleteById(999);
   }
 }
