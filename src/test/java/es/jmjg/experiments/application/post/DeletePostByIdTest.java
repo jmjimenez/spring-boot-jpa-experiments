@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import es.jmjg.experiments.application.post.DeletePostById;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 
 @ExtendWith(MockitoExtension.class)

@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
 import es.jmjg.experiments.shared.UserFactory;
