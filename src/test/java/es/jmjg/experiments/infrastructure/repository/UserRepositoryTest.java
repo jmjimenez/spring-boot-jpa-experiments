@@ -2,11 +2,9 @@ package es.jmjg.experiments.infrastructure.repository;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.shared.UserFactory;
@@ -173,6 +170,53 @@ public class UserRepositoryTest extends TestContainersConfig {
     Optional<User> foundUser = userRepository.findById(999);
 
     assertFalse(foundUser.isPresent(), "User should not be found with non-existent ID");
+  }
+
+  @Test
+  void shouldDeleteUserByUuid() {
+    UUID uuidToDelete = testUser.getUuid();
+
+    userRepository.deleteByUuid(uuidToDelete);
+
+    Optional<User> deletedUser = userRepository.findByUuid(uuidToDelete);
+    assertFalse(deletedUser.isPresent(), "User should be deleted by UUID");
+
+    List<User> remainingUsers = userRepository.findAll();
+    // There are 5 users from test data migration + 1 user from setUp (after
+    // deletion) = 6 total
+    assertThat(remainingUsers).hasSize(6);
+    // Check that our remaining test user is still there
+    assertThat(remainingUsers).extracting("email").contains("john@example.com");
+  }
+
+  @Test
+  void shouldDeleteUserByUuidAndNotAffectOtherUsers() {
+    UUID uuidToDelete = testUser.getUuid();
+    UUID remainingUserUuid = johnDoeUser.getUuid();
+
+    userRepository.deleteByUuid(uuidToDelete);
+
+    // Verify the target user is deleted
+    Optional<User> deletedUser = userRepository.findByUuid(uuidToDelete);
+    assertFalse(deletedUser.isPresent(), "Target user should be deleted by UUID");
+
+    // Verify the other user is still present
+    Optional<User> remainingUser = userRepository.findByUuid(remainingUserUuid);
+    assertTrue(remainingUser.isPresent(), "Other user should still be present");
+    assertEquals("john@example.com", remainingUser.get().getEmail(),
+        "Remaining user email should match");
+  }
+
+  @Test
+  void shouldHandleDeleteByNonExistentUuid() {
+    UUID nonExistentUuid = UUID.randomUUID();
+    int initialUserCount = userRepository.findAll().size();
+
+    // This should not throw an exception
+    userRepository.deleteByUuid(nonExistentUuid);
+
+    int finalUserCount = userRepository.findAll().size();
+    assertEquals(initialUserCount, finalUserCount, "User count should remain the same");
   }
 
   @Test
