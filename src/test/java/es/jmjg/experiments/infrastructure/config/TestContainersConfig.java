@@ -7,16 +7,16 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
+@SuppressWarnings("resource")
 public class TestContainersConfig {
 
   @Container
-  static PostgreSQLContainer<?> postgres =
-      new PostgreSQLContainer<>("postgres:16.0")
-          .withDatabaseName("blog")
-          .withUsername("blog")
-          .withPassword("secret_password")
-          .withReuse(true)
-          .withExposedPorts(5432);
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0")
+      .withDatabaseName("blog")
+      .withUsername("blog")
+      .withPassword("secret_password")
+      .withReuse(true)
+      .withExposedPorts(5432);
 
   static {
     // Ensure container is started before any tests run
