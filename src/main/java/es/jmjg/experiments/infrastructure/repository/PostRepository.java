@@ -20,7 +20,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
   Optional<Post> findByUuid(UUID uuid);
 
-  @Query(
-      "SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(p.body) LIKE LOWER(CONCAT('%', :query, '%'))")
+  @Query("SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(p.body) LIKE LOWER(CONCAT('%', :query, '%'))")
   List<Post> searchByContent(@Param("query") String query, Pageable pageable);
+
+  @Query(value = "SELECT DISTINCT p.* FROM Post p JOIN post_tag pt ON p.id = pt.post_id WHERE pt.tag_id = :tagId", nativeQuery = true)
+  List<Post> findByTagId(@Param("tagId") Integer tagId);
 }
