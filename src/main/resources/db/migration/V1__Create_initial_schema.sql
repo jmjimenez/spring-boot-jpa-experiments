@@ -14,3 +14,25 @@ CREATE TABLE IF NOT EXISTS Post (
     body text NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users (id)
 );
+
+CREATE TABLE IF NOT EXISTS tag (
+    id SERIAL PRIMARY KEY,
+    uuid UUID NOT NULL UNIQUE,
+    tab varchar(60) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS post_tag (
+    post_id INT NOT NULL,
+    tag_id INT NOT NULL,
+    PRIMARY KEY (post_id, tag_id),
+    FOREIGN KEY (post_id) REFERENCES Post (id),
+    FOREIGN KEY (tag_id) REFERENCES tag (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_tag (
+    user_id INT NOT NULL,
+    tag_id INT NOT NULL,
+    PRIMARY KEY (user_id, tag_id),
+    FOREIGN KEY (user_id) REFERENCES Users (id),
+    FOREIGN KEY (tag_id) REFERENCES tag (id)
+);
