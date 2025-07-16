@@ -23,7 +23,7 @@ import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class PostRepositoryTest extends TestContainersConfig {
+public class PostRepositoryIntegrationTest extends TestContainersConfig {
 
   @Autowired PostRepository postRepository;
 

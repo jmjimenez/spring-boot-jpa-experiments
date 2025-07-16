@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.user;
+package es.jmjg.experiments.application.user.integration;
 
 import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
+import es.jmjg.experiments.application.user.FindUserById;
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;

@@ -21,7 +21,7 @@ import es.jmjg.experiments.shared.TagFactory;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class TagRepositoryTest extends TestContainersConfig {
+public class TagRepositoryIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private TagRepository tagRepository;

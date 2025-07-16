@@ -35,12 +35,28 @@
 	
 	<profiles>
 		<profile>
+			<id>unit-tests</id>
+			<properties>
+				<test.include>**/*Test.java</test.include>
+				<test.exclude>**/*IntegrationTest.java,**/*TestSuite.java</test.exclude>
+				<surefire.timeout>30</surefire.timeout>
+				<junit.jupiter.suite.discovery.disabled>true</junit.jupiter.suite.discovery.disabled>
+			</properties>
+		</profile>
+		<profile>
 			<id>integration-tests</id>
-			<build>
-				<plugins>
-					
-				</plugins>
-			</build>
+			<properties>
+				<test.include>**/*IntegrationTest.java</test.include>
+				<test.exclude>**/*TestSuite.java</test.exclude>
+				<surefire.timeout>300</surefire.timeout>
+			</properties>
+		</profile>
+		<profile>
+			<id>all-tests</id>
+			<properties>
+				<test.include>**/*Test.java</test.include>
+				<test.exclude>**/*TestSuite.java</test.exclude>
+			</properties>
 		</profile>
 	</profiles>
 	<dependencies>
@@ -139,6 +155,11 @@
 			<artifactId>postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-suite</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -185,9 +206,16 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.3</version>
                 <configuration>
+                    <includes>
+                        <include>${test.include}</include>
+                    </includes>
+                    <excludes>
+                        <exclude>${test.exclude}</exclude>
+                    </excludes>
                     <argLine>
                         -Dmockito.mock.maker=org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker
                         -Dspring.profiles.active=test
+                        -Djunit.jupiter.suite.discovery.disabled=${junit.jupiter.suite.discovery.disabled:false}
                     </argLine>
                 </configuration>
             </plugin>

@@ -38,15 +38,22 @@
   "java.project.outputPath": "target/classes",
   "java.project.testOutputPath": "target/test-classes",
   "java.test.config": {
-    "vmargs": [
-      "--enable-preview"
-    ],
-    "env": {
-      "SPRING_PROFILES_ACTIVE": "test",
-      "DEFAULT_PROFILE": "test"
+    "unit": {
+      "vmargs": [
+        "-Dtest.include=**/*Test.java",
+        "-Dtest.exclude=**/*IntegrationTest.java,**/*TestSuite.java"
+      ],
+      "workingDirectory": "${workspaceFolder}"
+    },
+    "integration": {
+      "vmargs": [
+        "-Dtest.include=**/*IntegrationTest.java",
+        "-Dtest.exclude=**/*TestSuite.java"
+      ],
+      "workingDirectory": "${workspaceFolder}"
     }
   },
-  "java.test.defaultConfig": "default",
+  "java.test.defaultConfig": "unit",
   "java.test.additionalVmArgs": [
     "--enable-preview"
   ],

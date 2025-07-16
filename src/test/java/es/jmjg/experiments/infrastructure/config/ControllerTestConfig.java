@@ -12,7 +12,16 @@ import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.UpdatePost;
+import es.jmjg.experiments.application.user.DeleteUserByUuid;
+import es.jmjg.experiments.application.user.FindAllUsers;
+import es.jmjg.experiments.application.user.FindUserByEmail;
+import es.jmjg.experiments.application.user.FindUserById;
+import es.jmjg.experiments.application.user.FindUserByUsername;
+import es.jmjg.experiments.application.user.FindUserByUuid;
+import es.jmjg.experiments.application.user.SaveUser;
+import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
+import es.jmjg.experiments.infrastructure.controller.mapper.UserMapper;
 
 @TestConfiguration
 public class ControllerTestConfig {
@@ -56,5 +65,59 @@ public class ControllerTestConfig {
   @Bean
   public PostMapper postMapper() {
     return new PostMapper();
+  }
+
+  @Bean
+  @Primary
+  public UserMapper userMapper() {
+    return new UserMapper();
+  }
+
+  @Bean
+  @Primary
+  public SaveUser saveUser() {
+    return mock(SaveUser.class);
+  }
+
+  @Bean
+  @Primary
+  public UpdateUser updateUser() {
+    return mock(UpdateUser.class);
+  }
+
+  @Bean
+  @Primary
+  public FindUserById findUserById() {
+    return mock(FindUserById.class);
+  }
+
+  @Bean
+  @Primary
+  public FindUserByUuid findUserByUuid() {
+    return mock(FindUserByUuid.class);
+  }
+
+  @Bean
+  @Primary
+  public FindUserByEmail findUserByEmail() {
+    return mock(FindUserByEmail.class);
+  }
+
+  @Bean
+  @Primary
+  public FindUserByUsername findUserByUsername() {
+    return mock(FindUserByUsername.class);
+  }
+
+  @Bean
+  @Primary
+  public FindAllUsers findAllUsers() {
+    return mock(FindAllUsers.class);
+  }
+
+  @Bean
+  @Primary
+  public DeleteUserByUuid deleteUserByUuid() {
+    return mock(DeleteUserByUuid.class);
   }
 }

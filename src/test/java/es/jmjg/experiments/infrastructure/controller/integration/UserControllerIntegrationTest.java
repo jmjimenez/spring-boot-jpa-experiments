@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller;
+package es.jmjg.experiments.infrastructure.controller.integration;
 
 import static org.assertj.core.api.Assertions.*;
 import java.util.UUID;

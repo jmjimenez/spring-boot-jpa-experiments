@@ -1,68 +1,64 @@
 package es.jmjg.experiments.infrastructure.controller;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
 import es.jmjg.experiments.application.user.DeleteUserByUuid;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.FindUserByEmail;
-import es.jmjg.experiments.application.user.FindUserById;
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.domain.User;
-import es.jmjg.experiments.infrastructure.controller.dto.UserRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
-import es.jmjg.experiments.infrastructure.controller.exception.UserNotFoundException;
-import es.jmjg.experiments.infrastructure.controller.mapper.UserMapper;
+import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
 import es.jmjg.experiments.shared.UserFactory;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(UserController.class)
+@Import(ControllerTestConfig.class)
 class UserControllerTest {
 
-  @Mock
-  private UserMapper userMapper;
+  @Autowired
+  private MockMvc mockMvc;
 
-  @Mock
+  @Autowired
   private SaveUser saveUser;
 
-  @Mock
+  @Autowired
   private UpdateUser updateUser;
 
-  @Mock
-  private FindUserById findUserById;
-
-  @Mock
+  @Autowired
   private FindUserByUuid findUserByUuid;
 
-  @Mock
+  @Autowired
   private FindUserByEmail findUserByEmail;
 
-  @Mock
+  @Autowired
   private FindUserByUsername findUserByUsername;
 
-  @Mock
+  @Autowired
   private FindAllUsers findAllUsers;
 
-  @Mock
+  @Autowired
   private DeleteUserByUuid deleteUserByUuid;
 
-  @InjectMocks
-  private UserController userController;
-
   private User testUser;
-  private UserRequestDto userRequestDto;
-  private UserResponseDto userResponseDto;
   private UUID testUuid;
   private Integer testId;
 
@@ -72,164 +68,211 @@ class UserControllerTest {
     testId = 1;
     testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
     testUser.setId(testId);
-
-    userRequestDto = new UserRequestDto(testUuid, "Test User", "test@example.com", "testuser");
-    userResponseDto = new UserResponseDto(testUuid, "Test User", "test@example.com", "testuser");
   }
 
   @Test
-  void findAll_ShouldReturnAllUsers() {
+  void shouldFindAllUsers() throws Exception {
     // Given
     List<User> users = List.of(testUser);
-    List<UserResponseDto> expectedResponse = List.of(userResponseDto);
     when(findAllUsers.findAll()).thenReturn(users);
-    when(userMapper.toResponseDtoList(users)).thenReturn(expectedResponse);
 
-    // When
-    List<UserResponseDto> result = userController.findAll();
-
-    // Then
-    assertThat(result).isEqualTo(expectedResponse);
-    verify(findAllUsers).findAll();
-    verify(userMapper).toResponseDtoList(users);
-  }
-
-  @Test
-  void findByUuid_WhenUserExists_ShouldReturnUser() {
-    // Given
-    when(findUserByUuid.findByUuid(testUuid)).thenReturn(Optional.of(testUser));
-    when(userMapper.toResponseDto(testUser)).thenReturn(userResponseDto);
-
-    // When
-    UserResponseDto result = userController.findByUuid(testUuid);
-
-    // Then
-    assertThat(result).isEqualTo(userResponseDto);
-    verify(findUserByUuid).findByUuid(testUuid);
-    verify(userMapper).toResponseDto(testUser);
-  }
-
-  @Test
-  void findByUuid_WhenUserDoesNotExist_ShouldThrowException() {
-    // Given
-    when(findUserByUuid.findByUuid(testUuid)).thenReturn(Optional.empty());
+    String expectedJson = """
+        [
+            {
+                "uuid":"%s",
+                "name":"Test User",
+                "email":"test@example.com",
+                "username":"testuser"
+            }
+        ]
+        """.formatted(testUuid);
 
     // When & Then
-    assertThatThrownBy(() -> userController.findByUuid(testUuid))
-        .isInstanceOf(UserNotFoundException.class);
-    verify(findUserByUuid).findByUuid(testUuid);
-    verify(userMapper, never()).toResponseDto(any());
+    ResultActions resultActions = mockMvc
+        .perform(get("/api/users"))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+
+    JSONAssert.assertEquals(
+        expectedJson, resultActions.andReturn().getResponse().getContentAsString(), false);
   }
 
   @Test
-  void findByEmail_WhenUserExists_ShouldReturnUser() {
+  void shouldFindUserWhenGivenValidUuid() throws Exception {
+    // Given
+    when(findUserByUuid.findByUuid(testUuid)).thenReturn(Optional.of(testUser));
+
+    String expectedJson = """
+        {
+            "uuid":"%s",
+            "name":"Test User",
+            "email":"test@example.com",
+            "username":"testuser"
+        }
+        """.formatted(testUuid);
+
+    // When & Then
+    mockMvc
+        .perform(get("/api/users/" + testUuid))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void shouldNotFindUserWhenGivenInvalidUuid() throws Exception {
+    // Given
+    UUID invalidUuid = UUID.randomUUID();
+    when(findUserByUuid.findByUuid(invalidUuid)).thenReturn(Optional.empty());
+
+    // When & Then
+    mockMvc.perform(get("/api/users/" + invalidUuid)).andExpect(status().isNotFound());
+  }
+
+  @Test
+  void shouldFindUserWhenGivenValidEmail() throws Exception {
     // Given
     String email = "test@example.com";
     when(findUserByEmail.findByEmail(email)).thenReturn(Optional.of(testUser));
-    when(userMapper.toResponseDto(testUser)).thenReturn(userResponseDto);
 
-    // When
-    UserResponseDto result = userController.findByEmail(email);
-
-    // Then
-    assertThat(result).isEqualTo(userResponseDto);
-    verify(findUserByEmail).findByEmail(email);
-    verify(userMapper).toResponseDto(testUser);
-  }
-
-  @Test
-  void findByEmail_WhenUserDoesNotExist_ShouldThrowException() {
-    // Given
-    String email = "nonexistent@example.com";
-    when(findUserByEmail.findByEmail(email)).thenReturn(Optional.empty());
+    String expectedJson = """
+        {
+            "uuid":"%s",
+            "name":"Test User",
+            "email":"test@example.com",
+            "username":"testuser"
+        }
+        """.formatted(testUuid);
 
     // When & Then
-    assertThatThrownBy(() -> userController.findByEmail(email))
-        .isInstanceOf(UserNotFoundException.class);
-    verify(findUserByEmail).findByEmail(email);
-    verify(userMapper, never()).toResponseDto(any());
+    mockMvc
+        .perform(get("/api/users/search/email").param("email", email))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
   }
 
   @Test
-  void findByUsername_WhenUserExists_ShouldReturnUser() {
+  void shouldNotFindUserWhenGivenInvalidEmail() throws Exception {
+    // Given
+    String invalidEmail = "nonexistent@example.com";
+    when(findUserByEmail.findByEmail(invalidEmail)).thenReturn(Optional.empty());
+
+    // When & Then
+    mockMvc
+        .perform(get("/api/users/search/email").param("email", invalidEmail))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void shouldFindUserWhenGivenValidUsername() throws Exception {
     // Given
     String username = "testuser";
     when(findUserByUsername.findByUsername(username)).thenReturn(Optional.of(testUser));
-    when(userMapper.toResponseDto(testUser)).thenReturn(userResponseDto);
 
-    // When
-    UserResponseDto result = userController.findByUsername(username);
-
-    // Then
-    assertThat(result).isEqualTo(userResponseDto);
-    verify(findUserByUsername).findByUsername(username);
-    verify(userMapper).toResponseDto(testUser);
-  }
-
-  @Test
-  void findByUsername_WhenUserDoesNotExist_ShouldThrowException() {
-    // Given
-    String username = "nonexistentuser";
-    when(findUserByUsername.findByUsername(username)).thenReturn(Optional.empty());
+    String expectedJson = """
+        {
+            "uuid":"%s",
+            "name":"Test User",
+            "email":"test@example.com",
+            "username":"testuser"
+        }
+        """.formatted(testUuid);
 
     // When & Then
-    assertThatThrownBy(() -> userController.findByUsername(username))
-        .isInstanceOf(UserNotFoundException.class);
-    verify(findUserByUsername).findByUsername(username);
-    verify(userMapper, never()).toResponseDto(any());
+    mockMvc
+        .perform(get("/api/users/search/username").param("username", username))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
   }
 
   @Test
-  void save_WhenUserIsValid_ShouldSaveAndReturnUser() {
+  void shouldNotFindUserWhenGivenInvalidUsername() throws Exception {
     // Given
-    User savedUser =
-        UserFactory.createUser(testId, testUuid, "Test User", "test@example.com", "testuser");
-    when(userMapper.toDomain(userRequestDto)).thenReturn(testUser);
-    when(saveUser.save(testUser)).thenReturn(savedUser);
-    when(userMapper.toResponseDto(savedUser)).thenReturn(userResponseDto);
+    String invalidUsername = "nonexistentuser";
+    when(findUserByUsername.findByUsername(invalidUsername)).thenReturn(Optional.empty());
 
-    // When
-    UserResponseDto result = userController.save(userRequestDto);
-
-    // Then
-    assertThat(result).isEqualTo(userResponseDto);
-    verify(userMapper).toDomain(userRequestDto);
-    verify(saveUser).save(testUser);
-    verify(userMapper).toResponseDto(savedUser);
+    // When & Then
+    mockMvc
+        .perform(get("/api/users/search/username").param("username", invalidUsername))
+        .andExpect(status().isNotFound());
   }
 
   @Test
-  void update_WhenUserExists_ShouldUpdateAndReturnUser() {
+  void shouldCreateNewUserWhenGivenValidData() throws Exception {
     // Given
-    User updatedUser = UserFactory.createUser(testId, testUuid, "Updated User",
-        "updated@example.com", "updateduser");
-    UserResponseDto updatedResponseDto =
-        new UserResponseDto(testUuid, "Updated User", "updated@example.com", "updateduser");
-    when(userMapper.toDomain(userRequestDto)).thenReturn(testUser);
+    User savedUser = UserFactory.createUser(testId, testUuid, "Test User", "test@example.com", "testuser");
+    when(saveUser.save(any(User.class))).thenReturn(savedUser);
+
+    String requestBody = """
+        {
+            "uuid":"%s",
+            "name":"Test User",
+            "email":"test@example.com",
+            "username":"testuser"
+        }
+        """.formatted(testUuid);
+
+    String expectedResponse = """
+        {
+            "uuid":"%s",
+            "name":"Test User",
+            "email":"test@example.com",
+            "username":"testuser"
+        }
+        """.formatted(testUuid);
+
+    // When & Then
+    mockMvc
+        .perform(post("/api/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody))
+        .andExpect(status().isCreated())
+        .andExpect(content().json(expectedResponse));
+  }
+
+  @Test
+  void shouldUpdateUserWhenGivenValidData() throws Exception {
+    // Given
+    User updatedUser = UserFactory.createUser(testId, testUuid, "Updated User", "updated@example.com", "updateduser");
     when(findUserByUuid.findByUuid(testUuid)).thenReturn(Optional.of(testUser));
-    when(updateUser.update(testId, testUser)).thenReturn(updatedUser);
-    when(userMapper.toResponseDto(updatedUser)).thenReturn(updatedResponseDto);
+    when(updateUser.update(eq(testId), any(User.class))).thenReturn(updatedUser);
 
-    // When
-    UserResponseDto result = userController.update(testUuid, userRequestDto);
+    String requestBody = """
+        {
+            "uuid":"%s",
+            "name":"Updated User",
+            "email":"updated@example.com",
+            "username":"updateduser"
+        }
+        """.formatted(testUuid);
 
-    // Then
-    assertThat(result).isEqualTo(updatedResponseDto);
-    verify(userMapper).toDomain(userRequestDto);
-    verify(findUserByUuid).findByUuid(testUuid);
-    verify(updateUser).update(testId, testUser);
-    verify(userMapper).toResponseDto(updatedUser);
+    String expectedResponse = """
+        {
+            "uuid":"%s",
+            "name":"Updated User",
+            "email":"updated@example.com",
+            "username":"updateduser"
+        }
+        """.formatted(testUuid);
+
+    // When & Then
+    mockMvc
+        .perform(put("/api/users/" + testUuid)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedResponse));
   }
 
   @Test
-  void deleteByUuid_ShouldCallDeleteService() {
+  void shouldDeleteUserWhenGivenValidUuid() throws Exception {
     // Given
     doNothing().when(deleteUserByUuid).deleteByUuid(testUuid);
 
-    // When
-    userController.deleteByUuid(testUuid);
+    // When & Then
+    mockMvc
+        .perform(delete("/api/users/" + testUuid))
+        .andExpect(status().isNoContent());
 
-    // Then
-    verify(deleteUserByUuid).deleteByUuid(testUuid);
+    verify(deleteUserByUuid, times(1)).deleteByUuid(testUuid);
   }
 }
