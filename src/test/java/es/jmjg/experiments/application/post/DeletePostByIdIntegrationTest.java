@@ -41,6 +41,7 @@ class DeletePostByIdIntegrationTest extends TestContainersConfig {
   @BeforeEach
   void setUp() {
     // Clear the database before each test
+    // Delete in order to respect foreign key constraints
     postRepository.deleteAll();
     userRepository.deleteAll();
 
@@ -58,6 +59,7 @@ class DeletePostByIdIntegrationTest extends TestContainersConfig {
     assertThat(activeProfiles).contains("test");
   }
 
+  // TODO: this test is repeated in other tests, we should refactor it
   @Test
   void connectionEstablished() {
     assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();

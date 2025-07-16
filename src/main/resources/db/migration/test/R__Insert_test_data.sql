@@ -3,6 +3,12 @@
 -- The R__ prefix makes it a repeatable migration
 
 -- Clear existing data to ensure fresh state
+TRUNCATE TABLE post_tag CASCADE;
+
+TRUNCATE TABLE user_tag CASCADE;
+
+TRUNCATE TABLE tag CASCADE;
+
 TRUNCATE TABLE Post CASCADE;
 
 TRUNCATE TABLE Users CASCADE;
@@ -11,6 +17,8 @@ TRUNCATE TABLE Users CASCADE;
 ALTER SEQUENCE users_id_seq RESTART WITH 1;
 
 ALTER SEQUENCE post_id_seq RESTART WITH 1;
+
+ALTER SEQUENCE tag_id_seq RESTART WITH 1;
 
 -- Insert Users
 INSERT INTO
@@ -44,6 +52,70 @@ VALUES (
         'Chelsey Dietrich',
         'chelsey.dietrich@example.com',
         'chelsey_dietrich'
+    );
+
+-- Insert Tags
+INSERT INTO
+    tag (uuid, tag)
+VALUES (
+        '550e8400-e29b-41d4-a716-446655440056',
+        'technology'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440057',
+        'programming'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440058',
+        'java'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440059',
+        'spring-boot'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440060',
+        'jpa'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440061',
+        'database'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440062',
+        'web-development'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440063',
+        'tutorial'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440064',
+        'best-practices'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440065',
+        'architecture'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440066',
+        'microservices'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440067',
+        'testing'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440068',
+        'devops'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440069',
+        'api'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440070',
+        'security'
     );
 
 -- Insert Posts for Leanne Graham (user_id = 1)
@@ -365,3 +437,250 @@ VALUES (
         'rem veniam quaerat et nemo molestiae excepturi',
         'aut sunt sed neque labore quaerat soluta temporibus\ncorporis sed in consequatur eos repellat\ninventore tenetur aut voluptatem vel\ntotam asperiores autem et quas sed ipsa'
     );
+
+-- Insert User Tags
+-- Leanne Graham (user_id = 1) - Technology enthusiast
+INSERT INTO
+    user_tag (user_id, tag_id)
+VALUES (1, 1), -- technology
+    (1, 2), -- programming
+    (1, 3), -- java
+    (1, 4);
+-- spring-boot
+
+-- Ervin Howell (user_id = 2) - Database expert
+INSERT INTO
+    user_tag (user_id, tag_id)
+VALUES (2, 1), -- technology
+    (2, 6), -- database
+    (2, 5), -- jpa
+    (2, 7);
+-- web-development
+
+-- Clementine Bauch (user_id = 3) - Tutorial creator
+INSERT INTO
+    user_tag (user_id, tag_id)
+VALUES (3, 1), -- technology
+    (3, 8), -- tutorial
+    (3, 9), -- best-practices
+    (3, 10);
+-- architecture
+
+-- Patricia Lebsack (user_id = 4) - DevOps specialist
+INSERT INTO
+    user_tag (user_id, tag_id)
+VALUES (4, 1), -- technology
+    (4, 13), -- devops
+    (4, 12), -- testing
+    (4, 11);
+-- microservices
+
+-- Chelsey Dietrich (user_id = 5) - Security expert
+INSERT INTO
+    user_tag (user_id, tag_id)
+VALUES (5, 1), -- technology
+    (5, 15), -- security
+    (5, 14), -- api
+    (5, 9);
+-- best-practices
+
+-- Insert Post Tags
+-- Technology posts (posts 1-5) - Leanne Graham
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (1, 1),
+    (1, 2),
+    (1, 3), -- technology, programming, java
+    (2, 1),
+    (2, 4),
+    (2, 5), -- technology, spring-boot, jpa
+    (3, 1),
+    (3, 6),
+    (3, 7), -- technology, database, web-development
+    (4, 1),
+    (4, 8),
+    (4, 9), -- technology, tutorial, best-practices
+    (5, 1),
+    (5, 10),
+    (5, 11);
+-- technology, architecture, microservices
+
+-- Database posts (posts 6-10) - Leanne Graham
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (6, 6),
+    (6, 5),
+    (6, 9), -- database, jpa, best-practices
+    (7, 6),
+    (7, 7),
+    (7, 12), -- database, web-development, testing
+    (8, 6),
+    (8, 10),
+    (8, 13), -- database, architecture, devops
+    (9, 6),
+    (9, 14),
+    (9, 15), -- database, api, security
+    (10, 6),
+    (10, 8),
+    (10, 9);
+-- database, tutorial, best-practices
+
+-- Programming posts (posts 11-15) - Leanne Graham
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (11, 2),
+    (11, 3),
+    (11, 4), -- programming, java, spring-boot
+    (12, 2),
+    (12, 5),
+    (12, 6), -- programming, jpa, database
+    (13, 2),
+    (13, 7),
+    (13, 8), -- programming, web-development, tutorial
+    (14, 2),
+    (14, 9),
+    (14, 10), -- programming, best-practices, architecture
+    (15, 2),
+    (15, 11),
+    (15, 12);
+-- programming, microservices, testing
+
+-- Web development posts (posts 16-20) - Ervin Howell
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (16, 7),
+    (16, 14),
+    (16, 15), -- web-development, api, security
+    (17, 7),
+    (17, 6),
+    (17, 5), -- web-development, database, jpa
+    (18, 7),
+    (18, 2),
+    (18, 3), -- web-development, programming, java
+    (19, 7),
+    (19, 4),
+    (19, 8), -- web-development, spring-boot, tutorial
+    (20, 7),
+    (20, 9),
+    (20, 10);
+-- web-development, best-practices, architecture
+
+-- Database posts (posts 21-25) - Ervin Howell
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (21, 6),
+    (21, 5),
+    (21, 9), -- database, jpa, best-practices
+    (22, 6),
+    (22, 7),
+    (22, 12), -- database, web-development, testing
+    (23, 6),
+    (23, 10),
+    (23, 13), -- database, architecture, devops
+    (24, 6),
+    (24, 14),
+    (24, 15), -- database, api, security
+    (25, 6),
+    (25, 8),
+    (25, 9);
+-- database, tutorial, best-practices
+
+-- Tutorial posts (posts 26-30) - Clementine Bauch
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (26, 8),
+    (26, 2),
+    (26, 3), -- tutorial, programming, java
+    (27, 8),
+    (27, 4),
+    (27, 5), -- tutorial, spring-boot, jpa
+    (28, 8),
+    (28, 6),
+    (28, 7), -- tutorial, database, web-development
+    (29, 8),
+    (29, 9),
+    (29, 10), -- tutorial, best-practices, architecture
+    (30, 8),
+    (30, 11),
+    (30, 12);
+-- tutorial, microservices, testing
+
+-- Best practices posts (posts 31-35) - Clementine Bauch
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (31, 9),
+    (31, 1),
+    (31, 2), -- best-practices, technology, programming
+    (32, 9),
+    (32, 3),
+    (32, 4), -- best-practices, java, spring-boot
+    (33, 9),
+    (33, 5),
+    (33, 6), -- best-practices, jpa, database
+    (34, 9),
+    (34, 7),
+    (34, 8), -- best-practices, web-development, tutorial
+    (35, 9),
+    (35, 10),
+    (35, 11);
+-- best-practices, architecture, microservices
+
+-- Architecture posts (posts 36-40) - Patricia Lebsack
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (36, 10),
+    (36, 1),
+    (36, 2), -- architecture, technology, programming
+    (37, 10),
+    (37, 3),
+    (37, 4), -- architecture, java, spring-boot
+    (38, 10),
+    (38, 5),
+    (38, 6), -- architecture, jpa, database
+    (39, 10),
+    (39, 7),
+    (39, 8), -- architecture, web-development, tutorial
+    (40, 10),
+    (40, 9),
+    (40, 11);
+-- architecture, best-practices, microservices
+
+-- DevOps posts (posts 41-45) - Patricia Lebsack
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (41, 13),
+    (41, 12),
+    (41, 15), -- devops, testing, security
+    (42, 13),
+    (42, 11),
+    (42, 14), -- devops, microservices, api
+    (43, 13),
+    (43, 6),
+    (43, 7), -- devops, database, web-development
+    (44, 13),
+    (44, 8),
+    (44, 9), -- devops, tutorial, best-practices
+    (45, 13),
+    (45, 10),
+    (45, 1);
+-- devops, architecture, technology
+
+-- Security posts (posts 46-50) - Chelsey Dietrich
+INSERT INTO
+    post_tag (post_id, tag_id)
+VALUES (46, 15),
+    (46, 14),
+    (46, 9), -- security, api, best-practices
+    (47, 15),
+    (47, 7),
+    (47, 6), -- security, web-development, database
+    (48, 15),
+    (48, 2),
+    (48, 3), -- security, programming, java
+    (49, 15),
+    (49, 4),
+    (49, 5), -- security, spring-boot, jpa
+    (50, 15),
+    (50, 10),
+    (50, 11);
+-- security, architecture, microservices
