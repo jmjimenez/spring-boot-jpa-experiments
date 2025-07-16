@@ -1,4 +1,4 @@
-package es.jmjg.experiments;
+package es.jmjg.experiments.suite;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.platform.suite.api.IncludeClassNamePatterns;
