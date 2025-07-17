@@ -15,6 +15,10 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -57,6 +61,7 @@ class PostControllerTest {
   private FindAllPosts findAllPosts;
 
   List<Post> posts;
+  Page<Post> postsPage;
 
   @BeforeEach
   void setUp() {
@@ -69,32 +74,42 @@ class PostControllerTest {
     post2.setId(2);
 
     posts = List.of(post1, post2);
+    Pageable pageable = PageRequest.of(0, 20);
+    postsPage = new PageImpl<>(posts, pageable, posts.size());
   }
 
   @Test
   void shouldFindAllPosts() throws Exception {
     String jsonResponse = """
-        [
-            {
-                "id":1,
-                "uuid":"%s",
-                "userId":"%s",
-                "title":"Hello, World!",
-                "body":"This is my first post."
-            },
-            {
-                "id":2,
-                "uuid":"%s",
-                "userId":"%s",
-                "title":"Second Post",
-                "body":"This is my second post."
-            }
-        ]
+        {
+            "content":[
+                {
+                    "id":1,
+                    "uuid":"%s",
+                    "userId":"%s",
+                    "title":"Hello, World!",
+                    "body":"This is my first post."
+                },
+                {
+                    "id":2,
+                    "uuid":"%s",
+                    "userId":"%s",
+                    "title":"Second Post",
+                    "body":"This is my second post."
+                }
+            ],
+            "pageNumber":0,
+            "pageSize":20,
+            "totalElements":2,
+            "totalPages":1,
+            "hasNext":false,
+            "hasPrevious":false
+        }
         """
         .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid(), posts.get(1).getUuid(),
             posts.get(1).getUser().getUuid());
 
-    when(findAllPosts.findAll()).thenReturn(posts);
+    when(findAllPosts.findAll(any(Pageable.class))).thenReturn(postsPage);
 
     ResultActions resultActions = mockMvc
         .perform(get("/api/posts"))
@@ -108,30 +123,74 @@ class PostControllerTest {
   @Test
   void shouldFindAllPostsV2() throws Exception {
     String jsonResponse = """
-        [
-            {
-                "id":1,
-                "uuid":"%s",
-                "userId":"%s",
-                "title":"Hello, World!",
-                "body":"This is my first post."
-            },
-            {
-                "id":2,
-                "uuid":"%s",
-                "userId":"%s",
-                "title":"Second Post",
-                "body":"This is my second post."
-            }
-        ]
+        {
+            "content":[
+                {
+                    "id":1,
+                    "uuid":"%s",
+                    "userId":"%s",
+                    "title":"Hello, World!",
+                    "body":"This is my first post."
+                },
+                {
+                    "id":2,
+                    "uuid":"%s",
+                    "userId":"%s",
+                    "title":"Second Post",
+                    "body":"This is my second post."
+                }
+            ],
+            "pageNumber":0,
+            "pageSize":20,
+            "totalElements":2,
+            "totalPages":1,
+            "hasNext":false,
+            "hasPrevious":false
+        }
         """
         .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid(), posts.get(1).getUuid(),
             posts.get(1).getUser().getUuid());
 
-    doReturn(posts).when(findAllPosts).findAll();
+    doReturn(postsPage).when(findAllPosts).findAll(any(Pageable.class));
 
     ResultActions resultActions = mockMvc
         .perform(get("/api/posts"))
+        .andExpect(status().isOk())
+        .andExpect(content().json(jsonResponse));
+
+    JSONAssert.assertEquals(
+        jsonResponse, resultActions.andReturn().getResponse().getContentAsString(), false);
+  }
+
+  @Test
+  void shouldFindAllPostsWithPagination() throws Exception {
+    String jsonResponse = """
+        {
+            "content":[
+                {
+                    "id":1,
+                    "uuid":"%s",
+                    "userId":"%s",
+                    "title":"Hello, World!",
+                    "body":"This is my first post."
+                }
+            ],
+            "pageNumber":0,
+            "pageSize":1,
+            "totalElements":2,
+            "totalPages":2,
+            "hasNext":true,
+            "hasPrevious":false
+        }
+        """
+        .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid());
+
+    Pageable pageable = PageRequest.of(0, 1);
+    Page<Post> singlePostPage = new PageImpl<>(List.of(posts.get(0)), pageable, 2);
+    when(findAllPosts.findAll(any(Pageable.class))).thenReturn(singlePostPage);
+
+    ResultActions resultActions = mockMvc
+        .perform(get("/api/posts?page=0&size=1"))
         .andExpect(status().isOk())
         .andExpect(content().json(jsonResponse));
 

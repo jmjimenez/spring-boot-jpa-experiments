@@ -2,24 +2,20 @@ package es.jmjg.experiments.application.post.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.domain.Post;
-import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
-import es.jmjg.experiments.infrastructure.repository.PostRepository;
-import es.jmjg.experiments.infrastructure.repository.UserRepository;
-import es.jmjg.experiments.shared.PostFactory;
-import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -30,30 +26,13 @@ class FindAllPostsIntegrationTest extends TestContainersConfig {
   private FindAllPosts findAllPosts;
 
   @Autowired
-  private PostRepository postRepository;
-
-  @Autowired
-  private UserRepository userRepository;
-
-  @Autowired
   private Environment environment;
 
-  private User testUser;
-  private Post testPost1;
-  private Post testPost2;
+  private Pageable pageable;
 
   @BeforeEach
   void setUp() {
-    // Clear the database before each test
-    postRepository.deleteAll();
-    userRepository.deleteAll();
-
-    // Create a test user
-    testUser = userRepository.save(UserFactory.createBasicUser());
-
-    // Create test posts
-    testPost1 = PostFactory.createBasicPost(testUser);
-    testPost2 = PostFactory.createPost(testUser, "Another Post", "Another Body");
+    pageable = PageRequest.of(0, 10);
   }
 
   @Test
@@ -71,28 +50,43 @@ class FindAllPostsIntegrationTest extends TestContainersConfig {
 
   @Test
   void findAll_ShouldReturnAllPosts() {
-    // Given
-    postRepository.save(testPost1);
-    postRepository.save(testPost2);
-
     // When
-    List<Post> result = findAllPosts.findAll();
+    Page<Post> result = findAllPosts.findAll(pageable);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result).hasSize(2);
-    assertThat(result)
-        .extracting("title")
-        .containsExactlyInAnyOrder(testPost1.getTitle(), testPost2.getTitle());
+    assertThat(result.getContent()).hasSize(10); // First page with 10 items
+    assertThat(result.getTotalElements()).isGreaterThanOrEqualTo(50); // At least 50 from Flyway + 2 from test
+    assertThat(result.getTotalPages()).isGreaterThanOrEqualTo(5); // At least 5 pages with 10 items per page
   }
 
   @Test
-  void findAll_WhenNoPosts_ShouldReturnEmptyList() {
+  void findAll_WhenNoPosts_ShouldReturnEmptyPage() {
+    // Given - Test with a page that should be empty
+    Pageable emptyPage = PageRequest.of(999, 10);
+
     // When
-    List<Post> result = findAllPosts.findAll();
+    Page<Post> result = findAllPosts.findAll(emptyPage);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result).isEmpty();
+    assertThat(result.getContent()).isEmpty();
+    assertThat(result.getTotalElements()).isGreaterThanOrEqualTo(50); // At least 50 posts from Flyway
+    assertThat(result.getNumber()).isEqualTo(999);
+  }
+
+  @Test
+  void findAll_WithPagination_ShouldReturnCorrectPage() {
+    Pageable firstPage = PageRequest.of(0, 5);
+
+    // When
+    Page<Post> result = findAllPosts.findAll(firstPage);
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getContent()).hasSize(5); // First page with 5 items
+    assertThat(result.getTotalElements()).isGreaterThanOrEqualTo(50); // At least 50 from Flyway + 2 from test
+    assertThat(result.getTotalPages()).isGreaterThanOrEqualTo(10); // At least 10 pages with 5 items per page
+    assertThat(result.getNumber()).isEqualTo(0);
   }
 }

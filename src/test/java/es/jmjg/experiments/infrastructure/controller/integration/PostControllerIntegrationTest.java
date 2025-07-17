@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
+import es.jmjg.experiments.infrastructure.controller.dto.PagedResponseDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
@@ -57,11 +58,44 @@ class PostControllerIntegrationTest extends TestContainersConfig {
 
   @Test
   void shouldReturnAllPosts() {
-    ResponseEntity<PostResponseDto[]> response = restTemplate.getForEntity("/api/posts", PostResponseDto[].class);
+    ResponseEntity<PagedResponseDto<PostResponseDto>> response = restTemplate.exchange(
+        "/api/posts",
+        HttpMethod.GET,
+        null,
+        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {
+        });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    PostResponseDto[] posts = response.getBody();
-    assertThat(posts).isNotNull().satisfies(p -> assertThat(p.length).isGreaterThan(0));
+    PagedResponseDto<PostResponseDto> pagedResponse = response.getBody();
+    assertThat(pagedResponse).isNotNull().satisfies(p -> {
+      assertThat(p.getContent()).isNotNull();
+      assertThat(p.getContent()).hasSizeGreaterThan(0);
+      assertThat(p.getPageNumber()).isEqualTo(0);
+      assertThat(p.getPageSize()).isEqualTo(20);
+      assertThat(p.getTotalElements()).isGreaterThan(0);
+      assertThat(p.getTotalPages()).isGreaterThan(0);
+    });
+  }
+
+  @Test
+  void shouldReturnAllPostsWithPagination() {
+    ResponseEntity<PagedResponseDto<PostResponseDto>> response = restTemplate.exchange(
+        "/api/posts?page=0&size=5",
+        HttpMethod.GET,
+        null,
+        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {
+        });
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    PagedResponseDto<PostResponseDto> pagedResponse = response.getBody();
+    assertThat(pagedResponse).isNotNull().satisfies(p -> {
+      assertThat(p.getContent()).isNotNull();
+      assertThat(p.getContent()).hasSizeLessThanOrEqualTo(5);
+      assertThat(p.getPageNumber()).isEqualTo(0);
+      assertThat(p.getPageSize()).isEqualTo(5);
+      assertThat(p.getTotalElements()).isGreaterThan(0);
+      assertThat(p.getTotalPages()).isGreaterThan(0);
+    });
   }
 
   @Test
