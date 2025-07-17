@@ -15,6 +15,10 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -61,6 +65,7 @@ class UserControllerTest {
   private User testUser;
   private UUID testUuid;
   private Integer testId;
+  private Pageable pageable;
 
   @BeforeEach
   void setUp() {
@@ -68,23 +73,52 @@ class UserControllerTest {
     testId = 1;
     testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
     testUser.setId(testId);
+    pageable = PageRequest.of(0, 10);
   }
 
   @Test
   void shouldFindAllUsers() throws Exception {
     // Given
     List<User> users = List.of(testUser);
-    when(findAllUsers.findAll()).thenReturn(users);
+    Page<User> userPage = new PageImpl<>(users, pageable, users.size());
+    when(findAllUsers.findAll(any(Pageable.class))).thenReturn(userPage);
 
     String expectedJson = """
-        [
-            {
-                "uuid":"%s",
-                "name":"Test User",
-                "email":"test@example.com",
-                "username":"testuser"
-            }
-        ]
+        {
+            "content":[
+                {
+                    "uuid":"%s",
+                    "name":"Test User",
+                    "email":"test@example.com",
+                    "username":"testuser"
+                }
+            ],
+            "pageable":{
+                "sort":{
+                    "empty":true,
+                    "sorted":false,
+                    "unsorted":true
+                },
+                "offset":0,
+                "pageNumber":0,
+                "pageSize":10,
+                "paged":true,
+                "unpaged":false
+            },
+            "last":true,
+            "totalElements":1,
+            "totalPages":1,
+            "size":10,
+            "number":0,
+            "sort":{
+                "empty":true,
+                "sorted":false,
+                "unsorted":true
+            },
+            "first":true,
+            "numberOfElements":1,
+            "empty":false
+        }
         """.formatted(testUuid);
 
     // When & Then

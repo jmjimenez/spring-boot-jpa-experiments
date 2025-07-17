@@ -1,7 +1,7 @@
 package es.jmjg.experiments.application.user;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +18,7 @@ public class FindAllUsers {
   }
 
   @Transactional(readOnly = true)
-  public List<User> findAll() {
-    return userRepository.findAll();
+  public Page<User> findAll(Pageable pageable) {
+    return userRepository.findAll(pageable);
   }
 }

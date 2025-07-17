@@ -1,7 +1,9 @@
 package es.jmjg.experiments.infrastructure.controller.integration;
 
 import static org.assertj.core.api.Assertions.*;
+
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
 import es.jmjg.experiments.domain.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.controller.dto.UserRequestDto;
@@ -57,12 +60,11 @@ class UserControllerIntegrationTest extends TestContainersConfig {
 
   @Test
   void shouldGetAllUsers() {
-    ResponseEntity<UserResponseDto[]> response = restTemplate.getForEntity("/api/users",
-        UserResponseDto[].class);
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/users", Object.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    UserResponseDto[] users = response.getBody();
-    assertThat(users).isNotNull();
+    Object responseBody = response.getBody();
+    assertThat(responseBody).isNotNull();
   }
 
   @Test
@@ -88,9 +90,8 @@ class UserControllerIntegrationTest extends TestContainersConfig {
     User savedUser = userRepository.save(testUser);
     String userEmail = savedUser.getEmail();
 
-    ResponseEntity<UserResponseDto> response =
-        restTemplate.getForEntity("/api/users/search/email?email=" + userEmail,
-            UserResponseDto.class);
+    ResponseEntity<UserResponseDto> response = restTemplate.getForEntity("/api/users/search/email?email=" + userEmail,
+        UserResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     UserResponseDto user = response.getBody();
@@ -106,9 +107,9 @@ class UserControllerIntegrationTest extends TestContainersConfig {
     User savedUser = userRepository.save(testUser);
     String username = savedUser.getUsername();
 
-    ResponseEntity<UserResponseDto> response =
-        restTemplate.getForEntity("/api/users/search/username?username=" + username,
-            UserResponseDto.class);
+    ResponseEntity<UserResponseDto> response = restTemplate.getForEntity(
+        "/api/users/search/username?username=" + username,
+        UserResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     UserResponseDto user = response.getBody();
@@ -122,8 +123,7 @@ class UserControllerIntegrationTest extends TestContainersConfig {
   @Test
   @DirtiesContext
   void shouldCreateNewUserWhenUserIsValid() {
-    UserRequestDto userDto =
-        new UserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser");
+    UserRequestDto userDto = new UserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser");
 
     ResponseEntity<UserResponseDto> response = restTemplate.exchange(
         "/api/users", HttpMethod.POST, new HttpEntity<>(userDto), UserResponseDto.class);
@@ -144,8 +144,7 @@ class UserControllerIntegrationTest extends TestContainersConfig {
     User savedUser = userRepository.save(testUser);
     UUID userUuid = savedUser.getUuid();
 
-    UserRequestDto updateDto =
-        new UserRequestDto(userUuid, "Updated User", "updated@example.com", "updateduser");
+    UserRequestDto updateDto = new UserRequestDto(userUuid, "Updated User", "updated@example.com", "updateduser");
 
     ResponseEntity<UserResponseDto> response = restTemplate.exchange(
         "/api/users/" + userUuid, HttpMethod.PUT, new HttpEntity<>(updateDto),
@@ -178,9 +177,8 @@ class UserControllerIntegrationTest extends TestContainersConfig {
   void shouldReturnNotFoundWhenUserDoesNotExist() {
     UUID nonExistentUuid = UUID.randomUUID();
 
-    ResponseEntity<UserResponseDto> response =
-        restTemplate.getForEntity("/api/users/" + nonExistentUuid,
-            UserResponseDto.class);
+    ResponseEntity<UserResponseDto> response = restTemplate.getForEntity("/api/users/" + nonExistentUuid,
+        UserResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
@@ -188,9 +186,8 @@ class UserControllerIntegrationTest extends TestContainersConfig {
   void shouldReturnNotFoundWhenUserByUuidDoesNotExist() {
     UUID nonExistentUuid = UUID.randomUUID();
 
-    ResponseEntity<UserResponseDto> response =
-        restTemplate.getForEntity("/api/users/" + nonExistentUuid,
-            UserResponseDto.class);
+    ResponseEntity<UserResponseDto> response = restTemplate.getForEntity("/api/users/" + nonExistentUuid,
+        UserResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
@@ -198,9 +195,9 @@ class UserControllerIntegrationTest extends TestContainersConfig {
   void shouldReturnNotFoundWhenUserByEmailDoesNotExist() {
     String nonExistentEmail = "nonexistent@example.com";
 
-    ResponseEntity<UserResponseDto> response =
-        restTemplate.getForEntity("/api/users/search/email?email=" + nonExistentEmail,
-            UserResponseDto.class);
+    ResponseEntity<UserResponseDto> response = restTemplate.getForEntity(
+        "/api/users/search/email?email=" + nonExistentEmail,
+        UserResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
@@ -208,9 +205,9 @@ class UserControllerIntegrationTest extends TestContainersConfig {
   void shouldReturnNotFoundWhenUserByUsernameDoesNotExist() {
     String nonExistentUsername = "nonexistentuser";
 
-    ResponseEntity<UserResponseDto> response =
-        restTemplate.getForEntity("/api/users/search/username?username=" + nonExistentUsername,
-            UserResponseDto.class);
+    ResponseEntity<UserResponseDto> response = restTemplate.getForEntity(
+        "/api/users/search/username?username=" + nonExistentUsername,
+        UserResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 }
