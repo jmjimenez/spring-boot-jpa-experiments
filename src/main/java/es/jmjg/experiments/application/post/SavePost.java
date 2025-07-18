@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
-import es.jmjg.experiments.domain.Post;
-import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
 

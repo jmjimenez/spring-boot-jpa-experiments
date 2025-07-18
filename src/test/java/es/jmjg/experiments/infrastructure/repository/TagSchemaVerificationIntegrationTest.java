@@ -11,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import es.jmjg.experiments.domain.Tag;
+import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 
 @DataJpaTest

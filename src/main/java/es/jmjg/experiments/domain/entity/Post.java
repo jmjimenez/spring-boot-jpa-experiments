@@ -1,12 +1,17 @@
-package es.jmjg.experiments.domain;
+package es.jmjg.experiments.domain.entity;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -15,11 +20,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tag")
+@Table(name = "Post")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Tag {
+public class Post {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
@@ -28,14 +33,23 @@ public class Tag {
   @Column(name = "uuid", unique = true, nullable = false)
   private UUID uuid;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  @JsonIgnore
+  private User user;
+
   @NotEmpty
-  @Column(name = "tag", unique = true, nullable = false)
-  private String name;
+  @Column(name = "title", unique = true, nullable = false)
+  private String title;
+
+  @NotEmpty private String body;
 
   // Constructor with UUID
-  public Tag(Integer id, UUID uuid, String name) {
+  public Post(Integer id, UUID uuid, User user, String title, String body) {
     this.id = id;
     this.uuid = uuid;
-    this.name = name;
+    this.user = user;
+    this.title = title;
+    this.body = body;
   }
 }

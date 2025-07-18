@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.post.FindAllPosts;
-import es.jmjg.experiments.domain.Post;
+import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 
 @SpringBootTest

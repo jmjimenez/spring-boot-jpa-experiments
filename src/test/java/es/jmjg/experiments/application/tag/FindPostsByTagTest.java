@@ -15,9 +15,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.Post;
-import es.jmjg.experiments.domain.Tag;
-import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.TagRepository;
 import es.jmjg.experiments.shared.PostFactory;

@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.tag.FindUsersByTag;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.TagRepository;
 

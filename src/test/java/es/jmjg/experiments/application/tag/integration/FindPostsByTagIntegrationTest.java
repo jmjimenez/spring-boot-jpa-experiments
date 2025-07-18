@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.tag.FindPostsByTag;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.Post;
+import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.TagRepository;
 

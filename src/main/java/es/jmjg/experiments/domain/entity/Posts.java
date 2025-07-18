@@ -1,4 +1,4 @@
-package es.jmjg.experiments.domain;
+package es.jmjg.experiments.domain.entity;
 
 import java.util.List;
 

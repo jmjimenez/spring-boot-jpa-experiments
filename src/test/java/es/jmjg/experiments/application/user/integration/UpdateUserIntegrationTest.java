@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.user.UpdateUser;
-import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
 import es.jmjg.experiments.shared.UserFactory;

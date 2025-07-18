@@ -2,7 +2,7 @@ package es.jmjg.experiments.shared;
 
 import java.util.UUID;
 
-import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.domain.entity.User;
 
 /**
  * Factory class for creating test User instances with various configurations.

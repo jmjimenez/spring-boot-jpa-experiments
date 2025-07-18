@@ -37,31 +37,58 @@
   ],
   "java.project.outputPath": "target/classes",
   "java.project.testOutputPath": "target/test-classes",
-  "java.test.config": {
-    "unit": {
+  "java.test.config": [
+    {
+      "name": "unit",
       "vmargs": [
+        "--enable-preview",
+        "-Dfile.encoding=UTF-8",
+        "-Dspring.profiles.active=test"
+      ],
+      "workingDirectory": "${workspaceFolder}",
+      "env": {
+        "JAVA_HOME": "${env:JAVA_HOME}"
+      },
+      "args": [
         "-Dtest.include=**/*Test.java",
         "-Dtest.exclude=**/*IntegrationTest.java,**/*TestSuite.java"
-      ],
-      "workingDirectory": "${workspaceFolder}"
+      ]
     },
-    "integration": {
+    {
+      "name": "integration",
       "vmargs": [
+        "--enable-preview",
+        "-Dfile.encoding=UTF-8",
+        "-Dspring.profiles.active=test"
+      ],
+      "workingDirectory": "${workspaceFolder}",
+      "env": {
+        "JAVA_HOME": "${env:JAVA_HOME}"
+      },
+      "args": [
         "-Dtest.include=**/*IntegrationTest.java",
         "-Dtest.exclude=**/*TestSuite.java"
-      ],
-      "workingDirectory": "${workspaceFolder}"
+      ]
     }
-  },
-  "java.test.defaultConfig": "unit",
-  "java.test.additionalVmArgs": [
-    "--enable-preview"
   ],
+  "java.test.defaultConfig": "unit",
   "java.test.console": "integratedTerminal",
   "java.test.editor.enableShortcuts": true,
   "java.test.runner": "junit",
   "java.test.workingDirectory": "${workspaceFolder}",
   "java.test.consoleOptions": "openOnSessionStart",
+  "java.test.additionalVmArgs": [
+    "--enable-preview",
+    "-Dfile.encoding=UTF-8"
+  ],
+  "java.test.discovery.enabled": true,
+  "java.test.discovery.includePatterns": [
+    "**/*Test.java",
+    "**/*Tests.java"
+  ],
+  "java.test.discovery.excludePatterns": [
+    "**/target/**"
+  ],
   // Enable standard Java formatting
   "java.format.enabled": true,
   "java.format.onType.enabled": true,

@@ -11,7 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.tag.SaveTag;
-import es.jmjg.experiments.domain.Tag;
+import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.TagRepository;
 import es.jmjg.experiments.shared.TagFactory;

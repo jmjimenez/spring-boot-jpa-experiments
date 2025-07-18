@@ -25,7 +25,7 @@ import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
-import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.controller.dto.UserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
 import es.jmjg.experiments.infrastructure.controller.exception.UserNotFoundException;

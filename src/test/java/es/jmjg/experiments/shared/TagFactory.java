@@ -2,7 +2,7 @@ package es.jmjg.experiments.shared;
 
 import java.util.UUID;
 
-import es.jmjg.experiments.domain.Tag;
+import es.jmjg.experiments.domain.entity.Tag;
 
 /**
  * Factory class for creating test Tag instances with various configurations.

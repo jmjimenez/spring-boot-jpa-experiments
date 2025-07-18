@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.Post;
+import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.TagRepository;
 

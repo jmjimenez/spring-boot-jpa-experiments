@@ -3,7 +3,8 @@ package es.jmjg.experiments.infrastructure.controller.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
-import es.jmjg.experiments.domain.User;
+
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.controller.dto.UserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
 

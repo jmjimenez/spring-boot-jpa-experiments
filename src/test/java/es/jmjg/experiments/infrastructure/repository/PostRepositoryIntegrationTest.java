@@ -17,8 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import es.jmjg.experiments.domain.Post;
-import es.jmjg.experiments.domain.User;
+import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.shared.UserFactory;
 
