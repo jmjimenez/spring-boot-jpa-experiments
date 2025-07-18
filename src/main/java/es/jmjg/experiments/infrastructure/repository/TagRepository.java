@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.jmjg.experiments.domain.entity.Tag;
 
 @Repository
-public interface TagRepository extends JpaRepository<Tag, Integer> {
+public interface TagRepository extends JpaRepository<Tag, Integer>, es.jmjg.experiments.domain.repository.TagRepository {
 
   @Transactional(readOnly = true)
   Optional<Tag> findByName(String name);

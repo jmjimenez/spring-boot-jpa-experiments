@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.jmjg.experiments.domain.entity.Post;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Integer> {
+public interface PostRepository extends JpaRepository<Post, Integer>, es.jmjg.experiments.domain.repository.PostRepository {
 
   @Transactional(readOnly = true)
   Optional<Post> findByTitle(String title);

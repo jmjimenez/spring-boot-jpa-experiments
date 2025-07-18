@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.repository.TagRepository;
+import es.jmjg.experiments.domain.repository.TagRepository;
 
 @Service
 public class FindTagByPattern {
