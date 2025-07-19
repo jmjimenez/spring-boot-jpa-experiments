@@ -25,7 +25,7 @@ import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class SavePostIntegrationTest extends TestContainersConfig {
 
   @Autowired

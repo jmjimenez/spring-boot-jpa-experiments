@@ -32,16 +32,17 @@ public class User {
   @Column(name = "uuid", unique = true, nullable = false)
   private UUID uuid;
 
-  @NotEmpty private String name;
+  @NotEmpty
+  private String name;
 
-  @NotEmpty private String email;
+  @NotEmpty
+  @Column(unique = true)
+  private String email;
 
+  @Column(unique = true)
   private String username;
 
-  @OneToMany(
-      mappedBy = "user",
-      cascade = {CascadeType.ALL},
-      fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "user", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
   private List<Post> posts;
 
   // Constructor with UUID

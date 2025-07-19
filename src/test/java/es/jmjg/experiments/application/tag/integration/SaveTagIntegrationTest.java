@@ -2,7 +2,6 @@ package es.jmjg.experiments.application.tag.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +17,7 @@ import es.jmjg.experiments.shared.TagFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class SaveTagIntegrationTest extends TestContainersConfig {
 
   @Autowired
@@ -29,12 +28,6 @@ class SaveTagIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private Environment environment;
-
-  @BeforeEach
-  void setUp() {
-    // Clean up before each test
-    tagRepository.deleteAll();
-  }
 
   @Test
   void shouldUseTestProfile() {
@@ -60,13 +53,13 @@ class SaveTagIntegrationTest extends TestContainersConfig {
     // Then
     assertThat(savedTag).isNotNull();
     assertThat(savedTag.getId()).isNotNull();
-    assertThat(savedTag.getName()).isEqualTo("test-tag");
+    assertThat(savedTag.getName()).isEqualTo(tag.getName());
     assertThat(savedTag.getUuid()).isNotNull();
 
     // Verify we can retrieve it from the database
     var foundTag = tagRepository.findById(savedTag.getId());
     assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getName()).isEqualTo("test-tag");
+    assertThat(foundTag.get().getName()).isEqualTo(tag.getName());
     assertThat(foundTag.get().getUuid()).isEqualTo(savedTag.getUuid());
   }
 
@@ -101,12 +94,12 @@ class SaveTagIntegrationTest extends TestContainersConfig {
     // Then
     assertThat(savedTag).isNotNull();
     assertThat(savedTag.getId()).isNotNull();
-    assertThat(savedTag.getName()).isEqualTo("technology");
+    assertThat(savedTag.getName()).isEqualTo(tag.getName());
     assertThat(savedTag.getUuid()).isNotNull();
 
     // Verify we can retrieve it from the database
     var foundTag = tagRepository.findById(savedTag.getId());
     assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getName()).isEqualTo("technology");
+    assertThat(foundTag.get().getName()).isEqualTo(tag.getName());
   }
 }

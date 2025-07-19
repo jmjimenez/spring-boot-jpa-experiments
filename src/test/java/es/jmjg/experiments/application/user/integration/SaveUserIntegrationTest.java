@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +20,7 @@ import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class SaveUserIntegrationTest extends TestContainersConfig {
 
   @Autowired
@@ -32,11 +31,6 @@ class SaveUserIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private Environment environment;
-
-  @BeforeEach
-  void setUp() {
-    userRepository.deleteAll();
-  }
 
   @Test
   void shouldUseTestProfile() {
@@ -52,38 +46,38 @@ class SaveUserIntegrationTest extends TestContainersConfig {
 
   @Test
   void save_WhenUserIsValid_ShouldSaveAndReturnUser() {
-    User userToSave = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    User userToSave = UserFactory.createUser("Test User 01", "test01@example.com", "testuser01");
     UUID originalUuid = userToSave.getUuid();
 
     User result = saveUser.save(userToSave);
 
     assertThat(result).isNotNull();
     assertThat(result.getId()).isNotNull();
-    assertThat(result.getName()).isEqualTo("Test User");
-    assertThat(result.getEmail()).isEqualTo("test@example.com");
-    assertThat(result.getUsername()).isEqualTo("testuser");
+    assertThat(result.getName()).isEqualTo(userToSave.getName());
+    assertThat(result.getEmail()).isEqualTo(userToSave.getEmail());
+    assertThat(result.getUsername()).isEqualTo(userToSave.getUsername());
     assertThat(result.getUuid()).isEqualTo(originalUuid);
 
     Optional<User> dbUser = userRepository.findById(result.getId());
     assertThat(dbUser).isPresent();
-    assertThat(dbUser.get().getName()).isEqualTo("Test User");
-    assertThat(dbUser.get().getEmail()).isEqualTo("test@example.com");
-    assertThat(dbUser.get().getUsername()).isEqualTo("testuser");
+    assertThat(dbUser.get().getName()).isEqualTo(userToSave.getName());
+    assertThat(dbUser.get().getEmail()).isEqualTo(userToSave.getEmail());
+    assertThat(dbUser.get().getUsername()).isEqualTo(userToSave.getUsername());
     assertThat(dbUser.get().getUuid()).isEqualTo(originalUuid);
   }
 
   @Test
   void save_WhenUserHasValidData_ShouldSaveAndReturnUser() {
-    User userToSave = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    User userToSave = UserFactory.createUser("Test User 02", "test02@example.com", "testuser02");
 
     User result = saveUser.save(userToSave);
 
     assertThat(result).isNotNull();
     assertThat(result.getId()).isNotNull();
     assertThat(result.getUuid()).isNotNull();
-    assertThat(result.getName()).isEqualTo("Test User");
-    assertThat(result.getEmail()).isEqualTo("test@example.com");
-    assertThat(result.getUsername()).isEqualTo("testuser");
+    assertThat(result.getName()).isEqualTo(userToSave.getName());
+    assertThat(result.getEmail()).isEqualTo(userToSave.getEmail());
+    assertThat(result.getUsername()).isEqualTo(userToSave.getUsername());
 
     Optional<User> dbUser = userRepository.findById(result.getId());
     assertThat(dbUser).isPresent();
@@ -92,26 +86,26 @@ class SaveUserIntegrationTest extends TestContainersConfig {
 
   @Test
   void save_WhenUserHasNoId_ShouldSaveAndReturnUserWithGeneratedId() {
-    User userToSave = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    User userToSave = UserFactory.createUser("Test User 03", "test03@example.com", "testuser03");
     userToSave.setId(null);
 
     User result = saveUser.save(userToSave);
 
     assertThat(result).isNotNull();
     assertThat(result.getId()).isNotNull();
-    assertThat(result.getName()).isEqualTo("Test User");
-    assertThat(result.getEmail()).isEqualTo("test@example.com");
-    assertThat(result.getUsername()).isEqualTo("testuser");
+    assertThat(result.getName()).isEqualTo(userToSave.getName());
+    assertThat(result.getEmail()).isEqualTo(userToSave.getEmail());
+    assertThat(result.getUsername()).isEqualTo(userToSave.getUsername());
 
     Optional<User> dbUser = userRepository.findById(result.getId());
     assertThat(dbUser).isPresent();
-    assertThat(dbUser.get().getName()).isEqualTo("Test User");
+    assertThat(dbUser.get().getName()).isEqualTo(userToSave.getName());
   }
 
   @Test
   void save_WhenMultipleUsers_ShouldSaveAllUsersWithDifferentIds() {
-    User user1 = UserFactory.createUser("User 1", "user1@example.com", "user1");
-    User user2 = UserFactory.createUser("User 2", "user2@example.com", "user2");
+    User user1 = UserFactory.createUser("User 04", "user04@example.com", "user04");
+    User user2 = UserFactory.createUser("User 05", "user05@example.com", "user05");
 
     User result1 = saveUser.save(user1);
     User result2 = saveUser.save(user2);
@@ -124,17 +118,43 @@ class SaveUserIntegrationTest extends TestContainersConfig {
     Optional<User> dbUser2 = userRepository.findById(result2.getId());
     assertThat(dbUser1).isPresent();
     assertThat(dbUser2).isPresent();
-    assertThat(dbUser1.get().getName()).isEqualTo("User 1");
-    assertThat(dbUser2.get().getName()).isEqualTo("User 2");
+    assertThat(dbUser1.get().getName()).isEqualTo(user1.getName());
+    assertThat(dbUser2.get().getName()).isEqualTo(user2.getName());
   }
 
   @Test
   void save_WhenUserWithExistingUuid_ShouldThrowException() {
-    User existingUser = userRepository.save(UserFactory.createBasicUser());
-    User userToSave = UserFactory.createUser("New User", "new@example.com", "newuser");
-    userToSave.setUuid(existingUser.getUuid());
+    User user1 = UserFactory.createUser("User 06", "user06@example.com", "user06");
+    User user2 = UserFactory.createUser("User 07", "user07@example.com", "user07");
 
-    assertThatThrownBy(() -> saveUser.save(userToSave))
+    User existingUser = userRepository.save(user1);
+    user2.setUuid(existingUser.getUuid());
+
+    assertThatThrownBy(() -> saveUser.save(user2))
+        .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+  }
+
+  @Test
+  void save_WhenUserWithExistingEmail_ShouldThrowException() {
+    User user1 = UserFactory.createUser("User 08", "user08@example.com", "user08");
+    User user2 = UserFactory.createUser("User 09", "user09@example.com", "user09");
+
+    userRepository.save(user1);
+    user2.setEmail(user1.getEmail());
+
+    assertThatThrownBy(() -> saveUser.save(user2))
+        .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+  }
+
+  @Test
+  void save_WhenUserWithExistingUsername_ShouldThrowException() {
+    User user1 = UserFactory.createUser("User 10", "user10@example.com", "user10");
+    User user2 = UserFactory.createUser("User 11", "user11@example.com", "user11");
+
+    userRepository.save(user1);
+    user2.setUsername(user1.getUsername());
+
+    assertThatThrownBy(() -> saveUser.save(user2))
         .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
   }
 }

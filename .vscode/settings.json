@@ -121,5 +121,8 @@
   "editor.rulers": [
     100
   ],
-  "editor.wordWrapColumn": 100
+  "editor.wordWrapColumn": 100,
+  "workbench.editor.tabSizing": "shrink",
+  "workbench.editor.scrollToSwitchTabs": true,
+  "workbench.editor.wrapTabs": true
 }

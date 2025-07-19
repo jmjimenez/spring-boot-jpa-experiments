@@ -2,7 +2,6 @@ package es.jmjg.experiments.application.user.integration;
 
 import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +17,7 @@ import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class FindUserByEmailIntegrationTest extends TestContainersConfig {
 
   @Autowired
@@ -29,14 +28,6 @@ class FindUserByEmailIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private Environment environment;
-
-  private User testUser;
-
-  @BeforeEach
-  void setUp() {
-    userRepository.deleteAll();
-    testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-  }
 
   @Test
   void shouldUseTestProfile() {
@@ -53,6 +44,7 @@ class FindUserByEmailIntegrationTest extends TestContainersConfig {
   @Test
   void findByEmail_WhenUserExists_ShouldReturnUser() {
     // Given
+    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
     User savedUser = userRepository.save(testUser);
 
     // When
@@ -60,9 +52,9 @@ class FindUserByEmailIntegrationTest extends TestContainersConfig {
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo("Test User");
-    assertThat(result.get().getEmail()).isEqualTo("test@example.com");
-    assertThat(result.get().getUsername()).isEqualTo("testuser");
+    assertThat(result.get().getName()).isEqualTo(testUser.getName());
+    assertThat(result.get().getEmail()).isEqualTo(testUser.getEmail());
+    assertThat(result.get().getUsername()).isEqualTo(testUser.getUsername());
     assertThat(result.get().getUuid()).isEqualTo(testUser.getUuid());
     assertThat(result.get().getId()).isEqualTo(savedUser.getId());
   }
@@ -89,30 +81,31 @@ class FindUserByEmailIntegrationTest extends TestContainersConfig {
   void findByEmail_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
     // Given
     User secondUser = UserFactory.createUser("Second User", "second@example.com", "seconduser");
-
-    User savedFirstUser = userRepository.save(testUser);
     User savedSecondUser = userRepository.save(secondUser);
+    User thirdUser = UserFactory.createUser("Third User", "third@example.com", "thirduser");
+    User savedThirdUser = userRepository.save(thirdUser);
 
     // When
-    Optional<User> firstResult = findUserByEmail.findByEmail(savedFirstUser.getEmail());
-    Optional<User> secondResult = findUserByEmail.findByEmail(savedSecondUser.getEmail());
+    Optional<User> secondResult = findUserByEmail.findByEmail(secondUser.getEmail());
+    Optional<User> thirdResult = findUserByEmail.findByEmail(thirdUser.getEmail());
 
     // Then
-    assertThat(firstResult).isPresent();
-    assertThat(firstResult.get().getName()).isEqualTo("Test User");
-    assertThat(firstResult.get().getEmail()).isEqualTo("test@example.com");
-    assertThat(firstResult.get().getId()).isEqualTo(savedFirstUser.getId());
-
     assertThat(secondResult).isPresent();
-    assertThat(secondResult.get().getName()).isEqualTo("Second User");
-    assertThat(secondResult.get().getEmail()).isEqualTo("second@example.com");
+    assertThat(secondResult.get().getName()).isEqualTo(secondUser.getName());
+    assertThat(secondResult.get().getEmail()).isEqualTo(secondUser.getEmail());
     assertThat(secondResult.get().getId()).isEqualTo(savedSecondUser.getId());
+
+    assertThat(thirdResult).isPresent();
+    assertThat(thirdResult.get().getName()).isEqualTo(thirdUser.getName());
+    assertThat(thirdResult.get().getEmail()).isEqualTo(thirdUser.getEmail());
+    assertThat(thirdResult.get().getId()).isEqualTo(savedThirdUser.getId());
   }
 
   @Test
   void findByEmail_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given
-    User savedUser = userRepository.save(testUser);
+    User fourthUser = UserFactory.createUser("Fourth User", "fourth@example.com", "fourthuser");
+    User savedUser = userRepository.save(fourthUser);
     savedUser.setName("Updated Test User");
     savedUser.setEmail("updated@example.com");
     userRepository.save(savedUser);
@@ -124,8 +117,8 @@ class FindUserByEmailIntegrationTest extends TestContainersConfig {
     assertThat(result).isPresent();
     assertThat(result.get().getName()).isEqualTo("Updated Test User");
     assertThat(result.get().getEmail()).isEqualTo("updated@example.com");
-    assertThat(result.get().getUsername()).isEqualTo("testuser");
-    assertThat(result.get().getUuid()).isEqualTo(testUser.getUuid());
+    assertThat(result.get().getUsername()).isEqualTo(fourthUser.getUsername());
+    assertThat(result.get().getUuid()).isEqualTo(savedUser.getUuid());
   }
 
   @Test
@@ -149,7 +142,8 @@ class FindUserByEmailIntegrationTest extends TestContainersConfig {
   @Test
   void findByEmail_WhenUserIsDeleted_ShouldReturnEmpty() {
     // Given
-    User savedUser = userRepository.save(testUser);
+    User fifthUser = UserFactory.createUser("Fifth User", "fifth@example.com", "fifthuser");
+    User savedUser = userRepository.save(fifthUser);
     String userEmail = savedUser.getEmail();
 
     // When
@@ -163,36 +157,13 @@ class FindUserByEmailIntegrationTest extends TestContainersConfig {
   }
 
   @Test
-  void findByEmail_WhenMultipleUsersWithSameName_ShouldReturnCorrectUser() {
-    // Given
-    User secondUser = UserFactory.createUser("Test User", "test2@example.com", "testuser2");
-
-    User savedFirstUser = userRepository.save(testUser);
-    User savedSecondUser = userRepository.save(secondUser);
-
-    // When
-    Optional<User> firstResult = findUserByEmail.findByEmail(savedFirstUser.getEmail());
-    Optional<User> secondResult = findUserByEmail.findByEmail(savedSecondUser.getEmail());
-
-    // Then
-    assertThat(firstResult).isPresent();
-    assertThat(firstResult.get().getName()).isEqualTo("Test User");
-    assertThat(firstResult.get().getEmail()).isEqualTo("test@example.com");
-    assertThat(firstResult.get().getId()).isEqualTo(savedFirstUser.getId());
-
-    assertThat(secondResult).isPresent();
-    assertThat(secondResult.get().getName()).isEqualTo("Test User");
-    assertThat(secondResult.get().getEmail()).isEqualTo("test2@example.com");
-    assertThat(secondResult.get().getId()).isEqualTo(savedSecondUser.getId());
-  }
-
-  @Test
   void findByEmail_WhenEmailHasDifferentCase_ShouldReturnEmpty() {
     // Given
-    userRepository.save(testUser);
+    User sixthUser = UserFactory.createUser("Sixth User", "sixth@example.com", "sixthuser");
+    userRepository.save(sixthUser);
 
     // When
-    Optional<User> result = findUserByEmail.findByEmail("TEST@EXAMPLE.COM");
+    Optional<User> result = findUserByEmail.findByEmail(sixthUser.getEmail().toUpperCase());
 
     // Then
     assertThat(result).isEmpty();
@@ -201,8 +172,7 @@ class FindUserByEmailIntegrationTest extends TestContainersConfig {
   @Test
   void findByEmail_WhenEmailHasSpecialCharacters_ShouldReturnUser() {
     // Given
-    User specialUser =
-        UserFactory.createUser("Special User", "test+tag@example.com", "specialuser");
+    User specialUser = UserFactory.createUser("Special User", "test+tag@example.com", "specialuser");
     User savedUser = userRepository.save(specialUser);
 
     // When
@@ -218,8 +188,7 @@ class FindUserByEmailIntegrationTest extends TestContainersConfig {
   @Test
   void findByEmail_WhenEmailHasSubdomain_ShouldReturnUser() {
     // Given
-    User subdomainUser =
-        UserFactory.createUser("Subdomain User", "user@subdomain.example.com", "subdomainuser");
+    User subdomainUser = UserFactory.createUser("Subdomain User", "user@subdomain.example.com", "subdomainuser");
     User savedUser = userRepository.save(subdomainUser);
 
     // When

@@ -19,7 +19,7 @@ import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class FindUserByUsernameIntegrationTest extends TestContainersConfig {
 
   @Autowired
@@ -36,7 +36,6 @@ class FindUserByUsernameIntegrationTest extends TestContainersConfig {
 
   @BeforeEach
   void setUp() {
-    userRepository.deleteAll();
     testUsername = "testuser";
     testUser =
         UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", testUsername);

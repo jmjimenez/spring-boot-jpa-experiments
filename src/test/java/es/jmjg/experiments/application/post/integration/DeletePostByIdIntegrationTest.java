@@ -2,7 +2,6 @@ package es.jmjg.experiments.application.post.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +20,7 @@ import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class DeletePostByIdIntegrationTest extends TestContainersConfig {
 
   @Autowired
@@ -35,23 +34,6 @@ class DeletePostByIdIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private Environment environment;
-
-  private User testUser;
-  private Post testPost1;
-
-  @BeforeEach
-  void setUp() {
-    // Clear the database before each test
-    // Delete in order to respect foreign key constraints
-    postRepository.deleteAll();
-    userRepository.deleteAll();
-
-    // Create a test user
-    testUser = userRepository.save(UserFactory.createBasicUser());
-
-    // Create test posts associated with the user
-    testPost1 = PostFactory.createBasicPost(testUser);
-  }
 
   @Test
   void shouldUseTestProfile() {
@@ -70,6 +52,8 @@ class DeletePostByIdIntegrationTest extends TestContainersConfig {
   @Test
   void deleteById_ShouldDeletePost() {
     // Given
+    User testUser = userRepository.save(UserFactory.createBasicUser());
+    Post testPost1 = PostFactory.createBasicPost(testUser);
     Post savedPost = postRepository.save(testPost1);
     assertThat(postRepository.findById(savedPost.getId())).isPresent();
 

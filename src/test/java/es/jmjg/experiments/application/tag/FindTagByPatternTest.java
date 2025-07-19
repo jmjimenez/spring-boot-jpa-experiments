@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.repository.TagRepository;
 import es.jmjg.experiments.shared.TagFactory;
+import jakarta.transaction.Transactional;
 
 @ExtendWith(MockitoExtension.class)
 class FindTagByPatternTest {
@@ -30,6 +31,7 @@ class FindTagByPatternTest {
   }
 
   @Test
+  @Transactional
   void findByPattern_WhenPatternMatches_ShouldReturnMatchingTags() {
     // Given
     String pattern = "java";

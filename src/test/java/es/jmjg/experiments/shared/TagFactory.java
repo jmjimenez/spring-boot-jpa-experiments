@@ -23,6 +23,12 @@ public class TagFactory {
     return tag;
   }
 
+  public static Tag createBasicTag(Integer id) {
+    Tag tag = new Tag();
+    tag.setUuid(UUID.randomUUID());
+    tag.setName("test-tag" + id);
+    return tag;
+  }
   /**
    * Creates a tag with custom name.
    *
@@ -56,7 +62,7 @@ public class TagFactory {
    * @return a new Tag instance for technology
    */
   public static Tag createTechnologyTag() {
-    return createTag("technology");
+    return createTag("technology-test");
   }
 
   /**
@@ -65,7 +71,7 @@ public class TagFactory {
    * @return a new Tag instance for programming
    */
   public static Tag createProgrammingTag() {
-    return createTag("programming");
+    return createTag("programming-test");
   }
 
   /**
@@ -74,7 +80,7 @@ public class TagFactory {
    * @return a new Tag instance for Java
    */
   public static Tag createJavaTag() {
-    return createTag("java");
+    return createTag("java-test");
   }
 
   /**
@@ -83,7 +89,7 @@ public class TagFactory {
    * @return a new Tag instance for Spring Boot
    */
   public static Tag createSpringBootTag() {
-    return createTag("spring-boot");
+    return createTag("spring-boot-test");
   }
 
   /**
@@ -92,7 +98,7 @@ public class TagFactory {
    * @return a new Tag instance for JPA
    */
   public static Tag createJpaTag() {
-    return createTag("jpa");
+    return createTag("jpa-test");
   }
 
   /**
@@ -101,7 +107,7 @@ public class TagFactory {
    * @return a new Tag instance for database
    */
   public static Tag createDatabaseTag() {
-    return createTag("database");
+    return createTag("database-test");
   }
 
   /**
@@ -110,7 +116,7 @@ public class TagFactory {
    * @return a new Tag instance for web development
    */
   public static Tag createWebDevelopmentTag() {
-    return createTag("web-development");
+    return createTag("web-development-test");
   }
 
   /**
@@ -119,7 +125,7 @@ public class TagFactory {
    * @return a new Tag instance for tutorial
    */
   public static Tag createTutorialTag() {
-    return createTag("tutorial");
+    return createTag("tutorial-test");
   }
 
   /**
@@ -128,7 +134,7 @@ public class TagFactory {
    * @return a new Tag instance for best practices
    */
   public static Tag createBestPracticesTag() {
-    return createTag("best-practices");
+    return createTag("best-practices-test");
   }
 
   /**
@@ -137,7 +143,7 @@ public class TagFactory {
    * @return a new Tag instance for architecture
    */
   public static Tag createArchitectureTag() {
-    return createTag("architecture");
+    return createTag("architecture-test");
   }
 
   /**
@@ -146,7 +152,7 @@ public class TagFactory {
    * @return a new Tag instance for microservices
    */
   public static Tag createMicroservicesTag() {
-    return createTag("microservices");
+    return createTag("microservices-test");
   }
 
   /**
@@ -155,7 +161,7 @@ public class TagFactory {
    * @return a new Tag instance for testing
    */
   public static Tag createTestingTag() {
-    return createTag("testing");
+    return createTag("testing-test");
   }
 
   /**
@@ -164,7 +170,7 @@ public class TagFactory {
    * @return a new Tag instance for DevOps
    */
   public static Tag createDevOpsTag() {
-    return createTag("devops");
+    return createTag("devops-test");
   }
 
   /**
@@ -173,7 +179,7 @@ public class TagFactory {
    * @return a new Tag instance for API
    */
   public static Tag createApiTag() {
-    return createTag("api");
+    return createTag("api-test");
   }
 
   /**
@@ -182,6 +188,6 @@ public class TagFactory {
    * @return a new Tag instance for security
    */
   public static Tag createSecurityTag() {
-    return createTag("security");
+    return createTag("security-test");
   }
 }

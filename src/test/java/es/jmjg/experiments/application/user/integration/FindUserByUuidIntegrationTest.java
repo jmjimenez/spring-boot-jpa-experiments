@@ -3,7 +3,6 @@ package es.jmjg.experiments.application.user.integration;
 import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +18,7 @@ import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class FindUserByUuidIntegrationTest extends TestContainersConfig {
 
   @Autowired
@@ -30,16 +29,6 @@ class FindUserByUuidIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private Environment environment;
-
-  private User testUser;
-  private UUID testUuid;
-
-  @BeforeEach
-  void setUp() {
-    userRepository.deleteAll();
-    testUuid = UUID.randomUUID();
-    testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
-  }
 
   @Test
   void shouldUseTestProfile() {
@@ -56,6 +45,8 @@ class FindUserByUuidIntegrationTest extends TestContainersConfig {
   @Test
   void findByUuid_WhenUserExists_ShouldReturnUser() {
     // Given
+    UUID testUuid = UUID.randomUUID();
+    User testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
     User savedUser = userRepository.save(testUser);
 
     // When
@@ -92,42 +83,47 @@ class FindUserByUuidIntegrationTest extends TestContainersConfig {
   void findByUuid_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
     // Given
     UUID secondUuid = UUID.randomUUID();
-    User secondUser =
-        UserFactory.createUser(secondUuid, "Second User", "second@example.com", "seconduser");
+    User secondUser = UserFactory.createUser(secondUuid, "Second User", "second@example.com", "seconduser");
 
-    User savedFirstUser = userRepository.save(testUser);
+    UUID thirdUuid = UUID.randomUUID();
+    User thirdUser = UserFactory.createUser(thirdUuid, "Third User", "third@example.com", "thirduser");
+
     User savedSecondUser = userRepository.save(secondUser);
+    User savedThirdUser = userRepository.save(thirdUser);
 
     // When
-    Optional<User> firstResult = findUserByUuid.findByUuid(testUuid);
-    Optional<User> secondResult = findUserByUuid.findByUuid(secondUuid);
+    Optional<User> firstResult = findUserByUuid.findByUuid(secondUuid);
+    Optional<User> secondResult = findUserByUuid.findByUuid(thirdUuid);
 
     // Then
     assertThat(firstResult).isPresent();
-    assertThat(firstResult.get().getName()).isEqualTo("Test User");
-    assertThat(firstResult.get().getId()).isEqualTo(savedFirstUser.getId());
+    assertThat(firstResult.get().getName()).isEqualTo(secondUser.getName());
+    assertThat(firstResult.get().getId()).isEqualTo(savedSecondUser.getId());
 
     assertThat(secondResult).isPresent();
-    assertThat(secondResult.get().getName()).isEqualTo("Second User");
-    assertThat(secondResult.get().getId()).isEqualTo(savedSecondUser.getId());
+    assertThat(secondResult.get().getName()).isEqualTo(thirdUser.getName());
+    assertThat(secondResult.get().getId()).isEqualTo(savedThirdUser.getId());
   }
 
   @Test
   void findByUuid_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given
-    User savedUser = userRepository.save(testUser);
+    UUID fourthUuid = UUID.randomUUID();
+    User fourthUser = UserFactory.createUser(fourthUuid, "Fourth User", "fourth@example.com", "fourthuser");
+    User savedUser = userRepository.save(fourthUser);
+
     savedUser.setName("Updated Test User");
     savedUser.setEmail("updated@example.com");
-    userRepository.save(savedUser);
+    User updatedUser = userRepository.save(savedUser);
 
     // When
-    Optional<User> result = findUserByUuid.findByUuid(testUuid);
+    Optional<User> result = findUserByUuid.findByUuid(fourthUuid);
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo("Updated Test User");
-    assertThat(result.get().getEmail()).isEqualTo("updated@example.com");
-    assertThat(result.get().getUsername()).isEqualTo("testuser");
-    assertThat(result.get().getUuid()).isEqualTo(testUuid);
+    assertThat(result.get().getName()).isEqualTo(fourthUser.getName());
+    assertThat(result.get().getEmail()).isEqualTo(fourthUser.getEmail());
+    assertThat(result.get().getUsername()).isEqualTo(fourthUser.getUsername());
+    assertThat(result.get().getUuid()).isEqualTo(fourthUuid);
   }
 }

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +21,7 @@ import es.jmjg.experiments.shared.TagFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class UpdateTagNameIntegrationTest extends TestContainersConfig {
 
   @Autowired
@@ -33,12 +32,6 @@ class UpdateTagNameIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private Environment environment;
-
-  @BeforeEach
-  void setUp() {
-    // Clean up before each test
-    tagRepository.deleteAll();
-  }
 
   @Test
   void shouldUseTestProfile() {
@@ -56,7 +49,7 @@ class UpdateTagNameIntegrationTest extends TestContainersConfig {
   @Test
   void updateName_WhenTagExists_ShouldUpdateAndReturnTag() {
     // Given
-    Tag tag = TagFactory.createBasicTag();
+    Tag tag = TagFactory.createBasicTag(4);
     Tag savedTag = tagRepository.save(tag);
     String newName = "updated-tag";
 
@@ -102,7 +95,7 @@ class UpdateTagNameIntegrationTest extends TestContainersConfig {
   @Test
   void updateName_WhenNewNameIsEmpty_ShouldThrowIllegalArgumentException() {
     // Given
-    Tag tag = TagFactory.createBasicTag();
+    Tag tag = TagFactory.createBasicTag(3);
     Tag savedTag = tagRepository.save(tag);
 
     // When & Then
@@ -114,7 +107,7 @@ class UpdateTagNameIntegrationTest extends TestContainersConfig {
   @Test
   void updateName_WhenNewNameIsWhitespace_ShouldThrowIllegalArgumentException() {
     // Given
-    Tag tag = TagFactory.createBasicTag();
+    Tag tag = TagFactory.createBasicTag(1);
     Tag savedTag = tagRepository.save(tag);
 
     // When & Then
@@ -126,10 +119,10 @@ class UpdateTagNameIntegrationTest extends TestContainersConfig {
   @Test
   void updateName_WhenNewNameIsTrimmed_ShouldWorkCorrectly() {
     // Given
-    Tag tag = TagFactory.createBasicTag();
+    Tag tag = TagFactory.createBasicTag(2);
     Tag savedTag = tagRepository.save(tag);
-    String newName = "  updated-tag  ";
-    String expectedName = "updated-tag";
+    String newName = "  updated-tag-2  ";
+    String expectedName = "updated-tag-2";
 
     // When
     Tag result = updateTagName.updateName(savedTag.getUuid(), newName);

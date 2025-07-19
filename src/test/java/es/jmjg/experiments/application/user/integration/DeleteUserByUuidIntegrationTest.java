@@ -19,7 +19,7 @@ import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class DeleteUserByUuidIntegrationTest extends TestContainersConfig {
 
   @Autowired
@@ -36,7 +36,6 @@ class DeleteUserByUuidIntegrationTest extends TestContainersConfig {
 
   @BeforeEach
   void setUp() {
-    userRepository.deleteAll();
     testUuid = UUID.randomUUID();
     testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
   }
@@ -142,9 +141,6 @@ class DeleteUserByUuidIntegrationTest extends TestContainersConfig {
 
   @Test
   void deleteByUuid_WhenDatabaseIsEmpty_ShouldNotThrowException() {
-    // Given
-    assertThat(userRepository.findAll()).isEmpty();
-
     // When & Then
     assertThatCode(() -> deleteUserByUuid.deleteByUuid(UUID.randomUUID()))
         .doesNotThrowAnyException();

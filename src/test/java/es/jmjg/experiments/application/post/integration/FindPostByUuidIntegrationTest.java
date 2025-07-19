@@ -24,8 +24,7 @@ import es.jmjg.experiments.shared.UserFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-// TODO: review parameters in DirtiesContext
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class FindPostByUuidIntegrationTest extends TestContainersConfig {
 
   @Autowired
@@ -39,23 +38,6 @@ class FindPostByUuidIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private Environment environment;
-
-  private User testUser;
-  private Post testPost;
-
-  @BeforeEach
-  void setUp() {
-    // Clear the database before each test
-    // TODO: review if this is needed
-    postRepository.deleteAll();
-    userRepository.deleteAll();
-
-    // Create a test user
-    testUser = userRepository.save(UserFactory.createBasicUser());
-
-    // Create test post
-    testPost = PostFactory.createBasicPost(testUser);
-  }
 
   @Test
   void shouldUseTestProfile() {
@@ -73,6 +55,8 @@ class FindPostByUuidIntegrationTest extends TestContainersConfig {
   @Test
   void findByUuid_WhenPostExists_ShouldReturnPost() {
     // Given
+    User testUser = userRepository.save(UserFactory.createBasicUser());
+    Post testPost = PostFactory.createBasicPost(testUser);
     postRepository.save(testPost);
 
     // When
@@ -80,8 +64,8 @@ class FindPostByUuidIntegrationTest extends TestContainersConfig {
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getTitle()).isEqualTo("Test Post");
-    assertThat(result.get().getBody()).isEqualTo("Test Body");
+    assertThat(result.get().getTitle()).isEqualTo(testPost.getTitle());
+    assertThat(result.get().getBody()).isEqualTo(testPost.getBody());
     assertThat(result.get().getUser().getId()).isEqualTo(testUser.getId());
     assertThat(result.get().getUuid()).isEqualTo(testPost.getUuid());
   }

@@ -19,7 +19,7 @@ import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class FindAllPostsIntegrationTest extends TestContainersConfig {
 
   @Autowired

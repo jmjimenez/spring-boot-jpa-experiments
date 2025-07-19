@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,28 +14,17 @@ import org.springframework.test.context.ActiveProfiles;
 import es.jmjg.experiments.application.tag.FindTagByPattern;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
-import es.jmjg.experiments.infrastructure.repository.TagRepository;
-import es.jmjg.experiments.shared.TagFactory;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class FindTagByPatternIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private FindTagByPattern findTagByPattern;
 
   @Autowired
-  private TagRepository tagRepository;
-
-  @Autowired
   private Environment environment;
-
-  @BeforeEach
-  void setUp() {
-    // Clean up before each test
-    tagRepository.deleteAll();
-  }
 
   @Test
   void shouldUseTestProfile() {
@@ -53,15 +41,7 @@ class FindTagByPatternIntegrationTest extends TestContainersConfig {
 
   @Test
   void findByPattern_WhenPatternMatches_ShouldReturnMatchingTags() {
-    // Given
-    Tag javaTag = TagFactory.createJavaTag();
-    Tag springBootTag = TagFactory.createSpringBootTag();
-    Tag jpaTag = TagFactory.createJpaTag();
-
-    tagRepository.save(javaTag);
-    tagRepository.save(springBootTag);
-    tagRepository.save(jpaTag);
-
+    // Given - Using existing Flyway test data
     // When
     List<Tag> result = findTagByPattern.findByPattern("java");
 
@@ -73,17 +53,9 @@ class FindTagByPatternIntegrationTest extends TestContainersConfig {
 
   @Test
   void findByPattern_WhenPatternMatchesMultipleTags_ShouldReturnAllMatchingTags() {
-    // Given
-    Tag javaTag = TagFactory.createJavaTag();
-    Tag springBootTag = TagFactory.createSpringBootTag();
-    Tag jpaTag = TagFactory.createJpaTag();
-
-    tagRepository.save(javaTag);
-    tagRepository.save(springBootTag);
-    tagRepository.save(jpaTag);
-
+    // Given - Using existing Flyway test data
     // When
-    List<Tag> result = findTagByPattern.findByPattern("j");
+    List<Tag> result = findTagByPattern.findByPattern("j%");
 
     // Then
     assertThat(result).isNotNull();
@@ -93,10 +65,7 @@ class FindTagByPatternIntegrationTest extends TestContainersConfig {
 
   @Test
   void findByPattern_WhenPatternIsCaseInsensitive_ShouldReturnMatchingTags() {
-    // Given
-    Tag javaTag = TagFactory.createJavaTag();
-    tagRepository.save(javaTag);
-
+    // Given - Using existing Flyway test data
     // When
     List<Tag> result = findTagByPattern.findByPattern("JAVA");
 
@@ -138,10 +107,7 @@ class FindTagByPatternIntegrationTest extends TestContainersConfig {
 
   @Test
   void findByPattern_WhenNoMatches_ShouldReturnEmptyList() {
-    // Given
-    Tag javaTag = TagFactory.createJavaTag();
-    tagRepository.save(javaTag);
-
+    // Given - Using existing Flyway test data
     // When
     List<Tag> result = findTagByPattern.findByPattern("nonexistent");
 
@@ -152,10 +118,7 @@ class FindTagByPatternIntegrationTest extends TestContainersConfig {
 
   @Test
   void findByPattern_WhenPatternIsTrimmed_ShouldWorkCorrectly() {
-    // Given
-    Tag javaTag = TagFactory.createJavaTag();
-    tagRepository.save(javaTag);
-
+    // Given - Using existing Flyway test data
     // When
     List<Tag> result = findTagByPattern.findByPattern("  java  ");
 
@@ -167,15 +130,7 @@ class FindTagByPatternIntegrationTest extends TestContainersConfig {
 
   @Test
   void findByPattern_WhenPatternMatchesPartial_ShouldReturnMatchingTags() {
-    // Given
-    Tag springBootTag = TagFactory.createSpringBootTag();
-    Tag jpaTag = TagFactory.createJpaTag();
-    Tag databaseTag = TagFactory.createDatabaseTag();
-
-    tagRepository.save(springBootTag);
-    tagRepository.save(jpaTag);
-    tagRepository.save(databaseTag);
-
+    // Given - Using existing Flyway test data
     // When
     List<Tag> result = findTagByPattern.findByPattern("boot");
 
@@ -183,5 +138,149 @@ class FindTagByPatternIntegrationTest extends TestContainersConfig {
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
     assertThat(result.get(0).getName()).isEqualTo("spring-boot");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesTechnology_ShouldReturnTechnologyTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("technology");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("technology");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesProgramming_ShouldReturnProgrammingTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("programming");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("programming");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesDatabase_ShouldReturnDatabaseTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("database");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("database");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesWebDevelopment_ShouldReturnWebDevelopmentTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("web-development");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("web-development");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesTutorial_ShouldReturnTutorialTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("tutorial");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("tutorial");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesBestPractices_ShouldReturnBestPracticesTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("best-practices");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("best-practices");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesArchitecture_ShouldReturnArchitectureTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("architecture");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("architecture");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesMicroservices_ShouldReturnMicroservicesTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("microservices");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("microservices");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesTesting_ShouldReturnTestingTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("testing");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("testing");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesDevOps_ShouldReturnDevOpsTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("devops");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("devops");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesApi_ShouldReturnApiTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("api");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("api");
+  }
+
+  @Test
+  void findByPattern_WhenPatternMatchesSecurity_ShouldReturnSecurityTag() {
+    // Given - Using existing Flyway test data
+    // When
+    List<Tag> result = findTagByPattern.findByPattern("security");
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getName()).isEqualTo("security");
   }
 }
