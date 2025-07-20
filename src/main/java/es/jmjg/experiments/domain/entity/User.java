@@ -1,5 +1,6 @@
 package es.jmjg.experiments.domain.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +44,7 @@ public class User {
   private String username;
 
   @OneToMany(mappedBy = "user", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-  private List<Post> posts;
+  private List<Post> posts = new ArrayList<>();
 
   // Constructor with UUID
   public User(Integer id, UUID uuid, String name, String email, String username, List<Post> posts) {
@@ -52,6 +53,6 @@ public class User {
     this.name = name;
     this.email = email;
     this.username = username;
-    this.posts = posts;
+    this.posts = posts != null ? posts : new ArrayList<>();
   }
 }
