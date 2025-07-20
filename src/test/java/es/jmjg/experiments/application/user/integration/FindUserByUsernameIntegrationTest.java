@@ -7,29 +7,19 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.shared.BaseIntegration;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class FindUserByUsernameIntegrationTest extends TestContainersConfig {
+class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
   @Autowired
   private FindUserByUsername findUserByUsername;
 
   @Autowired
   private UserRepository userRepository;
-
-  @Autowired
-  private Environment environment;
 
   // Test data from migration
   private static final UUID LEANNE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
@@ -42,18 +32,6 @@ class FindUserByUsernameIntegrationTest extends TestContainersConfig {
 
   private static final String CLEMENTINE_USERNAME = "clementine_bauch";
   private static final String CLEMENTINE_NAME = "Clementine Bauch";
-
-  @Test
-  void shouldUseTestProfile() {
-    String[] activeProfiles = environment.getActiveProfiles();
-    assertThat(activeProfiles).contains("test");
-  }
-
-  @Test
-  void connectionEstablished() {
-    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
-  }
 
   @Test
   void findByUsername_WhenUserExists_ShouldReturnUser() {

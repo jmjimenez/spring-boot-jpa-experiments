@@ -7,45 +7,22 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.tag.DeleteTagByUuid;
 import es.jmjg.experiments.application.tag.exception.TagInUseException;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.TagRepository;
+import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TagFactory;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class DeleteTagByUuidIntegrationTest extends TestContainersConfig {
+class DeleteTagByUuidIntegrationTest extends BaseIntegration {
 
   @Autowired
   private DeleteTagByUuid deleteTagByUuid;
 
   @Autowired
   private TagRepository tagRepository;
-
-  @Autowired
-  private Environment environment;
-
-  @Test
-  void shouldUseTestProfile() {
-    // Verify that the test profile is active
-    String[] activeProfiles = environment.getActiveProfiles();
-    assertThat(activeProfiles).contains("test");
-  }
-
-  @Test
-  void connectionEstablished() {
-    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
-  }
 
   @Test
   void deleteByUuid_WhenTagExistsAndNotInUse_ShouldDeleteTag() {

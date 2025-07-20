@@ -5,42 +5,20 @@ import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.UserFactory;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class FindUserByUuidIntegrationTest extends TestContainersConfig {
+class FindUserByUuidIntegrationTest extends BaseIntegration {
 
   @Autowired
   private FindUserByUuid findUserByUuid;
 
   @Autowired
   private UserRepository userRepository;
-
-  @Autowired
-  private Environment environment;
-
-  @Test
-  void shouldUseTestProfile() {
-    String[] activeProfiles = environment.getActiveProfiles();
-    assertThat(activeProfiles).contains("test");
-  }
-
-  @Test
-  void connectionEstablished() {
-    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
-  }
 
   @Test
   void findByUuid_WhenUserExists_ShouldReturnUser() {

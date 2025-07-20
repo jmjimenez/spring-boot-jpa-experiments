@@ -6,38 +6,15 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.tag.FindTagByPattern;
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
+import es.jmjg.experiments.shared.BaseIntegration;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class FindTagByPatternIntegrationTest extends TestContainersConfig {
+class FindTagByPatternIntegrationTest extends BaseIntegration {
 
   @Autowired
   private FindTagByPattern findTagByPattern;
-
-  @Autowired
-  private Environment environment;
-
-  @Test
-  void shouldUseTestProfile() {
-    // Verify that the test profile is active
-    String[] activeProfiles = environment.getActiveProfiles();
-    assertThat(activeProfiles).contains("test");
-  }
-
-  @Test
-  void connectionEstablished() {
-    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
-  }
 
   @Test
   void findByPattern_WhenPatternMatches_ShouldReturnMatchingTags() {

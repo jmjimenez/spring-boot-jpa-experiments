@@ -5,47 +5,24 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
+import es.jmjg.experiments.shared.BaseIntegration;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class FindAllPostsIntegrationTest extends TestContainersConfig {
+class FindAllPostsIntegrationTest extends BaseIntegration {
 
   @Autowired
   private FindAllPosts findAllPosts;
-
-  @Autowired
-  private Environment environment;
 
   private Pageable pageable;
 
   @BeforeEach
   void setUp() {
     pageable = PageRequest.of(0, 10);
-  }
-
-  @Test
-  void shouldUseTestProfile() {
-    // Verify that the test profile is active
-    String[] activeProfiles = environment.getActiveProfiles();
-    assertThat(activeProfiles).contains("test");
-  }
-
-  @Test
-  void connectionEstablished() {
-    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
   }
 
   @Test

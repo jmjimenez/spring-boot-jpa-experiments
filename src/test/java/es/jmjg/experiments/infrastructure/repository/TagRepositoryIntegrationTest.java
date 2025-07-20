@@ -8,20 +8,12 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
+import es.jmjg.experiments.shared.BaseJpaIntegration;
 import es.jmjg.experiments.shared.TagFactory;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class TagRepositoryIntegrationTest extends TestContainersConfig {
+public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
   private TagRepository tagRepository;
@@ -82,7 +74,7 @@ public class TagRepositoryIntegrationTest extends TestContainersConfig {
     // Given
     UUID uuid = UUID.randomUUID();
     Tag tag = TagFactory.createTag(uuid, "jpa test");
-    tagRepository.save(tag);  
+    tagRepository.save(tag);
 
     // When
     tagRepository.deleteByUuid(uuid);

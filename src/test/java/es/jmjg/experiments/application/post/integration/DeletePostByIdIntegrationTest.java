@@ -4,24 +4,17 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.post.DeletePostById;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class DeletePostByIdIntegrationTest extends TestContainersConfig {
+class DeletePostByIdIntegrationTest extends BaseIntegration {
 
   @Autowired
   private DeletePostById deletePostById;
@@ -31,23 +24,6 @@ class DeletePostByIdIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private UserRepository userRepository;
-
-  @Autowired
-  private Environment environment;
-
-  @Test
-  void shouldUseTestProfile() {
-    // Verify that the test profile is active
-    String[] activeProfiles = environment.getActiveProfiles();
-    assertThat(activeProfiles).contains("test");
-  }
-
-  // TODO: this test is repeated in other tests, we should refactor it
-  @Test
-  void connectionEstablished() {
-    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
-  }
 
   @Test
   void deleteById_ShouldDeletePost() {

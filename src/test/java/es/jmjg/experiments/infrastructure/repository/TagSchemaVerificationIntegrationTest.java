@@ -6,19 +6,11 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
+import es.jmjg.experiments.shared.BaseJpaIntegration;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class TagSchemaVerificationIntegrationTest extends TestContainersConfig {
+public class TagSchemaVerificationIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
   private TagRepository tagRepository;

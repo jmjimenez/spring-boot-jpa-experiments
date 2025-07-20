@@ -7,26 +7,19 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class SavePostIntegrationTest extends TestContainersConfig {
+class SavePostIntegrationTest extends BaseIntegration {
 
   @Autowired
   private SavePost savePost;
@@ -36,9 +29,6 @@ class SavePostIntegrationTest extends TestContainersConfig {
 
   @Autowired
   private UserRepository userRepository;
-
-  @Autowired
-  private Environment environment;
 
   private User testUser;
 
@@ -50,19 +40,6 @@ class SavePostIntegrationTest extends TestContainersConfig {
 
     // Create a test user
     testUser = userRepository.save(UserFactory.createBasicUser());
-  }
-
-  @Test
-  void shouldUseTestProfile() {
-    // Verify that the test profile is active
-    String[] activeProfiles = environment.getActiveProfiles();
-    assertThat(activeProfiles).contains("test");
-  }
-
-  @Test
-  void connectionEstablished() {
-    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
   }
 
   @Test

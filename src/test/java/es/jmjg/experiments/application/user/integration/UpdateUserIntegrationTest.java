@@ -8,21 +8,14 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.UserFactory;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class UpdateUserIntegrationTest extends TestContainersConfig {
+class UpdateUserIntegrationTest extends BaseIntegration {
 
   @Autowired
   private UpdateUser updateUser;
@@ -30,27 +23,12 @@ class UpdateUserIntegrationTest extends TestContainersConfig {
   @Autowired
   private UserRepository userRepository;
 
-  @Autowired
-  private Environment environment;
-
   private User existingUser;
 
   @BeforeEach
   void setUp() {
     userRepository.deleteAll();
     existingUser = userRepository.save(UserFactory.createBasicUser());
-  }
-
-  @Test
-  void shouldUseTestProfile() {
-    String[] activeProfiles = environment.getActiveProfiles();
-    assertThat(activeProfiles).contains("test");
-  }
-
-  @Test
-  void connectionEstablished() {
-    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
   }
 
   @Test

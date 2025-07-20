@@ -7,27 +7,21 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.controller.dto.UserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
 import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.UserFactory;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class UserControllerIntegrationTest extends TestContainersConfig {
+class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Autowired
   private TestRestTemplate restTemplate;
@@ -35,27 +29,12 @@ class UserControllerIntegrationTest extends TestContainersConfig {
   @Autowired
   private UserRepository userRepository;
 
-  @Autowired
-  private Environment environment;
-
   private User testUser;
 
   @BeforeEach
   void setUp() {
     userRepository.deleteAll();
     testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-  }
-
-  @Test
-  void shouldUseTestProfile() {
-    String[] activeProfiles = environment.getActiveProfiles();
-    assertThat(activeProfiles).contains("test");
-  }
-
-  @Test
-  void connectionEstablished() {
-    assertThat(TestContainersConfig.getPostgresContainer().isCreated()).isTrue();
-    assertThat(TestContainersConfig.getPostgresContainer().isRunning()).isTrue();
   }
 
   @Test
