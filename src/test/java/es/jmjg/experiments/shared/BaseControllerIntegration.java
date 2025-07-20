@@ -14,7 +14,7 @@ import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class BaseControllerIntegration extends TestContainersConfig {
 
   @Autowired

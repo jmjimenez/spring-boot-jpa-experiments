@@ -39,6 +39,9 @@ public class Tag {
   @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
   private List<User> users = new ArrayList<>();
 
+  @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+  private List<Post> posts = new ArrayList<>();
+
   // Constructor with UUID
   public Tag(Integer id, UUID uuid, String name) {
     this.id = id;

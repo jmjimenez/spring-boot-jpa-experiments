@@ -1,5 +1,7 @@
 package es.jmjg.experiments.domain.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +13,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
@@ -42,7 +46,12 @@ public class Post {
   @Column(name = "title", unique = true, nullable = false)
   private String title;
 
-  @NotEmpty private String body;
+  @NotEmpty
+  private String body;
+
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  private List<Tag> tags = new ArrayList<>();
 
   // Constructor with UUID
   public Post(Integer id, UUID uuid, User user, String title, String body) {
