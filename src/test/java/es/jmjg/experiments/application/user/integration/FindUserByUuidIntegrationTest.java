@@ -114,7 +114,7 @@ class FindUserByUuidIntegrationTest extends TestContainersConfig {
 
     savedUser.setName("Updated Test User");
     savedUser.setEmail("updated@example.com");
-    User updatedUser = userRepository.save(savedUser);
+    userRepository.save(savedUser);
 
     // When
     Optional<User> result = findUserByUuid.findByUuid(fourthUuid);

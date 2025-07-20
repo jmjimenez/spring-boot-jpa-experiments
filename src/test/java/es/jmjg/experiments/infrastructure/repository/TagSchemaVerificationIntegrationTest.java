@@ -17,7 +17,7 @@ import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class TagSchemaVerificationIntegrationTest extends TestContainersConfig {
 
   @Autowired
