@@ -16,6 +16,7 @@ import es.jmjg.experiments.domain.entity.Tag;
 public interface TagRepository
     extends JpaRepository<Tag, Integer>, es.jmjg.experiments.domain.repository.TagRepository {
 
+  @SuppressWarnings({ "unchecked", "null" })
   @Override
   @Transactional
   Tag save(Tag tag);

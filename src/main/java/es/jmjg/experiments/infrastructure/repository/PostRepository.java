@@ -17,14 +17,17 @@ import es.jmjg.experiments.domain.entity.Post;
 public interface PostRepository
     extends JpaRepository<Post, Integer>, es.jmjg.experiments.domain.repository.PostRepository {
 
+  @SuppressWarnings("null")
   @Override
   @Transactional
   void deleteById(Integer id);
 
+  @SuppressWarnings({ "null", "unchecked" })
   @Override
   @Transactional
   Post save(Post post);
 
+  @SuppressWarnings("null")
   @Override
   @Transactional(readOnly = true)
   Optional<Post> findById(Integer id);

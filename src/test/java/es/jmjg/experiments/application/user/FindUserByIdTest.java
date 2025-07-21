@@ -65,7 +65,6 @@ class FindUserByIdTest {
   }
 
   @Test
-  @SuppressWarnings("null")
   void findById_WhenIdIsNull_ShouldThrowException() {
     // Given
     when(userRepository.findById(null))

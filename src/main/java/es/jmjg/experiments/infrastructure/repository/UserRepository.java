@@ -16,10 +16,12 @@ import es.jmjg.experiments.domain.entity.User;
 public interface UserRepository
     extends JpaRepository<User, Integer>, es.jmjg.experiments.domain.repository.UserRepository {
 
+  @SuppressWarnings({ "null", "unchecked" })
   @Override
   @Transactional
   User save(User user);
 
+  @SuppressWarnings("null")
   @Override
   @Transactional(readOnly = true)
   Optional<User> findById(Integer id);
