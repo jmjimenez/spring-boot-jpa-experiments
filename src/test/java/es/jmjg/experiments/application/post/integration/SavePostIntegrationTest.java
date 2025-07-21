@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,22 +29,11 @@ class SavePostIntegrationTest extends BaseIntegration {
   @Autowired
   private UserRepository userRepository;
 
-  private User testUser;
-
-  @BeforeEach
-  void setUp() {
-    // Clear the database before each test
-    postRepository.deleteAll();
-    userRepository.deleteAll();
-
-    // Create a test user
-    testUser = userRepository.save(UserFactory.createBasicUser());
-  }
-
   @Test
   void save_ShouldSaveAndReturnPost() {
     // Given
-    Post newPost = PostFactory.createPost(testUser, "New Post", "New Body");
+    User testUser = userRepository.save(UserFactory.createUser("Alice Johnson", "alice@example.com", "alicej"));
+    Post newPost = PostFactory.createPost(testUser, "Test Post 1", "Test Body 1");
 
     // When
     Post result = savePost.save(newPost);
@@ -53,34 +41,36 @@ class SavePostIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isNotNull();
-    assertThat(result.getTitle()).isEqualTo("New Post");
-    assertThat(result.getBody()).isEqualTo("New Body");
+    assertThat(result.getTitle()).isEqualTo("Test Post 1");
+    assertThat(result.getBody()).isEqualTo("Test Body 1");
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
 
     // Verify it was actually saved to the database
     Optional<Post> savedPost = postRepository.findById(result.getId());
     assertThat(savedPost).isPresent();
-    assertThat(savedPost.get().getTitle()).isEqualTo("New Post");
+    assertThat(savedPost.get().getTitle()).isEqualTo("Test Post 1");
   }
 
   @Test
   void save_WhenPostHasNoUser_ShouldThrowInvalidRequest() {
     // Given
-    Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
+    Long postCount = postRepository.count();
 
     // When & Then
+    Post newPost = PostFactory.createPostWithoutUser("Test Post 2", "Test Body 2");
     assertThatThrownBy(() -> savePost.save(newPost))
         .isInstanceOf(InvalidRequest.class)
         .hasMessage("Post must have a user");
 
     // Verify no post was saved
-    assertThat(postRepository.count()).isZero();
+    assertThat(postRepository.count()).isEqualTo(postCount); // Only the post from previous test
   }
 
   @Test
   void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
     // Given
-    Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
+    User testUser = userRepository.save(UserFactory.createUser("Bob Smith", "bob@example.com", "bobsmith"));
+    Post newPost = PostFactory.createPostWithoutUser("Test Post 3", "Test Body 3");
 
     // When
     Post result = savePost.save(newPost, testUser.getUuid());
@@ -88,8 +78,8 @@ class SavePostIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isNotNull();
-    assertThat(result.getTitle()).isEqualTo("New Post");
-    assertThat(result.getBody()).isEqualTo("New Body");
+    assertThat(result.getTitle()).isEqualTo("Test Post 3");
+    assertThat(result.getBody()).isEqualTo("Test Body 3");
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
 
     // Verify it was actually saved to the database
@@ -101,7 +91,8 @@ class SavePostIntegrationTest extends BaseIntegration {
   @Test
   void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
     // Given
-    Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
+    Long postCount = postRepository.count();
+    Post newPost = PostFactory.createPostWithoutUser("Test Post 4", "Test Body 4");
     java.util.UUID nonExistentUserUuid = java.util.UUID.randomUUID();
 
     // When & Then
@@ -110,13 +101,14 @@ class SavePostIntegrationTest extends BaseIntegration {
         .hasMessage("User not found with uuid: " + nonExistentUserUuid);
 
     // Verify no post was saved
-    assertThat(postRepository.count()).isZero();
+    assertThat(postRepository.count()).isEqualTo(postCount); // Posts from previous tests
   }
 
   @Test
   void save_WhenUserIdIsNull_ShouldThrowInvalidRequest() {
     // Given
-    Post newPost = PostFactory.createPostWithoutUser("New Post", "New Body");
+    Long postCount = postRepository.count();
+    Post newPost = PostFactory.createPostWithoutUser("Test Post 5", "Test Body 5");
 
     // When & Then
     assertThatThrownBy(() -> savePost.save(newPost, null))
@@ -124,13 +116,14 @@ class SavePostIntegrationTest extends BaseIntegration {
         .hasMessage("Post must have a user");
 
     // Verify no post was saved
-    assertThat(postRepository.count()).isZero();
+    assertThat(postRepository.count()).isEqualTo(postCount); // Posts from previous tests
   }
 
   @Test
   void save_WhenPostAlreadyHasUserAndUserIdProvided_ShouldKeepExistingUser() {
     // Given
-    Post newPost = PostFactory.createPost(testUser, "New Post", "New Body");
+    User testUser = userRepository.save(UserFactory.createUser("Carol Davis", "carol@example.com", "carold"));
+    Post newPost = PostFactory.createPost(testUser, "Test Post 6", "Test Body 6");
 
     // When
     Post result = savePost.save(newPost, testUser.getUuid());
@@ -138,8 +131,8 @@ class SavePostIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isNotNull();
-    assertThat(result.getTitle()).isEqualTo("New Post");
-    assertThat(result.getBody()).isEqualTo("New Body");
+    assertThat(result.getTitle()).isEqualTo("Test Post 6");
+    assertThat(result.getBody()).isEqualTo("Test Body 6");
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
 
     // Verify it was actually saved to the database

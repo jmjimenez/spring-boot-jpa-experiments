@@ -13,7 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 import es.jmjg.experiments.domain.entity.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer>, es.jmjg.experiments.domain.repository.UserRepository {
+public interface UserRepository
+    extends JpaRepository<User, Integer>, es.jmjg.experiments.domain.repository.UserRepository {
+
+  @Override
+  @Transactional
+  User save(User user);
+
+  @Override
+  @Transactional(readOnly = true)
+  Optional<User> findById(Integer id);
 
   @Transactional(readOnly = true)
   Optional<User> findByEmail(String email);

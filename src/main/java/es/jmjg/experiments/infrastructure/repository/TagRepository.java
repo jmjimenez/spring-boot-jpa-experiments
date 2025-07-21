@@ -13,25 +13,36 @@ import org.springframework.transaction.annotation.Transactional;
 import es.jmjg.experiments.domain.entity.Tag;
 
 @Repository
-public interface TagRepository extends JpaRepository<Tag, Integer>, es.jmjg.experiments.domain.repository.TagRepository {
+public interface TagRepository
+    extends JpaRepository<Tag, Integer>, es.jmjg.experiments.domain.repository.TagRepository {
 
-  @Transactional(readOnly = true)
-  Optional<Tag> findByName(String name);
+  @Override
+  @Transactional
+  Tag save(Tag tag);
 
+  @Override
   @Transactional(readOnly = true)
   Optional<Tag> findByUuid(UUID uuid);
 
+  @Override
   @Transactional
   void deleteByUuid(UUID uuid);
 
+  @Override
+  @Transactional(readOnly = true)
+  Optional<Tag> findByName(String name);
+
+  @Override
   @Transactional(readOnly = true)
   @Query("SELECT t FROM Tag t WHERE LOWER(t.name) LIKE LOWER(CONCAT('%', :pattern, '%'))")
   List<Tag> findByNameContainingPattern(@Param("pattern") String pattern);
 
+  @Override
   @Transactional(readOnly = true)
   @Query(value = "SELECT COUNT(pt) > 0 FROM post_tag pt WHERE pt.tag_id = :tagId", nativeQuery = true)
   boolean isTagUsedInPosts(@Param("tagId") Integer tagId);
 
+  @Override
   @Transactional(readOnly = true)
   @Query(value = "SELECT COUNT(ut) > 0 FROM user_tag ut WHERE ut.tag_id = :tagId", nativeQuery = true)
   boolean isTagUsedInUsers(@Param("tagId") Integer tagId);
