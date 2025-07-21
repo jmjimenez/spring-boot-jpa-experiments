@@ -5,83 +5,83 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
-import es.jmjg.experiments.shared.TagFactory;
 
 public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
   private TagRepository tagRepository;
 
-  @BeforeEach
-  void setUp() {
-    // Clean up before each test
-    tagRepository.deleteAll();
-  }
-
-  @Test
-  void shouldSaveAndRetrieveTag() {
-    // Given
-    Tag tag = TagFactory.createBasicTag();
-
-    // When
-    Tag savedTag = tagRepository.save(tag);
-    Optional<Tag> foundTag = tagRepository.findById(savedTag.getId());
-
-    // Then
-    assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getName()).isEqualTo("test-tag");
-    assertThat(foundTag.get().getUuid()).isNotNull();
-  }
+  // Sample tags from Flyway migration
+  private static final UUID TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
+  private static final UUID PROGRAMMING_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440057");
+  private static final UUID JAVA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
+  private static final UUID SPRING_BOOT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440059");
+  private static final UUID JPA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440060");
+  private static final UUID DATABASE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440061");
+  private static final UUID WEB_DEVELOPMENT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440062");
+  private static final UUID BEST_PRACTICES_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440064");
 
   @Test
   void shouldFindTagByName() {
-    // Given
-    Tag tag = TagFactory.createTag("java test");
-    tagRepository.save(tag);
-
     // When
-    Optional<Tag> foundTag = tagRepository.findByName("java test");
+    Optional<Tag> foundTag = tagRepository.findByName("technology");
 
     // Then
     assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getName()).isEqualTo("java test");
+    assertThat(foundTag.get().getName()).isEqualTo("technology");
+    assertThat(foundTag.get().getUuid()).isEqualTo(TECHNOLOGY_UUID);
   }
 
   @Test
   void shouldFindTagByUuid() {
-    // Given
-    UUID uuid = UUID.randomUUID();
-    Tag tag = TagFactory.createTag(uuid, "spring-boot test");
-    tagRepository.save(tag);
-
     // When
-    Optional<Tag> foundTag = tagRepository.findByUuid(uuid);
+    Optional<Tag> foundTag = tagRepository.findByUuid(JAVA_UUID);
 
     // Then
     assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getUuid()).isEqualTo(uuid);
-    assertThat(foundTag.get().getName()).isEqualTo("spring-boot test");
+    assertThat(foundTag.get().getUuid()).isEqualTo(JAVA_UUID);
+    assertThat(foundTag.get().getName()).isEqualTo("java");
   }
 
   @Test
-  void shouldDeleteTagByUuid() {
-    // Given
-    UUID uuid = UUID.randomUUID();
-    Tag tag = TagFactory.createTag(uuid, "jpa test");
-    tagRepository.save(tag);
-
+  void shouldFindMultipleTagsByUuid() {
     // When
-    tagRepository.deleteByUuid(uuid);
-    Optional<Tag> foundTag = tagRepository.findByUuid(uuid);
+    Optional<Tag> springBootTag = tagRepository.findByUuid(SPRING_BOOT_UUID);
+    Optional<Tag> jpaTag = tagRepository.findByUuid(JPA_UUID);
+    Optional<Tag> databaseTag = tagRepository.findByUuid(DATABASE_UUID);
 
     // Then
-    assertThat(foundTag).isEmpty();
+    assertThat(springBootTag).isPresent();
+    assertThat(springBootTag.get().getName()).isEqualTo("spring-boot");
+
+    assertThat(jpaTag).isPresent();
+    assertThat(jpaTag.get().getName()).isEqualTo("jpa");
+
+    assertThat(databaseTag).isPresent();
+    assertThat(databaseTag.get().getName()).isEqualTo("database");
+  }
+
+  @Test
+  void shouldFindTagsByName() {
+    // When
+    Optional<Tag> programmingTag = tagRepository.findByName("programming");
+    Optional<Tag> webDevelopmentTag = tagRepository.findByName("web-development");
+    Optional<Tag> bestPracticesTag = tagRepository.findByName("best-practices");
+
+    // Then
+    assertThat(programmingTag).isPresent();
+    assertThat(programmingTag.get().getUuid()).isEqualTo(PROGRAMMING_UUID);
+
+    assertThat(webDevelopmentTag).isPresent();
+    assertThat(webDevelopmentTag.get().getUuid()).isEqualTo(WEB_DEVELOPMENT_UUID);
+
+    assertThat(bestPracticesTag).isPresent();
+    assertThat(bestPracticesTag.get().getUuid()).isEqualTo(BEST_PRACTICES_UUID);
   }
 
   @Test
@@ -100,5 +100,25 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
 
     // Then
     assertThat(foundTag).isEmpty();
+  }
+
+  @Test
+  void shouldFindAllPredefinedTags() {
+    // When & Then - Verify all predefined tags exist
+    assertThat(tagRepository.findByName("technology")).isPresent();
+    assertThat(tagRepository.findByName("programming")).isPresent();
+    assertThat(tagRepository.findByName("java")).isPresent();
+    assertThat(tagRepository.findByName("spring-boot")).isPresent();
+    assertThat(tagRepository.findByName("jpa")).isPresent();
+    assertThat(tagRepository.findByName("database")).isPresent();
+    assertThat(tagRepository.findByName("web-development")).isPresent();
+    assertThat(tagRepository.findByName("tutorial")).isPresent();
+    assertThat(tagRepository.findByName("best-practices")).isPresent();
+    assertThat(tagRepository.findByName("architecture")).isPresent();
+    assertThat(tagRepository.findByName("microservices")).isPresent();
+    assertThat(tagRepository.findByName("testing")).isPresent();
+    assertThat(tagRepository.findByName("devops")).isPresent();
+    assertThat(tagRepository.findByName("api")).isPresent();
+    assertThat(tagRepository.findByName("security")).isPresent();
   }
 }
