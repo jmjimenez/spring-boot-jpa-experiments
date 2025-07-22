@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.application.tag.exception.TagInUseException;
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.repository.TagRepository;
 
 @Service
@@ -20,19 +19,10 @@ public class DeleteTagByUuid {
 
   @Transactional
   public void deleteByUuid(UUID uuid) {
-    var tag = tagRepository.findByUuid(uuid)
-        .orElseThrow(() -> new TagNotFound(uuid));
-
-    // Check if tag is used in posts
-    if (tagRepository.isTagUsedInPosts(tag.getId())) {
-      throw new TagInUseException(tag.getName(), uuid);
+    try {
+      tagRepository.deleteByUuid(uuid);
+    } catch (es.jmjg.experiments.domain.exception.TagInUseException e) {
+      throw new TagInUseException(e.getMessage());
     }
-
-    // Check if tag is used in users
-    if (tagRepository.isTagUsedInUsers(tag.getId())) {
-      throw new TagInUseException(tag.getName(), uuid);
-    }
-
-    tagRepository.deleteByUuid(uuid);
   }
 }

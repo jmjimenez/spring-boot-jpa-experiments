@@ -116,6 +116,10 @@ VALUES (
     (
         '550e8400-e29b-41d4-a716-446655440070',
         'security'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440071',
+        'developer'
     );
 
 -- Insert Posts for Leanne Graham (user_id = 1)
@@ -445,8 +449,9 @@ INSERT INTO
 VALUES (1, 1), -- technology
     (1, 2), -- programming
     (1, 3), -- java
-    (1, 4);
--- spring-boot
+    (1, 4), -- spring-boot
+    (1, 16);
+-- developer
 
 -- Ervin Howell (user_id = 2) - Database expert
 INSERT INTO

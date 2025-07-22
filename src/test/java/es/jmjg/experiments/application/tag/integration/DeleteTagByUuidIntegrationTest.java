@@ -51,28 +51,26 @@ class DeleteTagByUuidIntegrationTest extends BaseIntegration {
 
   @Test
   void deleteByUuid_WhenTagIsUsedInPosts_ShouldThrowTagInUseException() {
-    // Given - Create a tag that is used in posts (from test data)
-    // The test data includes tags that are used in posts
-    var technologyTag = tagRepository.findByName("technology");
-    assertThat(technologyTag).isPresent();
+    // Given - Use a tag that is used in posts (from test data)
+    var javaTag = tagRepository.findByName("java");
+    assertThat(javaTag).isPresent();
 
     // When & Then
-    assertThatThrownBy(() -> deleteTagByUuid.deleteByUuid(technologyTag.get().getUuid()))
+    assertThatThrownBy(() -> deleteTagByUuid.deleteByUuid(javaTag.get().getUuid()))
         .isInstanceOf(TagInUseException.class)
-        .hasMessageContaining("because it is currently in use");
+        .hasMessageContaining("Cannot delete tag 'java' because it is assigned to posts");
   }
 
   @Test
   void deleteByUuid_WhenTagIsUsedInUsers_ShouldThrowTagInUseException() {
-    // Given - Create a tag that is used in users (from test data)
-    // The test data includes tags that are used in users
-    var technologyTag = tagRepository.findByName("technology");
-    assertThat(technologyTag).isPresent();
+    // Given - Use the "developer" tag which is assigned to users but not to posts
+    var developerTag = tagRepository.findByName("developer");
+    assertThat(developerTag).isPresent();
 
     // When & Then
-    assertThatThrownBy(() -> deleteTagByUuid.deleteByUuid(technologyTag.get().getUuid()))
+    assertThatThrownBy(() -> deleteTagByUuid.deleteByUuid(developerTag.get().getUuid()))
         .isInstanceOf(TagInUseException.class)
-        .hasMessageContaining("because it is currently in use");
+        .hasMessageContaining("Cannot delete tag 'developer' because it is assigned to users");
   }
 
   @Test
