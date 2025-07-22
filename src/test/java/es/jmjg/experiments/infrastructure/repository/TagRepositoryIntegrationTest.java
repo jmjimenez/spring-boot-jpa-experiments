@@ -103,6 +103,18 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
   }
 
   @Test
+  void shouldPreventDeletionOfTagAssignedToPosts() {
+    // Given - Use the "java" tag which is assigned to posts in the migration data
+    Optional<Tag> javaTag = tagRepository.findByName("java");
+    assertThat(javaTag).isPresent();
+
+    // When & Then - Should throw exception when trying to delete
+    assertThatThrownBy(() -> tagRepository.deleteByUuid(javaTag.get().getUuid()))
+        .isInstanceOf(es.jmjg.experiments.domain.exception.TagInUseException.class)
+        .hasMessageContaining("Cannot delete tag 'java' because it is assigned to posts");
+  }
+
+  @Test
   void shouldFindAllPredefinedTags() {
     // When & Then - Verify all predefined tags exist
     assertThat(tagRepository.findByName("technology")).isPresent();

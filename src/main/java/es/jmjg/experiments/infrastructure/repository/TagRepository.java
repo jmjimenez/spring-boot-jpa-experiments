@@ -10,7 +10,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.exception.TagInUseException;
 
 @Repository
 public interface TagRepository
@@ -27,7 +29,22 @@ public interface TagRepository
 
   @Override
   @Transactional
-  void deleteByUuid(UUID uuid);
+  default void deleteByUuid(UUID uuid) {
+    Tag tag = findByUuid(uuid)
+        .orElseThrow(() -> new TagNotFound(uuid));
+
+    if (isTagUsedInPosts(tag.getId())) {
+      throw new TagInUseException(
+          "Cannot delete tag '" + tag.getName() + "' because it is assigned to posts");
+    }
+
+    if (isTagUsedInUsers(tag.getId())) {
+      throw new TagInUseException(
+          "Cannot delete tag '" + tag.getName() + "' because it is assigned to users");
+    }
+
+    delete(tag);
+  }
 
   @Override
   @Transactional(readOnly = true)
