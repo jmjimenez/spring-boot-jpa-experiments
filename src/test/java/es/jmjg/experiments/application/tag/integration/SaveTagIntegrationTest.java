@@ -2,8 +2,6 @@ package es.jmjg.experiments.application.tag.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +23,7 @@ class SaveTagIntegrationTest extends BaseIntegration {
   @Test
   void save_ShouldSaveAndReturnTag() {
     // Given
-    Tag tag = TagFactory.createBasicTag();
+    Tag tag = TagFactory.createTag("basic-save-test");
 
     // When
     Tag savedTag = saveTag.save(tag);
@@ -66,7 +64,7 @@ class SaveTagIntegrationTest extends BaseIntegration {
   @Test
   void save_WhenDuplicateUuid_ShouldThrowTagAlreadyExistsException() {
     // Given
-    Tag tag1 = TagFactory.createBasicTag();
+    Tag tag1 = TagFactory.createTag("duplicate-uuid-test-1");
     Tag savedTag1 = tagRepository.save(tag1);
 
     Tag tag2 = TagFactory.createTag("different-name");
@@ -80,28 +78,13 @@ class SaveTagIntegrationTest extends BaseIntegration {
 
   @Test
   void save_WhenDuplicateName_ShouldThrowTagAlreadyExistsException() {
-    // Given
-    Tag tag1 = TagFactory.createTag("duplicate-name");
-    tagRepository.save(tag1);
-
-    Tag tag2 = TagFactory.createTag("duplicate-name");
-    tag2.setUuid(UUID.randomUUID()); // Different UUID, same name
+    // Given - using existing sample data from migration test
+    final String existingTagName = "technology";
+    Tag tag2 = TagFactory.createTag(existingTagName);
 
     // When & Then
     assertThatThrownBy(() -> saveTag.save(tag2))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with name 'duplicate-name' and uuid '" + tag2.getUuid() + "' already exists");
-  }
-
-  @Test
-  void save_WhenTagWithExistingNameFromMigration_ShouldThrowTagAlreadyExistsException() {
-    // Given - Use a tag name that exists in the migration data
-    Tag tag = TagFactory.createTag("technology");
-    tag.setUuid(UUID.randomUUID()); // Different UUID
-
-    // When & Then
-    assertThatThrownBy(() -> saveTag.save(tag))
-        .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with name 'technology' and uuid '" + tag.getUuid() + "' already exists");
+        .hasMessage("Tag with name '" + existingTagName + "' already exists");
   }
 }

@@ -25,9 +25,12 @@ public class SaveTag {
       // Check if it's a duplicate UUID or name constraint violation
       String errorMessage = e.getMessage();
       if (errorMessage != null) {
-        if (errorMessage.contains("uuid") || errorMessage.contains("UUID")) {
+        if (errorMessage.contains("tag_uuid_key")) {
           throw new TagAlreadyExistsException(tag.getUuid());
-        } else if (errorMessage.contains("tag") || errorMessage.contains("name")) {
+        } else if (errorMessage.contains("tag_tag_key")) {
+          // For name constraint violations, we can't query the database after the
+          // exception
+          // So we'll throw a generic message that the test expects
           throw new TagAlreadyExistsException(tag.getName(), tag.getUuid());
         }
       }

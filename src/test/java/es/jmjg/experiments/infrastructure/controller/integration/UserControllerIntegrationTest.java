@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -18,27 +16,6 @@ import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class UserControllerIntegrationTest extends BaseControllerIntegration {
-
-  @Autowired
-  private TestRestTemplate restTemplate;
-
-  // Sample users from Flyway migration data
-  private static final UUID LEANNE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
-  private static final String LEANNE_NAME = "Leanne Graham";
-  private static final String LEANNE_EMAIL = "leanne.graham@example.com";
-  private static final String LEANNE_USERNAME = "leanne_graham";
-
-  private static final String ERVIN_NAME = "Ervin Howell";
-  private static final String ERVIN_EMAIL = "ervin.howell@example.com";
-  private static final String ERVIN_USERNAME = "ervin_howell";
-
-  private static final String CLEMENTINE_NAME = "Clementine Bauch";
-  private static final String CLEMENTINE_EMAIL = "clementine.bauch@example.com";
-  private static final String CLEMENTINE_USERNAME = "clementine_bauch";
-
-  private static final UUID PATRICIA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440004");
-
-  private static final UUID CHELSEY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440005");
 
   @Test
   void shouldGetAllUsers() {

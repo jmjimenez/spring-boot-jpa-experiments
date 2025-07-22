@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -24,9 +23,6 @@ import es.jmjg.experiments.infrastructure.repository.UserRepository;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class PostControllerIntegrationTest extends BaseControllerIntegration {
-
-  @Autowired
-  private TestRestTemplate restTemplate;
 
   @Autowired
   private PostRepository postRepository;

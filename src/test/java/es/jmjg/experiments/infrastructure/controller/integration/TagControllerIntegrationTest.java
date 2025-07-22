@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -18,15 +16,6 @@ import es.jmjg.experiments.infrastructure.controller.dto.TagResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class TagControllerIntegrationTest extends BaseControllerIntegration {
-
-  @Autowired
-  private TestRestTemplate restTemplate;
-
-  // Sample tags from Flyway migration data
-  private static final UUID TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
-  private static final UUID JAVA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
-  private static final UUID DEVELOPER_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440071");
-  private static final UUID NOT_USED_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440072");
 
   @Test
   void shouldFindTagByUuid() {
