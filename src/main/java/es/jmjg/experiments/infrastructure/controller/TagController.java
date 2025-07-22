@@ -89,7 +89,9 @@ public class TagController {
   List<TagResponseDto> findByPattern(
       @Parameter(description = "Pattern to search for in tag names") @RequestParam String pattern) {
     List<Tag> tags = findTagByPattern.findByPattern(pattern);
-    return tagMapper.toResponseDtoList(tags);
+    return tags.stream()
+        .map(tag -> tagMapper.toResponseDtoWithRelations(tag, tag.getPosts(), tag.getUsers()))
+        .toList();
   }
 
   @GetMapping("/{uuid}")

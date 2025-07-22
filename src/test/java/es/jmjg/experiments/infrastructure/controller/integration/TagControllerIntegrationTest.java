@@ -76,19 +76,29 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     });
   }
 
+  @SuppressWarnings("null")
   @Test
   void shouldFindTagsByPattern() {
     // Given
     String pattern = "tech";
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
-        Object.class);
+    ResponseEntity<TagResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
+        TagResponseDto[].class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Object responseBody = response.getBody();
-    assertThat(responseBody).isNotNull();
+    TagResponseDto[] tags = response.getBody();
+    assertThat(tags).isNotNull();
+    assertThat(tags).isNotEmpty();
+
+    for (TagResponseDto tag : tags) {
+      assertThat(tag.getPosts()).isNotNull();
+      assertThat(tag.getUsers()).isNotNull();
+      // Technology tag should have posts and users based on migration data
+      assertThat(tag.getPosts()).isNotEmpty();
+      assertThat(tag.getUsers()).isNotEmpty();
+    }
   }
 
   @Test
@@ -97,13 +107,14 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "nonexistent";
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
-        Object.class);
+    ResponseEntity<TagResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
+        TagResponseDto[].class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Object responseBody = response.getBody();
-    assertThat(responseBody).isNotNull();
+    TagResponseDto[] tags = response.getBody();
+    assertThat(tags).isNotNull();
+    assertThat(tags).isEmpty();
   }
 
   @Test
@@ -392,18 +403,29 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
   }
 
+  @SuppressWarnings("null")
   @Test
   void shouldFindTagsByPatternWithMultipleTags() {
     // Given
     String pattern = "tech";
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
-        Object.class);
+    ResponseEntity<TagResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
+        TagResponseDto[].class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Object responseBody = response.getBody();
-    assertThat(responseBody).isNotNull();
+    TagResponseDto[] tags = response.getBody();
+    assertThat(tags).isNotNull();
+    assertThat(tags).isNotEmpty();
+
+    // Verify that each tag has posts and users properties
+    for (TagResponseDto tag : tags) {
+      assertThat(tag.getPosts()).isNotNull();
+      assertThat(tag.getUsers()).isNotNull();
+      // All tags should have posts and users based on migration data
+      assertThat(tag.getPosts()).isNotEmpty();
+      assertThat(tag.getUsers()).isNotEmpty();
+    }
   }
 }

@@ -135,6 +135,14 @@ class TagControllerTest {
   void shouldFindTagsByPattern() throws Exception {
     // Given
     String pattern = "test";
+    User user1 = UserFactory.createUser(LEANNE_UUID, "Leanne Graham", "leanne.graham@example.com", "leanne_graham");
+    User user2 = UserFactory.createUser(ERVIN_UUID, "Ervin Howell", "ervin.howell@example.com", "ervin_howell");
+    Post post1 = PostFactory.createPost(user1, POST_1_UUID, "Test Post 1", "Test content 1");
+    Post post2 = PostFactory.createPost(user2, POST_16_UUID, "Test Post 2", "Test content 2");
+
+    testTag.setUsers(List.of(user1, user2));
+    testTag.setPosts(List.of(post1, post2));
+
     List<Tag> tags = List.of(testTag);
     when(findTagByPattern.findByPattern(pattern)).thenReturn(tags);
 
@@ -143,7 +151,15 @@ class TagControllerTest {
         .param("pattern", pattern))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].uuid").value(testUuid.toString()))
-        .andExpect(jsonPath("$[0].name").value("test-tag"));
+        .andExpect(jsonPath("$[0].name").value("test-tag"))
+        .andExpect(jsonPath("$[0].posts").isArray())
+        .andExpect(jsonPath("$[0].posts").value(hasSize(2)))
+        .andExpect(jsonPath("$[0].posts[0]").value(POST_1_UUID.toString()))
+        .andExpect(jsonPath("$[0].posts[1]").value(POST_16_UUID.toString()))
+        .andExpect(jsonPath("$[0].users").isArray())
+        .andExpect(jsonPath("$[0].users").value(hasSize(2)))
+        .andExpect(jsonPath("$[0].users[0]").value(LEANNE_UUID.toString()))
+        .andExpect(jsonPath("$[0].users[1]").value(ERVIN_UUID.toString()));
   }
 
   @Test
