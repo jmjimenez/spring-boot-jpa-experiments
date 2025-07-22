@@ -15,6 +15,7 @@ import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.tag.DeleteTagByUuid;
 import es.jmjg.experiments.application.tag.FindPostsByTag;
 import es.jmjg.experiments.application.tag.FindTagByPattern;
+import es.jmjg.experiments.application.tag.FindTagByUuid;
 import es.jmjg.experiments.application.tag.FindUsersByTag;
 import es.jmjg.experiments.application.tag.SaveTag;
 import es.jmjg.experiments.application.tag.UpdateTagName;
@@ -162,6 +163,12 @@ public class ControllerTestConfig {
   @Primary
   public FindPostsByTag findPostsByTag() {
     return mock(FindPostsByTag.class);
+  }
+
+  @Bean
+  @Primary
+  public FindTagByUuid findTagByUuid() {
+    return mock(FindTagByUuid.class);
   }
 
   @Bean

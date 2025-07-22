@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import es.jmjg.experiments.application.tag.DeleteTagByUuid;
 import es.jmjg.experiments.application.tag.FindPostsByTag;
 import es.jmjg.experiments.application.tag.FindTagByPattern;
+import es.jmjg.experiments.application.tag.FindTagByUuid;
 import es.jmjg.experiments.application.tag.FindUsersByTag;
 import es.jmjg.experiments.application.tag.SaveTag;
 import es.jmjg.experiments.application.tag.UpdateTagName;
@@ -29,7 +30,6 @@ import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
 import es.jmjg.experiments.infrastructure.controller.dto.TagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.TagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
-import es.jmjg.experiments.infrastructure.controller.exception.TagNotFoundException;
 import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
 import es.jmjg.experiments.infrastructure.controller.mapper.TagMapper;
 import es.jmjg.experiments.infrastructure.controller.mapper.UserMapper;
@@ -55,6 +55,7 @@ public class TagController {
   private final FindTagByPattern findTagByPattern;
   private final FindUsersByTag findUsersByTag;
   private final FindPostsByTag findPostsByTag;
+  private final FindTagByUuid findTagByUuid;
 
   public TagController(
       TagMapper tagMapper,
@@ -65,7 +66,8 @@ public class TagController {
       DeleteTagByUuid deleteTagByUuid,
       FindTagByPattern findTagByPattern,
       FindUsersByTag findUsersByTag,
-      FindPostsByTag findPostsByTag) {
+      FindPostsByTag findPostsByTag,
+      FindTagByUuid findTagByUuid) {
     this.tagMapper = tagMapper;
     this.userMapper = userMapper;
     this.postMapper = postMapper;
@@ -75,6 +77,7 @@ public class TagController {
     this.findTagByPattern = findTagByPattern;
     this.findUsersByTag = findUsersByTag;
     this.findPostsByTag = findPostsByTag;
+    this.findTagByUuid = findTagByUuid;
   }
 
   @GetMapping("/search")
@@ -98,9 +101,8 @@ public class TagController {
   })
   TagResponseDto findByUuid(
       @Parameter(description = "UUID of the tag to retrieve") @PathVariable UUID uuid) {
-    // This would need a FindTagByUuid service, but it's not implemented yet
-    // For now, we'll throw an exception
-    throw new TagNotFoundException("Tag not found with uuid: " + uuid);
+    Tag tag = findTagByUuid.findByUuid(uuid);
+    return tagMapper.toResponseDto(tag);
   }
 
   @GetMapping("/{uuid}/users")

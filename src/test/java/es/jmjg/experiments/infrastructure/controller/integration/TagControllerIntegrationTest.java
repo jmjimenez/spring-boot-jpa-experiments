@@ -29,6 +29,25 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   private static final UUID NOT_USED_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440072");
 
   @Test
+  void shouldFindTagByUuid() {
+    // Given
+    UUID tagUuid = TECHNOLOGY_UUID;
+
+    // When
+    ResponseEntity<TagResponseDto> response = restTemplate.getForEntity("/api/tags/" + tagUuid,
+        TagResponseDto.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    TagResponseDto tag = response.getBody();
+    assertThat(tag).isNotNull().satisfies(t -> {
+      assertThat(t.getUuid()).isEqualTo(tagUuid);
+      assertThat(t.getName()).isEqualTo("technology");
+    });
+  }
+
+  @Test
   void shouldFindTagsByPattern() {
     // Given
     String pattern = "tech";

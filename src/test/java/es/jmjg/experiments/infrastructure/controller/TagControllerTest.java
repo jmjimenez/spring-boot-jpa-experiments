@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.jmjg.experiments.application.tag.DeleteTagByUuid;
 import es.jmjg.experiments.application.tag.FindPostsByTag;
 import es.jmjg.experiments.application.tag.FindTagByPattern;
+import es.jmjg.experiments.application.tag.FindTagByUuid;
 import es.jmjg.experiments.application.tag.FindUsersByTag;
 import es.jmjg.experiments.application.tag.SaveTag;
 import es.jmjg.experiments.application.tag.UpdateTagName;
@@ -58,6 +59,9 @@ class TagControllerTest {
   @Autowired
   private FindPostsByTag findPostsByTag;
 
+  @Autowired
+  private FindTagByUuid findTagByUuid;
+
   private Tag testTag;
   private UUID testUuid;
   private Integer testId;
@@ -70,6 +74,18 @@ class TagControllerTest {
     testTag = TagFactory.createTag(testUuid, "test-tag");
     testTag.setId(testId);
     objectMapper = new ObjectMapper();
+  }
+
+  @Test
+  void shouldFindTagByUuid() throws Exception {
+    // Given
+    when(findTagByUuid.findByUuid(testUuid)).thenReturn(testTag);
+
+    // When & Then
+    mockMvc.perform(get("/api/tags/{uuid}", testUuid))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.uuid").value(testUuid.toString()))
+        .andExpect(jsonPath("$.name").value("test-tag"));
   }
 
   @Test
