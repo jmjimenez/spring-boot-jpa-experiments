@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
+import es.jmjg.experiments.application.tag.exception.TagAlreadyExistsException;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.repository.TagRepository;
 import es.jmjg.experiments.shared.TagFactory;
@@ -63,5 +65,59 @@ class SaveTagTest {
     assertThat(result.getId()).isEqualTo(2);
     assertThat(result.getName()).isEqualTo("custom-tag");
     assertThat(result.getUuid()).isEqualTo(tag.getUuid());
+  }
+
+  @Test
+  void save_WhenDuplicateUuid_ShouldThrowTagAlreadyExistsException() {
+    // Given
+    Tag tag = TagFactory.createBasicTag();
+    when(tagRepository.save(any(Tag.class)))
+        .thenThrow(
+            new DataIntegrityViolationException("duplicate key value violates unique constraint \"tag_uuid_key\""));
+
+    // When & Then
+    assertThatThrownBy(() -> saveTag.save(tag))
+        .isInstanceOf(TagAlreadyExistsException.class)
+        .hasMessage("Tag with uuid '" + tag.getUuid() + "' already exists");
+  }
+
+  @Test
+  void save_WhenDuplicateName_ShouldThrowTagAlreadyExistsException() {
+    // Given
+    Tag tag = TagFactory.createTag("existing-tag");
+    when(tagRepository.save(any(Tag.class)))
+        .thenThrow(
+            new DataIntegrityViolationException("duplicate key value violates unique constraint \"tag_tag_key\""));
+
+    // When & Then
+    assertThatThrownBy(() -> saveTag.save(tag))
+        .isInstanceOf(TagAlreadyExistsException.class)
+        .hasMessage("Tag with name '" + tag.getName() + "' and uuid '" + tag.getUuid() + "' already exists");
+  }
+
+  @Test
+  void save_WhenGenericDataIntegrityViolation_ShouldThrowTagAlreadyExistsException() {
+    // Given
+    Tag tag = TagFactory.createBasicTag();
+    when(tagRepository.save(any(Tag.class)))
+        .thenThrow(new DataIntegrityViolationException("Some other constraint violation"));
+
+    // When & Then
+    assertThatThrownBy(() -> saveTag.save(tag))
+        .isInstanceOf(TagAlreadyExistsException.class)
+        .hasMessage("Tag already exists");
+  }
+
+  @Test
+  void save_WhenRepositoryThrowsOtherException_ShouldPropagateException() {
+    // Given
+    Tag tag = TagFactory.createBasicTag();
+    when(tagRepository.save(any(Tag.class)))
+        .thenThrow(new RuntimeException("Database error"));
+
+    // When & Then
+    assertThatThrownBy(() -> saveTag.save(tag))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Database error");
   }
 }

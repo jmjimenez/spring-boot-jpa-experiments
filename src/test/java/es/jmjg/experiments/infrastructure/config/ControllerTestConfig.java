@@ -12,6 +12,12 @@ import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.UpdatePost;
+import es.jmjg.experiments.application.tag.DeleteTagByUuid;
+import es.jmjg.experiments.application.tag.FindPostsByTag;
+import es.jmjg.experiments.application.tag.FindTagByPattern;
+import es.jmjg.experiments.application.tag.FindUsersByTag;
+import es.jmjg.experiments.application.tag.SaveTag;
+import es.jmjg.experiments.application.tag.UpdateTagName;
 import es.jmjg.experiments.application.user.DeleteUserByUuid;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.FindUserByEmail;
@@ -21,6 +27,7 @@ import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
+import es.jmjg.experiments.infrastructure.controller.mapper.TagMapper;
 import es.jmjg.experiments.infrastructure.controller.mapper.UserMapper;
 
 @TestConfiguration
@@ -119,5 +126,46 @@ public class ControllerTestConfig {
   @Primary
   public DeleteUserByUuid deleteUserByUuid() {
     return mock(DeleteUserByUuid.class);
+  }
+
+  @Bean
+  @Primary
+  public SaveTag saveTag() {
+    return mock(SaveTag.class);
+  }
+
+  @Bean
+  @Primary
+  public UpdateTagName updateTagName() {
+    return mock(UpdateTagName.class);
+  }
+
+  @Bean
+  @Primary
+  public DeleteTagByUuid deleteTagByUuid() {
+    return mock(DeleteTagByUuid.class);
+  }
+
+  @Bean
+  @Primary
+  public FindTagByPattern findTagByPattern() {
+    return mock(FindTagByPattern.class);
+  }
+
+  @Bean
+  @Primary
+  public FindUsersByTag findUsersByTag() {
+    return mock(FindUsersByTag.class);
+  }
+
+  @Bean
+  @Primary
+  public FindPostsByTag findPostsByTag() {
+    return mock(FindPostsByTag.class);
+  }
+
+  @Bean
+  public TagMapper tagMapper() {
+    return new TagMapper();
   }
 }

@@ -1,0 +1,361 @@
+package es.jmjg.experiments.infrastructure.controller.integration;
+
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.UUID;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
+
+import es.jmjg.experiments.infrastructure.controller.dto.TagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.dto.TagResponseDto;
+import es.jmjg.experiments.shared.BaseControllerIntegration;
+
+class TagControllerIntegrationTest extends BaseControllerIntegration {
+
+  @Autowired
+  private TestRestTemplate restTemplate;
+
+  // Sample tags from Flyway migration data
+  private static final UUID TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
+  private static final UUID JAVA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
+  private static final UUID DEVELOPER_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440071");
+  private static final UUID NOT_USED_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440072");
+
+  @Test
+  void shouldFindTagsByPattern() {
+    // Given
+    String pattern = "tech";
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Object responseBody = response.getBody();
+    assertThat(responseBody).isNotNull();
+  }
+
+  @Test
+  void shouldFindTagsByPatternWithNoResults() {
+    // Given
+    String pattern = "nonexistent";
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Object responseBody = response.getBody();
+    assertThat(responseBody).isNotNull();
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenTagByUuidDoesNotExist() {
+    // Given
+    UUID nonExistentUuid = UUID.randomUUID();
+
+    // When
+    ResponseEntity<TagResponseDto> response = restTemplate.getForEntity("/api/tags/" + nonExistentUuid,
+        TagResponseDto.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void shouldFindUsersByTag() {
+    // Given
+    UUID tagUuid = TECHNOLOGY_UUID;
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/" + tagUuid + "/users",
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Object responseBody = response.getBody();
+    assertThat(responseBody).isNotNull();
+  }
+
+  @Test
+  void shouldFindPostsByTag() {
+    // Given
+    UUID tagUuid = TECHNOLOGY_UUID;
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/" + tagUuid + "/posts",
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Object responseBody = response.getBody();
+    assertThat(responseBody).isNotNull();
+  }
+
+  @Test
+  void shouldFindUsersByTagName() {
+    // Given
+    String tagName = "technology";
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search/users?name=" + tagName,
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Object responseBody = response.getBody();
+    assertThat(responseBody).isNotNull();
+  }
+
+  @Test
+  void shouldFindPostsByTagName() {
+    // Given
+    String tagName = "technology";
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search/posts?name=" + tagName,
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Object responseBody = response.getBody();
+    assertThat(responseBody).isNotNull();
+  }
+
+  @Test
+  @DirtiesContext
+  void shouldCreateNewTagWhenTagIsValid() {
+    // Given
+    TagRequestDto tagDto = new TagRequestDto(UUID.randomUUID(), "new-tag");
+
+    // When
+    ResponseEntity<TagResponseDto> response = restTemplate.exchange(
+        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto), TagResponseDto.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+    TagResponseDto tag = response.getBody();
+    assertThat(tag).isNotNull().satisfies(t -> {
+      assertThat(t.getName()).isEqualTo("new-tag");
+      assertThat(t.getUuid()).isNotNull();
+    });
+  }
+
+  @Test
+  @DirtiesContext
+  void shouldUpdateExistingTagName() {
+    // Given
+    UUID tagUuid = JAVA_UUID;
+    TagRequestDto updateDto = new TagRequestDto(tagUuid, "updated-java");
+
+    // When
+    ResponseEntity<TagResponseDto> response = restTemplate.exchange(
+        "/api/tags/" + tagUuid, HttpMethod.PUT, new HttpEntity<>(updateDto),
+        TagResponseDto.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    TagResponseDto updatedTag = response.getBody();
+    assertThat(updatedTag).isNotNull().satisfies(t -> {
+      assertThat(t.getUuid()).isEqualTo(tagUuid);
+      assertThat(t.getName()).isEqualTo("updated-java");
+    });
+  }
+
+  @Test
+  void shouldReturnErrorWhenDeletingTagUsedByUser() {
+    // Given
+    UUID tagUuid = DEVELOPER_UUID;
+
+    // When
+    ResponseEntity<Void> response = restTemplate.exchange(
+        "/api/tags/" + tagUuid, HttpMethod.DELETE, null, Void.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
+
+  @Test
+  @DirtiesContext
+  void shouldDeleteUnusedTagByUuid() {
+    // Given
+    UUID tagUuid = NOT_USED_UUID;
+
+    // When
+    ResponseEntity<Void> response = restTemplate.exchange(
+        "/api/tags/" + tagUuid, HttpMethod.DELETE, null, Void.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
+  @Test
+  void shouldReturnErrorWhenDeletingTagUsedByPost() {
+    // Given
+    UUID tagUuid = TECHNOLOGY_UUID;
+
+    // When
+    ResponseEntity<Void> response = restTemplate.exchange(
+        "/api/tags/" + tagUuid, HttpMethod.DELETE, null, Void.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenDeletingNonExistentTag() {
+    // Given
+    UUID nonExistentUuid = UUID.randomUUID();
+
+    // When
+    ResponseEntity<Void> response = restTemplate.exchange(
+        "/api/tags/" + nonExistentUuid, HttpMethod.DELETE, null, Void.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenUpdatingNonExistentTag() {
+    // Given
+    UUID nonExistentUuid = UUID.randomUUID();
+    TagRequestDto updateDto = new TagRequestDto(nonExistentUuid, "updated-tag");
+
+    // When
+    ResponseEntity<TagResponseDto> response = restTemplate.exchange(
+        "/api/tags/" + nonExistentUuid, HttpMethod.PUT, new HttpEntity<>(updateDto),
+        TagResponseDto.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenFindingUsersByNonExistentTag() {
+    // Given
+    UUID nonExistentUuid = UUID.randomUUID();
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/" + nonExistentUuid + "/users",
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenFindingPostsByNonExistentTag() {
+    // Given
+    UUID nonExistentUuid = UUID.randomUUID();
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/" + nonExistentUuid + "/posts",
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenFindingUsersByNonExistentTagName() {
+    // Given
+    String nonExistentTagName = "nonexistent-tag";
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search/users?name=" + nonExistentTagName,
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenFindingPostsByNonExistentTagName() {
+    // Given
+    String nonExistentTagName = "nonexistent-tag";
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search/posts?name=" + nonExistentTagName,
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  @DirtiesContext
+  void shouldReturnConflictWhenCreatingTagWithDuplicateName() {
+    // Given
+    TagRequestDto tagDto1 = new TagRequestDto(UUID.randomUUID(), "duplicate-tag");
+    TagRequestDto tagDto2 = new TagRequestDto(UUID.randomUUID(), "duplicate-tag");
+
+    // Create first tag
+    restTemplate.exchange("/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto1), TagResponseDto.class);
+
+    // When - Try to create second tag with same name
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto2), Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
+
+  @Test
+  @DirtiesContext
+  void shouldReturnConflictWhenCreatingTagWithDuplicateUuid() {
+    // Given
+    UUID duplicateUuid = UUID.randomUUID();
+    TagRequestDto tagDto1 = new TagRequestDto(duplicateUuid, "first-tag");
+    TagRequestDto tagDto2 = new TagRequestDto(duplicateUuid, "second-tag");
+
+    // Create first tag
+    restTemplate.exchange("/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto1), TagResponseDto.class);
+
+    // When - Try to create second tag with same UUID
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto2), Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
+
+  @Test
+  @DirtiesContext
+  void shouldReturnConflictWhenCreatingTagWithExistingNameFromMigration() {
+    // Given - Try to create a tag with a name that exists in migration data
+    TagRequestDto tagDto = new TagRequestDto(UUID.randomUUID(), "technology");
+
+    // When
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto), Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
+
+  @Test
+  void shouldFindTagsByPatternWithMultipleTags() {
+    // Given
+    String pattern = "tech";
+
+    // When
+    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
+        Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Object responseBody = response.getBody();
+    assertThat(responseBody).isNotNull();
+  }
+}

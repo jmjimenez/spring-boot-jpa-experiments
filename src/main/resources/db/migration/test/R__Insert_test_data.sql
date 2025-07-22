@@ -120,6 +120,10 @@ VALUES (
     (
         '550e8400-e29b-41d4-a716-446655440071',
         'developer'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440072',
+        'not-used'
     );
 
 -- Insert Posts for Leanne Graham (user_id = 1)

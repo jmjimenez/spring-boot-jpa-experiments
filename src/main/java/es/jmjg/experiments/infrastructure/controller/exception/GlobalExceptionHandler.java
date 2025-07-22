@@ -17,6 +17,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
+import es.jmjg.experiments.application.tag.exception.TagAlreadyExistsException;
+import es.jmjg.experiments.application.tag.exception.TagInUseException;
+import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 
 @RestControllerAdvice
@@ -30,14 +33,13 @@ public class GlobalExceptionHandler {
 
     log.warn("Post not found: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse =
-        ApiErrorResponse.builder()
-            .timestamp(LocalDateTime.now())
-            .status(HttpStatus.NOT_FOUND.value())
-            .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-            .message(ex.getMessage())
-            .path(request.getDescription(false))
-            .build();
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.NOT_FOUND.value())
+        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
@@ -47,14 +49,13 @@ public class GlobalExceptionHandler {
 
     log.warn("Post not found: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse =
-        ApiErrorResponse.builder()
-            .timestamp(LocalDateTime.now())
-            .status(HttpStatus.NOT_FOUND.value())
-            .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-            .message(ex.getMessage())
-            .path(request.getDescription(false))
-            .build();
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.NOT_FOUND.value())
+        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
@@ -64,14 +65,13 @@ public class GlobalExceptionHandler {
 
     log.warn("User not found: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse =
-        ApiErrorResponse.builder()
-            .timestamp(LocalDateTime.now())
-            .status(HttpStatus.NOT_FOUND.value())
-            .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-            .message(ex.getMessage())
-            .path(request.getDescription(false))
-            .build();
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.NOT_FOUND.value())
+        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
@@ -82,16 +82,82 @@ public class GlobalExceptionHandler {
 
     log.warn("User not found: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse =
-        ApiErrorResponse.builder()
-            .timestamp(LocalDateTime.now())
-            .status(HttpStatus.NOT_FOUND.value())
-            .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-            .message(ex.getMessage())
-            .path(request.getDescription(false))
-            .build();
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.NOT_FOUND.value())
+        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
+
+  @ExceptionHandler(TagNotFoundException.class)
+  public ResponseEntity<ApiErrorResponse> handleTagNotFoundException(
+      TagNotFoundException ex, WebRequest request) {
+
+    log.warn("Tag not found: {}", ex.getMessage());
+
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.NOT_FOUND.value())
+        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
+
+  @ExceptionHandler(TagNotFound.class)
+  public ResponseEntity<ApiErrorResponse> handleTagNotFound(TagNotFound ex, WebRequest request) {
+
+    log.warn("Tag not found: {}", ex.getMessage());
+
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.NOT_FOUND.value())
+        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
+
+  @ExceptionHandler(TagInUseException.class)
+  public ResponseEntity<ApiErrorResponse> handleTagInUseException(
+      TagInUseException ex, WebRequest request) {
+
+    log.warn("Tag in use: {}", ex.getMessage());
+
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.CONFLICT.value())
+        .error(HttpStatus.CONFLICT.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+  }
+
+  @ExceptionHandler(TagAlreadyExistsException.class)
+  public ResponseEntity<ApiErrorResponse> handleTagAlreadyExistsException(
+      TagAlreadyExistsException ex, WebRequest request) {
+
+    log.warn("Tag already exists: {}", ex.getMessage());
+
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.CONFLICT.value())
+        .error(HttpStatus.CONFLICT.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
   }
 
   @ExceptionHandler(InvalidRequest.class)
@@ -100,14 +166,13 @@ public class GlobalExceptionHandler {
 
     log.warn("Invalid request: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse =
-        ApiErrorResponse.builder()
-            .timestamp(LocalDateTime.now())
-            .status(HttpStatus.BAD_REQUEST.value())
-            .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-            .message(ex.getMessage())
-            .path(request.getDescription(false))
-            .build();
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.BAD_REQUEST.value())
+        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
@@ -128,15 +193,14 @@ public class GlobalExceptionHandler {
               errors.put(fieldName, errorMessage);
             });
 
-    ApiErrorResponse errorResponse =
-        ApiErrorResponse.builder()
-            .timestamp(LocalDateTime.now())
-            .status(HttpStatus.BAD_REQUEST.value())
-            .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-            .message("Validation failed")
-            .path(request.getDescription(false))
-            .details(errors)
-            .build();
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.BAD_REQUEST.value())
+        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+        .message("Validation failed")
+        .path(request.getDescription(false))
+        .details(errors)
+        .build();
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
@@ -145,14 +209,13 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiErrorResponse> handleTypeMismatch(
       MethodArgumentTypeMismatchException ex, WebRequest request) {
     log.warn("Type mismatch: {}", ex.getMessage());
-    ApiErrorResponse errorResponse =
-        ApiErrorResponse.builder()
-            .timestamp(LocalDateTime.now())
-            .status(HttpStatus.BAD_REQUEST.value())
-            .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-            .message("Invalid parameter: " + ex.getName() + ". " + ex.getMessage())
-            .path(request.getDescription(false))
-            .build();
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.BAD_REQUEST.value())
+        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+        .message("Invalid parameter: " + ex.getName() + ". " + ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
@@ -161,14 +224,13 @@ public class GlobalExceptionHandler {
 
     log.error("Unhandled exception occurred: {}", ex.getMessage(), ex);
 
-    ApiErrorResponse errorResponse =
-        ApiErrorResponse.builder()
-            .timestamp(LocalDateTime.now())
-            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-            .message("An unexpected error occurred")
-            .path(request.getDescription(false))
-            .build();
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+        .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+        .message("An unexpected error occurred")
+        .path(request.getDescription(false))
+        .build();
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
