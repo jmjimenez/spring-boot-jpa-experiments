@@ -44,6 +44,35 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(tag).isNotNull().satisfies(t -> {
       assertThat(t.getUuid()).isEqualTo(tagUuid);
       assertThat(t.getName()).isEqualTo("technology");
+      assertThat(t.getPosts()).isNotNull();
+      assertThat(t.getUsers()).isNotNull();
+      // Technology tag should have posts and users based on migration data
+      assertThat(t.getPosts()).isNotEmpty();
+      assertThat(t.getUsers()).isNotEmpty();
+    });
+  }
+
+  @Test
+  void shouldFindTagByUuidWithNoRelations() {
+    // Given
+    UUID tagUuid = NOT_USED_UUID;
+
+    // When
+    ResponseEntity<TagResponseDto> response = restTemplate.getForEntity("/api/tags/" + tagUuid,
+        TagResponseDto.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    TagResponseDto tag = response.getBody();
+    assertThat(tag).isNotNull().satisfies(t -> {
+      assertThat(t.getUuid()).isEqualTo(tagUuid);
+      assertThat(t.getName()).isEqualTo("not-used");
+      assertThat(t.getPosts()).isNotNull();
+      assertThat(t.getUsers()).isNotNull();
+      // Not-used tag should have no posts or users
+      assertThat(t.getPosts()).isEmpty();
+      assertThat(t.getUsers()).isEmpty();
     });
   }
 

@@ -1,11 +1,14 @@
 package es.jmjg.experiments.infrastructure.controller.mapper;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.controller.dto.TagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.TagResponseDto;
 
@@ -16,7 +19,20 @@ public class TagMapper {
     if (tag == null) {
       return null;
     }
-    return new TagResponseDto(tag.getUuid(), tag.getName());
+    return toResponseDtoWithRelations(tag, List.of(), List.of());
+  }
+
+  public TagResponseDto toResponseDtoWithRelations(Tag tag, List<Post> posts, List<User> users) {
+    if (tag == null) {
+      return null;
+    }
+    List<UUID> postUuids = posts.stream()
+        .map(Post::getUuid)
+        .collect(Collectors.toList());
+    List<UUID> userUuids = users.stream()
+        .map(User::getUuid)
+        .collect(Collectors.toList());
+    return new TagResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
   }
 
   public List<TagResponseDto> toResponseDtoList(List<Tag> tags) {

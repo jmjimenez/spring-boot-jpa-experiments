@@ -102,7 +102,7 @@ public class TagController {
   TagResponseDto findByUuid(
       @Parameter(description = "UUID of the tag to retrieve") @PathVariable UUID uuid) {
     Tag tag = findTagByUuid.findByUuid(uuid);
-    return tagMapper.toResponseDto(tag);
+    return tagMapper.toResponseDtoWithRelations(tag, tag.getPosts(), tag.getUsers());
   }
 
   @GetMapping("/{uuid}/users")

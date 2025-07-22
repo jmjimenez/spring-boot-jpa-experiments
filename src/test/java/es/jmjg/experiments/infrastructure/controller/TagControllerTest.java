@@ -1,6 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -62,6 +63,12 @@ class TagControllerTest {
   @Autowired
   private FindTagByUuid findTagByUuid;
 
+  // Sample data from Flyway migration
+  private static final UUID LEANNE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+  private static final UUID ERVIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+  private static final UUID POST_1_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
+  private static final UUID POST_16_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
+
   private Tag testTag;
   private UUID testUuid;
   private Integer testId;
@@ -78,14 +85,50 @@ class TagControllerTest {
 
   @Test
   void shouldFindTagByUuid() throws Exception {
-    // Given
+    // Given - Using existing migration test data
+    User user1 = UserFactory.createUser(LEANNE_UUID, "Leanne Graham", "leanne.graham@example.com", "leanne_graham");
+    User user2 = UserFactory.createUser(ERVIN_UUID, "Ervin Howell", "ervin.howell@example.com", "ervin_howell");
+    Post post1 = PostFactory.createPost(user1, POST_1_UUID,
+        "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", "Test content 1");
+    Post post2 = PostFactory.createPost(user2, POST_16_UUID, "et ea vero quia laudantium autem", "Test content 2");
+
+    testTag.setUsers(List.of(user1, user2));
+    testTag.setPosts(List.of(post1, post2));
+
     when(findTagByUuid.findByUuid(testUuid)).thenReturn(testTag);
 
     // When & Then
     mockMvc.perform(get("/api/tags/{uuid}", testUuid))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.uuid").value(testUuid.toString()))
-        .andExpect(jsonPath("$.name").value("test-tag"));
+        .andExpect(jsonPath("$.name").value("test-tag"))
+        .andExpect(jsonPath("$.posts").isArray())
+        .andExpect(jsonPath("$.posts").value(hasSize(2)))
+        .andExpect(jsonPath("$.posts[0]").value(POST_1_UUID.toString()))
+        .andExpect(jsonPath("$.posts[1]").value(POST_16_UUID.toString()))
+        .andExpect(jsonPath("$.users").isArray())
+        .andExpect(jsonPath("$.users").value(hasSize(2)))
+        .andExpect(jsonPath("$.users[0]").value(LEANNE_UUID.toString()))
+        .andExpect(jsonPath("$.users[1]").value(ERVIN_UUID.toString()));
+  }
+
+  @Test
+  void shouldFindTagByUuidWithNoRelations() throws Exception {
+    // Given
+    testTag.setUsers(List.of());
+    testTag.setPosts(List.of());
+
+    when(findTagByUuid.findByUuid(testUuid)).thenReturn(testTag);
+
+    // When & Then
+    mockMvc.perform(get("/api/tags/{uuid}", testUuid))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.uuid").value(testUuid.toString()))
+        .andExpect(jsonPath("$.name").value("test-tag"))
+        .andExpect(jsonPath("$.posts").isArray())
+        .andExpect(jsonPath("$.posts").value(hasSize(0)))
+        .andExpect(jsonPath("$.users").isArray())
+        .andExpect(jsonPath("$.users").value(hasSize(0)));
   }
 
   @Test

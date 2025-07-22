@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.dto;
 
+import java.util.List;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -12,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class TagResponseDto {
   private UUID uuid;
   private String name;
+  private List<UUID> posts;
+  private List<UUID> users;
 }
