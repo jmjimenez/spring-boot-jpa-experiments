@@ -85,6 +85,7 @@ public class UserController {
   }
 
   @GetMapping("/{uuid}")
+  @Transactional(readOnly = true)
   @Operation(summary = "Get user by UUID", description = "Retrieves a specific user by its UUID")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),

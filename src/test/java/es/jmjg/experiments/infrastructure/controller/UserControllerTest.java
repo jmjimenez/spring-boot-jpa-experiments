@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,6 +31,8 @@ import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
+import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
 import es.jmjg.experiments.shared.UserFactory;
@@ -66,6 +69,8 @@ class UserControllerTest {
   private UUID testUuid;
   private Integer testId;
   private Pageable pageable;
+  private List<Post> testPosts;
+  private List<Tag> testTags;
 
   @BeforeEach
   void setUp() {
@@ -73,6 +78,27 @@ class UserControllerTest {
     testId = 1;
     testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
     testUser.setId(testId);
+
+    // Create test posts
+    testPosts = new ArrayList<>();
+    Post post1 = new Post();
+    post1.setUuid(UUID.randomUUID());
+    testPosts.add(post1);
+    Post post2 = new Post();
+    post2.setUuid(UUID.randomUUID());
+    testPosts.add(post2);
+    testUser.setPosts(testPosts);
+
+    // Create test tags
+    testTags = new ArrayList<>();
+    Tag tag1 = new Tag();
+    tag1.setName("technology");
+    testTags.add(tag1);
+    Tag tag2 = new Tag();
+    tag2.setName("java");
+    testTags.add(tag2);
+    testUser.setTags(testTags);
+
     pageable = PageRequest.of(0, 10);
   }
 
@@ -90,7 +116,9 @@ class UserControllerTest {
                     "uuid":"%s",
                     "name":"Test User",
                     "email":"test@example.com",
-                    "username":"testuser"
+                    "username":"testuser",
+                    "posts":["%s","%s"],
+                    "tags":["technology","java"]
                 }
             ],
             "pageable":{
@@ -119,7 +147,7 @@ class UserControllerTest {
             "numberOfElements":1,
             "empty":false
         }
-        """.formatted(testUuid);
+        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
 
     // When & Then
     ResultActions resultActions = mockMvc
@@ -141,9 +169,11 @@ class UserControllerTest {
             "uuid":"%s",
             "name":"Test User",
             "email":"test@example.com",
-            "username":"testuser"
+            "username":"testuser",
+            "posts":["%s","%s"],
+            "tags":["technology","java"]
         }
-        """.formatted(testUuid);
+        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
 
     // When & Then
     mockMvc
@@ -173,9 +203,11 @@ class UserControllerTest {
             "uuid":"%s",
             "name":"Test User",
             "email":"test@example.com",
-            "username":"testuser"
+            "username":"testuser",
+            "posts":["%s","%s"],
+            "tags":["technology","java"]
         }
-        """.formatted(testUuid);
+        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
 
     // When & Then
     mockMvc
@@ -207,9 +239,11 @@ class UserControllerTest {
             "uuid":"%s",
             "name":"Test User",
             "email":"test@example.com",
-            "username":"testuser"
+            "username":"testuser",
+            "posts":["%s","%s"],
+            "tags":["technology","java"]
         }
-        """.formatted(testUuid);
+        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
 
     // When & Then
     mockMvc
@@ -234,6 +268,8 @@ class UserControllerTest {
   void shouldCreateNewUserWhenGivenValidData() throws Exception {
     // Given
     User savedUser = UserFactory.createUser(testId, testUuid, "Test User", "test@example.com", "testuser");
+    savedUser.setPosts(testPosts);
+    savedUser.setTags(testTags);
     when(saveUser.save(any(User.class))).thenReturn(savedUser);
 
     String requestBody = """
@@ -250,9 +286,11 @@ class UserControllerTest {
             "uuid":"%s",
             "name":"Test User",
             "email":"test@example.com",
-            "username":"testuser"
+            "username":"testuser",
+            "posts":["%s","%s"],
+            "tags":["technology","java"]
         }
-        """.formatted(testUuid);
+        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
 
     // When & Then
     mockMvc
@@ -267,6 +305,8 @@ class UserControllerTest {
   void shouldUpdateUserWhenGivenValidData() throws Exception {
     // Given
     User updatedUser = UserFactory.createUser(testId, testUuid, "Updated User", "updated@example.com", "updateduser");
+    updatedUser.setPosts(testPosts);
+    updatedUser.setTags(testTags);
     when(findUserByUuid.findByUuid(testUuid)).thenReturn(Optional.of(testUser));
     when(updateUser.update(eq(testId), any(User.class))).thenReturn(updatedUser);
 
@@ -284,9 +324,11 @@ class UserControllerTest {
             "uuid":"%s",
             "name":"Updated User",
             "email":"updated@example.com",
-            "username":"updateduser"
+            "username":"updateduser",
+            "posts":["%s","%s"],
+            "tags":["technology","java"]
         }
-        """.formatted(testUuid);
+        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
 
     // When & Then
     mockMvc

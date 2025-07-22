@@ -1,7 +1,9 @@
 package es.jmjg.experiments.infrastructure.controller.mapper;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
 
 import es.jmjg.experiments.domain.entity.User;
@@ -15,8 +17,18 @@ public class UserMapper {
     if (user == null) {
       return null;
     }
+
+    List<UUID> postUuids = user.getPosts() != null ? user.getPosts().stream()
+        .map(post -> post.getUuid())
+        .collect(Collectors.toList()) : List.of();
+
+    List<String> tagNames = user.getTags() != null ? user.getTags().stream()
+        .map(tag -> tag.getName())
+        .collect(Collectors.toList()) : List.of();
+
     return new UserResponseDto(
-        user.getUuid(), user.getName(), user.getEmail(), user.getUsername());
+        user.getUuid(), user.getName(), user.getEmail(), user.getUsername(),
+        postUuids, tagNames);
   }
 
   public List<UserResponseDto> toResponseDtoList(List<User> users) {
