@@ -20,7 +20,7 @@ import org.springframework.data.domain.Pageable;
 
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.repository.PostRepository;
+import es.jmjg.experiments.domain.repository.PostRepository;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)

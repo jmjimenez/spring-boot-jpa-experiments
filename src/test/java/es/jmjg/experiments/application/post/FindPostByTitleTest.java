@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.repository.PostRepository;
+import es.jmjg.experiments.domain.repository.PostRepository;
 
 @ExtendWith(MockitoExtension.class)
 class FindPostByTitleTest {

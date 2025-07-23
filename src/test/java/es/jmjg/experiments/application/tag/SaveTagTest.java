@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.jmjg.experiments.application.tag.exception.TagAlreadyExistsException;
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.repository.TagRepository;
+import es.jmjg.experiments.domain.repository.TagRepository;
 import es.jmjg.experiments.shared.TagFactory;
 
 @ExtendWith(MockitoExtension.class)

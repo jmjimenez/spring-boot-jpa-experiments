@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.repository.TagRepository;
+import es.jmjg.experiments.domain.repository.TagRepository;
 import es.jmjg.experiments.shared.TagFactory;
 import jakarta.transaction.Transactional;
 

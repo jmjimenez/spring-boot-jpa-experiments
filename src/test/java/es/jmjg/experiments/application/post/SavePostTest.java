@@ -18,8 +18,8 @@ import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.repository.PostRepository;
-import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.domain.repository.PostRepository;
+import es.jmjg.experiments.domain.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class SavePostTest {

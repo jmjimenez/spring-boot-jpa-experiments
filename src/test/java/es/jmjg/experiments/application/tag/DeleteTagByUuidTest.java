@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.jmjg.experiments.application.tag.exception.TagInUseException;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.infrastructure.repository.TagRepository;
+import es.jmjg.experiments.domain.repository.TagRepository;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteTagByUuidTest {
