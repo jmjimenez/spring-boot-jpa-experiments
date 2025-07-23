@@ -97,3 +97,34 @@
 # Avoid premature agreement or confirmation
 # Always say "Let me check/analyze/verify..." before making conclusions
 # Base all responses on actual analysis, not assumptions
+
+# TEST ANALYSIS RULES:
+# When analyzing test failures or logs:
+#   1. ALWAYS read the complete test log/output provided by user
+#   2. Look for patterns of test execution (which tests run, how many times)
+#   3. Identify actual error messages and stack traces
+#   4. Check for duplicate test executions or suite runs
+#   5. Verify test configuration and Maven profiles
+#   6. NEVER assume test behavior without examining evidence
+#   7. If user provides test.log, analyze it line by line for patterns
+#   8. Look for test suite executions in logs (IntegrationTestSuite, UnitTestSuite)
+#   9. Count how many times each test class appears in the log
+#   10. Verify Maven profile configurations match actual test execution
+
+# EVIDENCE-BASED RESPONSES:
+# ALWAYS base conclusions on provided evidence (logs, code, error messages)
+# NEVER make assumptions about what "should" happen
+# If user provides specific data/files, analyze them thoroughly first
+# Quote specific lines from logs/code when making claims
+# Admit when evidence contradicts initial assumptions
+# When user points out an error in analysis, acknowledge and re-examine evidence
+
+# VERIFICATION CHECKLIST:
+# Before making any claim about test behavior:
+# - Have I read the complete test output/log?
+# - Have I identified all test executions in the log?
+# - Have I checked for duplicate test runs?
+# - Have I verified the Maven configuration?
+# - Am I basing conclusions on evidence or assumptions?
+# - Have I looked for test suite executions?
+# - Have I counted how many times each test appears?
