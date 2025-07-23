@@ -124,5 +124,21 @@
   "editor.wordWrapColumn": 100,
   "workbench.editor.tabSizing": "shrink",
   "workbench.editor.scrollToSwitchTabs": true,
-  "workbench.editor.wrapTabs": true
+  "workbench.editor.wrapTabs": true,
+  // Vim configuration to allow native find
+  "vim.handleKeys": {
+    "<C-f>": false,
+    "<C-h>": false,
+    "<C-g>": false
+  },
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        "<C-f>"
+      ],
+      "commands": [
+        "actions.find"
+      ]
+    }
+  ]
 }
