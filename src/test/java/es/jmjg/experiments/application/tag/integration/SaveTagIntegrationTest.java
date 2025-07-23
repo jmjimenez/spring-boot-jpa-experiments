@@ -79,12 +79,13 @@ class SaveTagIntegrationTest extends BaseIntegration {
   @Test
   void save_WhenDuplicateName_ShouldThrowTagAlreadyExistsException() {
     // Given - using existing sample data from migration test
-    final String existingTagName = "technology";
-    Tag tag2 = TagFactory.createTag(existingTagName);
+    final String technologyTagName = "technology";
+    final String technologyTagUuid = "550e8400-e29b-41d4-a716-446655440056";
+    Tag tag2 = TagFactory.createTag(technologyTagName);
 
     // When & Then
     assertThatThrownBy(() -> saveTag.save(tag2))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with name '" + existingTagName + "' already exists");
+        .hasMessage("Tag with name '" + technologyTagName + "' already exists with uuid '" + technologyTagUuid + "'");
   }
 }

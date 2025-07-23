@@ -12,7 +12,7 @@ public class TagAlreadyExistsException extends RuntimeException {
   }
 
   public TagAlreadyExistsException(String name, UUID uuid) {
-    super("Tag with name '" + name + "' already exists");
+    super("Tag with name '" + name + "' already exists with uuid '" + uuid + "'");
   }
 
   public TagAlreadyExistsException(UUID uuid) {

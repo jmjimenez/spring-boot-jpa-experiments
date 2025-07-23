@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import es.jmjg.experiments.application.tag.exception.TagAlreadyExistsException;
 import es.jmjg.experiments.domain.entity.Tag;
@@ -73,7 +72,7 @@ class SaveTagTest {
     Tag tag = TagFactory.createBasicTag();
     when(tagRepository.save(any(Tag.class)))
         .thenThrow(
-            new DataIntegrityViolationException("duplicate key value violates unique constraint \"tag_uuid_key\""));
+            new TagAlreadyExistsException("Tag with uuid '" + tag.getUuid() + "' already exists"));
 
     // When & Then
     assertThatThrownBy(() -> saveTag.save(tag))
@@ -87,7 +86,7 @@ class SaveTagTest {
     Tag tag = TagFactory.createTag("existing-tag");
     when(tagRepository.save(any(Tag.class)))
         .thenThrow(
-            new DataIntegrityViolationException("duplicate key value violates unique constraint \"tag_tag_key\""));
+            new TagAlreadyExistsException("Tag with name '" + tag.getName() + "' and uuid '" + tag.getUuid() + "' already exists"));
 
     // When & Then
     assertThatThrownBy(() -> saveTag.save(tag))
@@ -100,7 +99,7 @@ class SaveTagTest {
     // Given
     Tag tag = TagFactory.createBasicTag();
     when(tagRepository.save(any(Tag.class)))
-        .thenThrow(new DataIntegrityViolationException("Some other constraint violation"));
+        .thenThrow(new TagAlreadyExistsException("Tag already exists"));
 
     // When & Then
     assertThatThrownBy(() -> saveTag.save(tag))
