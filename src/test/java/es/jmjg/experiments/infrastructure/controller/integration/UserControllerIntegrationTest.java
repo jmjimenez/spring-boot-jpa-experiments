@@ -9,7 +9,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 
 import es.jmjg.experiments.infrastructure.controller.dto.UserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
@@ -77,7 +76,6 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldCreateNewUserWhenUserIsValid() {
     UserRequestDto userDto = new UserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser");
 
@@ -97,7 +95,6 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldUpdateExistingUser() {
     UserRequestDto updateDto = new UserRequestDto(PATRICIA_UUID, "Updated User", "updated@example.com", "updateduser");
 
@@ -118,7 +115,6 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldDeleteUserByUuid() {
     ResponseEntity<Void> response = restTemplate.exchange(
         "/api/users/" + CHELSEY_UUID, HttpMethod.DELETE, null, Void.class);

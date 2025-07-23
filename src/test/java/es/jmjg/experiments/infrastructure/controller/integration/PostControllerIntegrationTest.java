@@ -10,7 +10,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,7 +100,6 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldCreateNewPostWhenPostIsValid() {
     User user = new User(null, UUID.randomUUID(), "Test User", "test01@example.com", "testuser01", null);
     user = userRepository.save(user);
@@ -147,7 +145,6 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldUpdatePostWhenPostExists() {
     User user = new User(null, UUID.randomUUID(), "Test User", "test03@example.com", "testuser03", null);
     user = userRepository.save(user);

@@ -9,7 +9,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 
 import es.jmjg.experiments.infrastructure.controller.dto.TagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.TagResponseDto;
@@ -180,7 +179,6 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldCreateNewTagWhenTagIsValid() {
     // Given
     TagRequestDto tagDto = new TagRequestDto(UUID.randomUUID(), "new-tag");
@@ -200,7 +198,6 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldUpdateExistingTagName() {
     // Given
     UUID tagUuid = JAVA_UUID;
@@ -235,7 +232,6 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldDeleteUnusedTagByUuid() {
     // Given
     UUID tagUuid = NOT_USED_UUID;
@@ -342,7 +338,6 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldReturnConflictWhenCreatingTagWithDuplicateName() {
     // Given
     TagRequestDto tagDto1 = new TagRequestDto(UUID.randomUUID(), "duplicate-tag");
@@ -360,7 +355,6 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldReturnConflictWhenCreatingTagWithDuplicateUuid() {
     // Given
     UUID duplicateUuid = UUID.randomUUID();
@@ -379,7 +373,6 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  @DirtiesContext
   void shouldReturnConflictWhenCreatingTagWithExistingNameFromMigration() {
     // Given - Try to create a tag with a name that exists in migration data
     TagRequestDto tagDto = new TagRequestDto(UUID.randomUUID(), "technology");
