@@ -7,7 +7,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-@SuppressWarnings("resource")
 public class TestContainersConfig {
 
   @Container
