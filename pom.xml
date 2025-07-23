@@ -35,6 +35,18 @@
 	
 	<profiles>
 		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<test.include>**/*Test.java</test.include>
+				<test.exclude>**/*TestSuite.java</test.exclude>
+				<surefire.timeout>300</surefire.timeout>
+				<junit.jupiter.suite.discovery.disabled>true</junit.jupiter.suite.discovery.disabled>
+			</properties>
+		</profile>
+		<profile>
 			<id>unit-tests</id>
 			<properties>
 				<test.include>**/*Test.java</test.include>
@@ -215,7 +227,7 @@
                     <argLine>
                         -Dmockito.mock.maker=org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker
                         -Dspring.profiles.active=test
-                        -Djunit.jupiter.suite.discovery.disabled=${junit.jupiter.suite.discovery.disabled:false}
+                        -Djunit.jupiter.suite.discovery.disabled=${junit.jupiter.suite.discovery.disabled:true}
                     </argLine>
                     <!-- Reduce Maven Surefire verbosity -->
                     <redirectTestOutputToFile>false</redirectTestOutputToFile>
