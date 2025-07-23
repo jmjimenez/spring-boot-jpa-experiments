@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- Console appender for tests -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Set root logging level to WARN to reduce verbosity -->
+  <root level="WARN">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+  <!-- Specific logger configurations for common verbose components -->
+  <logger name="org.springframework" level="WARN"/>
+  <logger name="org.hibernate" level="WARN"/>
+  <logger name="org.flywaydb" level="WARN"/>
+  <logger name="org.testcontainers" level="WARN"/>
+  <logger name="com.zaxxer.hikari" level="WARN"/>
+  <logger name="org.postgresql" level="WARN"/>
+  <logger name="org.apache.tomcat" level="WARN"/>
+  <logger name="org.apache.catalina" level="WARN"/>
+  <logger name="org.apache.coyote" level="WARN"/>
+  <logger name="org.springframework.boot.autoconfigure" level="WARN"/>
+  <logger name="org.springframework.boot.context.config" level="WARN"/>
+  <logger name="org.springframework.context.annotation" level="WARN"/>
+  <logger name="org.springframework.beans" level="WARN"/>
+  <logger name="org.springframework.core" level="WARN"/>
+  <logger name="org.springframework.web" level="WARN"/>
+  <logger name="org.springframework.data" level="WARN"/>
+  <logger name="org.springframework.transaction" level="WARN"/>
+  <logger name="org.springframework.orm" level="WARN"/>
+  <logger name="org.springframework.jdbc" level="WARN"/>
+  <logger name="org.springframework.test" level="INFO"/>
+  <logger name="es.jmjg.experiments" level="INFO"/>
+</configuration> 

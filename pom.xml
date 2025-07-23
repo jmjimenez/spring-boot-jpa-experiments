@@ -217,6 +217,12 @@
                         -Dspring.profiles.active=test
                         -Djunit.jupiter.suite.discovery.disabled=${junit.jupiter.suite.discovery.disabled:false}
                     </argLine>
+                    <!-- Reduce Maven Surefire verbosity -->
+                    <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                    <useFile>false</useFile>
+                    <disableXmlReport>false</disableXmlReport>
+                    <reuseForks>true</reuseForks>
+                    <forkCount>1</forkCount>
                 </configuration>
             </plugin>
 		</plugins>
