@@ -1,31 +1,21 @@
 package es.jmjg.experiments.infrastructure.controller.integration;
 
 import static org.assertj.core.api.Assertions.*;
-import java.util.UUID;
+import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
-import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.controller.dto.PagedResponseDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
-import es.jmjg.experiments.infrastructure.repository.PostRepository;
-import es.jmjg.experiments.infrastructure.repository.UserRepository;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class PostControllerIntegrationTest extends BaseControllerIntegration {
 
-  @Autowired
-  private PostRepository postRepository;
-
-  @Autowired
-  private UserRepository userRepository;
-
+  //TODO: test telete post
+  //TODO: id must be hidden
   @Test
   void shouldReturnAllPosts() {
     ResponseEntity<PagedResponseDto<PostResponseDto>> response = restTemplate.exchange(
@@ -69,13 +59,16 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnPostByUuid() {
     ResponseEntity<PostResponseDto> response = restTemplate.getForEntity(
-        "/api/posts/550e8400-e29b-41d4-a716-446655440007", PostResponseDto.class);
+        "/api/posts/" + POST_2_UUID, PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto post = response.getBody();
     assertThat(post).isNotNull().satisfies(p -> {
-      assertThat(p.getTitle()).isEqualTo("qui est esse");
-      assertThat(p.getTags()).isNotNull(); // Tags field should be present
+      assertThat(p.getTitle()).isEqualTo(POST_2_TITLE);
+      assertThat(p.getTags()).isNotNull();
+      assertThat(p.getTags()).hasSize(3);
+      assertThat(p.getTags()).extracting("name")
+          .containsExactlyInAnyOrder(TECHNOLOGY_TAG_NAME, SPRING_BOOT_TAG_NAME, JPA_TAG_NAME);
     });
   }
 
@@ -90,13 +83,14 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldSearchPosts() {
     ResponseEntity<PostResponseDto[]> response =
-        restTemplate.getForEntity("/api/posts/search?q=Spring&limit=5",
+        restTemplate.getForEntity("/api/posts/search?q=" + SEARCH_TERM_SUNT + "&limit=20",
             PostResponseDto[].class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto[] posts = response.getBody();
     assertThat(posts).isNotNull().satisfies(p -> {
       assertThat(p).isNotNull();
+      assertThat(p).hasSize(EXPECTED_SUNT_SEARCH_COUNT);
       // Verify that all posts have the tags field
       for (PostResponseDto post : p) {
         assertThat(post.getTags()).isNotNull();
@@ -106,48 +100,52 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldCreateNewPostWhenPostIsValid() {
-    User user =
-        new User(null, UUID.randomUUID(), "Test User", "test01@example.com", "testuser01", null);
-    user = userRepository.save(user);
-    final UUID userUuid = user.getUuid();
+    final String existingTagName = TECHNOLOGY_TAG_NAME;
+    final String newTagName = "integration-test-tag";
+    final String postTitle = "101 Title";
+    final String postBody = "101 Body";
 
-    PostRequestDto postDto = new PostRequestDto(null, java.util.UUID.randomUUID(), userUuid,
-        "101 Title", "101 Body", null);
+    PostRequestDto postDto = new PostRequestDto(null, java.util.UUID.randomUUID(), LEANNE_UUID,
+        postTitle, postBody, List.of(existingTagName, newTagName));
 
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
         "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     PostResponseDto post = response.getBody();
-    assertThat(post).isNotNull();
-
-    assertThat(post)
-        .isNotNull()
+    assertThat(post).isNotNull()
         .satisfies(
             body -> {
               assertThat(body.getId()).isNotNull();
-              assertThat(body.getUserId()).isEqualTo(userUuid);
-              assertThat(body.getTitle()).isEqualTo("101 Title");
-              assertThat(body.getBody()).isEqualTo("101 Body");
-              assertThat(body.getTags()).isNotNull(); // Tags field should be present
+              assertThat(body.getUserId()).isEqualTo(LEANNE_UUID);
+              assertThat(body.getTitle()).isEqualTo(postTitle);
+              assertThat(body.getBody()).isEqualTo(postBody);
+              assertThat(body.getTags()).isNotNull();
+              assertThat(body.getTags()).hasSize(2);
+              assertThat(body.getTags()).extracting("name")
+                  .containsExactlyInAnyOrder(existingTagName, newTagName);
             });
 
-    // Clean up manually - only delete the specific post that was created
-    if (post != null) {
-      final Integer postId = post.getId();
-      postRepository.deleteById(postId);
-    }
+    // Verify the post can be found and has the expected tags
+    assertThat(post).isNotNull().satisfies(p -> {
+      ResponseEntity<PostResponseDto> foundPostResponse = restTemplate.getForEntity(
+          "/api/posts/" + p.getUuid(), PostResponseDto.class);
+      assertThat(foundPostResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+      PostResponseDto foundPost = foundPostResponse.getBody();
+      assertThat(foundPost).isNotNull().satisfies(fp -> {
+        assertThat(fp.getTags()).isNotNull();
+        assertThat(fp.getTags()).hasSize(2);
+        assertThat(fp.getTags()).extracting("name")
+            .containsExactlyInAnyOrder(existingTagName, newTagName);
+      });
+    });
   }
 
   @Test
-  @Transactional
-  @Rollback
   void shouldNotCreateNewPostWhenValidationFails() {
-    User user =
-        new User(1, UUID.randomUUID(), "Test User", "test02@example.com", "testuser02", null);
-    user = userRepository.save(user);
     PostRequestDto postDto =
-        new PostRequestDto(101, java.util.UUID.randomUUID(), user.getUuid(), "", "", null);
+        new PostRequestDto(101, java.util.UUID.randomUUID(), LEANNE_UUID, "", "", null);
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
         "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
 
@@ -156,13 +154,14 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldUpdatePostWhenPostExists() {
-    User user =
-        new User(null, UUID.randomUUID(), "Test User", "test03@example.com", "testuser03", null);
-    user = userRepository.save(user);
-    final UUID userUuid = user.getUuid();
+    final String existingTagName = TECHNOLOGY_TAG_NAME;
+    final String newTagName = "update-test-tag";
+    final String updatedTitle = "Updated Title";
+    final String updatedBody = "Updated Body";
 
     PostRequestDto postDto = new PostRequestDto(
-        null, java.util.UUID.randomUUID(), userUuid, "Updated Title", "Updated Body", null);
+        null, java.util.UUID.randomUUID(), LEANNE_UUID, updatedTitle, updatedBody,
+        List.of(existingTagName, newTagName));
 
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
         "/api/posts/1", HttpMethod.PUT, new HttpEntity<>(postDto), PostResponseDto.class);
@@ -173,9 +172,12 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
         .isNotNull()
         .satisfies(
             p -> {
-              assertThat(p.getTitle()).isEqualTo("Updated Title");
-              assertThat(p.getBody()).isEqualTo("Updated Body");
-              assertThat(p.getTags()).isNotNull(); // Tags field should be present
+              assertThat(p.getTitle()).isEqualTo(updatedTitle);
+              assertThat(p.getBody()).isEqualTo(updatedBody);
+              assertThat(p.getTags()).isNotNull();
+              assertThat(p.getTags()).hasSize(2);
+              assertThat(p.getTags()).extracting("name")
+                  .containsExactlyInAnyOrder(existingTagName, newTagName);
             });
   }
 }
