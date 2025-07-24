@@ -3,17 +3,14 @@ package es.jmjg.experiments.application.post;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.Post;
@@ -63,6 +60,7 @@ class UpdatePostTest {
     assertThat(result).isNotNull();
     assertThat(result.getTitle()).isEqualTo("Updated Title");
     assertThat(result.getBody()).isEqualTo("Updated Body");
+    assertThat(result.getTags()).isNotNull(); // Tags field should be present
 
     verify(postRepository, times(1)).findById(postId);
     verify(postRepository, times(1)).save(any(Post.class));
@@ -112,6 +110,7 @@ class UpdatePostTest {
     assertThat(result.getUser().getId()).isEqualTo(5); // Should preserve original userId
     assertThat(result.getTitle()).isEqualTo("Updated Title"); // Should update title
     assertThat(result.getBody()).isEqualTo("Updated Body"); // Should update body
+    assertThat(result.getTags()).isNotNull(); // Tags field should be present
 
     verify(postRepository, times(1)).findById(postId);
     verify(postRepository, times(1)).save(any(Post.class));
@@ -142,6 +141,7 @@ class UpdatePostTest {
     assertThat(result.getUser()).isEqualTo(user);
     assertThat(result.getTitle()).isEqualTo("Updated Title");
     assertThat(result.getBody()).isEqualTo("Updated Body");
+    assertThat(result.getTags()).isNotNull(); // Tags field should be present
 
     verify(postRepository, times(1)).findById(postId);
     verify(userRepository, times(1)).findByUuid(userUuid);
@@ -172,7 +172,8 @@ class UpdatePostTest {
   void update_WhenPostHasUser_ShouldUsePostUser() {
     // Given
     Integer postId = 1;
-    User postUser = new User(3, UUID.randomUUID(), "Post User", "post@example.com", "postuser", null);
+    User postUser =
+        new User(3, UUID.randomUUID(), "Post User", "post@example.com", "postuser", null);
     UUID updateUuid = UUID.randomUUID();
     Post updateData = new Post(null, updateUuid, postUser, "Updated Title", "Updated Body");
 
@@ -192,6 +193,7 @@ class UpdatePostTest {
     assertThat(result.getUser()).isEqualTo(postUser);
     assertThat(result.getTitle()).isEqualTo("Updated Title");
     assertThat(result.getBody()).isEqualTo("Updated Body");
+    assertThat(result.getTags()).isNotNull(); // Tags field should be present
 
     verify(postRepository, times(1)).findById(postId);
     verify(userRepository, never()).findById(any());
@@ -218,6 +220,7 @@ class UpdatePostTest {
 
     // Then
     assertThat(result.getUuid()).isEqualTo(newUuid);
+    assertThat(result.getTags()).isNotNull(); // Tags field should be present
     verify(postRepository, times(1)).findById(postId);
     verify(postRepository, times(1)).save(any(Post.class));
   }
@@ -243,6 +246,7 @@ class UpdatePostTest {
 
     // Then
     assertThat(result.getUuid()).isEqualTo(originalUuid);
+    assertThat(result.getTags()).isNotNull(); // Tags field should be present
     verify(postRepository, times(1)).findById(postId);
     verify(postRepository, times(1)).save(any(Post.class));
   }

@@ -1,7 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.integration;
 
 import static org.assertj.core.api.Assertions.*;
-
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -78,7 +77,10 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto post = response.getBody();
-    assertThat(post).isNotNull().satisfies(p -> assertThat(p.getTitle()).isEqualTo("qui est esse"));
+    assertThat(post).isNotNull().satisfies(p -> {
+      assertThat(p.getTitle()).isEqualTo("qui est esse");
+      assertThat(p.getTags()).isNotNull(); // Tags field should be present
+    });
   }
 
   @Test
@@ -96,7 +98,13 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto[] posts = response.getBody();
-    assertThat(posts).isNotNull();
+    assertThat(posts).isNotNull().satisfies(p -> {
+      assertThat(p).isNotNull();
+      // Verify that all posts have the tags field
+      for (PostResponseDto post : p) {
+        assertThat(post.getTags()).isNotNull();
+      }
+    });
   }
 
   @Test
@@ -122,6 +130,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
               assertThat(body.getUserId()).isEqualTo(userUuid);
               assertThat(body.getTitle()).isEqualTo("101 Title");
               assertThat(body.getBody()).isEqualTo("101 Body");
+              assertThat(body.getTags()).isNotNull(); // Tags field should be present
             });
 
     // Clean up manually - only delete the specific post that was created
@@ -164,6 +173,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
             p -> {
               assertThat(p.getTitle()).isEqualTo("Updated Title");
               assertThat(p.getBody()).isEqualTo("Updated Body");
+              assertThat(p.getTags()).isNotNull(); // Tags field should be present
             });
   }
 }

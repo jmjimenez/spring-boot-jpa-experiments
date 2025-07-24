@@ -4,11 +4,9 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -21,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
 import es.jmjg.experiments.application.post.DeletePostById;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
@@ -67,10 +64,12 @@ class PostControllerTest {
   void setUp() {
     User user = UserFactory.createJohnDoeUser(1);
 
-    Post post1 = PostFactory.createPost(user, UUID.randomUUID(), "Hello, World!", "This is my first post.");
+    Post post1 =
+        PostFactory.createPost(user, UUID.randomUUID(), "Hello, World!", "This is my first post.");
     post1.setId(1);
 
-    Post post2 = PostFactory.createPost(user, UUID.randomUUID(), "Second Post", "This is my second post.");
+    Post post2 =
+        PostFactory.createPost(user, UUID.randomUUID(), "Second Post", "This is my second post.");
     post2.setId(2);
 
     posts = List.of(post1, post2);
@@ -241,7 +240,8 @@ class PostControllerTest {
   void shouldCreateNewPostWhenGivenValidID() throws Exception {
     User user = UserFactory.createTestUserWithId1();
 
-    Post post = PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
+    Post post =
+        PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
     post.setId(3);
 
     when(savePost.save(any(Post.class), eq(user.getUuid()))).thenReturn(post);
@@ -372,7 +372,8 @@ class PostControllerTest {
         user, UUID.randomUUID(), "Spring Boot Tutorial", "Learn Spring Boot");
     searchResult1.setId(1);
 
-    Post searchResult2 = PostFactory.createPost(user, UUID.randomUUID(), "JPA Best Practices", "Learn JPA");
+    Post searchResult2 =
+        PostFactory.createPost(user, UUID.randomUUID(), "JPA Best Practices", "Learn JPA");
     searchResult2.setId(2);
 
     List<Post> searchResults = List.of(searchResult1, searchResult2);
@@ -397,7 +398,8 @@ class PostControllerTest {
             }
         ]
         """
-        .formatted(searchResult1.getUuid(), searchResult1.getUser().getUuid(), searchResult2.getUuid(),
+        .formatted(searchResult1.getUuid(), searchResult1.getUser().getUuid(),
+            searchResult2.getUuid(),
             searchResult2.getUser().getUuid());
 
     mockMvc

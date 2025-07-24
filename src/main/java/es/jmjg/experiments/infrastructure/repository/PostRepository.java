@@ -3,14 +3,12 @@ package es.jmjg.experiments.infrastructure.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import es.jmjg.experiments.domain.entity.Post;
 
 @Repository
@@ -22,7 +20,7 @@ public interface PostRepository
   @Transactional
   void deleteById(Integer id);
 
-  @SuppressWarnings({ "null", "unchecked" })
+  @SuppressWarnings({"null", "unchecked"})
   @Override
   @Transactional
   Post save(Post post);
@@ -44,6 +42,8 @@ public interface PostRepository
   List<Post> searchByContent(@Param("query") String query, Pageable pageable);
 
   @Transactional(readOnly = true)
-  @Query(value = "SELECT DISTINCT p.* FROM Post p JOIN post_tag pt ON p.id = pt.post_id WHERE pt.tag_id = :tagId", nativeQuery = true)
+  @Query(
+      value = "SELECT DISTINCT p.* FROM Post p JOIN post_tag pt ON p.id = pt.post_id WHERE pt.tag_id = :tagId",
+      nativeQuery = true)
   List<Post> findByTagId(@Param("tagId") Integer tagId);
 }

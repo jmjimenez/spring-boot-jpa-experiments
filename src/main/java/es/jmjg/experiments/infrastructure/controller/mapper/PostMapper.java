@@ -2,14 +2,14 @@ package es.jmjg.experiments.infrastructure.controller.mapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-
 import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.controller.dto.PagedResponseDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.dto.PostTagResponseDto;
 
 @Component
 public class PostMapper {
@@ -19,7 +19,12 @@ public class PostMapper {
       return null;
     }
     return new PostResponseDto(
-        post.getId(), post.getUuid(), post.getUser().getUuid(), post.getTitle(), post.getBody());
+        post.getId(),
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        convertTagsToPostTagResponseDto(post.getTags()));
   }
 
   public List<PostResponseDto> toResponseDtoList(List<Post> posts) {
@@ -57,6 +62,17 @@ public class PostMapper {
     post.setUuid(postRequestDto.getUuid());
     post.setTitle(postRequestDto.getTitle());
     post.setBody(postRequestDto.getBody());
+    // Note: tagUuids will be handled in the service layer
     return post;
+  }
+
+  private List<PostTagResponseDto> convertTagsToPostTagResponseDto(List<Tag> tags) {
+    if (tags == null || tags.isEmpty()) {
+      return List.of();
+    }
+    return tags.stream()
+        .filter(tag -> tag != null && tag.getUuid() != null && tag.getName() != null)
+        .map(tag -> new PostTagResponseDto(tag.getUuid(), tag.getName()))
+        .collect(Collectors.toList());
   }
 }
