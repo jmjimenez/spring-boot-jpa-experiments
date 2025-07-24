@@ -1,11 +1,10 @@
 package es.jmjg.experiments.application.post;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.Post;
@@ -18,18 +17,25 @@ public class UpdatePost {
 
   private final PostRepository postRepository;
   private final UserRepository userRepository;
+  private final ProcessPostTags processPostTags;
 
-  public UpdatePost(PostRepository postRepository, UserRepository userRepository) {
+  public UpdatePost(PostRepository postRepository, UserRepository userRepository,
+      ProcessPostTags processPostTags) {
     this.postRepository = postRepository;
     this.userRepository = userRepository;
+    this.processPostTags = processPostTags;
   }
 
   public Post update(Integer id, Post post) {
-    return update(id, post, null);
+    return update(id, post, null, null);
+  }
+
+  public Post update(Integer id, Post post, UUID userUuid) {
+    return update(id, post, userUuid, null);
   }
 
   @Transactional
-  public Post update(Integer id, Post post, UUID userUuid) {
+  public Post update(Integer id, Post post, UUID userUuid, List<String> tagNames) {
     Optional<Post> existing = postRepository.findById(id);
     if (existing.isEmpty()) {
       throw new PostNotFound(id);
@@ -53,6 +59,11 @@ public class UpdatePost {
       }
     } else if (post.getUser() != null) {
       existingPost.setUser(post.getUser());
+    }
+
+    // Process tags if provided
+    if (tagNames != null) {
+      processPostTags.processTagsForPost(existingPost, tagNames);
     }
 
     return postRepository.save(existingPost);

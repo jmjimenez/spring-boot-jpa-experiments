@@ -132,7 +132,7 @@ public class PostController {
   })
   PostResponseDto save(@RequestBody @Valid PostRequestDto postDto) {
     Post post = postMapper.toDomain(postDto);
-    Post savedPost = savePost.save(post, postDto.getUserId());
+    Post savedPost = savePost.save(post, postDto.getUserId(), postDto.getTagNames());
     return postMapper.toResponseDto(savedPost);
   }
 
@@ -148,7 +148,7 @@ public class PostController {
   })
   PostResponseDto update(@PathVariable Integer id, @RequestBody @Valid PostRequestDto postDto) {
     Post post = postMapper.toDomain(postDto);
-    Post updatedPost = updatePost.update(id, post, postDto.getUserId());
+    Post updatedPost = updatePost.update(id, post, postDto.getUserId(), postDto.getTagNames());
     return postMapper.toResponseDto(updatedPost);
   }
 

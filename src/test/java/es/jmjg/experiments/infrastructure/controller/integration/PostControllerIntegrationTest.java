@@ -2,7 +2,6 @@ package es.jmjg.experiments.infrastructure.controller.integration;
 
 import static org.assertj.core.api.Assertions.*;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.controller.dto.PagedResponseDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
@@ -34,8 +32,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
         "/api/posts",
         HttpMethod.GET,
         null,
-        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {
-        });
+        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {});
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PagedResponseDto<PostResponseDto> pagedResponse = response.getBody();
@@ -55,8 +52,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
         "/api/posts?page=0&size=5",
         HttpMethod.GET,
         null,
-        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {
-        });
+        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {});
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PagedResponseDto<PostResponseDto> pagedResponse = response.getBody();
@@ -93,8 +89,9 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldSearchPosts() {
-    ResponseEntity<PostResponseDto[]> response = restTemplate.getForEntity("/api/posts/search?q=Spring&limit=5",
-        PostResponseDto[].class);
+    ResponseEntity<PostResponseDto[]> response =
+        restTemplate.getForEntity("/api/posts/search?q=Spring&limit=5",
+            PostResponseDto[].class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto[] posts = response.getBody();
@@ -109,11 +106,13 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldCreateNewPostWhenPostIsValid() {
-    User user = new User(null, UUID.randomUUID(), "Test User", "test01@example.com", "testuser01", null);
+    User user =
+        new User(null, UUID.randomUUID(), "Test User", "test01@example.com", "testuser01", null);
     user = userRepository.save(user);
     final UUID userUuid = user.getUuid();
 
-    PostRequestDto postDto = new PostRequestDto(null, java.util.UUID.randomUUID(), userUuid, "101 Title", "101 Body");
+    PostRequestDto postDto = new PostRequestDto(null, java.util.UUID.randomUUID(), userUuid,
+        "101 Title", "101 Body", null);
 
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
         "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
@@ -144,9 +143,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   @Transactional
   @Rollback
   void shouldNotCreateNewPostWhenValidationFails() {
-    User user = new User(1, UUID.randomUUID(), "Test User", "test02@example.com", "testuser02", null);
+    User user =
+        new User(1, UUID.randomUUID(), "Test User", "test02@example.com", "testuser02", null);
     user = userRepository.save(user);
-    PostRequestDto postDto = new PostRequestDto(101, java.util.UUID.randomUUID(), user.getUuid(), "", "");
+    PostRequestDto postDto =
+        new PostRequestDto(101, java.util.UUID.randomUUID(), user.getUuid(), "", "", null);
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
         "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
 
@@ -155,12 +156,13 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldUpdatePostWhenPostExists() {
-    User user = new User(null, UUID.randomUUID(), "Test User", "test03@example.com", "testuser03", null);
+    User user =
+        new User(null, UUID.randomUUID(), "Test User", "test03@example.com", "testuser03", null);
     user = userRepository.save(user);
     final UUID userUuid = user.getUuid();
 
     PostRequestDto postDto = new PostRequestDto(
-        null, java.util.UUID.randomUUID(), userUuid, "Updated Title", "Updated Body");
+        null, java.util.UUID.randomUUID(), userUuid, "Updated Title", "Updated Body", null);
 
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
         "/api/posts/1", HttpMethod.PUT, new HttpEntity<>(postDto), PostResponseDto.class);

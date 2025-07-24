@@ -244,7 +244,7 @@ class PostControllerTest {
         PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
     post.setId(3);
 
-    when(savePost.save(any(Post.class), eq(user.getUuid()))).thenReturn(post);
+    when(savePost.save(any(Post.class), eq(user.getUuid()), any())).thenReturn(post);
 
     // Request body should be a PostDto (without id, since it's a new post)
     String requestBody = """
@@ -264,7 +264,8 @@ class PostControllerTest {
             "uuid":"%s",
             "userId":"%s",
             "title":"%s",
-            "body":"%s"
+            "body":"%s",
+            "tags":[]
         }
         """
         .formatted(
@@ -288,7 +289,7 @@ class PostControllerTest {
         user, UUID.randomUUID(), "This is my brand new post", "UPDATED BODY");
     updated.setId(1);
 
-    when(updatePost.update(eq(1), any(Post.class), eq(user.getUuid()))).thenReturn(updated);
+    when(updatePost.update(eq(1), any(Post.class), eq(user.getUuid()), any())).thenReturn(updated);
     String requestBody = """
         {
             "id":%d,
@@ -308,7 +309,7 @@ class PostControllerTest {
     mockMvc
         .perform(put("/api/posts/1").contentType("application/json").content(requestBody))
         .andExpect(status().isOk())
-        .andExpect(content().json(requestBody));
+        .andExpect(content().json(requestBody + ",\"tags\":[]"));
   }
 
   @Test
@@ -327,7 +328,7 @@ class PostControllerTest {
     updated.setTitle("This is my brand new post");
     updated.setBody("UPDATED BODY");
 
-    when(updatePost.update(eq(999), any(Post.class), eq(user.getUuid())))
+    when(updatePost.update(eq(999), any(Post.class), eq(user.getUuid()), any()))
         .thenThrow(new PostNotFound("Post not found with id: 999"));
     String json = """
         {
