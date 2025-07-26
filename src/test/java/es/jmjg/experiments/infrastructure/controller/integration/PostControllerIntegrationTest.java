@@ -1,12 +1,15 @@
 package es.jmjg.experiments.infrastructure.controller.integration;
 
 import static org.assertj.core.api.Assertions.*;
+
 import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import es.jmjg.experiments.infrastructure.controller.dto.PagedResponseDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
@@ -14,15 +17,16 @@ import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class PostControllerIntegrationTest extends BaseControllerIntegration {
 
-  //TODO: test telete post
-  //TODO: id must be hidden
+  // TODO: test telete post
+  // TODO: id must be hidden
   @Test
   void shouldReturnAllPosts() {
     ResponseEntity<PagedResponseDto<PostResponseDto>> response = restTemplate.exchange(
         "/api/posts",
         HttpMethod.GET,
         null,
-        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {});
+        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {
+        });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PagedResponseDto<PostResponseDto> pagedResponse = response.getBody();
@@ -42,7 +46,8 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
         "/api/posts?page=0&size=5",
         HttpMethod.GET,
         null,
-        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {});
+        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<PostResponseDto>>() {
+        });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PagedResponseDto<PostResponseDto> pagedResponse = response.getBody();
@@ -82,9 +87,9 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldSearchPosts() {
-    ResponseEntity<PostResponseDto[]> response =
-        restTemplate.getForEntity("/api/posts/search?q=" + SEARCH_TERM_SUNT + "&limit=20",
-            PostResponseDto[].class);
+    ResponseEntity<PostResponseDto[]> response = restTemplate.getForEntity(
+        "/api/posts/search?q=" + SEARCH_TERM_SUNT + "&limit=20",
+        PostResponseDto[].class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PostResponseDto[] posts = response.getBody();
@@ -144,8 +149,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldNotCreateNewPostWhenValidationFails() {
-    PostRequestDto postDto =
-        new PostRequestDto(101, java.util.UUID.randomUUID(), LEANNE_UUID, "", "", null);
+    PostRequestDto postDto = new PostRequestDto(101, java.util.UUID.randomUUID(), LEANNE_UUID, "", "", null);
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
         "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
 
@@ -179,5 +183,28 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
               assertThat(p.getTags()).extracting("name")
                   .containsExactlyInAnyOrder(existingTagName, newTagName);
             });
+  }
+
+  @Test
+  void shouldDeletePostById() {
+    // Given: Post with ID 2 exists (POST_2_UUID)
+    final int postId = 2;
+    final String postUuid = POST_2_UUID.toString();
+
+    // When: Delete the post by ID
+    ResponseEntity<Void> deleteResponse = restTemplate.exchange(
+        "/api/posts/" + postId,
+        HttpMethod.DELETE,
+        null,
+        Void.class);
+
+    // Then: Should return 204 No Content
+    assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+    // And: Retrieving the post by UUID should return 404
+    ResponseEntity<PostResponseDto> getResponse = restTemplate.getForEntity(
+        "/api/posts/" + postUuid,
+        PostResponseDto.class);
+    assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 }
