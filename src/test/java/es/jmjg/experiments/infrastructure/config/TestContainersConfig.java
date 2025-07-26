@@ -9,6 +9,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class TestContainersConfig {
 
+  @SuppressWarnings("resource")
   @Container
   static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0")
       .withDatabaseName("blog")
