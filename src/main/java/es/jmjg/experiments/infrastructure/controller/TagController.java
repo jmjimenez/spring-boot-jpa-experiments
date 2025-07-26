@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import es.jmjg.experiments.application.tag.DeleteTagByUuid;
 import es.jmjg.experiments.application.tag.FindPostsByTag;
@@ -160,16 +162,23 @@ public class TagController {
   }
 
   @PostMapping("")
-  @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Create a new tag", description = "Creates a new tag with the provided data")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Tag created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TagResponseDto.class))),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  TagResponseDto save(@RequestBody @Valid TagRequestDto tagDto) {
+  ResponseEntity<TagResponseDto> save(@RequestBody @Valid TagRequestDto tagDto) {
     Tag tag = tagMapper.toDomain(tagDto);
     Tag savedTag = saveTag.save(tag);
-    return tagMapper.toResponseDto(savedTag);
+    TagResponseDto responseDto = tagMapper.toResponseDto(savedTag);
+
+    String locationUrl = UriComponentsBuilder.fromPath("/api/tags/{uuid}")
+        .buildAndExpand(savedTag.getUuid())
+        .toUriString();
+
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .header("Location", locationUrl)
+        .body(responseDto);
   }
 
   @PutMapping("/{uuid}")

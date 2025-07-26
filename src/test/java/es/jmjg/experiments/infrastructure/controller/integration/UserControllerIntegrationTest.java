@@ -83,6 +83,11 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
         "/api/users", HttpMethod.POST, new HttpEntity<>(userDto), UserResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
+    // Verify Location header is present and correct
+    String locationHeader = response.getHeaders().getFirst("Location");
+    assertThat(locationHeader).isNotNull();
+    assertThat(locationHeader).startsWith("/api/users/");
+
     UserResponseDto user = response.getBody();
     assertThat(user).isNotNull().satisfies(u -> {
       assertThat(u.getName()).isEqualTo("New User");
@@ -91,6 +96,8 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
       assertThat(u.getUuid()).isNotNull();
       assertThat(u.getPosts()).isEmpty();
       assertThat(u.getTags()).isEmpty();
+      // Verify the Location header contains the correct UUID
+      assertThat(locationHeader).isEqualTo("/api/users/" + u.getUuid().toString());
     });
   }
 

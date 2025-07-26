@@ -231,6 +231,7 @@ class TagControllerTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(tagDto)))
         .andExpect(status().isCreated())
+        .andExpect(header().string("Location", "/api/tags/" + testUuid.toString()))
         .andExpect(jsonPath("$.uuid").value(testUuid.toString()))
         .andExpect(jsonPath("$.name").value("test-tag"));
   }

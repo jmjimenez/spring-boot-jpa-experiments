@@ -115,6 +115,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
         "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
+    // Verify Location header is present and correct
+    String locationHeader = response.getHeaders().getFirst("Location");
+    assertThat(locationHeader).isNotNull();
+    assertThat(locationHeader).startsWith("/api/posts/");
+
     PostResponseDto post = response.getBody();
     assertThat(post).isNotNull()
         .satisfies(
@@ -126,6 +131,8 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
               assertThat(body.getTags()).hasSize(2);
               assertThat(body.getTags()).extracting("name")
                   .containsExactlyInAnyOrder(existingTagName, newTagName);
+              // Verify the Location header contains the correct UUID
+              assertThat(locationHeader).isEqualTo("/api/posts/" + body.getUuid().toString());
             });
 
     // Verify the post can be found and has the expected tags

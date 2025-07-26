@@ -275,6 +275,7 @@ class PostControllerTest {
     mockMvc
         .perform(post("/api/posts").contentType("application/json").content(requestBody))
         .andExpect(status().isCreated())
+        .andExpect(header().string("Location", "/api/posts/" + post.getUuid().toString()))
         .andExpect(content().json(expectedResponse));
   }
 

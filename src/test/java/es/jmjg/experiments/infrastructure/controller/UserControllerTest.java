@@ -298,6 +298,7 @@ class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
         .andExpect(status().isCreated())
+        .andExpect(header().string("Location", "/api/users/" + testUuid.toString()))
         .andExpect(content().json(expectedResponse));
   }
 

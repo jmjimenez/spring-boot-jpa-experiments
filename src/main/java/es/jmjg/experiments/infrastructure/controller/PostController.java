@@ -2,11 +2,13 @@ package es.jmjg.experiments.infrastructure.controller;
 
 import java.util.List;
 import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import es.jmjg.experiments.application.post.DeletePostById;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
@@ -74,9 +78,7 @@ public class PostController {
   @Transactional(readOnly = true)
   @Operation(summary = "Get all posts", description = "Retrieves a paginated list of all posts")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts",
-          content = @Content(mediaType = "application/json",
-              schema = @Schema(implementation = PagedResponseDto.class)))
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagedResponseDto.class)))
   })
   PagedResponseDto<PostResponseDto> findAll(
       @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
@@ -89,9 +91,7 @@ public class PostController {
   @GetMapping("/{uuid}")
   @Operation(summary = "Get post by UUID", description = "Retrieves a specific post by its UUID")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved post",
-          content = @Content(mediaType = "application/json",
-              schema = @Schema(implementation = PostResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved post", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Post not found")
   })
   PostResponseDto findByUuid(
@@ -102,17 +102,13 @@ public class PostController {
 
   @GetMapping("/search")
   @Transactional(readOnly = true)
-  @Operation(summary = "Search posts by content",
-      description = "Finds posts containing specified words")
+  @Operation(summary = "Search posts by content", description = "Finds posts containing specified words")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts",
-          content = @Content(mediaType = "application/json",
-              schema = @Schema(implementation = PostResponseDto.class)))
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class)))
   })
   List<PostResponseDto> searchPosts(
       @Parameter(description = "Search terms to find in post content") @RequestParam String q,
-      @Parameter(description = "Maximum number of results to return") @RequestParam(
-          defaultValue = "20") int limit) {
+      @Parameter(description = "Maximum number of results to return") @RequestParam(defaultValue = "20") int limit) {
 
     log.info("Searching posts with query: '{}' and limit: {}", q, limit);
 
@@ -121,28 +117,29 @@ public class PostController {
   }
 
   @PostMapping("")
-  @ResponseStatus(HttpStatus.CREATED)
-  @Operation(summary = "Create a new post",
-      description = "Creates a new post with the provided data")
+  @Operation(summary = "Create a new post", description = "Creates a new post with the provided data")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "Post created successfully",
-          content = @Content(mediaType = "application/json",
-              schema = @Schema(implementation = PostResponseDto.class))),
+      @ApiResponse(responseCode = "201", description = "Post created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class))),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  PostResponseDto save(@RequestBody @Valid PostRequestDto postDto) {
+  ResponseEntity<PostResponseDto> save(@RequestBody @Valid PostRequestDto postDto) {
     Post post = postMapper.toDomain(postDto);
     Post savedPost = savePost.save(post, postDto.getUserId(), postDto.getTagNames());
-    return postMapper.toResponseDto(savedPost);
+    PostResponseDto responseDto = postMapper.toResponseDto(savedPost);
+
+    String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{uuid}")
+        .buildAndExpand(savedPost.getUuid())
+        .toUriString();
+
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .header("Location", locationUrl)
+        .body(responseDto);
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Update a post",
-      description = "Updates an existing post with the provided data")
+  @Operation(summary = "Update a post", description = "Updates an existing post with the provided data")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Post updated successfully",
-          content = @Content(mediaType = "application/json",
-              schema = @Schema(implementation = PostResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Post updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Post not found"),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })

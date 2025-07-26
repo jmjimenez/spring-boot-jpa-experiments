@@ -190,10 +190,17 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
+    // Verify Location header is present and correct
+    String locationHeader = response.getHeaders().getFirst("Location");
+    assertThat(locationHeader).isNotNull();
+    assertThat(locationHeader).startsWith("/api/tags/");
+
     TagResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
       assertThat(t.getName()).isEqualTo("new-tag");
       assertThat(t.getUuid()).isNotNull();
+      // Verify the Location header contains the correct UUID
+      assertThat(locationHeader).isEqualTo("/api/tags/" + t.getUuid().toString());
     });
   }
 

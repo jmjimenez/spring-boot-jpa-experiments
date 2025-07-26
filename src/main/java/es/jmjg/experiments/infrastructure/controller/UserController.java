@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import es.jmjg.experiments.application.user.DeleteUserByUuid;
 import es.jmjg.experiments.application.user.FindAllUsers;
@@ -124,16 +126,23 @@ public class UserController {
   }
 
   @PostMapping("")
-  @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Create a new user", description = "Creates a new user with the provided data")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  UserResponseDto save(@RequestBody @Valid UserRequestDto userDto) {
+  ResponseEntity<UserResponseDto> save(@RequestBody @Valid UserRequestDto userDto) {
     User user = userMapper.toDomain(userDto);
     User savedUser = saveUser.save(user);
-    return userMapper.toResponseDto(savedUser);
+    UserResponseDto responseDto = userMapper.toResponseDto(savedUser);
+
+    String locationUrl = UriComponentsBuilder.fromPath("/api/users/{uuid}")
+        .buildAndExpand(savedUser.getUuid())
+        .toUriString();
+
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .header("Location", locationUrl)
+        .body(responseDto);
   }
 
   @PutMapping("/{uuid}")
