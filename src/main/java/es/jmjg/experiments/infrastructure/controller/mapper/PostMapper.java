@@ -2,8 +2,10 @@ package es.jmjg.experiments.infrastructure.controller.mapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.controller.dto.PagedResponseDto;
@@ -58,7 +60,6 @@ public class PostMapper {
       return null;
     }
     Post post = new Post();
-    post.setId(postRequestDto.getId());
     post.setUuid(postRequestDto.getUuid());
     post.setTitle(postRequestDto.getTitle());
     post.setBody(postRequestDto.getBody());

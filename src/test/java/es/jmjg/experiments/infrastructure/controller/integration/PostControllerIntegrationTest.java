@@ -17,8 +17,6 @@ import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class PostControllerIntegrationTest extends BaseControllerIntegration {
 
-  // TODO: test telete post
-  // TODO: id must be hidden
   @Test
   void shouldReturnAllPosts() {
     ResponseEntity<PagedResponseDto<PostResponseDto>> response = restTemplate.exchange(
@@ -110,7 +108,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     final String postTitle = "101 Title";
     final String postBody = "101 Body";
 
-    PostRequestDto postDto = new PostRequestDto(null, java.util.UUID.randomUUID(), LEANNE_UUID,
+    PostRequestDto postDto = new PostRequestDto(java.util.UUID.randomUUID(), LEANNE_UUID,
         postTitle, postBody, List.of(existingTagName, newTagName));
 
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
@@ -149,7 +147,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldNotCreateNewPostWhenValidationFails() {
-    PostRequestDto postDto = new PostRequestDto(101, java.util.UUID.randomUUID(), LEANNE_UUID, "", "", null);
+    PostRequestDto postDto = new PostRequestDto(java.util.UUID.randomUUID(), LEANNE_UUID, "", "", null);
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
         "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), PostResponseDto.class);
 
@@ -164,7 +162,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     final String updatedBody = "Updated Body";
 
     PostRequestDto postDto = new PostRequestDto(
-        null, java.util.UUID.randomUUID(), LEANNE_UUID, updatedTitle, updatedBody,
+        java.util.UUID.randomUUID(), LEANNE_UUID, updatedTitle, updatedBody,
         List.of(existingTagName, newTagName));
 
     ResponseEntity<PostResponseDto> response = restTemplate.exchange(
