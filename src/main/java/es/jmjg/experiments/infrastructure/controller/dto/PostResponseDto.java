@@ -2,13 +2,13 @@ package es.jmjg.experiments.infrastructure.controller.dto;
 
 import java.util.List;
 import java.util.UUID;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 public class PostResponseDto {
-  private Integer id;
   private UUID uuid;
   private UUID userId;
   private String title;
@@ -16,9 +16,8 @@ public class PostResponseDto {
   private List<PostTagResponseDto> tags;
 
   // Constructor with tags
-  public PostResponseDto(Integer id, UUID uuid, UUID userId, String title, String body,
+  public PostResponseDto(UUID uuid, UUID userId, String title, String body,
       List<PostTagResponseDto> tags) {
-    this.id = id;
     this.uuid = uuid;
     this.userId = userId;
     this.title = title;

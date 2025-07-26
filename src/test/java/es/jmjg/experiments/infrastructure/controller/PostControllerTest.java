@@ -84,18 +84,18 @@ class PostControllerTest {
         {
             "content":[
                 {
-                    "id":1,
                     "uuid":"%s",
                     "userId":"%s",
                     "title":"Hello, World!",
-                    "body":"This is my first post."
+                    "body":"This is my first post.",
+                    "tags":[]
                 },
                 {
-                    "id":2,
                     "uuid":"%s",
                     "userId":"%s",
                     "title":"Second Post",
-                    "body":"This is my second post."
+                    "body":"This is my second post.",
+                    "tags":[]
                 }
             ],
             "pageNumber":0,
@@ -126,18 +126,18 @@ class PostControllerTest {
         {
             "content":[
                 {
-                    "id":1,
                     "uuid":"%s",
                     "userId":"%s",
                     "title":"Hello, World!",
-                    "body":"This is my first post."
+                    "body":"This is my first post.",
+                    "tags":[]
                 },
                 {
-                    "id":2,
                     "uuid":"%s",
                     "userId":"%s",
                     "title":"Second Post",
-                    "body":"This is my second post."
+                    "body":"This is my second post.",
+                    "tags":[]
                 }
             ],
             "pageNumber":0,
@@ -168,11 +168,11 @@ class PostControllerTest {
         {
             "content":[
                 {
-                    "id":1,
                     "uuid":"%s",
                     "userId":"%s",
                     "title":"Hello, World!",
-                    "body":"This is my first post."
+                    "body":"This is my first post.",
+                    "tags":[]
                 }
             ],
             "pageNumber":0,
@@ -209,15 +209,14 @@ class PostControllerTest {
     when(findPostByUuid.findByUuid(uuid)).thenReturn(Optional.of(post));
     String json = """
         {
-            "id":%d,
             "uuid":"%s",
             "userId":"%s",
             "title":"%s",
-            "body":"%s"
+            "body":"%s",
+            "tags":[]
         }
         """
         .formatted(
-            post.getId(),
             post.getUuid(),
             post.getUser().getUuid(),
             post.getTitle(),
@@ -257,10 +256,9 @@ class PostControllerTest {
         """
         .formatted(post.getUuid(), user.getUuid(), post.getTitle(), post.getBody());
 
-    // Expected response should include the generated id
+    // Expected response should not include the id
     String expectedResponse = """
         {
-            "id":%d,
             "uuid":"%s",
             "userId":"%s",
             "title":"%s",
@@ -269,7 +267,6 @@ class PostControllerTest {
         }
         """
         .formatted(
-            post.getId(),
             post.getUuid(),
             post.getUser().getUuid(),
             post.getTitle(),
@@ -379,18 +376,18 @@ class PostControllerTest {
     String expectedJson = """
         [
             {
-                "id":1,
                 "uuid":"%s",
                 "userId":"%s",
                 "title":"Spring Boot Tutorial",
-                "body":"Learn Spring Boot"
+                "body":"Learn Spring Boot",
+                "tags":[]
             },
             {
-                "id":2,
                 "uuid":"%s",
                 "userId":"%s",
                 "title":"JPA Best Practices",
-                "body":"Learn JPA"
+                "body":"Learn JPA",
+                "tags":[]
             }
         ]
         """

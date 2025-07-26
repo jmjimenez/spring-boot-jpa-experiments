@@ -119,7 +119,6 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(post).isNotNull()
         .satisfies(
             body -> {
-              assertThat(body.getId()).isNotNull();
               assertThat(body.getUserId()).isEqualTo(LEANNE_UUID);
               assertThat(body.getTitle()).isEqualTo(postTitle);
               assertThat(body.getBody()).isEqualTo(postBody);

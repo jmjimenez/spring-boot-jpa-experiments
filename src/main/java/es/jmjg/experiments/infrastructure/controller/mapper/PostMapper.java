@@ -21,7 +21,6 @@ public class PostMapper {
       return null;
     }
     return new PostResponseDto(
-        post.getId(),
         post.getUuid(),
         post.getUser().getUuid(),
         post.getTitle(),
