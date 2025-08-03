@@ -7,14 +7,16 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
 
+@Import(TagRepositoryImpl.class)
 public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
-  private TagRepository tagRepository;
+  private TagRepositoryImpl tagRepository;
 
   // Sample tags from Flyway migration
   private static final UUID TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");

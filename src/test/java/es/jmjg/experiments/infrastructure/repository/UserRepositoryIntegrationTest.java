@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
@@ -14,13 +15,14 @@ import es.jmjg.experiments.shared.BaseJpaIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
+@Import({ UserRepositoryImpl.class, PostRepositoryImpl.class })
 public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
-  UserRepository userRepository;
+  private UserRepositoryImpl userRepository;
 
   @Autowired
-  PostRepository postRepository;
+  private PostRepositoryImpl postRepository;
 
   // Sample users from Flyway migration data
   private static final String LEANNE_NAME = "Leanne Graham";

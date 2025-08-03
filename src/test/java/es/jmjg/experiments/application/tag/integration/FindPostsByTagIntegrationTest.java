@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.jmjg.experiments.application.tag.FindPostsByTag;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.infrastructure.repository.TagRepository;
+import es.jmjg.experiments.infrastructure.repository.TagRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 
 class FindPostsByTagIntegrationTest extends BaseIntegration {
@@ -19,7 +19,7 @@ class FindPostsByTagIntegrationTest extends BaseIntegration {
   private FindPostsByTag findPostsByTag;
 
   @Autowired
-  private TagRepository tagRepository;
+  private TagRepositoryImpl tagRepository;
 
   @Test
   void findByTagUuid_WhenTagExistsAndHasPosts_ShouldReturnPosts() {

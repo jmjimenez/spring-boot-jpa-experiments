@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.jmjg.experiments.application.post.DeletePostById;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.repository.PostRepository;
-import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
+import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
@@ -20,10 +20,10 @@ class DeletePostByIdIntegrationTest extends BaseIntegration {
   private DeletePostById deletePostById;
 
   @Autowired
-  private PostRepository postRepository;
+  private PostRepositoryImpl postRepository;
 
   @Autowired
-  private UserRepository userRepository;
+  private UserRepositoryImpl userRepository;
 
   @Test
   void deleteById_ShouldDeletePost() {

@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.repository;
+package es.jmjg.experiments.infrastructure.repository.jpa;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,27 +7,20 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.exception.TagInUseException;
 
-@Repository
-public interface TagRepository
-    extends JpaRepository<Tag, Integer>, es.jmjg.experiments.domain.repository.TagRepository {
+public interface JpaTagRepository extends JpaRepository<Tag, Integer> {
 
-  @SuppressWarnings({ "unchecked", "null" })
-  @Override
-  @Transactional
-  Tag save(Tag tag);
-
-  @Override
   @Transactional(readOnly = true)
   Optional<Tag> findByUuid(UUID uuid);
 
-  @Override
+  @Transactional(readOnly = true)
+  Optional<Tag> findByName(String name);
+
   @Transactional
   default void deleteByUuid(UUID uuid) {
     Tag tag = findByUuid(uuid)
@@ -46,21 +39,14 @@ public interface TagRepository
     delete(tag);
   }
 
-  @Override
-  @Transactional(readOnly = true)
-  Optional<Tag> findByName(String name);
-
-  @Override
   @Transactional(readOnly = true)
   @Query("SELECT t FROM Tag t WHERE LOWER(t.name) LIKE LOWER(CONCAT('%', :pattern, '%'))")
   List<Tag> findByNameContainingPattern(@Param("pattern") String pattern);
 
-  @Override
   @Transactional(readOnly = true)
   @Query(value = "SELECT COUNT(pt) > 0 FROM post_tag pt WHERE pt.tag_id = :tagId", nativeQuery = true)
   boolean isTagUsedInPosts(@Param("tagId") Integer tagId);
 
-  @Override
   @Transactional(readOnly = true)
   @Query(value = "SELECT COUNT(ut) > 0 FROM user_tag ut WHERE ut.tag_id = :tagId", nativeQuery = true)
   boolean isTagUsedInUsers(@Param("tagId") Integer tagId);

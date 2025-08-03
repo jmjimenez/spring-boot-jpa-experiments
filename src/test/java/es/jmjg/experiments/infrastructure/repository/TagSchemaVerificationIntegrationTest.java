@@ -6,14 +6,16 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
 
+@Import(TagRepositoryImpl.class)
 public class TagSchemaVerificationIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
-  private TagRepository tagRepository;
+  private TagRepositoryImpl tagRepository;
 
   @Test
   void shouldCreateAndSaveTagWithCorrectSchema() {

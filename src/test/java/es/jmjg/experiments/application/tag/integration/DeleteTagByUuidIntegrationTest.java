@@ -12,7 +12,7 @@ import es.jmjg.experiments.application.tag.DeleteTagByUuid;
 import es.jmjg.experiments.application.tag.exception.TagInUseException;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.repository.TagRepository;
+import es.jmjg.experiments.infrastructure.repository.TagRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TagFactory;
 
@@ -22,7 +22,7 @@ class DeleteTagByUuidIntegrationTest extends BaseIntegration {
   private DeleteTagByUuid deleteTagByUuid;
 
   @Autowired
-  private TagRepository tagRepository;
+  private TagRepositoryImpl tagRepository;
 
   @Test
   void deleteByUuid_WhenTagExistsAndNotInUse_ShouldDeleteTag() {

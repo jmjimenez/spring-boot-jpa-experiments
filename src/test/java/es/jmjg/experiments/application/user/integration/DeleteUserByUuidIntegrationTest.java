@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.DeleteUserByUuid;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -21,7 +21,7 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
   private DeleteUserByUuid deleteUserByUuid;
 
   @Autowired
-  private UserRepository userRepository;
+  private UserRepositoryImpl userRepository;
 
   private User testUser;
   private UUID testUuid;

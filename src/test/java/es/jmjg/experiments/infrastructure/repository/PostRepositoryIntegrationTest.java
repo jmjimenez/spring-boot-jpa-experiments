@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,16 +22,17 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
 
 //TODO: instead of inheriting use a custom annotation like in https://www.wimdeblauwe.com/blog/2025/07/30/how-i-test-production-ready-spring-boot-applications/
+@Import({ PostRepositoryImpl.class, TagRepositoryImpl.class, UserRepositoryImpl.class })
 public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
-  PostRepository postRepository;
+  private PostRepositoryImpl postRepository;
 
   @Autowired
-  TagRepository tagRepository;
+  private TagRepositoryImpl tagRepository;
 
   @Autowired
-  UserRepository userRepository;
+  private UserRepositoryImpl userRepository;
 
   // Sample posts from Flyway migration data
   private static final String LEANNE_POST_TITLE = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";

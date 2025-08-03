@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.UserFactory;
 import jakarta.persistence.EntityManager;
@@ -28,7 +28,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   private FindAllUsers findAllUsers;
 
   @Autowired
-  private UserRepository userRepository;
+  private UserRepositoryImpl userRepository;
 
   private Pageable pageable;
 

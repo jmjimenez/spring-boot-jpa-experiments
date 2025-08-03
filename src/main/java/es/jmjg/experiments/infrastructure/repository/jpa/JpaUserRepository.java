@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.repository;
+package es.jmjg.experiments.infrastructure.repository.jpa;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,24 +7,11 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.domain.entity.User;
 
-@Repository
-public interface UserRepository
-    extends JpaRepository<User, Integer>, es.jmjg.experiments.domain.repository.UserRepository {
-
-  @SuppressWarnings({ "null", "unchecked" })
-  @Override
-  @Transactional
-  User save(User user);
-
-  @SuppressWarnings("null")
-  @Override
-  @Transactional(readOnly = true)
-  Optional<User> findById(Integer id);
+public interface JpaUserRepository extends JpaRepository<User, Integer> {
 
   @Transactional(readOnly = true)
   Optional<User> findByEmail(String email);

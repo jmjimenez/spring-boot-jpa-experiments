@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.FindUserById;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -19,7 +19,7 @@ class FindUserByIdIntegrationTest extends BaseIntegration {
   private FindUserById findUserById;
 
   @Autowired
-  private UserRepository userRepository;
+  private UserRepositoryImpl userRepository;
 
   @Test
   void findById_WhenUserExists_ShouldReturnUser() {

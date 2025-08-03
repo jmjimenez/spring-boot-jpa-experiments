@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.jmjg.experiments.application.tag.FindUsersByTag;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.repository.TagRepository;
+import es.jmjg.experiments.infrastructure.repository.TagRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 
 class FindUsersByTagIntegrationTest extends BaseIntegration {
@@ -19,7 +19,7 @@ class FindUsersByTagIntegrationTest extends BaseIntegration {
   private FindUsersByTag findUsersByTag;
 
   @Autowired
-  private TagRepository tagRepository;
+  private TagRepositoryImpl tagRepository;
 
   @Test
   void findByTagUuid_WhenTagExistsAndHasUsers_ShouldReturnUsers() {

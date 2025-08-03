@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 
 class FindUserByUsernameIntegrationTest extends BaseIntegration {
@@ -19,7 +19,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   private FindUserByUsername findUserByUsername;
 
   @Autowired
-  private UserRepository userRepository;
+  private UserRepositoryImpl userRepository;
 
   // Test data from migration
   private static final UUID LEANNE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");

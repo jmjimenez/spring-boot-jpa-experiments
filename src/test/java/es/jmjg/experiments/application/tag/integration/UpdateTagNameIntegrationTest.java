@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.jmjg.experiments.application.tag.UpdateTagName;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.repository.TagRepository;
+import es.jmjg.experiments.infrastructure.repository.TagRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TagFactory;
 
@@ -21,7 +21,7 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   private UpdateTagName updateTagName;
 
   @Autowired
-  private TagRepository tagRepository;
+  private TagRepositoryImpl tagRepository;
 
   @Test
   void updateName_WhenTagExists_ShouldUpdateAndReturnTag() {
