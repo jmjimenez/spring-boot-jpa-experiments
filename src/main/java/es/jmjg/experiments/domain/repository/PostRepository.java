@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import es.jmjg.experiments.domain.entity.Post;
 
+//TODO: implement repositories as https://www.wimdeblauwe.com/blog/2025/07/30/how-i-test-production-ready-spring-boot-applications/
 public interface PostRepository {
 
   void deleteById(Integer id);
