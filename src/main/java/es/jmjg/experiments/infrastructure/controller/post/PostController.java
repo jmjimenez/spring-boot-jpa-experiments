@@ -31,7 +31,7 @@ import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.FindByUuidResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDto;
@@ -99,7 +99,7 @@ public class PostController {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved post", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Post not found")
   })
-  FindByUuidResponseDto findByUuid(
+  FindPostByUuidResponseDto findByUuid(
       @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID uuid) {
     Post post = findPostByUuid.findByUuid(uuid).orElseThrow(PostNotFoundException::new);
     return postMapper.toFindByUuidResponseDto(post);

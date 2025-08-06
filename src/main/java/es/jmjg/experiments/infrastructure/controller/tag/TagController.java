@@ -29,11 +29,15 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostsByTagNameResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostsByTagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagNameResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
-import es.jmjg.experiments.infrastructure.controller.tag.dto.TagRequestDto;
-import es.jmjg.experiments.infrastructure.controller.tag.dto.TagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.FindTagByPatternResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.FindTagByUuidResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.tag.mapper.TagMapper;
 import es.jmjg.experiments.infrastructure.controller.user.dto.UserResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
@@ -88,13 +92,13 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find tags by pattern", description = "Finds tags by name pattern")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved tags", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TagResponseDto.class)))
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved tags", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindTagByPatternResponseDto.class)))
   })
-  List<TagResponseDto> findByPattern(
+  List<FindTagByPatternResponseDto> findByPattern(
       @Parameter(description = "Pattern to search for in tag names") @RequestParam String pattern) {
     List<Tag> tags = findTagByPattern.findByPattern(pattern);
     return tags.stream()
-        .map(tag -> tagMapper.toResponseDtoWithRelations(tag, tag.getPosts(), tag.getUsers()))
+        .map(tag -> tagMapper.toFindByPatternResponseDto(tag, tag.getPosts(), tag.getUsers()))
         .toList();
   }
 
@@ -102,13 +106,13 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Get tag by UUID", description = "Retrieves a specific tag by its UUID")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved tag", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TagResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved tag", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindTagByUuidResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
-  TagResponseDto findByUuid(
+  FindTagByUuidResponseDto findByUuid(
       @Parameter(description = "UUID of the tag to retrieve") @PathVariable UUID uuid) {
     Tag tag = findTagByUuid.findByUuid(uuid);
-    return tagMapper.toResponseDtoWithRelations(tag, tag.getPosts(), tag.getUsers());
+    return tagMapper.toFindByUuidResponseDto(tag, tag.getPosts(), tag.getUsers());
   }
 
   @GetMapping("/{uuid}/users")
@@ -131,7 +135,7 @@ public class TagController {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
-  List<FindPostsByTagResponseDto> findPostsByTag(
+  List<FindPostByTagResponseDto> findPostsByTag(
       @Parameter(description = "UUID of the tag") @PathVariable UUID uuid) {
     List<Post> posts = findPostsByTag.findByTagUuid(uuid);
     return postMapper.toFindPostsByTagResponseDto(posts);
@@ -157,7 +161,7 @@ public class TagController {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
-  List<FindPostsByTagNameResponseDto> findPostsByTagName(
+  List<FindPostByTagNameResponseDto> findPostsByTagName(
       @Parameter(description = "Name of the tag") @RequestParam String name) {
     List<Post> posts = findPostsByTag.findByTagName(name);
     return postMapper.toFindPostsByTagNameResponseDto(posts);
@@ -166,13 +170,13 @@ public class TagController {
   @PostMapping("")
   @Operation(summary = "Create a new tag", description = "Creates a new tag with the provided data")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "Tag created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TagResponseDto.class))),
+      @ApiResponse(responseCode = "201", description = "Tag created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveTagResponseDto.class))),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  ResponseEntity<TagResponseDto> save(@RequestBody @Valid TagRequestDto tagDto) {
+  ResponseEntity<SaveTagResponseDto> save(@RequestBody @Valid SaveTagRequestDto tagDto) {
     Tag tag = tagMapper.toDomain(tagDto);
     Tag savedTag = saveTag.save(tag);
-    TagResponseDto responseDto = tagMapper.toResponseDto(savedTag);
+    SaveTagResponseDto responseDto = tagMapper.toSaveTagResponseDto(savedTag);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/tags/{uuid}")
         .buildAndExpand(savedTag.getUuid())
@@ -186,13 +190,13 @@ public class TagController {
   @PutMapping("/{uuid}")
   @Operation(summary = "Update a tag name", description = "Updates an existing tag name")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Tag updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TagResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Tag updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateTagResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Tag not found"),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  TagResponseDto updateName(@PathVariable UUID uuid, @RequestBody @Valid TagRequestDto tagDto) {
+  UpdateTagResponseDto updateName(@PathVariable UUID uuid, @RequestBody @Valid UpdateTagRequestDto tagDto) {
     Tag updatedTag = updateTagName.updateName(uuid, tagDto.getName());
-    return tagMapper.toResponseDto(updatedTag);
+    return tagMapper.toUpdateTagResponseDto(updatedTag);
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)

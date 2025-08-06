@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.FindByUuidResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostsByTagNameResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostsByTagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagNameResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.PostTagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostRequestDto;
@@ -39,11 +39,11 @@ public class PostMapper {
         convertTagsToPostTagResponseDto(post.getTags()));
   }
 
-  public FindByUuidResponseDto toFindByUuidResponseDto(Post post) {
+  public FindPostByUuidResponseDto toFindByUuidResponseDto(Post post) {
     if (post == null) {
       return null;
     }
-    return new FindByUuidResponseDto(
+    return new FindPostByUuidResponseDto(
         post.getUuid(),
         post.getUser().getUuid(),
         post.getTitle(),
@@ -82,11 +82,11 @@ public class PostMapper {
     return posts.stream().map(this::toFindAllPostsResponseDto).collect(Collectors.toList());
   }
 
-  public FindPostsByTagResponseDto toFindPostsByTagResponseDto(Post post) {
+  public FindPostByTagResponseDto toFindPostsByTagResponseDto(Post post) {
     if (post == null) {
       return null;
     }
-    return new FindPostsByTagResponseDto(
+    return new FindPostByTagResponseDto(
         post.getUuid(),
         post.getUser().getUuid(),
         post.getTitle(),
@@ -94,18 +94,18 @@ public class PostMapper {
         convertTagsToPostTagResponseDto(post.getTags()));
   }
 
-  public List<FindPostsByTagResponseDto> toFindPostsByTagResponseDto(List<Post> posts) {
+  public List<FindPostByTagResponseDto> toFindPostsByTagResponseDto(List<Post> posts) {
     if (posts == null) {
       return List.of();
     }
     return posts.stream().map(this::toFindPostsByTagResponseDto).collect(Collectors.toList());
   }
 
-  public FindPostsByTagNameResponseDto toFindPostsByTagNameResponseDto(Post post) {
+  public FindPostByTagNameResponseDto toFindPostsByTagNameResponseDto(Post post) {
     if (post == null) {
       return null;
     }
-    return new FindPostsByTagNameResponseDto(
+    return new FindPostByTagNameResponseDto(
         post.getUuid(),
         post.getUser().getUuid(),
         post.getTitle(),
@@ -113,7 +113,7 @@ public class PostMapper {
         convertTagsToPostTagResponseDto(post.getTags()));
   }
 
-  public List<FindPostsByTagNameResponseDto> toFindPostsByTagNameResponseDto(List<Post> posts) {
+  public List<FindPostByTagNameResponseDto> toFindPostsByTagNameResponseDto(List<Post> posts) {
     if (posts == null) {
       return List.of();
     }

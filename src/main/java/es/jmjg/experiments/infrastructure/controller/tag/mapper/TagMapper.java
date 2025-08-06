@@ -9,20 +9,23 @@ import org.springframework.stereotype.Component;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.controller.tag.dto.TagRequestDto;
-import es.jmjg.experiments.infrastructure.controller.tag.dto.TagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.FindTagByPatternResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.FindTagByUuidResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagResponseDto;
 
 @Component
 public class TagMapper {
 
-  public TagResponseDto toResponseDto(Tag tag) {
+  public SaveTagResponseDto toSaveTagResponseDto(Tag tag) {
     if (tag == null) {
       return null;
     }
-    return toResponseDtoWithRelations(tag, List.of(), List.of());
+    return toSaveResponseDtoWithRelations(tag, List.of(), List.of());
   }
 
-  public TagResponseDto toResponseDtoWithRelations(Tag tag, List<Post> posts, List<User> users) {
+  public SaveTagResponseDto toSaveResponseDtoWithRelations(Tag tag, List<Post> posts, List<User> users) {
     if (tag == null) {
       return null;
     }
@@ -32,17 +35,30 @@ public class TagMapper {
     List<UUID> userUuids = users.stream()
         .map(User::getUuid)
         .collect(Collectors.toList());
-    return new TagResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
+    return new SaveTagResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
   }
 
-  public List<TagResponseDto> toResponseDtoList(List<Tag> tags) {
-    if (tags == null) {
-      return List.of();
+  public UpdateTagResponseDto toUpdateTagResponseDto(Tag updatedTag) {
+    if (updatedTag == null) {
+      return null;
     }
-    return tags.stream().map(this::toResponseDto).collect(Collectors.toList());
+    return toUpdateResponseDtoWithRelations(updatedTag, List.of(), List.of());
   }
 
-  public Tag toDomain(TagRequestDto tagRequestDto) {
+  public UpdateTagResponseDto toUpdateResponseDtoWithRelations(Tag tag, List<Post> posts, List<User> users) {
+    if (tag == null) {
+      return null;
+    }
+    List<UUID> postUuids = posts.stream()
+        .map(Post::getUuid)
+        .collect(Collectors.toList());
+    List<UUID> userUuids = users.stream()
+        .map(User::getUuid)
+        .collect(Collectors.toList());
+    return new UpdateTagResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
+  }
+
+  public Tag toDomain(SaveTagRequestDto tagRequestDto) {
     if (tagRequestDto == null) {
       return null;
     }
@@ -50,5 +66,31 @@ public class TagMapper {
     tag.setUuid(tagRequestDto.getUuid());
     tag.setName(tagRequestDto.getName());
     return tag;
+  }
+
+  public FindTagByPatternResponseDto toFindByPatternResponseDto(Tag tag, List<Post> posts, List<User> users) {
+    if (tag == null) {
+      return null;
+    }
+    List<UUID> postUuids = posts.stream()
+        .map(Post::getUuid)
+        .collect(Collectors.toList());
+    List<UUID> userUuids = users.stream()
+        .map(User::getUuid)
+        .collect(Collectors.toList());
+    return new FindTagByPatternResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
+  }
+
+  public FindTagByUuidResponseDto toFindByUuidResponseDto(Tag tag, List<Post> posts, List<User> users) {
+    if (tag == null) {
+      return null;
+    }
+    List<UUID> postUuids = posts.stream()
+        .map(Post::getUuid)
+        .collect(Collectors.toList());
+    List<UUID> userUuids = users.stream()
+        .map(User::getUuid)
+        .collect(Collectors.toList());
+    return new FindTagByUuidResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
   }
 }

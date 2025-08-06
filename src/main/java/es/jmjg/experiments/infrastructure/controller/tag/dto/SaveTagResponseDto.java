@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagResponseDto {
+public class SaveTagResponseDto {
   private UUID uuid;
   private String name;
   private List<UUID> posts;

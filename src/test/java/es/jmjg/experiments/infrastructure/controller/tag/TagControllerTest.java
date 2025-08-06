@@ -30,7 +30,8 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
-import es.jmjg.experiments.infrastructure.controller.tag.dto.TagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.UserFactory;
@@ -223,7 +224,7 @@ class TagControllerTest {
   @Test
   void shouldSaveTag() throws Exception {
     // Given
-    TagRequestDto tagDto = new TagRequestDto(testUuid, "new-tag");
+    SaveTagRequestDto tagDto = new SaveTagRequestDto(testUuid, "new-tag");
     when(saveTag.save(any(Tag.class))).thenReturn(testTag);
 
     // When & Then
@@ -239,7 +240,7 @@ class TagControllerTest {
   @Test
   void shouldUpdateTagName() throws Exception {
     // Given
-    TagRequestDto tagDto = new TagRequestDto(testUuid, "updated-tag");
+    UpdateTagRequestDto tagDto = new UpdateTagRequestDto(testUuid, "updated-tag");
     Tag updatedTag = TagFactory.createTag(testUuid, "updated-tag");
     updatedTag.setId(testId);
     when(updateTagName.updateName(testUuid, "updated-tag")).thenReturn(updatedTag);

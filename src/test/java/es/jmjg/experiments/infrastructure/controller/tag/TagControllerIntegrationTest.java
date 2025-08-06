@@ -10,8 +10,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import es.jmjg.experiments.infrastructure.controller.tag.dto.TagRequestDto;
-import es.jmjg.experiments.infrastructure.controller.tag.dto.TagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.FindTagByPatternResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.FindTagByUuidResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class TagControllerIntegrationTest extends BaseControllerIntegration {
@@ -22,13 +26,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID tagUuid = TECHNOLOGY_UUID;
 
     // When
-    ResponseEntity<TagResponseDto> response = restTemplate.getForEntity("/api/tags/" + tagUuid,
-        TagResponseDto.class);
+    ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.getForEntity("/api/tags/" + tagUuid,
+        FindTagByUuidResponseDto.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    TagResponseDto tag = response.getBody();
+    FindTagByUuidResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
       assertThat(t.getUuid()).isEqualTo(tagUuid);
       assertThat(t.getName()).isEqualTo("technology");
@@ -46,13 +50,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID tagUuid = NOT_USED_UUID;
 
     // When
-    ResponseEntity<TagResponseDto> response = restTemplate.getForEntity("/api/tags/" + tagUuid,
-        TagResponseDto.class);
+    ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.getForEntity("/api/tags/" + tagUuid,
+        FindTagByUuidResponseDto.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    TagResponseDto tag = response.getBody();
+    FindTagByUuidResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
       assertThat(t.getUuid()).isEqualTo(tagUuid);
       assertThat(t.getName()).isEqualTo("not-used");
@@ -71,16 +75,16 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "tech";
 
     // When
-    ResponseEntity<TagResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
-        TagResponseDto[].class);
+    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
+        FindTagByPatternResponseDto[].class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    TagResponseDto[] tags = response.getBody();
+    FindTagByPatternResponseDto[] tags = response.getBody();
     assertThat(tags).isNotNull();
     assertThat(tags).isNotEmpty();
 
-    for (TagResponseDto tag : tags) {
+    for (FindTagByPatternResponseDto tag : tags) {
       assertThat(tag.getPosts()).isNotNull();
       assertThat(tag.getUsers()).isNotNull();
       // Technology tag should have posts and users based on migration data
@@ -95,12 +99,12 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "nonexistent";
 
     // When
-    ResponseEntity<TagResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
-        TagResponseDto[].class);
+    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
+        FindTagByPatternResponseDto[].class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    TagResponseDto[] tags = response.getBody();
+    FindTagByPatternResponseDto[] tags = response.getBody();
     assertThat(tags).isNotNull();
     assertThat(tags).isEmpty();
   }
@@ -111,8 +115,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID nonExistentUuid = UUID.randomUUID();
 
     // When
-    ResponseEntity<TagResponseDto> response = restTemplate.getForEntity("/api/tags/" + nonExistentUuid,
-        TagResponseDto.class);
+    ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.getForEntity("/api/tags/" + nonExistentUuid,
+        FindTagByUuidResponseDto.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -181,11 +185,11 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldCreateNewTagWhenTagIsValid() {
     // Given
-    TagRequestDto tagDto = new TagRequestDto(UUID.randomUUID(), "new-tag");
+    SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "new-tag");
 
     // When
-    ResponseEntity<TagResponseDto> response = restTemplate.exchange(
-        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto), TagResponseDto.class);
+    ResponseEntity<SaveTagResponseDto> response = restTemplate.exchange(
+        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto), SaveTagResponseDto.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -195,7 +199,7 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(locationHeader).isNotNull();
     assertThat(locationHeader).startsWith("/api/tags/");
 
-    TagResponseDto tag = response.getBody();
+    SaveTagResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
       assertThat(t.getName()).isEqualTo("new-tag");
       assertThat(t.getUuid()).isNotNull();
@@ -208,17 +212,17 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   void shouldUpdateExistingTagName() {
     // Given
     UUID tagUuid = JAVA_UUID;
-    TagRequestDto updateDto = new TagRequestDto(tagUuid, "updated-java");
+    UpdateTagRequestDto updateDto = new UpdateTagRequestDto(tagUuid, "updated-java");
 
     // When
-    ResponseEntity<TagResponseDto> response = restTemplate.exchange(
+    ResponseEntity<UpdateTagResponseDto> response = restTemplate.exchange(
         "/api/tags/" + tagUuid, HttpMethod.PUT, new HttpEntity<>(updateDto),
-        TagResponseDto.class);
+        UpdateTagResponseDto.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    TagResponseDto updatedTag = response.getBody();
+    UpdateTagResponseDto updatedTag = response.getBody();
     assertThat(updatedTag).isNotNull().satisfies(t -> {
       assertThat(t.getUuid()).isEqualTo(tagUuid);
       assertThat(t.getName()).isEqualTo("updated-java");
@@ -281,12 +285,12 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnNotFoundWhenUpdatingNonExistentTag() {
     // Given
     UUID nonExistentUuid = UUID.randomUUID();
-    TagRequestDto updateDto = new TagRequestDto(nonExistentUuid, "updated-tag");
+    UpdateTagRequestDto updateDto = new UpdateTagRequestDto(nonExistentUuid, "updated-tag");
 
     // When
-    ResponseEntity<TagResponseDto> response = restTemplate.exchange(
+    ResponseEntity<UpdateTagResponseDto> response = restTemplate.exchange(
         "/api/tags/" + nonExistentUuid, HttpMethod.PUT, new HttpEntity<>(updateDto),
-        TagResponseDto.class);
+        UpdateTagResponseDto.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -347,11 +351,11 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnConflictWhenCreatingTagWithDuplicateName() {
     // Given
-    TagRequestDto tagDto1 = new TagRequestDto(UUID.randomUUID(), "duplicate-tag");
-    TagRequestDto tagDto2 = new TagRequestDto(UUID.randomUUID(), "duplicate-tag");
+    SaveTagRequestDto tagDto1 = new SaveTagRequestDto(UUID.randomUUID(), "duplicate-tag");
+    SaveTagRequestDto tagDto2 = new SaveTagRequestDto(UUID.randomUUID(), "duplicate-tag");
 
     // Create first tag
-    restTemplate.exchange("/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto1), TagResponseDto.class);
+    restTemplate.exchange("/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto1), SaveTagResponseDto.class);
 
     // When - Try to create second tag with same name
     ResponseEntity<Object> response = restTemplate.exchange(
@@ -365,11 +369,11 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnConflictWhenCreatingTagWithDuplicateUuid() {
     // Given
     UUID duplicateUuid = UUID.randomUUID();
-    TagRequestDto tagDto1 = new TagRequestDto(duplicateUuid, "first-tag");
-    TagRequestDto tagDto2 = new TagRequestDto(duplicateUuid, "second-tag");
+    SaveTagRequestDto tagDto1 = new SaveTagRequestDto(duplicateUuid, "first-tag");
+    SaveTagRequestDto tagDto2 = new SaveTagRequestDto(duplicateUuid, "second-tag");
 
     // Create first tag
-    restTemplate.exchange("/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto1), TagResponseDto.class);
+    restTemplate.exchange("/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto1), SaveTagResponseDto.class);
 
     // When - Try to create second tag with same UUID
     ResponseEntity<Object> response = restTemplate.exchange(
@@ -382,7 +386,7 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnConflictWhenCreatingTagWithExistingNameFromMigration() {
     // Given - Try to create a tag with a name that exists in migration data
-    TagRequestDto tagDto = new TagRequestDto(UUID.randomUUID(), "technology");
+    SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "technology");
 
     // When
     ResponseEntity<Object> response = restTemplate.exchange(
@@ -399,17 +403,17 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "tech";
 
     // When
-    ResponseEntity<TagResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
-        TagResponseDto[].class);
+    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
+        FindTagByPatternResponseDto[].class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    TagResponseDto[] tags = response.getBody();
+    FindTagByPatternResponseDto[] tags = response.getBody();
     assertThat(tags).isNotNull();
     assertThat(tags).isNotEmpty();
 
     // Verify that each tag has posts and users properties
-    for (TagResponseDto tag : tags) {
+    for (FindTagByPatternResponseDto tag : tags) {
       assertThat(tag.getPosts()).isNotNull();
       assertThat(tag.getUsers()).isNotNull();
       // All tags should have posts and users based on migration data
