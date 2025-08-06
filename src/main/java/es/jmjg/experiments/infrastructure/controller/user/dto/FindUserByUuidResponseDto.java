@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDto {
+public class FindUserByUuidResponseDto {
   private UUID uuid;
   private String name;
   private String email;

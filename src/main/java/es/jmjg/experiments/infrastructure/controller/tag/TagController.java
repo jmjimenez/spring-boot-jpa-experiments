@@ -39,7 +39,7 @@ import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.tag.mapper.TagMapper;
-import es.jmjg.experiments.infrastructure.controller.user.dto.UserResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -119,13 +119,13 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find users by tag", description = "Finds all users associated with a specific tag")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
-  List<UserResponseDto> findUsersByTag(
+  List<FindAllUsersResponseDto> findUsersByTag(
       @Parameter(description = "UUID of the tag") @PathVariable UUID uuid) {
     List<User> users = findUsersByTag.findByTagUuid(uuid);
-    return userMapper.toResponseDtoList(users);
+    return userMapper.toFindAllUsersResponseDtoList(users);
   }
 
   @GetMapping("/{uuid}/posts")
@@ -145,13 +145,13 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find users by tag name", description = "Finds all users associated with a tag by name")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
-  List<UserResponseDto> findUsersByTagName(
+  List<FindAllUsersResponseDto> findUsersByTagName(
       @Parameter(description = "Name of the tag") @RequestParam String name) {
     List<User> users = findUsersByTag.findByTagName(name);
-    return userMapper.toResponseDtoList(users);
+    return userMapper.toFindAllUsersResponseDtoList(users);
   }
 
   @GetMapping("/search/posts")
