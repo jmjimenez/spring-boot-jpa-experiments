@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller;
+package es.jmjg.experiments.infrastructure.controller.post;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,11 +29,11 @@ import es.jmjg.experiments.application.post.FindPosts;
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.infrastructure.controller.dto.PagedResponseDto;
-import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
 import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
-import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PostRequestDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

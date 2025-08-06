@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller;
+package es.jmjg.experiments.infrastructure.controller.user;
 
 import java.util.UUID;
 
@@ -28,10 +28,10 @@ import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.controller.dto.UserRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
 import es.jmjg.experiments.infrastructure.controller.exception.UserNotFoundException;
-import es.jmjg.experiments.infrastructure.controller.mapper.UserMapper;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UserRequestDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UserResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

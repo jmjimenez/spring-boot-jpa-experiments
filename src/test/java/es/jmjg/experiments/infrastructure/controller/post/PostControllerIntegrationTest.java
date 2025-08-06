@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.integration;
+package es.jmjg.experiments.infrastructure.controller.post;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,9 +10,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import es.jmjg.experiments.infrastructure.controller.dto.PagedResponseDto;
-import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PostRequestDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PostResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class PostControllerIntegrationTest extends BaseControllerIntegration {

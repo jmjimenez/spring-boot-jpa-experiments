@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.dto;
+package es.jmjg.experiments.infrastructure.controller.user.dto;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,9 +10,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagResponseDto {
+public class UserResponseDto {
   private UUID uuid;
   private String name;
+  private String email;
+  private String username;
   private List<UUID> posts;
-  private List<UUID> users;
+  private List<String> tags;
 }

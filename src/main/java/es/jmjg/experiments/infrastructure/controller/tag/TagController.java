@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller;
+package es.jmjg.experiments.infrastructure.controller.tag;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,13 +28,13 @@ import es.jmjg.experiments.application.tag.UpdateTagName;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
-import es.jmjg.experiments.infrastructure.controller.dto.TagRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.TagResponseDto;
-import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
-import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
-import es.jmjg.experiments.infrastructure.controller.mapper.TagMapper;
-import es.jmjg.experiments.infrastructure.controller.mapper.UserMapper;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.TagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.TagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.mapper.TagMapper;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UserResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

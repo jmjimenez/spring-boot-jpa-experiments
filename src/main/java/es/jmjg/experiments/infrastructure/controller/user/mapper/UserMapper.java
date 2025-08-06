@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.mapper;
+package es.jmjg.experiments.infrastructure.controller.user.mapper;
 
 import java.util.List;
 import java.util.UUID;
@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.controller.dto.UserRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UserRequestDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UserResponseDto;
 
 @Component
 public class UserMapper {

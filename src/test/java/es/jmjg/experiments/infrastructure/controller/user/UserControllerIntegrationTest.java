@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.integration;
+package es.jmjg.experiments.infrastructure.controller.user;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,8 +10,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import es.jmjg.experiments.infrastructure.controller.dto.UserRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.UserResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UserRequestDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UserResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class UserControllerIntegrationTest extends BaseControllerIntegration {

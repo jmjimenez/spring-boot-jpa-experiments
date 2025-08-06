@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.integration;
+package es.jmjg.experiments.infrastructure.controller.tag;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,8 +10,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import es.jmjg.experiments.infrastructure.controller.dto.TagRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.TagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.TagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.TagResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class TagControllerIntegrationTest extends BaseControllerIntegration {

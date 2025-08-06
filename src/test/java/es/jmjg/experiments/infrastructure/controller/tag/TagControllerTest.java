@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller;
+package es.jmjg.experiments.infrastructure.controller.tag;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,7 +30,7 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
-import es.jmjg.experiments.infrastructure.controller.dto.TagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.TagRequestDto;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.UserFactory;

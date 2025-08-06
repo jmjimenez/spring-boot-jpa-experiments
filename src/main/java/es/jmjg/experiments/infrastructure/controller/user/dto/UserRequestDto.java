@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.dto;
+package es.jmjg.experiments.infrastructure.controller.user.dto;
 
 import java.util.UUID;
 import jakarta.validation.constraints.NotEmpty;

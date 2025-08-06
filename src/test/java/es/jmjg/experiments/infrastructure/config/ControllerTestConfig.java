@@ -27,9 +27,9 @@ import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
-import es.jmjg.experiments.infrastructure.controller.mapper.PostMapper;
-import es.jmjg.experiments.infrastructure.controller.mapper.TagMapper;
-import es.jmjg.experiments.infrastructure.controller.mapper.UserMapper;
+import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
+import es.jmjg.experiments.infrastructure.controller.tag.mapper.TagMapper;
+import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 
 @TestConfiguration
 public class ControllerTestConfig {

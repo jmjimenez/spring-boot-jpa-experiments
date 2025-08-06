@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller;
+package es.jmjg.experiments.infrastructure.controller.post;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;

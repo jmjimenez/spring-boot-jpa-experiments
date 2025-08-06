@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.mapper;
+package es.jmjg.experiments.infrastructure.controller.post.mapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.infrastructure.controller.dto.PagedResponseDto;
-import es.jmjg.experiments.infrastructure.controller.dto.PostRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.PostResponseDto;
-import es.jmjg.experiments.infrastructure.controller.dto.PostTagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PostRequestDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.PostTagResponseDto;
 
 @Component
 public class PostMapper {

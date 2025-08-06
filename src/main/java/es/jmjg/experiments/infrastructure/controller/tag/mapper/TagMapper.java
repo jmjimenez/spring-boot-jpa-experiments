@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.mapper;
+package es.jmjg.experiments.infrastructure.controller.tag.mapper;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.controller.dto.TagRequestDto;
-import es.jmjg.experiments.infrastructure.controller.dto.TagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.TagRequestDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.TagResponseDto;
 
 @Component
 public class TagMapper {
