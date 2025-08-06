@@ -28,11 +28,13 @@ import es.jmjg.experiments.application.tag.UpdateTagName;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostsByTagNameResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostsByTagResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.TagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.TagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.tag.mapper.TagMapper;
-import es.jmjg.experiments.infrastructure.controller.post.dto.PostResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import es.jmjg.experiments.infrastructure.controller.user.dto.UserResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -126,13 +128,13 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find posts by tag", description = "Finds all posts associated with a specific tag")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
-  List<PostResponseDto> findPostsByTag(
+  List<FindPostsByTagResponseDto> findPostsByTag(
       @Parameter(description = "UUID of the tag") @PathVariable UUID uuid) {
     List<Post> posts = findPostsByTag.findByTagUuid(uuid);
-    return postMapper.toResponseDtoList(posts);
+    return postMapper.toFindPostsByTagResponseDto(posts);
   }
 
   @GetMapping("/search/users")
@@ -152,13 +154,13 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find posts by tag name", description = "Finds all posts associated with a tag by name")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
-  List<PostResponseDto> findPostsByTagName(
+  List<FindPostsByTagNameResponseDto> findPostsByTagName(
       @Parameter(description = "Name of the tag") @RequestParam String name) {
     List<Post> posts = findPostsByTag.findByTagName(name);
-    return postMapper.toResponseDtoList(posts);
+    return postMapper.toFindPostsByTagNameResponseDto(posts);
   }
 
   @PostMapping("")

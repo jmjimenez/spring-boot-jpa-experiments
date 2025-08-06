@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class PostResponseDto {
+public class FindByUuidResponseDto {
   private UUID uuid;
   private UUID userId;
   private String title;
@@ -16,7 +16,7 @@ public class PostResponseDto {
   private List<PostTagResponseDto> tags;
 
   // Constructor with tags
-  public PostResponseDto(UUID uuid, UUID userId, String title, String body,
+  public FindByUuidResponseDto(UUID uuid, UUID userId, String title, String body,
       List<PostTagResponseDto> tags) {
     this.uuid = uuid;
     this.userId = userId;

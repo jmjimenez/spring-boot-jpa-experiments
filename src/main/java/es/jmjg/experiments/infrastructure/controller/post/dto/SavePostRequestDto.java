@@ -12,9 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//TODO: each entry point should have its own DTO (see
-// https://www.wimdeblauwe.com/blog/2025/07/30/how-i-test-production-ready-spring-boot-applications/)
-public class PostRequestDto {
+public class SavePostRequestDto {
   @NotNull(message = "UUID is required")
   private UUID uuid;
 

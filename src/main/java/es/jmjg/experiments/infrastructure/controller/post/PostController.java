@@ -30,9 +30,14 @@ import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.PostRequestDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.PostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostRequestDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -80,7 +85,7 @@ public class PostController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagedResponseDto.class)))
   })
-  PagedResponseDto<PostResponseDto> findAll(
+  PagedResponseDto<FindAllPostsResponseDto> findAll(
       @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
       @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
     Pageable pageable = PageRequest.of(page, size);
@@ -91,41 +96,41 @@ public class PostController {
   @GetMapping("/{uuid}")
   @Operation(summary = "Get post by UUID", description = "Retrieves a specific post by its UUID")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved post", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved post", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Post not found")
   })
-  PostResponseDto findByUuid(
+  FindByUuidResponseDto findByUuid(
       @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID uuid) {
     Post post = findPostByUuid.findByUuid(uuid).orElseThrow(PostNotFoundException::new);
-    return postMapper.toResponseDto(post);
+    return postMapper.toFindByUuidResponseDto(post);
   }
 
   @GetMapping("/search")
   @Transactional(readOnly = true)
   @Operation(summary = "Search posts by content", description = "Finds posts containing specified words")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class)))
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class)))
   })
-  List<PostResponseDto> searchPosts(
+  List<SearchPostsResponseDto> searchPosts(
       @Parameter(description = "Search terms to find in post content") @RequestParam String q,
       @Parameter(description = "Maximum number of results to return") @RequestParam(defaultValue = "20") int limit) {
 
     log.info("Searching posts with query: '{}' and limit: {}", q, limit);
 
     List<Post> posts = findPosts.find(q, limit);
-    return postMapper.toResponseDtoList(posts);
+    return postMapper.toSearchPostsResponseDto(posts);
   }
 
   @PostMapping("")
   @Operation(summary = "Create a new post", description = "Creates a new post with the provided data")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "Post created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class))),
+      @ApiResponse(responseCode = "201", description = "Post created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  ResponseEntity<PostResponseDto> save(@RequestBody @Valid PostRequestDto postDto) {
+  ResponseEntity<SavePostResponseDto> save(@RequestBody @Valid SavePostRequestDto postDto) {
     Post post = postMapper.toDomain(postDto);
     Post savedPost = savePost.save(post, postDto.getUserId(), postDto.getTagNames());
-    PostResponseDto responseDto = postMapper.toResponseDto(savedPost);
+    SavePostResponseDto responseDto = postMapper.toSavePostResponseDto(savedPost);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{uuid}")
         .buildAndExpand(savedPost.getUuid())
@@ -139,14 +144,14 @@ public class PostController {
   @PutMapping("/{id}")
   @Operation(summary = "Update a post", description = "Updates an existing post with the provided data")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Post updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Post updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Post not found"),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  PostResponseDto update(@PathVariable Integer id, @RequestBody @Valid PostRequestDto postDto) {
+  UpdatePostResponseDto update(@PathVariable Integer id, @RequestBody @Valid UpdatePostRequestDto postDto) {
     Post post = postMapper.toDomain(postDto);
     Post updatedPost = updatePost.update(id, post, postDto.getUserId(), postDto.getTagNames());
-    return postMapper.toResponseDto(updatedPost);
+    return postMapper.toUpdatePostResponseDto(updatedPost);
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
