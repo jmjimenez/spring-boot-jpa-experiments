@@ -1,6 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.post.mapper;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -23,117 +24,32 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponse
 @Component
 public class PostMapper {
 
-  public UpdatePostResponseDto toUpdatePostResponseDto(Post post) {
+  // Generic method for creating response DTOs from Post
+  private <T> T createResponseDto(Post post, Function<Post, T> dtoCreator) {
     if (post == null) {
       return null;
     }
-    return new UpdatePostResponseDto(post.getUuid(), post.getUser().getUuid(), post.getTitle(), post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
+    return dtoCreator.apply(post);
   }
 
-  public SavePostResponseDto toSavePostResponseDto(Post post) {
-    if (post == null) {
-      return null;
-    }
-    return new SavePostResponseDto(post.getUuid(), post.getUser().getUuid(), post.getTitle(), post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
-  }
-
-  public FindPostByUuidResponseDto toFindByUuidResponseDto(Post post) {
-    if (post == null) {
-      return null;
-    }
-    return new FindPostByUuidResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
-  }
-
-  public FindAllPostsResponseDto toFindAllPostsResponseDto(Post post) {
-    if (post == null) {
-      return null;
-    }
-    return new FindAllPostsResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
-  }
-
-  public List<FindAllPostsResponseDto> toFindAllPostsResponseDto(List<Post> posts) {
+  // Generic method for converting lists
+  private <T> List<T> convertList(List<Post> posts, Function<Post, T> converter) {
     if (posts == null) {
       return List.of();
     }
-    return posts.stream().map(this::toFindAllPostsResponseDto).collect(Collectors.toList());
+    return posts.stream()
+        .map(converter)
+        .collect(Collectors.toList());
   }
 
-  public FindPostByTagResponseDto toFindPostsByTagResponseDto(Post post) {
-    if (post == null) {
-      return null;
-    }
-    return new FindPostByTagResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
-  }
-
-  public List<FindPostByTagResponseDto> toFindPostsByTagResponseDto(List<Post> posts) {
-    if (posts == null) {
-      return List.of();
-    }
-    return posts.stream().map(this::toFindPostsByTagResponseDto).collect(Collectors.toList());
-  }
-
-  public FindPostByTagNameResponseDto toFindPostsByTagNameResponseDto(Post post) {
-    if (post == null) {
-      return null;
-    }
-    return new FindPostByTagNameResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
-  }
-
-  public List<FindPostByTagNameResponseDto> toFindPostsByTagNameResponseDto(List<Post> posts) {
-    if (posts == null) {
-      return List.of();
-    }
-    return posts.stream().map(this::toFindPostsByTagNameResponseDto).collect(Collectors.toList());
-  }
-
-  public List<SearchPostsResponseDto> toSearchPostsResponseDto(List<Post> posts) {
-    if (posts == null) {
-      return List.of();
-    }
-    return posts.stream().map(this::toSearchPostsResponseDto).collect(Collectors.toList());
-  }
-
-  public SearchPostsResponseDto toSearchPostsResponseDto(Post post) {
-    if (post == null) {
-      return null;
-    }
-    return new SearchPostsResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
-  }
-
-  public PagedResponseDto<FindAllPostsResponseDto> toPagedResponseDto(Page<Post> page) {
+  // Generic method for creating paged responses
+  private <T> PagedResponseDto<T> createPagedResponse(Page<Post> page, Function<Post, T> converter) {
     if (page == null) {
       return new PagedResponseDto<>(List.of(), 0, 0, 0, 0, false, false);
     }
 
-    List<FindAllPostsResponseDto> content = page.getContent().stream()
-        .map(this::toFindAllPostsResponseDto)
+    List<T> content = page.getContent().stream()
+        .map(converter)
         .collect(Collectors.toList());
 
     return new PagedResponseDto<>(
@@ -146,10 +62,141 @@ public class PostMapper {
         page.hasPrevious());
   }
 
-  public Post toDomain(UpdatePostRequestDto postRequestDto) {
-    if (postRequestDto == null) {
+  // Generic method for domain conversion
+  private Post createPostFromDto(Object dto, Function<Object, Post> converter) {
+    if (dto == null) {
       return null;
     }
+    return converter.apply(dto);
+  }
+
+  // Response DTO creation methods using the generic approach
+  public UpdatePostResponseDto toUpdatePostResponseDto(Post post) {
+    return createResponseDto(post, this::createUpdatePostResponseDto);
+  }
+
+  public SavePostResponseDto toSavePostResponseDto(Post post) {
+    return createResponseDto(post, this::createSavePostResponseDto);
+  }
+
+  public FindPostByUuidResponseDto toFindByUuidResponseDto(Post post) {
+    return createResponseDto(post, this::createFindPostByUuidResponseDto);
+  }
+
+  public FindAllPostsResponseDto toFindAllPostsResponseDto(Post post) {
+    return createResponseDto(post, this::createFindAllPostsResponseDto);
+  }
+
+  public FindPostByTagResponseDto toFindPostsByTagResponseDto(Post post) {
+    return createResponseDto(post, this::createFindPostByTagResponseDto);
+  }
+
+  public FindPostByTagNameResponseDto toFindPostsByTagNameResponseDto(Post post) {
+    return createResponseDto(post, this::createFindPostByTagNameResponseDto);
+  }
+
+  public SearchPostsResponseDto toSearchPostsResponseDto(Post post) {
+    return createResponseDto(post, this::createSearchPostsResponseDto);
+  }
+
+  // List conversion methods using the generic approach
+  public List<FindAllPostsResponseDto> toFindAllPostsResponseDto(List<Post> posts) {
+    return convertList(posts, this::toFindAllPostsResponseDto);
+  }
+
+  public List<FindPostByTagResponseDto> toFindPostsByTagResponseDto(List<Post> posts) {
+    return convertList(posts, this::toFindPostsByTagResponseDto);
+  }
+
+  public List<FindPostByTagNameResponseDto> toFindPostsByTagNameResponseDto(List<Post> posts) {
+    return convertList(posts, this::toFindPostsByTagNameResponseDto);
+  }
+
+  public List<SearchPostsResponseDto> toSearchPostsResponseDto(List<Post> posts) {
+    return convertList(posts, this::toSearchPostsResponseDto);
+  }
+
+  // Paged response method using the generic approach
+  public PagedResponseDto<FindAllPostsResponseDto> toPagedResponseDto(Page<Post> page) {
+    return createPagedResponse(page, this::toFindAllPostsResponseDto);
+  }
+
+  // Domain conversion methods using the generic approach
+  public Post toDomain(UpdatePostRequestDto postRequestDto) {
+    return createPostFromDto(postRequestDto, this::createPostFromUpdateDto);
+  }
+
+  public Post toDomain(SavePostRequestDto postRequestDto) {
+    return createPostFromDto(postRequestDto, this::createPostFromSaveDto);
+  }
+
+  // Private helper methods for creating specific response DTOs
+  private UpdatePostResponseDto createUpdatePostResponseDto(Post post) {
+    return new UpdatePostResponseDto(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        convertTagsToPostTagResponseDto(post.getTags()));
+  }
+
+  private SavePostResponseDto createSavePostResponseDto(Post post) {
+    return new SavePostResponseDto(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        convertTagsToPostTagResponseDto(post.getTags()));
+  }
+
+  private FindPostByUuidResponseDto createFindPostByUuidResponseDto(Post post) {
+    return new FindPostByUuidResponseDto(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        convertTagsToPostTagResponseDto(post.getTags()));
+  }
+
+  private FindAllPostsResponseDto createFindAllPostsResponseDto(Post post) {
+    return new FindAllPostsResponseDto(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        convertTagsToPostTagResponseDto(post.getTags()));
+  }
+
+  private FindPostByTagResponseDto createFindPostByTagResponseDto(Post post) {
+    return new FindPostByTagResponseDto(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        convertTagsToPostTagResponseDto(post.getTags()));
+  }
+
+  private FindPostByTagNameResponseDto createFindPostByTagNameResponseDto(Post post) {
+    return new FindPostByTagNameResponseDto(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        convertTagsToPostTagResponseDto(post.getTags()));
+  }
+
+  private SearchPostsResponseDto createSearchPostsResponseDto(Post post) {
+    return new SearchPostsResponseDto(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        convertTagsToPostTagResponseDto(post.getTags()));
+  }
+
+  // Private helper methods for domain conversion
+  private Post createPostFromUpdateDto(Object dto) {
+    UpdatePostRequestDto postRequestDto = (UpdatePostRequestDto) dto;
     Post post = new Post();
     post.setTitle(postRequestDto.getTitle());
     post.setBody(postRequestDto.getBody());
@@ -157,10 +204,8 @@ public class PostMapper {
     return post;
   }
 
-  public Post toDomain(SavePostRequestDto postRequestDto) {
-    if (postRequestDto == null) {
-      return null;
-    }
+  private Post createPostFromSaveDto(Object dto) {
+    SavePostRequestDto postRequestDto = (SavePostRequestDto) dto;
     Post post = new Post();
     post.setUuid(postRequestDto.getUuid());
     post.setTitle(postRequestDto.getTitle());
