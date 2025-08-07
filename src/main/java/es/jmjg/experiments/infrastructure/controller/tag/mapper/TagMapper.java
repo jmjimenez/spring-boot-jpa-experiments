@@ -19,43 +19,23 @@ import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagResponseDt
 public class TagMapper {
 
   public SaveTagResponseDto toSaveTagResponseDto(Tag tag) {
-    if (tag == null) {
-      return null;
-    }
-    return toSaveResponseDtoWithRelations(tag, List.of(), List.of());
+    return mapToResponseDto(tag, List.of(), List.of(),
+        (uuid, name, posts, users) -> new SaveTagResponseDto(uuid, name, posts, users));
   }
 
   public SaveTagResponseDto toSaveResponseDtoWithRelations(Tag tag, List<Post> posts, List<User> users) {
-    if (tag == null) {
-      return null;
-    }
-    List<UUID> postUuids = posts.stream()
-        .map(Post::getUuid)
-        .collect(Collectors.toList());
-    List<UUID> userUuids = users.stream()
-        .map(User::getUuid)
-        .collect(Collectors.toList());
-    return new SaveTagResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
+    return mapToResponseDto(tag, posts, users,
+        (uuid, name, postsUuids, userUuids) -> new SaveTagResponseDto(uuid, name, postsUuids, userUuids));
   }
 
   public UpdateTagResponseDto toUpdateTagResponseDto(Tag updatedTag) {
-    if (updatedTag == null) {
-      return null;
-    }
-    return toUpdateResponseDtoWithRelations(updatedTag, List.of(), List.of());
+    return mapToResponseDto(updatedTag, List.of(), List.of(),
+        (uuid, name, posts, users) -> new UpdateTagResponseDto(uuid, name, posts, users));
   }
 
   public UpdateTagResponseDto toUpdateResponseDtoWithRelations(Tag tag, List<Post> posts, List<User> users) {
-    if (tag == null) {
-      return null;
-    }
-    List<UUID> postUuids = posts.stream()
-        .map(Post::getUuid)
-        .collect(Collectors.toList());
-    List<UUID> userUuids = users.stream()
-        .map(User::getUuid)
-        .collect(Collectors.toList());
-    return new UpdateTagResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
+    return mapToResponseDto(tag, posts, users,
+        (uuid, name, postsUuids, userUuids) -> new UpdateTagResponseDto(uuid, name, postsUuids, userUuids));
   }
 
   public Tag toDomain(SaveTagRequestDto tagRequestDto) {
@@ -69,28 +49,33 @@ public class TagMapper {
   }
 
   public FindTagByPatternResponseDto toFindByPatternResponseDto(Tag tag, List<Post> posts, List<User> users) {
-    if (tag == null) {
-      return null;
-    }
-    List<UUID> postUuids = posts.stream()
-        .map(Post::getUuid)
-        .collect(Collectors.toList());
-    List<UUID> userUuids = users.stream()
-        .map(User::getUuid)
-        .collect(Collectors.toList());
-    return new FindTagByPatternResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
+    return mapToResponseDto(tag, posts, users,
+        (uuid, name, postsUuids, userUuids) -> new FindTagByPatternResponseDto(uuid, name, postsUuids, userUuids));
   }
 
   public FindTagByUuidResponseDto toFindByUuidResponseDto(Tag tag, List<Post> posts, List<User> users) {
+    return mapToResponseDto(tag, posts, users,
+        (uuid, name, postsUuids, userUuids) -> new FindTagByUuidResponseDto(uuid, name, postsUuids, userUuids));
+  }
+
+  @FunctionalInterface
+  private interface TagDtoConstructor<T> {
+    T create(UUID uuid, String name, List<UUID> posts, List<UUID> users);
+  }
+
+  private <T> T mapToResponseDto(Tag tag, List<Post> posts, List<User> users, TagDtoConstructor<T> dtoConstructor) {
     if (tag == null) {
       return null;
     }
+
     List<UUID> postUuids = posts.stream()
         .map(Post::getUuid)
         .collect(Collectors.toList());
+
     List<UUID> userUuids = users.stream()
         .map(User::getUuid)
         .collect(Collectors.toList());
-    return new FindTagByUuidResponseDto(tag.getUuid(), tag.getName(), postUuids, userUuids);
+
+    return dtoConstructor.create(tag.getUuid(), tag.getName(), postUuids, userUuids);
   }
 }
