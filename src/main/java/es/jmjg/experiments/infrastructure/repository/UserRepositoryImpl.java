@@ -7,11 +7,13 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.jpa.JpaUserRepository;
 
 @Repository
+@Transactional(readOnly = true)
 public class UserRepositoryImpl implements es.jmjg.experiments.domain.repository.UserRepository {
 
   private final JpaUserRepository jpaUserRepository;
@@ -21,6 +23,7 @@ public class UserRepositoryImpl implements es.jmjg.experiments.domain.repository
   }
 
   @Override
+  @Transactional
   public void deleteByUuid(UUID uuid) {
     jpaUserRepository.deleteByUuid(uuid);
   }
@@ -51,6 +54,7 @@ public class UserRepositoryImpl implements es.jmjg.experiments.domain.repository
   }
 
   @Override
+  @Transactional
   public User save(User existingUser) {
     return jpaUserRepository.save(existingUser);
   }
@@ -64,10 +68,12 @@ public class UserRepositoryImpl implements es.jmjg.experiments.domain.repository
     return jpaUserRepository.count();
   }
 
+  @Transactional
   public void deleteAll() {
     jpaUserRepository.deleteAll();
   }
 
+  @Transactional
   public void deleteById(Integer id) {
     jpaUserRepository.deleteById(id);
   }

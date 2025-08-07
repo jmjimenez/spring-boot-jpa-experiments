@@ -13,6 +13,7 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.repository.jpa.JpaPostRepository;
 
 @Repository
+@Transactional(readOnly = true)
 public class PostRepositoryImpl implements es.jmjg.experiments.domain.repository.PostRepository {
 
   private final JpaPostRepository jpaPostRepository;
@@ -28,25 +29,21 @@ public class PostRepositoryImpl implements es.jmjg.experiments.domain.repository
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Page<Post> findAll(Pageable pageable) {
     return jpaPostRepository.findAll(pageable);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<Post> findByTitle(String trim) {
     return jpaPostRepository.findByTitle(trim);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<Post> findByUuid(UUID uuid) {
     return jpaPostRepository.findByUuid(uuid);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<Post> searchByContent(String trim, Pageable pageable) {
     return jpaPostRepository.searchByContent(trim, pageable);
   }
@@ -58,13 +55,11 @@ public class PostRepositoryImpl implements es.jmjg.experiments.domain.repository
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<Post> findById(Integer id) {
     return jpaPostRepository.findById(id);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<Post> findByTagId(Integer id) {
     return jpaPostRepository.findByTagId(id);
   }

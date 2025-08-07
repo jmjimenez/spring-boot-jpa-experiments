@@ -5,11 +5,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.repository.jpa.JpaTagRepository;
 
 @Repository
+@Transactional(readOnly = true)
 public class TagRepositoryImpl implements es.jmjg.experiments.domain.repository.TagRepository {
 
   private final JpaTagRepository jpaTagRepository;
@@ -24,6 +26,7 @@ public class TagRepositoryImpl implements es.jmjg.experiments.domain.repository.
   }
 
   @Override
+  @Transactional
   public void deleteByUuid(UUID uuid) {
     jpaTagRepository.deleteByUuid(uuid);
   }
@@ -49,6 +52,7 @@ public class TagRepositoryImpl implements es.jmjg.experiments.domain.repository.
   }
 
   @Override
+  @Transactional
   public Tag save(Tag tag) {
     return jpaTagRepository.save(tag);
   }
