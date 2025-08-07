@@ -95,7 +95,7 @@ public class UserController {
   @Transactional(readOnly = true)
   @Operation(summary = "Get user by UUID", description = "Retrieves a specific user by its UUID")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByUuidResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "User not found")
   })
   FindUserByUuidResponseDto findByUuid(
@@ -108,7 +108,7 @@ public class UserController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find user by email", description = "Finds a user by their email address")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByEmailResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "User not found")
   })
   FindUserByEmailResponseDto findByEmail(
@@ -121,7 +121,7 @@ public class UserController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find user by username", description = "Finds a user by their username")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByUsernameResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "User not found")
   })
   FindUserByUsernameResponseDto findByUsername(
@@ -133,10 +133,11 @@ public class UserController {
   @PostMapping("")
   @Operation(summary = "Create a new user", description = "Creates a new user with the provided data")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
+      @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveUserResponseDto.class))),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  ResponseEntity<SaveUserResponseDto> save(@RequestBody @Valid SaveUserRequestDto userDto) {
+  ResponseEntity<SaveUserResponseDto> save(
+      @Parameter(description = "User data to create") @RequestBody @Valid SaveUserRequestDto userDto) {
     User user = userMapper.toDomain(userDto);
     User savedUser = saveUser.save(user);
     SaveUserResponseDto responseDto = userMapper.toSaveUserResponseDto(savedUser);
@@ -153,11 +154,12 @@ public class UserController {
   @PutMapping("/{uuid}")
   @Operation(summary = "Update a user", description = "Updates an existing user with the provided data")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUserResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "User not found"),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  UpdateUserResponseDto update(@PathVariable UUID uuid, @RequestBody @Valid SaveUserRequestDto userDto) {
+  UpdateUserResponseDto update(@Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
+      @Parameter(description = "Updated user data") @RequestBody @Valid SaveUserRequestDto userDto) {
     User user = userMapper.toDomain(userDto);
     User existing = findUserByUuid.findByUuid(uuid).orElseThrow(UserNotFoundException::new);
     User updatedUser = updateUser.update(existing.getId(), user);
