@@ -28,7 +28,6 @@ import es.jmjg.experiments.application.tag.UpdateTagName;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagNameResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
@@ -119,20 +118,20 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find users by tag", description = "Finds all users associated with a specific tag")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class, type = "array"))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
   List<FindAllUsersResponseDto> findUsersByTag(
       @Parameter(description = "UUID of the tag") @PathVariable UUID uuid) {
     List<User> users = findUsersByTag.findByTagUuid(uuid);
-    return userMapper.toFindAllUsersResponseDtoList(users);
+    return userMapper.toFindAllUsersResponseDto(users);
   }
 
   @GetMapping("/{uuid}/posts")
   @Transactional(readOnly = true)
   @Operation(summary = "Find posts by tag", description = "Finds all posts associated with a specific tag")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostByTagResponseDto.class, type = "array"))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
   List<FindPostByTagResponseDto> findPostsByTag(
@@ -145,20 +144,20 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find users by tag name", description = "Finds all users associated with a tag by name")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class, type = "array"))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
   List<FindAllUsersResponseDto> findUsersByTagName(
       @Parameter(description = "Name of the tag") @RequestParam String name) {
     List<User> users = findUsersByTag.findByTagName(name);
-    return userMapper.toFindAllUsersResponseDtoList(users);
+    return userMapper.toFindAllUsersResponseDto(users);
   }
 
   @GetMapping("/search/posts")
   @Transactional(readOnly = true)
   @Operation(summary = "Find posts by tag name", description = "Finds all posts associated with a tag by name")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsResponseDto.class))),
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostByTagNameResponseDto.class, type = "array"))),
       @ApiResponse(responseCode = "404", description = "Tag not found")
   })
   List<FindPostByTagNameResponseDto> findPostsByTagName(
