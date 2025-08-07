@@ -10,13 +10,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.jmjg.experiments.domain.repository.PostRepository;
 
-
 @ExtendWith(MockitoExtension.class)
 class DeletePostByIdTest {
 
-  @Mock private PostRepository postRepository;
+  @Mock
+  private PostRepository postRepository;
 
-  @InjectMocks private DeletePostById deletePostById;
+  @InjectMocks
+  private DeletePostByUuid deletePostById;
 
   @Test
   void deleteById_ShouldCallRepositoryDelete() {

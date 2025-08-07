@@ -22,7 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import es.jmjg.experiments.application.post.DeletePostById;
+import es.jmjg.experiments.application.post.DeletePostByUuid;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
@@ -39,11 +39,14 @@ import es.jmjg.experiments.shared.UserFactory;
 @Import(ControllerTestConfig.class)
 class PostControllerTest {
 
+  // Sample post UUID from Flyway migration data
+  private static final UUID POST_2_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440007");
+
   @Autowired
   private MockMvc mockMvc;
 
   @Autowired
-  private DeletePostById deletePostById;
+  private DeletePostByUuid deletePostById;
 
   @Autowired
   private FindPosts findPosts;
@@ -287,7 +290,7 @@ class PostControllerTest {
         user, UUID.randomUUID(), "This is my brand new post", "UPDATED BODY");
     updated.setId(1);
 
-    when(updatePost.update(eq(1), any(Post.class), eq(user.getUuid()), any())).thenReturn(updated);
+    when(updatePost.update(eq(POST_2_UUID), any(Post.class), any())).thenReturn(updated);
     String requestBody = """
         {
             "uuid":"%s",
@@ -303,13 +306,13 @@ class PostControllerTest {
             updated.getBody());
 
     mockMvc
-        .perform(put("/api/posts/1").contentType("application/json").content(requestBody))
+        .perform(put("/api/posts/" + POST_2_UUID).contentType("application/json").content(requestBody))
         .andExpect(status().isOk())
         .andExpect(content().json(requestBody + ",\"tags\":[]"));
   }
 
   @Test
-  void shouldNotUpdateAndThrowNotFoundWhenGivenAnInvalidPostID() throws Exception {
+  void shouldNotUpdateAndThrowNotFoundWhenGivenAnInvalidPostUUID() throws Exception {
     User user = new User();
     user.setId(1);
     user.setUuid(UUID.randomUUID());
@@ -324,8 +327,9 @@ class PostControllerTest {
     updated.setTitle("This is my brand new post");
     updated.setBody("UPDATED BODY");
 
-    when(updatePost.update(eq(999), any(Post.class), eq(user.getUuid()), any()))
-        .thenThrow(new PostNotFound("Post not found with id: 999"));
+    UUID nonExistentUuid = UUID.randomUUID();
+    when(updatePost.update(eq(nonExistentUuid), any(Post.class), any()))
+        .thenThrow(new PostNotFound("Post not found with uuid: " + nonExistentUuid));
     String json = """
         {
             "uuid":"%s",
@@ -341,17 +345,17 @@ class PostControllerTest {
             updated.getBody());
 
     mockMvc
-        .perform(put("/api/posts/999").contentType("application/json").content(json))
+        .perform(put("/api/posts/" + nonExistentUuid).contentType("application/json").content(json))
         .andExpect(status().isNotFound());
   }
 
   @Test
-  void shouldDeletePostWhenGivenValidID() throws Exception {
-    doNothing().when(deletePostById).deleteById(1);
+  void shouldDeletePostWhenGivenValidUUID() throws Exception {
+    doNothing().when(deletePostById).deleteByUuid(POST_2_UUID);
 
-    mockMvc.perform(delete("/api/posts/1")).andExpect(status().isNoContent());
+    mockMvc.perform(delete("/api/posts/" + POST_2_UUID)).andExpect(status().isNoContent());
 
-    verify(deletePostById, times(1)).deleteById(1);
+    verify(deletePostById, times(1)).deleteByUuid(POST_2_UUID);
   }
 
   @Test

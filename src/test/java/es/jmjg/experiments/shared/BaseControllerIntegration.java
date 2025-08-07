@@ -46,8 +46,12 @@ public abstract class BaseControllerIntegration extends TestContainersConfig {
   protected static final UUID CHELSEY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440005");
 
   // Sample posts from Flyway migration data
+  protected static final UUID POST_1_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
+  protected static final String POST_1_TITLE = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
   protected static final UUID POST_2_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440007");
   protected static final String POST_2_TITLE = "qui est esse";
+  protected static final UUID POST_3_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440008");
+  protected static final String POST_3_TITLE = "ea molestias quasi exercitationem repellat qui ipsa sit aut";
 
   // Sample tag names from Flyway migration data
   protected static final String TECHNOLOGY_TAG_NAME = "technology";

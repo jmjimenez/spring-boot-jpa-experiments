@@ -51,18 +51,6 @@ public class PostMapper {
         convertTagsToPostTagResponseDto(post.getTags()));
   }
 
-  public SearchPostsResponseDto toSearchPostsResponseDto(Post post) {
-    if (post == null) {
-      return null;
-    }
-    return new SearchPostsResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
-  }
-
   public FindAllPostsResponseDto toFindAllPostsResponseDto(Post post) {
     if (post == null) {
       return null;
@@ -127,6 +115,18 @@ public class PostMapper {
     return posts.stream().map(this::toSearchPostsResponseDto).collect(Collectors.toList());
   }
 
+  public SearchPostsResponseDto toSearchPostsResponseDto(Post post) {
+    if (post == null) {
+      return null;
+    }
+    return new SearchPostsResponseDto(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        convertTagsToPostTagResponseDto(post.getTags()));
+  }
+
   public PagedResponseDto<FindAllPostsResponseDto> toPagedResponseDto(Page<Post> page) {
     if (page == null) {
       return new PagedResponseDto<>(List.of(), 0, 0, 0, 0, false, false);
@@ -151,7 +151,6 @@ public class PostMapper {
       return null;
     }
     Post post = new Post();
-    post.setUuid(postRequestDto.getUuid());
     post.setTitle(postRequestDto.getTitle());
     post.setBody(postRequestDto.getBody());
     // Note: tagUuids will be handled in the service layer

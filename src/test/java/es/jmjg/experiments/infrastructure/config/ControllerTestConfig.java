@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
-import es.jmjg.experiments.application.post.DeletePostById;
+import es.jmjg.experiments.application.post.DeletePostByUuid;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
@@ -36,8 +36,8 @@ public class ControllerTestConfig {
 
   @Bean
   @Primary
-  public DeletePostById deletePostById() {
-    return mock(DeletePostById.class);
+  public DeletePostByUuid deletePostById() {
+    return mock(DeletePostByUuid.class);
   }
 
   @Bean

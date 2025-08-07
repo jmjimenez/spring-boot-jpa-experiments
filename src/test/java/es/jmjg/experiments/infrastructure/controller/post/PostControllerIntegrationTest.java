@@ -11,9 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostRequestDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 
 class PostControllerIntegrationTest extends BaseControllerIntegration {
@@ -62,11 +66,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnPostByUuid() {
-    ResponseEntity<FindAllPostsResponseDto> response = restTemplate.getForEntity(
-        "/api/posts/" + POST_2_UUID, FindAllPostsResponseDto.class);
+    ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.getForEntity(
+        "/api/posts/" + POST_2_UUID, FindPostByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    FindAllPostsResponseDto post = response.getBody();
+    FindPostByUuidResponseDto post = response.getBody();
     assertThat(post).isNotNull().satisfies(p -> {
       assertThat(p.getTitle()).isEqualTo(POST_2_TITLE);
       assertThat(p.getTags()).isNotNull();
@@ -79,24 +83,27 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnNotFoundForInvalidUuid() {
     String randomUuid = java.util.UUID.randomUUID().toString();
-    ResponseEntity<FindAllPostsResponseDto> response = restTemplate.getForEntity("/api/posts/" + randomUuid,
-        FindAllPostsResponseDto.class);
+    ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.getForEntity("/api/posts/" + randomUuid,
+        FindPostByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
   void shouldSearchPosts() {
-    ResponseEntity<FindAllPostsResponseDto[]> response = restTemplate.getForEntity(
+    ResponseEntity<List<SearchPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts/search?q=" + SEARCH_TERM_SUNT + "&limit=20",
-        FindAllPostsResponseDto[].class);
+        HttpMethod.GET,
+        null,
+        new org.springframework.core.ParameterizedTypeReference<List<SearchPostsResponseDto>>() {
+        });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    FindAllPostsResponseDto[] posts = response.getBody();
+    List<SearchPostsResponseDto> posts = response.getBody();
     assertThat(posts).isNotNull().satisfies(p -> {
       assertThat(p).isNotNull();
       assertThat(p).hasSize(EXPECTED_SUNT_SEARCH_COUNT);
       // Verify that all posts have the tags field
-      for (FindAllPostsResponseDto post : p) {
+      for (SearchPostsResponseDto post : p) {
         assertThat(post.getTags()).isNotNull();
       }
     });
@@ -112,8 +119,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), LEANNE_UUID,
         postTitle, postBody, List.of(existingTagName, newTagName));
 
-    ResponseEntity<FindAllPostsResponseDto> response = restTemplate.exchange(
-        "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), FindAllPostsResponseDto.class);
+    final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
+        "/api/posts",
+        HttpMethod.POST,
+        new HttpEntity<>(postDto),
+        SavePostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     // Verify Location header is present and correct
@@ -121,7 +131,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(locationHeader).isNotNull();
     assertThat(locationHeader).startsWith("/api/posts/");
 
-    FindAllPostsResponseDto post = response.getBody();
+    SavePostResponseDto post = response.getBody();
     assertThat(post).isNotNull()
         .satisfies(
             body -> {
@@ -138,11 +148,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
     // Verify the post can be found and has the expected tags
     assertThat(post).isNotNull().satisfies(p -> {
-      ResponseEntity<FindAllPostsResponseDto> foundPostResponse = restTemplate.getForEntity(
-          "/api/posts/" + p.getUuid(), FindAllPostsResponseDto.class);
+      ResponseEntity<FindPostByUuidResponseDto> foundPostResponse = restTemplate.getForEntity(
+          "/api/posts/" + p.getUuid(), FindPostByUuidResponseDto.class);
       assertThat(foundPostResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-      FindAllPostsResponseDto foundPost = foundPostResponse.getBody();
+      FindPostByUuidResponseDto foundPost = foundPostResponse.getBody();
       assertThat(foundPost).isNotNull().satisfies(fp -> {
         assertThat(fp.getTags()).isNotNull();
         assertThat(fp.getTags()).hasSize(2);
@@ -155,8 +165,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldNotCreateNewPostWhenValidationFails() {
     SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), LEANNE_UUID, "", "", null);
-    ResponseEntity<FindAllPostsResponseDto> response = restTemplate.exchange(
-        "/api/posts", HttpMethod.POST, new HttpEntity<>(postDto), FindAllPostsResponseDto.class);
+    final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
+        "/api/posts",
+        HttpMethod.POST,
+        new HttpEntity<>(postDto),
+        SavePostResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
   }
@@ -169,14 +182,14 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     final String updatedBody = "Updated Body";
 
     UpdatePostRequestDto postDto = new UpdatePostRequestDto(
-        java.util.UUID.randomUUID(), LEANNE_UUID, updatedTitle, updatedBody,
+        updatedTitle, updatedBody,
         List.of(existingTagName, newTagName));
 
-    ResponseEntity<FindAllPostsResponseDto> response = restTemplate.exchange(
-        "/api/posts/1", HttpMethod.PUT, new HttpEntity<>(postDto), FindAllPostsResponseDto.class);
+    ResponseEntity<UpdatePostResponseDto> response = restTemplate.exchange(
+        "/api/posts/" + POST_1_UUID, HttpMethod.PUT, new HttpEntity<>(postDto), UpdatePostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    FindAllPostsResponseDto post = response.getBody();
+    UpdatePostResponseDto post = response.getBody();
     assertThat(post)
         .isNotNull()
         .satisfies(
@@ -188,17 +201,31 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
               assertThat(p.getTags()).extracting("name")
                   .containsExactlyInAnyOrder(existingTagName, newTagName);
             });
+
+    ResponseEntity<FindPostByUuidResponseDto> foundPostResponse = restTemplate.getForEntity(
+        "/api/posts/" + POST_1_UUID, FindPostByUuidResponseDto.class);
+    assertThat(foundPostResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    FindPostByUuidResponseDto foundPost = foundPostResponse.getBody();
+    assertThat(foundPost).isNotNull().satisfies(p -> {
+      assertThat(p.getTitle()).isEqualTo(updatedTitle);
+      assertThat(p.getBody()).isEqualTo(updatedBody);
+      assertThat(p.getTags()).isNotNull();
+      assertThat(p.getTags()).hasSize(2);
+      assertThat(p.getTags()).extracting("name")
+          .containsExactlyInAnyOrder(existingTagName, newTagName);
+    });
+
   }
 
   @Test
-  void shouldDeletePostById() {
-    // Given: Post with ID 2 exists (POST_2_UUID)
-    final int postId = 2;
-    final String postUuid = POST_2_UUID.toString();
+  void shouldDeletePostByUuid() {
+    // Given: Post with UUID POST_3_UUID exists
+    final String postUuid = POST_3_UUID.toString();
 
-    // When: Delete the post by ID
+    // When: Delete the post by UUID
     ResponseEntity<Void> deleteResponse = restTemplate.exchange(
-        "/api/posts/" + postId,
+        "/api/posts/" + postUuid,
         HttpMethod.DELETE,
         null,
         Void.class);
