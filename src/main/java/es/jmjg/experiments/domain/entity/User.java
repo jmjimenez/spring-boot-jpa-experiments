@@ -48,6 +48,10 @@ public class User {
   @Column(unique = true)
   private String username;
 
+  @NotEmpty
+  @Column(nullable = false)
+  private String password;
+
   @OneToMany(mappedBy = "user", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
   private List<Post> posts = new ArrayList<>();
 
@@ -56,12 +60,13 @@ public class User {
   private List<Tag> tags = new ArrayList<>();
 
   // Constructor with UUID
-  public User(Integer id, UUID uuid, String name, String email, String username, List<Post> posts) {
+  public User(Integer id, UUID uuid, String name, String email, String username, String password, List<Post> posts) {
     this.id = id;
     this.uuid = uuid;
     this.name = name;
     this.email = email;
     this.username = username;
+    this.password = password;
     this.posts = posts != null ? posts : new ArrayList<>();
   }
 }

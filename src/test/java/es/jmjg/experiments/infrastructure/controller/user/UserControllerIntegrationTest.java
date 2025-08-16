@@ -78,7 +78,8 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldCreateNewUserWhenUserIsValid() {
-    SaveUserRequestDto userDto = new SaveUserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser");
+    SaveUserRequestDto userDto = new SaveUserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser",
+        "password123");
 
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
         "/api/users", HttpMethod.POST, new HttpEntity<>(userDto), FindAllUsersResponseDto.class);
@@ -105,7 +106,7 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldUpdateExistingUser() {
     SaveUserRequestDto updateDto = new SaveUserRequestDto(PATRICIA_UUID, "Updated User", "updated@example.com",
-        "updateduser");
+        "updateduser", "password123");
 
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
         "/api/users/" + PATRICIA_UUID, HttpMethod.PUT, new HttpEntity<>(updateDto),

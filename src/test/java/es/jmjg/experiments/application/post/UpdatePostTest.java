@@ -3,14 +3,17 @@ package es.jmjg.experiments.application.post;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
@@ -36,7 +39,7 @@ class UpdatePostTest {
   @BeforeEach
   void setUp() {
     testPostUuid = UUID.randomUUID();
-    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
+    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", "encodedPassword123", null);
     testPost = new Post(1, testPostUuid, testUser, "Test Post", "Test Body");
   }
 
@@ -86,7 +89,8 @@ class UpdatePostTest {
   @Test
   void update_ShouldPreserveOriginalUuidAndUserId() {
     // Given
-    User updatedUser = new User(5, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
+    User updatedUser = new User(5, UUID.randomUUID(), "Test User", "test@example.com", "testuser", "encodedPassword123",
+        null);
     Post updateData = new Post(999, UUID.randomUUID(), updatedUser, "Updated Title", "Updated Body");
 
     when(postRepository.findByUuid(testPostUuid)).thenReturn(Optional.of(testPost));
@@ -114,8 +118,8 @@ class UpdatePostTest {
   @Test
   void update_WhenPostHasUser_ShouldNotUsePostUser() {
     // Given
-    User postUser =
-        new User(3, UUID.randomUUID(), "Post User", "post@example.com", "postuser", null);
+    User postUser = new User(3, UUID.randomUUID(), "Post User", "post@example.com", "postuser", "encodedPassword123",
+        null);
     UUID updateUuid = UUID.randomUUID();
     Post updateData = new Post(null, updateUuid, postUser, "Updated Title", "Updated Body");
 

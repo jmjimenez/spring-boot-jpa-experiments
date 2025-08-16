@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS Users (
     uuid UUID NOT NULL UNIQUE,
     name varchar(100) NOT NULL,
     email varchar(100) NOT NULL UNIQUE,
-    username varchar(50) UNIQUE
+    username varchar(50) UNIQUE,
+    password varchar(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Post (

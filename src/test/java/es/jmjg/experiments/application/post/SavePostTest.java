@@ -37,7 +37,7 @@ class SavePostTest {
 
   @BeforeEach
   void setUp() {
-    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
+    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", "encodedPassword123", null);
   }
 
   @Test

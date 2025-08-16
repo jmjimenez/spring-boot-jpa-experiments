@@ -319,6 +319,7 @@ class PostControllerTest {
     user.setName("Test User");
     user.setEmail("test@example.com");
     user.setUsername("testuser");
+    user.setPassword("encodedPassword123");
 
     Post updated = new Post();
     updated.setId(50);
@@ -366,6 +367,7 @@ class PostControllerTest {
     user.setName("Test User");
     user.setEmail("test@example.com");
     user.setUsername("testuser");
+    user.setPassword("encodedPassword123");
 
     Post searchResult1 = PostFactory.createPost(
         user, UUID.randomUUID(), "Spring Boot Tutorial", "Learn Spring Boot");

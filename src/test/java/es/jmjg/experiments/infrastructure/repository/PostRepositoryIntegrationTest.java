@@ -64,6 +64,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     user.setName("Test User");
     user.setEmail("test@example.com");
     user.setUsername("testuser");
+    user.setPassword("encodedPassword123");
     return user;
   }
 

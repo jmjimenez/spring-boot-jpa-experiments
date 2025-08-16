@@ -22,36 +22,47 @@ ALTER SEQUENCE tag_id_seq RESTART WITH 1;
 
 -- Insert Users
 INSERT INTO
-    Users (uuid, name, email, username)
+    Users (
+        uuid,
+        name,
+        email,
+        username,
+        password
+    )
 VALUES (
         '550e8400-e29b-41d4-a716-446655440001',
         'Leanne Graham',
         'leanne.graham@example.com',
-        'leanne_graham'
+        'leanne_graham',
+        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
     ),
     (
         '550e8400-e29b-41d4-a716-446655440002',
         'Ervin Howell',
         'ervin.howell@example.com',
-        'ervin_howell'
+        'ervin_howell',
+        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
     ),
     (
         '550e8400-e29b-41d4-a716-446655440003',
         'Clementine Bauch',
         'clementine.bauch@example.com',
-        'clementine_bauch'
+        'clementine_bauch',
+        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
     ),
     (
         '550e8400-e29b-41d4-a716-446655440004',
         'Patricia Lebsack',
         'patricia.lebsack@example.com',
-        'patricia_lebsack'
+        'patricia_lebsack',
+        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
     ),
     (
         '550e8400-e29b-41d4-a716-446655440005',
         'Chelsey Dietrich',
         'chelsey.dietrich@example.com',
-        'chelsey_dietrich'
+        'chelsey_dietrich',
+        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
     );
 
 -- Insert Tags

@@ -17,95 +17,7 @@ public class UserFactory {
    * @return a new User instance with default test values
    */
   public static User createBasicUser() {
-    User user = new User();
-    user.setUuid(UUID.randomUUID());
-    user.setName("Test User");
-    user.setEmail("test@example.com");
-    user.setUsername("testuser");
-    return user;
-  }
-
-  /**
-   * Creates a user with custom name, email, and username.
-   *
-   * @param name     the name for the user
-   * @param email    the email for the user
-   * @param username the username for the user
-   * @return a new User instance with the specified attributes
-   */
-  public static User createUser(String name, String email, String username) {
-    User user = new User();
-    user.setUuid(UUID.randomUUID());
-    user.setName(name);
-    user.setEmail(email);
-    user.setUsername(username);
-    return user;
-  }
-
-  /**
-   * Creates a user with a specific UUID and custom attributes.
-   *
-   * @param uuid     the UUID for the user
-   * @param name     the name for the user
-   * @param email    the email for the user
-   * @param username the username for the user
-   * @return a new User instance with the specified UUID and attributes
-   */
-  public static User createUser(UUID uuid, String name, String email, String username) {
-    User user = new User();
-    user.setUuid(uuid);
-    user.setName(name);
-    user.setEmail(email);
-    user.setUsername(username);
-    return user;
-  }
-
-  /**
-   * Creates a user with a specific ID and custom attributes.
-   *
-   * @param id       the ID for the user
-   * @param name     the name for the user
-   * @param email    the email for the user
-   * @param username the username for the user
-   * @return a new User instance with the specified ID and attributes
-   */
-  public static User createUser(Integer id, String name, String email, String username) {
-    User user = new User();
-    user.setId(id);
-    user.setUuid(UUID.randomUUID());
-    user.setName(name);
-    user.setEmail(email);
-    user.setUsername(username);
-    return user;
-  }
-
-  /**
-   * Creates a user with both specific ID and UUID.
-   *
-   * @param id       the ID for the user
-   * @param uuid     the UUID for the user
-   * @param name     the name for the user
-   * @param email    the email for the user
-   * @param username the username for the user
-   * @return a new User instance with the specified ID, UUID, and attributes
-   */
-  public static User createUser(Integer id, UUID uuid, String name, String email, String username) {
-    User user = new User();
-    user.setId(id);
-    user.setUuid(uuid);
-    user.setName(name);
-    user.setEmail(email);
-    user.setUsername(username);
-    return user;
-  }
-
-  /**
-   * Creates a John Doe user (commonly used in controller tests).
-   *
-   * @return a new User instance representing John Doe
-   */
-  public static User createJohnDoeUser() {
-    return createUser("John Doe", "john@example.com", "johndoe");
+    return createUser(UUID.randomUUID(), "Test User", "test@example.com", "testuser");
   }
 
   /**
@@ -128,20 +40,80 @@ public class UserFactory {
   }
 
   /**
-   * Creates a user without setting an ID (for integration tests where ID is
-   * generated).
+   * Creates a user with custom name, email, and username.
    *
    * @param name     the name for the user
    * @param email    the email for the user
    * @param username the username for the user
-   * @return a new User instance without an ID
+   * @return a new User instance with the specified attributes
    */
-  public static User createUserWithoutId(String name, String email, String username) {
+  public static User createUser(String name, String email, String username) {
     User user = new User();
     user.setUuid(UUID.randomUUID());
     user.setName(name);
     user.setEmail(email);
     user.setUsername(username);
+    user.setPassword("encodedPassword123");
+    return user;
+  }
+
+  /**
+   * Creates a user with a specific UUID and custom attributes.
+   *
+   * @param uuid     the UUID for the user
+   * @param name     the name for the user
+   * @param email    the email for the user
+   * @param username the username for the user
+   * @return a new User instance with the specified UUID and attributes
+   */
+  public static User createUser(UUID uuid, String name, String email, String username) {
+    User user = new User();
+    user.setUuid(uuid);
+    user.setName(name);
+    user.setEmail(email);
+    user.setUsername(username);
+    user.setPassword("encodedPassword123");
+    return user;
+  }
+
+  /**
+   * Creates a user with a specific ID and custom attributes.
+   *
+   * @param id       the ID for the user
+   * @param name     the name for the user
+   * @param email    the email for the user
+   * @param username the username for the user
+   * @return a new User instance with the specified ID and attributes
+   */
+  public static User createUser(Integer id, String name, String email, String username) {
+    User user = new User();
+    user.setId(id);
+    user.setUuid(UUID.randomUUID());
+    user.setName(name);
+    user.setEmail(email);
+    user.setUsername(username);
+    user.setPassword("encodedPassword123");
+    return user;
+  }
+
+  /**
+   * Creates a user with both specific ID and UUID.
+   *
+   * @param id       the ID for the user
+   * @param uuid     the UUID for the user
+   * @param name     the name for the user
+   * @param email    the email for the user
+   * @param username the username for the user
+   * @return a new User instance with the specified ID, UUID, and attributes
+   */
+  public static User createUser(Integer id, UUID uuid, String name, String email, String username) {
+    User user = new User();
+    user.setId(id);
+    user.setUuid(uuid);
+    user.setName(name);
+    user.setEmail(email);
+    user.setUsername(username);
+    user.setPassword("encodedPassword123");
     return user;
   }
 }

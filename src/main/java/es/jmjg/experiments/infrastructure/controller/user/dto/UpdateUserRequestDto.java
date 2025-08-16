@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Request DTO for creating a new user")
-public class SaveUserRequestDto {
+public class UpdateUserRequestDto {
   @NotNull(message = "UUID is required")
   @Schema(description = "Unique identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
   private UUID uuid;
@@ -29,7 +29,6 @@ public class SaveUserRequestDto {
   @Schema(description = "Username of the user", example = "johndoe")
   private String username;
 
-  @NotEmpty(message = "Password is required")
   @Schema(description = "Password of the user", example = "securePassword123")
   private String password;
 }

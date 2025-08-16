@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import es.jmjg.experiments.domain.entity.User;
@@ -14,10 +15,17 @@ import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByUsername
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserResponseDto;
 
 @Component
 public class UserMapper {
+
+  private final PasswordEncoder passwordEncoder;
+
+  public UserMapper(PasswordEncoder passwordEncoder) {
+    this.passwordEncoder = passwordEncoder;
+  }
 
   public FindAllUsersResponseDto toFindAllUsersResponseDto(User user) {
     return mapToResponseDto(user, (uuid, name, email, username, posts, tags) -> new FindAllUsersResponseDto(uuid, name,
@@ -70,6 +78,19 @@ public class UserMapper {
     user.setName(userRequestDto.getName());
     user.setEmail(userRequestDto.getEmail());
     user.setUsername(userRequestDto.getUsername());
+    user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
+    return user;
+  }
+
+  public User toDomain(UpdateUserRequestDto userDto) {
+    if (userDto == null) {
+      return null;
+    }
+    User user = new User();
+    user.setUuid(userDto.getUuid());
+    user.setName(userDto.getName());
+    user.setEmail(userDto.getEmail());
+    user.setUsername(userDto.getUsername());
     return user;
   }
 

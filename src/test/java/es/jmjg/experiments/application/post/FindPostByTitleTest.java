@@ -21,16 +21,18 @@ import es.jmjg.experiments.domain.repository.PostRepository;
 @ExtendWith(MockitoExtension.class)
 class FindPostByTitleTest {
 
-  @Mock private PostRepository postRepository;
+  @Mock
+  private PostRepository postRepository;
 
-  @InjectMocks private FindPostByTitle findPostByTitle;
+  @InjectMocks
+  private FindPostByTitle findPostByTitle;
 
   private Post testPost;
   private User testUser;
 
   @BeforeEach
   void setUp() {
-    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", null);
+    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", "encodedPassword123", null);
     testPost = new Post(1, UUID.randomUUID(), testUser, "Test Post", "Test Body");
   }
 

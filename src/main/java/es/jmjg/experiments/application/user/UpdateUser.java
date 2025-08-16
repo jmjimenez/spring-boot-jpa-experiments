@@ -25,6 +25,9 @@ public class UpdateUser {
       existingUser.setName(user.getName());
       existingUser.setEmail(user.getEmail());
       existingUser.setUsername(user.getUsername());
+      if (user.getPassword() != null) {
+        existingUser.setPassword(user.getPassword());
+      }
       if (user.getUuid() != null) {
         existingUser.setUuid(user.getUuid());
       }

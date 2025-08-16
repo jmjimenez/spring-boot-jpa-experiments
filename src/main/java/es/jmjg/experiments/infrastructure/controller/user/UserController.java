@@ -35,6 +35,7 @@ import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByUsername
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -159,7 +160,7 @@ public class UserController {
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
   UpdateUserResponseDto update(@Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
-      @Parameter(description = "Updated user data") @RequestBody @Valid SaveUserRequestDto userDto) {
+      @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
     User user = userMapper.toDomain(userDto);
     User existing = findUserByUuid.findByUuid(uuid).orElseThrow(UserNotFoundException::new);
     User updatedUser = updateUser.update(existing.getId(), user);
