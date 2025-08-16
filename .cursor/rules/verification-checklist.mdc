@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+---
+Before making any claim about test behavior:
+- Have I read the complete test output/log?
+- Have I identified all test executions in the log?
+- Have I checked for duplicate test runs?
+- Have I verified the Maven configuration?
+- Am I basing conclusions on evidence or assumptions?
+- Have I looked for test suite executions?
+- Have I counted how many times each test appears?

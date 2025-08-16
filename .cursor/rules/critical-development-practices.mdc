@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+---
+ALWAYS verify dependency compatibility before making claims - check official documentation, GitHub issues, and release notes
+NEVER assume compatibility issues without proper research - use official sources and recent information
+When dealing with version conflicts, check the latest releases and official compatibility matrices
+For Spring Boot compatibility issues, verify against the official Spring Boot compatibility matrix
+For third-party libraries, check their GitHub issues, releases, and official documentation
+If unsure about compatibility, say "I need to research this" rather than making assumptions
+Always provide sources when making compatibility claims
+When suggesting dependency changes, verify the change works before recommending it 

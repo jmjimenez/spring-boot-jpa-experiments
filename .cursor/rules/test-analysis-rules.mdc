@@ -1,0 +1,14 @@
+---
+alwaysApply: true
+---
+When analyzing test failures or logs:
+1. ALWAYS read the complete test log/output provided by user
+2. Look for patterns of test execution (which tests run, how many times)
+3. Identify actual error messages and stack traces
+4. Check for duplicate test executions or suite runs
+5. Verify test configuration and Maven profiles
+6. NEVER assume test behavior without examining evidence
+7. If user provides test.log, analyze it line by line for patterns
+8. Look for test suite executions in logs (IntegrationTestSuite, UnitTestSuite)
+9. Count how many times each test class appears in the log
+10. Verify Maven profile configurations match actual test execution
