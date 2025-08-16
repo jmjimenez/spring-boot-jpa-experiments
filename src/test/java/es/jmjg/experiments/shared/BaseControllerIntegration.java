@@ -65,8 +65,6 @@ public abstract class BaseControllerIntegration extends TestContainersConfig {
   @Autowired
   protected Environment environment;
 
-  // TODO: replace restTemplate with WebTestClient or RestAssured see
-  // https://www.wimdeblauwe.com/blog/2025/07/30/how-i-test-production-ready-spring-boot-applications/
   @Autowired
   protected TestRestTemplate restTemplate;
 
