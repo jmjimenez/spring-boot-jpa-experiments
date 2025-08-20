@@ -34,6 +34,7 @@ import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TagFactory;
+import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(TagController.class)
@@ -64,12 +65,6 @@ class TagControllerTest {
   @Autowired
   private FindTagByUuid findTagByUuid;
 
-  // Sample data from Flyway migration
-  private static final UUID LEANNE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
-  private static final UUID ERVIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
-  private static final UUID POST_1_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
-  private static final UUID POST_16_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
-
   private Tag testTag;
   private UUID testUuid;
   private Integer testId;
@@ -87,11 +82,14 @@ class TagControllerTest {
   @Test
   void shouldFindTagByUuid() throws Exception {
     // Given - Using existing migration test data
-    User user1 = UserFactory.createUser(LEANNE_UUID, "Leanne Graham", "leanne.graham@example.com", "leanne_graham");
-    User user2 = UserFactory.createUser(ERVIN_UUID, "Ervin Howell", "ervin.howell@example.com", "ervin_howell");
-    Post post1 = PostFactory.createPost(user1, POST_1_UUID,
-        "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", "Test content 1");
-    Post post2 = PostFactory.createPost(user2, POST_16_UUID, "et ea vero quia laudantium autem", "Test content 2");
+    User user1 = UserFactory.createUser(TestDataSamples.LEANNE_UUID, TestDataSamples.LEANNE_NAME,
+        TestDataSamples.LEANNE_EMAIL, TestDataSamples.LEANNE_USERNAME);
+    User user2 = UserFactory.createUser(TestDataSamples.ERVIN_UUID, TestDataSamples.ERVIN_NAME,
+        TestDataSamples.ERVIN_EMAIL, TestDataSamples.ERVIN_USERNAME);
+    Post post1 = PostFactory.createPost(user1, TestDataSamples.POST_1_UUID,
+        TestDataSamples.POST_1_TITLE, "Test content 1");
+    Post post2 = PostFactory.createPost(user2, TestDataSamples.POST_16_UUID, TestDataSamples.ERVIN_POST_TITLE,
+        "Test content 2");
 
     testTag.setUsers(List.of(user1, user2));
     testTag.setPosts(List.of(post1, post2));
@@ -105,12 +103,12 @@ class TagControllerTest {
         .andExpect(jsonPath("$.name").value("test-tag"))
         .andExpect(jsonPath("$.posts").isArray())
         .andExpect(jsonPath("$.posts").value(hasSize(2)))
-        .andExpect(jsonPath("$.posts[0]").value(POST_1_UUID.toString()))
-        .andExpect(jsonPath("$.posts[1]").value(POST_16_UUID.toString()))
+        .andExpect(jsonPath("$.posts[0]").value(TestDataSamples.POST_1_UUID.toString()))
+        .andExpect(jsonPath("$.posts[1]").value(TestDataSamples.POST_16_UUID.toString()))
         .andExpect(jsonPath("$.users").isArray())
         .andExpect(jsonPath("$.users").value(hasSize(2)))
-        .andExpect(jsonPath("$.users[0]").value(LEANNE_UUID.toString()))
-        .andExpect(jsonPath("$.users[1]").value(ERVIN_UUID.toString()));
+        .andExpect(jsonPath("$.users[0]").value(TestDataSamples.LEANNE_UUID.toString()))
+        .andExpect(jsonPath("$.users[1]").value(TestDataSamples.ERVIN_UUID.toString()));
   }
 
   @Test
@@ -136,10 +134,12 @@ class TagControllerTest {
   void shouldFindTagsByPattern() throws Exception {
     // Given
     String pattern = "test";
-    User user1 = UserFactory.createUser(LEANNE_UUID, "Leanne Graham", "leanne.graham@example.com", "leanne_graham");
-    User user2 = UserFactory.createUser(ERVIN_UUID, "Ervin Howell", "ervin.howell@example.com", "ervin_howell");
-    Post post1 = PostFactory.createPost(user1, POST_1_UUID, "Test Post 1", "Test content 1");
-    Post post2 = PostFactory.createPost(user2, POST_16_UUID, "Test Post 2", "Test content 2");
+    User user1 = UserFactory.createUser(TestDataSamples.LEANNE_UUID, TestDataSamples.LEANNE_NAME,
+        TestDataSamples.LEANNE_EMAIL, TestDataSamples.LEANNE_USERNAME);
+    User user2 = UserFactory.createUser(TestDataSamples.ERVIN_UUID, TestDataSamples.ERVIN_NAME,
+        TestDataSamples.ERVIN_EMAIL, TestDataSamples.ERVIN_USERNAME);
+    Post post1 = PostFactory.createPost(user1, TestDataSamples.POST_1_UUID, "Test Post 1", "Test content 1");
+    Post post2 = PostFactory.createPost(user2, TestDataSamples.POST_16_UUID, "Test Post 2", "Test content 2");
 
     testTag.setUsers(List.of(user1, user2));
     testTag.setPosts(List.of(post1, post2));
@@ -155,12 +155,12 @@ class TagControllerTest {
         .andExpect(jsonPath("$[0].name").value("test-tag"))
         .andExpect(jsonPath("$[0].posts").isArray())
         .andExpect(jsonPath("$[0].posts").value(hasSize(2)))
-        .andExpect(jsonPath("$[0].posts[0]").value(POST_1_UUID.toString()))
-        .andExpect(jsonPath("$[0].posts[1]").value(POST_16_UUID.toString()))
+        .andExpect(jsonPath("$[0].posts[0]").value(TestDataSamples.POST_1_UUID.toString()))
+        .andExpect(jsonPath("$[0].posts[1]").value(TestDataSamples.POST_16_UUID.toString()))
         .andExpect(jsonPath("$[0].users").isArray())
         .andExpect(jsonPath("$[0].users").value(hasSize(2)))
-        .andExpect(jsonPath("$[0].users[0]").value(LEANNE_UUID.toString()))
-        .andExpect(jsonPath("$[0].users[1]").value(ERVIN_UUID.toString()));
+        .andExpect(jsonPath("$[0].users[0]").value(TestDataSamples.LEANNE_UUID.toString()))
+        .andExpect(jsonPath("$[0].users[1]").value(TestDataSamples.ERVIN_UUID.toString()));
   }
 
   @Test

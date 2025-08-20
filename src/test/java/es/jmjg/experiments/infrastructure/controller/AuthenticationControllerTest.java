@@ -34,7 +34,7 @@ import es.jmjg.experiments.shared.UserFactory;
 @WebMvcTest(AuthenticationController.class)
 @Import(ControllerTestConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class AuthenticationControllerIntegrationTest {
+class AuthenticationControllerTest {
 
   private static final String AUTHENTICATE_ENDPOINT = "/authenticate";
   private static final String TEST_USERNAME = "admin";

@@ -24,6 +24,7 @@ public final class TestDataSamples {
   public static final String LEANNE_EMAIL = "leanne.graham@example.com";
   public static final String LEANNE_USERNAME = "leanne_graham";
 
+  public static final UUID ERVIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
   public static final String ERVIN_NAME = "Ervin Howell";
   public static final String ERVIN_EMAIL = "ervin.howell@example.com";
   public static final String ERVIN_USERNAME = "ervin_howell";
@@ -47,6 +48,7 @@ public final class TestDataSamples {
   public static final String POST_2_TITLE = "qui est esse";
   public static final UUID POST_3_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440008");
   public static final String POST_3_TITLE = "ea molestias quasi exercitationem repellat qui ipsa sit aut";
+  public static final UUID POST_16_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
 
   // Additional post titles and bodies from Flyway migration data
   public static final String ERVIN_POST_TITLE = "et ea vero quia laudantium autem";

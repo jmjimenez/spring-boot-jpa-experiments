@@ -33,14 +33,12 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
 import es.jmjg.experiments.shared.PostFactory;
+import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(PostController.class)
 @Import(ControllerTestConfig.class)
 class PostControllerTest {
-
-  // Sample post UUID from Flyway migration data
-  private static final UUID POST_2_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440007");
 
   @Autowired
   private MockMvc mockMvc;
@@ -290,7 +288,7 @@ class PostControllerTest {
         user, UUID.randomUUID(), "This is my brand new post", "UPDATED BODY");
     updated.setId(1);
 
-    when(updatePost.update(eq(POST_2_UUID), any(Post.class), any())).thenReturn(updated);
+    when(updatePost.update(eq(TestDataSamples.POST_2_UUID), any(Post.class), any())).thenReturn(updated);
     String requestBody = """
         {
             "uuid":"%s",
@@ -306,7 +304,7 @@ class PostControllerTest {
             updated.getBody());
 
     mockMvc
-        .perform(put("/api/posts/" + POST_2_UUID).contentType("application/json").content(requestBody))
+        .perform(put("/api/posts/" + TestDataSamples.POST_2_UUID).contentType("application/json").content(requestBody))
         .andExpect(status().isOk())
         .andExpect(content().json(requestBody + ",\"tags\":[]"));
   }
@@ -352,11 +350,11 @@ class PostControllerTest {
 
   @Test
   void shouldDeletePostWhenGivenValidUUID() throws Exception {
-    doNothing().when(deletePostById).deleteByUuid(POST_2_UUID);
+    doNothing().when(deletePostById).deleteByUuid(TestDataSamples.POST_2_UUID);
 
-    mockMvc.perform(delete("/api/posts/" + POST_2_UUID)).andExpect(status().isNoContent());
+    mockMvc.perform(delete("/api/posts/" + TestDataSamples.POST_2_UUID)).andExpect(status().isNoContent());
 
-    verify(deletePostById, times(1)).deleteByUuid(POST_2_UUID);
+    verify(deletePostById, times(1)).deleteByUuid(TestDataSamples.POST_2_UUID);
   }
 
   @Test
