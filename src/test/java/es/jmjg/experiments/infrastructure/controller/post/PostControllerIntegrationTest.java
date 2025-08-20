@@ -19,12 +19,14 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsRespons
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 
 class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnAllPosts() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
 
     ResponseEntity<PagedResponseDto<FindAllPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts",
@@ -47,7 +49,8 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnAllPostsWithPagination() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
 
     ResponseEntity<PagedResponseDto<FindAllPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts?page=0&size=5",
@@ -70,10 +73,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnPostByUuid() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
 
     ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
-        "/api/posts/" + POST_2_UUID,
+        "/api/posts/" + TestDataSamples.POST_2_UUID,
         HttpMethod.GET,
         request,
         FindPostByUuidResponseDto.class);
@@ -81,17 +85,19 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
     FindPostByUuidResponseDto post = response.getBody();
     assertThat(post).isNotNull().satisfies(p -> {
-      assertThat(p.getTitle()).isEqualTo(POST_2_TITLE);
+      assertThat(p.getTitle()).isEqualTo(TestDataSamples.POST_2_TITLE);
       assertThat(p.getTags()).isNotNull();
       assertThat(p.getTags()).hasSize(3);
       assertThat(p.getTags()).extracting("name")
-          .containsExactlyInAnyOrder(TECHNOLOGY_TAG_NAME, SPRING_BOOT_TAG_NAME, JPA_TAG_NAME);
+          .containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.SPRING_BOOT_TAG_NAME,
+              TestDataSamples.JPA_TAG_NAME);
     });
   }
 
   @Test
   void shouldReturnNotFoundForInvalidUuid() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
 
     String randomUuid = java.util.UUID.randomUUID().toString();
     ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
@@ -104,10 +110,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldSearchPosts() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
 
     ResponseEntity<List<SearchPostsResponseDto>> response = restTemplate.exchange(
-        "/api/posts/search?q=" + SEARCH_TERM_SUNT + "&limit=20",
+        "/api/posts/search?q=" + TestDataSamples.SEARCH_TERM_SUNT + "&limit=20",
         HttpMethod.GET,
         request,
         new org.springframework.core.ParameterizedTypeReference<List<SearchPostsResponseDto>>() {
@@ -117,7 +124,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     List<SearchPostsResponseDto> posts = response.getBody();
     assertThat(posts).isNotNull().satisfies(p -> {
       assertThat(p).isNotNull();
-      assertThat(p).hasSize(EXPECTED_SUNT_SEARCH_COUNT);
+      assertThat(p).hasSize(TestDataSamples.EXPECTED_SUNT_SEARCH_COUNT);
       // Verify that all posts have the tags field
       for (SearchPostsResponseDto post : p) {
         assertThat(post.getTags()).isNotNull();
@@ -127,16 +134,16 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldCreateNewPostWhenPostIsValid() {
-    final String existingTagName = TECHNOLOGY_TAG_NAME;
+    final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
     final String newTagName = "integration-test-tag";
     final String postTitle = "101 Title";
     final String postBody = "101 Body";
 
-    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), LEANNE_UUID,
+    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), TestDataSamples.LEANNE_UUID,
         postTitle, postBody, List.of(existingTagName, newTagName));
 
-    final String accessToken = getAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
-    HttpEntity<SavePostRequestDto> request = new HttpEntity<>(postDto, generateHeadersWithAccessToken(accessToken));
+    final String accessToken = createAccessToken(TestDataSamples.ADMIN_USERNAME, TestDataSamples.ADMIN_PASSWORD);
+    HttpEntity<SavePostRequestDto> request = createAuthenticatedRequestWithAccessToken(accessToken, postDto);
 
     final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
         "/api/posts",
@@ -154,7 +161,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(post).isNotNull()
         .satisfies(
             body -> {
-              assertThat(body.getUserId()).isEqualTo(LEANNE_UUID);
+              assertThat(body.getUserId()).isEqualTo(TestDataSamples.LEANNE_UUID);
               assertThat(body.getTitle()).isEqualTo(postTitle);
               assertThat(body.getBody()).isEqualTo(postBody);
               assertThat(body.getTags()).isNotNull();
@@ -167,7 +174,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
     // Verify the post can be found and has the expected tags
     assertThat(post).isNotNull().satisfies(p -> {
-      HttpEntity<String> getRequest = generateRequestWithAccessToken(accessToken);
+      HttpEntity<String> getRequest = createAuthenticatedRequestWithAccessToken(accessToken);
 
       ResponseEntity<FindPostByUuidResponseDto> foundPostResponse = restTemplate.exchange(
           "/api/posts/" + p.getUuid(),
@@ -188,10 +195,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldNotCreateNewPostWhenValidationFails() {
-    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), LEANNE_UUID, "", "", null);
+    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), TestDataSamples.LEANNE_UUID, "",
+        "", null);
 
-    final String accessToken = getAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
-    HttpEntity<SavePostRequestDto> request = new HttpEntity<>(postDto, generateHeadersWithAccessToken(accessToken));
+    HttpEntity<SavePostRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, postDto);
 
     final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
         "/api/posts",
@@ -204,7 +212,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldUpdatePostWhenPostExists() {
-    final String existingTagName = TECHNOLOGY_TAG_NAME;
+    final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
     final String newTagName = "update-test-tag";
     final String updatedTitle = "Updated Title";
     final String updatedBody = "Updated Body";
@@ -213,11 +221,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
         updatedTitle, updatedBody,
         List.of(existingTagName, newTagName));
 
-    final String accessToken = getAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
-    HttpEntity<UpdatePostRequestDto> request = new HttpEntity<>(postDto, generateHeadersWithAccessToken(accessToken));
+    final String accessToken = createAccessToken(TestDataSamples.ADMIN_USERNAME, TestDataSamples.ADMIN_PASSWORD);
+    HttpEntity<UpdatePostRequestDto> request = createAuthenticatedRequestWithAccessToken(accessToken, postDto);
 
     ResponseEntity<UpdatePostResponseDto> response = restTemplate.exchange(
-        "/api/posts/" + POST_1_UUID, HttpMethod.PUT, request, UpdatePostResponseDto.class);
+        "/api/posts/" + TestDataSamples.POST_1_UUID, HttpMethod.PUT, request, UpdatePostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     UpdatePostResponseDto post = response.getBody();
@@ -233,10 +241,10 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
                   .containsExactlyInAnyOrder(existingTagName, newTagName);
             });
 
-    HttpEntity<String> getRequest = generateRequestWithAccessToken(accessToken);
+    HttpEntity<String> getRequest = createAuthenticatedRequestWithAccessToken(accessToken);
 
     ResponseEntity<FindPostByUuidResponseDto> foundPostResponse = restTemplate.exchange(
-        "/api/posts/" + POST_1_UUID,
+        "/api/posts/" + TestDataSamples.POST_1_UUID,
         HttpMethod.GET,
         getRequest,
         FindPostByUuidResponseDto.class);
@@ -256,11 +264,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldDeletePostByUuid() {
-    final String accessToken = getAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
-    HttpEntity<String> request = generateRequestWithAccessToken(accessToken);
+    final String accessToken = createAccessToken(TestDataSamples.ADMIN_USERNAME, TestDataSamples.ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequestWithAccessToken(accessToken);
 
     // Given: Post with UUID POST_3_UUID exists
-    final String postUuid = POST_3_UUID.toString();
+    final String postUuid = TestDataSamples.POST_3_UUID.toString();
 
     // When: Delete the post by UUID
     ResponseEntity<Void> deleteResponse = restTemplate.exchange(
@@ -273,7 +281,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
     // And: Retrieving the post by UUID should return 404
-    HttpEntity<String> getRequest = generateRequestWithAccessToken(accessToken);
+    HttpEntity<String> getRequest = createAuthenticatedRequestWithAccessToken(accessToken);
 
     ResponseEntity<FindAllPostsResponseDto> getResponse = restTemplate.exchange(
         "/api/posts/" + postUuid,

@@ -21,13 +21,14 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationRequest;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 
 class SecurityIntegrationTest extends BaseControllerIntegration {
 
   private static final String AUTHENTICATE_ENDPOINT = "/authenticate";
   private static final String PROTECTED_ENDPOINT = "/api/posts/550e8400-e29b-41d4-a716-446655440006";
-  private static final String TEST_USERNAME = "admin";
-  private static final String TEST_PASSWORD = "testpass";
+  private static final String TEST_USERNAME = TestDataSamples.ADMIN_USERNAME;
+  private static final String TEST_PASSWORD = TestDataSamples.ADMIN_PASSWORD;
 
   private ObjectMapper objectMapper = new ObjectMapper();
 

@@ -12,36 +12,24 @@ import es.jmjg.experiments.application.tag.FindTagByUuid;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 
 class FindTagByUuidIntegrationTest extends BaseIntegration {
 
   @Autowired
   private FindTagByUuid findTagByUuid;
 
-  // Sample tags from Flyway test migration data
-  private static final UUID TECHNOLOGY_TAG_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
-  private static final String TECHNOLOGY_TAG_NAME = "technology";
-
-  private static final UUID JAVA_TAG_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
-  private static final String JAVA_TAG_NAME = "java";
-
-  private static final UUID SPRING_BOOT_TAG_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440059");
-  private static final String SPRING_BOOT_TAG_NAME = "spring-boot";
-
-  private static final UUID DATABASE_TAG_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440061");
-  private static final String DATABASE_TAG_NAME = "database";
-
   @Test
   void findByUuid_WhenTagExists_ShouldReturnTag() {
     // Given - using existing test data from migration
-    UUID existingTagUuid = TECHNOLOGY_TAG_UUID;
+    UUID existingTagUuid = TestDataSamples.TECHNOLOGY_UUID;
 
     // When
     Tag result = findTagByUuid.findByUuid(existingTagUuid);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getName()).isEqualTo(TECHNOLOGY_TAG_NAME);
+    assertThat(result.getName()).isEqualTo(TestDataSamples.TECHNOLOGY_TAG_NAME);
     assertThat(result.getUuid()).isEqualTo(existingTagUuid);
   }
 
@@ -67,14 +55,14 @@ class FindTagByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuidOptional_WhenTagExists_ShouldReturnOptionalWithTag() {
     // Given - using existing test data from migration
-    UUID existingTagUuid = JAVA_TAG_UUID;
+    UUID existingTagUuid = TestDataSamples.JAVA_UUID;
 
     // When
     Optional<Tag> result = findTagByUuid.findByUuidOptional(existingTagUuid);
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo(JAVA_TAG_NAME);
+    assertThat(result.get().getName()).isEqualTo(TestDataSamples.JAVA_TAG_NAME);
     assertThat(result.get().getUuid()).isEqualTo(existingTagUuid);
   }
 
@@ -102,8 +90,8 @@ class FindTagByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenMultipleTagsExist_ShouldReturnCorrectTag() {
     // Given - using existing test data from migration
-    UUID springBootTagUuid = SPRING_BOOT_TAG_UUID;
-    UUID databaseTagUuid = DATABASE_TAG_UUID;
+    UUID springBootTagUuid = TestDataSamples.SPRING_BOOT_TAG_UUID;
+    UUID databaseTagUuid = TestDataSamples.DATABASE_TAG_UUID;
 
     // When
     Tag springBootResult = findTagByUuid.findByUuid(springBootTagUuid);
@@ -111,11 +99,11 @@ class FindTagByUuidIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(springBootResult).isNotNull();
-    assertThat(springBootResult.getName()).isEqualTo(SPRING_BOOT_TAG_NAME);
+    assertThat(springBootResult.getName()).isEqualTo(TestDataSamples.SPRING_BOOT_TAG_NAME);
     assertThat(springBootResult.getUuid()).isEqualTo(springBootTagUuid);
 
     assertThat(databaseResult).isNotNull();
-    assertThat(databaseResult.getName()).isEqualTo(DATABASE_TAG_NAME);
+    assertThat(databaseResult.getName()).isEqualTo(TestDataSamples.DATABASE_TAG_NAME);
     assertThat(databaseResult.getUuid()).isEqualTo(databaseTagUuid);
   }
 }

@@ -17,16 +17,18 @@ import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 
 class TagControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldFindTagByUuid() {
     // Given
-    UUID tagUuid = TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(
         "/api/tags/" + tagUuid,
         HttpMethod.GET,
@@ -52,10 +54,11 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldFindTagByUuidWithNoRelations() {
     // Given
-    UUID tagUuid = NOT_USED_UUID;
+    UUID tagUuid = TestDataSamples.NOT_USED_UUID;
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(
         "/api/tags/" + tagUuid,
         HttpMethod.GET,
@@ -85,7 +88,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "tech";
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.exchange(
         "/api/tags/search?pattern=" + pattern,
         HttpMethod.GET,
@@ -114,7 +118,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "nonexistent";
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.exchange(
         "/api/tags/search?pattern=" + pattern,
         HttpMethod.GET,
@@ -135,7 +140,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID nonExistentUuid = UUID.randomUUID();
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(
         "/api/tags/" + nonExistentUuid,
         HttpMethod.GET,
@@ -150,10 +156,11 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldFindUsersByTag() {
     // Given
-    UUID tagUuid = TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags/" + tagUuid + "/users",
         HttpMethod.GET,
@@ -170,10 +177,11 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldFindPostsByTag() {
     // Given
-    UUID tagUuid = TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags/" + tagUuid + "/posts",
         HttpMethod.GET,
@@ -193,7 +201,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String tagName = "technology";
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags/search/users?name=" + tagName,
         HttpMethod.GET,
@@ -213,7 +222,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String tagName = "technology";
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags/search/posts?name=" + tagName,
         HttpMethod.GET,
@@ -233,7 +243,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "new-tag");
 
     // When
-    HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto);
+    HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, tagDto);
     ResponseEntity<SaveTagResponseDto> response = restTemplate.exchange(
         "/api/tags", HttpMethod.POST, request, SaveTagResponseDto.class);
 
@@ -257,11 +268,12 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldUpdateExistingTagName() {
     // Given
-    UUID tagUuid = JAVA_UUID;
+    UUID tagUuid = TestDataSamples.JAVA_UUID;
     UpdateTagRequestDto updateDto = new UpdateTagRequestDto(tagUuid, "updated-java");
 
     // When
-    HttpEntity<UpdateTagRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, updateDto);
+    HttpEntity<UpdateTagRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, updateDto);
     ResponseEntity<UpdateTagResponseDto> response = restTemplate.exchange(
         "/api/tags/" + tagUuid, HttpMethod.PUT, request,
         UpdateTagResponseDto.class);
@@ -279,10 +291,11 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnErrorWhenDeletingTagUsedByUser() {
     // Given
-    UUID tagUuid = DEVELOPER_UUID;
+    UUID tagUuid = TestDataSamples.DEVELOPER_UUID;
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
         "/api/tags/" + tagUuid, HttpMethod.DELETE, request, Void.class);
 
@@ -293,10 +306,11 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldDeleteUnusedTagByUuid() {
     // Given
-    UUID tagUuid = NOT_USED_UUID;
+    UUID tagUuid = TestDataSamples.NOT_USED_UUID;
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
         "/api/tags/" + tagUuid, HttpMethod.DELETE, request, Void.class);
 
@@ -307,10 +321,11 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnErrorWhenDeletingTagUsedByPost() {
     // Given
-    UUID tagUuid = TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
         "/api/tags/" + tagUuid, HttpMethod.DELETE, request, Void.class);
 
@@ -324,7 +339,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID nonExistentUuid = UUID.randomUUID();
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
         "/api/tags/" + nonExistentUuid, HttpMethod.DELETE, request, Void.class);
 
@@ -339,7 +355,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UpdateTagRequestDto updateDto = new UpdateTagRequestDto(nonExistentUuid, "updated-tag");
 
     // When
-    HttpEntity<UpdateTagRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, updateDto);
+    HttpEntity<UpdateTagRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, updateDto);
     ResponseEntity<UpdateTagResponseDto> response = restTemplate.exchange(
         "/api/tags/" + nonExistentUuid, HttpMethod.PUT, request,
         UpdateTagResponseDto.class);
@@ -354,7 +371,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID nonExistentUuid = UUID.randomUUID();
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags/" + nonExistentUuid + "/users",
         HttpMethod.GET,
@@ -372,7 +390,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID nonExistentUuid = UUID.randomUUID();
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags/" + nonExistentUuid + "/posts",
         HttpMethod.GET,
@@ -390,7 +409,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String nonExistentTagName = "nonexistent-tag";
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags/search/users?name=" + nonExistentTagName,
         HttpMethod.GET,
@@ -408,7 +428,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String nonExistentTagName = "nonexistent-tag";
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags/search/posts?name=" + nonExistentTagName,
         HttpMethod.GET,
@@ -427,11 +448,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     SaveTagRequestDto tagDto2 = new SaveTagRequestDto(UUID.randomUUID(), "duplicate-tag");
 
     // Create first tag
-    HttpEntity<SaveTagRequestDto> request1 = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto1);
+    HttpEntity<SaveTagRequestDto> request1 = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, tagDto1);
     restTemplate.exchange("/api/tags", HttpMethod.POST, request1, SaveTagResponseDto.class);
 
     // When - Try to create second tag with same name
-    HttpEntity<SaveTagRequestDto> request2 = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto2);
+    HttpEntity<SaveTagRequestDto> request2 = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, tagDto2);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags", HttpMethod.POST, request2, Object.class);
 
@@ -447,11 +470,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     SaveTagRequestDto tagDto2 = new SaveTagRequestDto(duplicateUuid, "second-tag");
 
     // Create first tag
-    HttpEntity<SaveTagRequestDto> request1 = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto1);
+    HttpEntity<SaveTagRequestDto> request1 = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, tagDto1);
     restTemplate.exchange("/api/tags", HttpMethod.POST, request1, SaveTagResponseDto.class);
 
     // When - Try to create second tag with same UUID
-    HttpEntity<SaveTagRequestDto> request2 = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto2);
+    HttpEntity<SaveTagRequestDto> request2 = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, tagDto2);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags", HttpMethod.POST, request2, Object.class);
 
@@ -465,7 +490,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "technology");
 
     // When
-    HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto);
+    HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, tagDto);
     ResponseEntity<Object> response = restTemplate.exchange(
         "/api/tags", HttpMethod.POST, request, Object.class);
 
@@ -480,7 +506,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "tech";
 
     // When
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.exchange(
         "/api/tags/search?pattern=" + pattern,
         HttpMethod.GET,

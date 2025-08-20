@@ -13,12 +13,14 @@ import org.springframework.http.ResponseEntity;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 
 class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldGetAllUsers() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Object> response = restTemplate.exchange("/api/users", HttpMethod.GET, request, Object.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -28,17 +30,19 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldFindUserByUuid() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange("/api/users/" + LEANNE_UUID,
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/" + TestDataSamples.LEANNE_UUID,
         HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindAllUsersResponseDto user = response.getBody();
     assertThat(user).isNotNull().satisfies(u -> {
-      assertThat(u.getUuid()).isEqualTo(LEANNE_UUID);
-      assertThat(u.getName()).isEqualTo(LEANNE_NAME);
-      assertThat(u.getEmail()).isEqualTo(LEANNE_EMAIL);
-      assertThat(u.getUsername()).isEqualTo(LEANNE_USERNAME);
+      assertThat(u.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+      assertThat(u.getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
+      assertThat(u.getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
+      assertThat(u.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
       assertThat(u.getPosts()).isNotEmpty();
       assertThat(u.getTags()).isNotEmpty();
     });
@@ -46,17 +50,18 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldFindUserByEmail() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users/search/email?email=" + ERVIN_EMAIL,
+        "/api/users/search/email?email=" + TestDataSamples.ERVIN_EMAIL,
         HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindAllUsersResponseDto user = response.getBody();
     assertThat(user).isNotNull().satisfies(u -> {
-      assertThat(u.getEmail()).isEqualTo(ERVIN_EMAIL);
-      assertThat(u.getName()).isEqualTo(ERVIN_NAME);
-      assertThat(u.getUsername()).isEqualTo(ERVIN_USERNAME);
+      assertThat(u.getEmail()).isEqualTo(TestDataSamples.ERVIN_EMAIL);
+      assertThat(u.getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
+      assertThat(u.getUsername()).isEqualTo(TestDataSamples.ERVIN_USERNAME);
       assertThat(u.getPosts()).isNotEmpty();
       assertThat(u.getTags()).isNotEmpty();
     });
@@ -64,17 +69,18 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldFindUserByUsername() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users/search/username?username=" + CLEMENTINE_USERNAME,
+        "/api/users/search/username?username=" + TestDataSamples.CLEMENTINE_USERNAME,
         HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindAllUsersResponseDto user = response.getBody();
     assertThat(user).isNotNull().satisfies(u -> {
-      assertThat(u.getUsername()).isEqualTo(CLEMENTINE_USERNAME);
-      assertThat(u.getName()).isEqualTo(CLEMENTINE_NAME);
-      assertThat(u.getEmail()).isEqualTo(CLEMENTINE_EMAIL);
+      assertThat(u.getUsername()).isEqualTo(TestDataSamples.CLEMENTINE_USERNAME);
+      assertThat(u.getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
+      assertThat(u.getEmail()).isEqualTo(TestDataSamples.CLEMENTINE_EMAIL);
       assertThat(u.getPosts()).isNotEmpty();
       assertThat(u.getTags()).isNotEmpty();
     });
@@ -85,7 +91,8 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
     SaveUserRequestDto userDto = new SaveUserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser",
         "password123");
 
-    HttpEntity<SaveUserRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, userDto);
+    HttpEntity<SaveUserRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, userDto);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
         "/api/users", HttpMethod.POST, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -110,17 +117,19 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldUpdateExistingUser() {
-    SaveUserRequestDto updateDto = new SaveUserRequestDto(PATRICIA_UUID, "Updated User", "updated@example.com",
+    SaveUserRequestDto updateDto = new SaveUserRequestDto(TestDataSamples.PATRICIA_UUID, "Updated User",
+        "updated@example.com",
         "updateduser", "password123");
 
-    HttpEntity<SaveUserRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, updateDto);
+    HttpEntity<SaveUserRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, updateDto);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users/" + PATRICIA_UUID, HttpMethod.PUT, request, FindAllUsersResponseDto.class);
+        "/api/users/" + TestDataSamples.PATRICIA_UUID, HttpMethod.PUT, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindAllUsersResponseDto updatedUser = response.getBody();
     assertThat(updatedUser).isNotNull().satisfies(u -> {
-      assertThat(u.getUuid()).isEqualTo(PATRICIA_UUID);
+      assertThat(u.getUuid()).isEqualTo(TestDataSamples.PATRICIA_UUID);
       assertThat(u.getName()).isEqualTo("Updated User");
       assertThat(u.getEmail()).isEqualTo("updated@example.com");
       assertThat(u.getUsername()).isEqualTo("updateduser");
@@ -131,9 +140,10 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldDeleteUserByUuid() {
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
-        "/api/users/" + CHELSEY_UUID, HttpMethod.DELETE, request, Void.class);
+        "/api/users/" + TestDataSamples.CHELSEY_UUID, HttpMethod.DELETE, request, Void.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
@@ -141,7 +151,8 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnNotFoundWhenUserDoesNotExist() {
     UUID nonExistentUuid = UUID.randomUUID();
 
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
         "/api/users/" + nonExistentUuid, HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -151,7 +162,8 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnNotFoundWhenUserByUuidDoesNotExist() {
     UUID nonExistentUuid = UUID.randomUUID();
 
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
         "/api/users/" + nonExistentUuid, HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -161,7 +173,8 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnNotFoundWhenUserByEmailDoesNotExist() {
     String nonExistentEmail = "nonexistent@example.com";
 
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
         "/api/users/search/email?email=" + nonExistentEmail, HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -171,7 +184,8 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnNotFoundWhenUserByUsernameDoesNotExist() {
     String nonExistentUsername = "nonexistentuser";
 
-    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
         "/api/users/search/username?username=" + nonExistentUsername, HttpMethod.GET, request,
         FindAllUsersResponseDto.class);
