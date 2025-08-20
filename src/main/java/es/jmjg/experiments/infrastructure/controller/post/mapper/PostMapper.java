@@ -1,9 +1,12 @@
 package es.jmjg.experiments.infrastructure.controller.post.mapper;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +26,8 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponse
 
 @Component
 public class PostMapper {
+
+  private static final Logger logger = LoggerFactory.getLogger(PostMapper.class);
 
   // Generic method for creating response DTOs from Post
   private <T> T createResponseDto(Post post, Function<Post, T> dtoCreator) {
@@ -132,66 +137,171 @@ public class PostMapper {
 
   // Private helper methods for creating specific response DTOs
   private UpdatePostResponseDto createUpdatePostResponseDto(Post post) {
-    return new UpdatePostResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
+    logger.debug("Creating UpdatePostResponseDto for post UUID: {}", post.getUuid());
+    try {
+      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
+      UUID userUuid = post.getUser().getUuid();
+      logger.debug("Successfully accessed user UUID: {}", userUuid);
+
+      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
+      List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      logger.debug("Successfully accessed tags, count: {}", tags.size());
+
+      return new UpdatePostResponseDto(
+          post.getUuid(),
+          userUuid,
+          post.getTitle(),
+          post.getBody(),
+          tags);
+    } catch (org.hibernate.LazyInitializationException e) {
+      logger.error("LazyInitializationException in createUpdatePostResponseDto for post UUID: {}. Error: {}",
+          post.getUuid(), e.getMessage(), e);
+      throw e;
+    }
   }
 
   private SavePostResponseDto createSavePostResponseDto(Post post) {
-    return new SavePostResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
+    logger.debug("Creating SavePostResponseDto for post UUID: {}", post.getUuid());
+    try {
+      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
+      UUID userUuid = post.getUser().getUuid();
+      logger.debug("Successfully accessed user UUID: {}", userUuid);
+
+      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
+      List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      logger.debug("Successfully accessed tags, count: {}", tags.size());
+
+      return new SavePostResponseDto(
+          post.getUuid(),
+          userUuid,
+          post.getTitle(),
+          post.getBody(),
+          tags);
+    } catch (org.hibernate.LazyInitializationException e) {
+      logger.error("LazyInitializationException in createSavePostResponseDto for post UUID: {}. Error: {}",
+          post.getUuid(), e.getMessage(), e);
+      throw e;
+    }
   }
 
   private FindPostByUuidResponseDto createFindPostByUuidResponseDto(Post post) {
-    return new FindPostByUuidResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
+    logger.debug("Creating FindPostByUuidResponseDto for post UUID: {}", post.getUuid());
+    try {
+      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
+      UUID userUuid = post.getUser().getUuid();
+      logger.debug("Successfully accessed user UUID: {}", userUuid);
+
+      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
+      List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      logger.debug("Successfully accessed tags, count: {}", tags.size());
+
+      return new FindPostByUuidResponseDto(
+          post.getUuid(),
+          userUuid,
+          post.getTitle(),
+          post.getBody(),
+          tags);
+    } catch (org.hibernate.LazyInitializationException e) {
+      logger.error("LazyInitializationException in createFindPostByUuidResponseDto for post UUID: {}. Error: {}",
+          post.getUuid(), e.getMessage(), e);
+      throw e;
+    }
   }
 
   private FindAllPostsResponseDto createFindAllPostsResponseDto(Post post) {
-    return new FindAllPostsResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
+    logger.debug("Creating FindAllPostsResponseDto for post UUID: {}", post.getUuid());
+    try {
+      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
+      UUID userUuid = post.getUser().getUuid();
+      logger.debug("Successfully accessed user UUID: {}", userUuid);
+
+      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
+      List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      logger.debug("Successfully accessed tags, count: {}", tags.size());
+
+      return new FindAllPostsResponseDto(
+          post.getUuid(),
+          userUuid,
+          post.getTitle(),
+          post.getBody(),
+          tags);
+    } catch (org.hibernate.LazyInitializationException e) {
+      logger.error("LazyInitializationException in createFindAllPostsResponseDto for post UUID: {}. Error: {}",
+          post.getUuid(), e.getMessage(), e);
+      throw e;
+    }
   }
 
   private FindPostByTagResponseDto createFindPostByTagResponseDto(Post post) {
-    return new FindPostByTagResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
+    logger.debug("Creating FindPostByTagResponseDto for post UUID: {}", post.getUuid());
+    try {
+      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
+      UUID userUuid = post.getUser().getUuid();
+      logger.debug("Successfully accessed user UUID: {}", userUuid);
+
+      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
+      List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      logger.debug("Successfully accessed tags, count: {}", tags.size());
+
+      return new FindPostByTagResponseDto(
+          post.getUuid(),
+          userUuid,
+          post.getTitle(),
+          post.getBody(),
+          tags);
+    } catch (org.hibernate.LazyInitializationException e) {
+      logger.error("LazyInitializationException in createFindPostByTagResponseDto for post UUID: {}. Error: {}",
+          post.getUuid(), e.getMessage(), e);
+      throw e;
+    }
   }
 
   private FindPostByTagNameResponseDto createFindPostByTagNameResponseDto(Post post) {
-    return new FindPostByTagNameResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
+    logger.debug("Creating FindPostByTagNameResponseDto for post UUID: {}", post.getUuid());
+    try {
+      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
+      UUID userUuid = post.getUser().getUuid();
+      logger.debug("Successfully accessed user UUID: {}", userUuid);
+
+      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
+      List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      logger.debug("Successfully accessed tags, count: {}", tags.size());
+
+      return new FindPostByTagNameResponseDto(
+          post.getUuid(),
+          userUuid,
+          post.getTitle(),
+          post.getBody(),
+          tags);
+    } catch (org.hibernate.LazyInitializationException e) {
+      logger.error("LazyInitializationException in createFindPostByTagNameResponseDto for post UUID: {}. Error: {}",
+          post.getUuid(), e.getMessage(), e);
+      throw e;
+    }
   }
 
   private SearchPostsResponseDto createSearchPostsResponseDto(Post post) {
-    return new SearchPostsResponseDto(
-        post.getUuid(),
-        post.getUser().getUuid(),
-        post.getTitle(),
-        post.getBody(),
-        convertTagsToPostTagResponseDto(post.getTags()));
+    logger.debug("Creating SearchPostsResponseDto for post UUID: {}", post.getUuid());
+    try {
+      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
+      UUID userUuid = post.getUser().getUuid();
+      logger.debug("Successfully accessed user UUID: {}", userUuid);
+
+      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
+      List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      logger.debug("Successfully accessed tags, count: {}", tags.size());
+
+      return new SearchPostsResponseDto(
+          post.getUuid(),
+          userUuid,
+          post.getTitle(),
+          post.getBody(),
+          tags);
+    } catch (org.hibernate.LazyInitializationException e) {
+      logger.error("LazyInitializationException in createSearchPostsResponseDto for post UUID: {}. Error: {}",
+          post.getUuid(), e.getMessage(), e);
+      throw e;
+    }
   }
 
   // Private helper methods for domain conversion
@@ -215,12 +325,21 @@ public class PostMapper {
   }
 
   private List<PostTagResponseDto> convertTagsToPostTagResponseDto(List<Tag> tags) {
+    logger.debug("Converting tags to PostTagResponseDto, tags count: {}", tags != null ? tags.size() : 0);
     if (tags == null || tags.isEmpty()) {
       return List.of();
     }
-    return tags.stream()
-        .filter(tag -> tag != null && tag.getUuid() != null && tag.getName() != null)
-        .map(tag -> new PostTagResponseDto(tag.getUuid(), tag.getName()))
-        .collect(Collectors.toList());
+    try {
+      return tags.stream()
+          .filter(tag -> tag != null && tag.getUuid() != null && tag.getName() != null)
+          .map(tag -> {
+            logger.debug("Processing tag UUID: {}, Name: {}", tag.getUuid(), tag.getName());
+            return new PostTagResponseDto(tag.getUuid(), tag.getName());
+          })
+          .collect(Collectors.toList());
+    } catch (org.hibernate.LazyInitializationException e) {
+      logger.error("LazyInitializationException in convertTagsToPostTagResponseDto. Error: {}", e.getMessage(), e);
+      throw e;
+    }
   }
 }

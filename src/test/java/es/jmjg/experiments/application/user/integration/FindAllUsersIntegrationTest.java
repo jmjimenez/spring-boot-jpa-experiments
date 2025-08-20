@@ -38,6 +38,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   private static final UUID CLEMENTINE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
   private static final UUID PATRICIA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440004");
   private static final UUID CHELSEY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440005");
+  private static final UUID ADMIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
 
   @BeforeEach
   void setUp() {
@@ -51,21 +52,21 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getContent()).hasSize(5);
+    assertThat(result.getContent()).hasSize(6);
     assertThat(result.getContent()).extracting("name")
         .containsExactlyInAnyOrder("Leanne Graham", "Ervin Howell", "Clementine Bauch",
-            "Patricia Lebsack", "Chelsey Dietrich");
+            "Patricia Lebsack", "Chelsey Dietrich", "Admin User");
     assertThat(result.getContent()).extracting("email")
         .containsExactlyInAnyOrder("leanne.graham@example.com", "ervin.howell@example.com",
             "clementine.bauch@example.com", "patricia.lebsack@example.com",
-            "chelsey.dietrich@example.com");
+            "chelsey.dietrich@example.com", "admin@test.com");
     assertThat(result.getContent()).extracting("username")
         .containsExactlyInAnyOrder("leanne_graham", "ervin_howell", "clementine_bauch",
-            "patricia_lebsack", "chelsey_dietrich");
+            "patricia_lebsack", "chelsey_dietrich", "admin");
     assertThat(result.getContent()).extracting("uuid")
         .containsExactlyInAnyOrder(LEANNE_UUID, ERVIN_UUID, CLEMENTINE_UUID,
-            PATRICIA_UUID, CHELSEY_UUID);
-    assertThat(result.getTotalElements()).isEqualTo(5);
+            PATRICIA_UUID, CHELSEY_UUID, ADMIN_UUID);
+    assertThat(result.getTotalElements()).isEqualTo(6);
     assertThat(result.getTotalPages()).isEqualTo(1);
   }
 
@@ -155,12 +156,12 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getContent()).hasSize(5);
+    assertThat(result.getContent()).hasSize(6);
     assertThat(result.getContent()).extracting("name")
         .contains("Updated Leanne Graham");
     assertThat(result.getContent()).extracting("email")
         .contains("updated.leanne@example.com");
-    assertThat(result.getTotalElements()).isEqualTo(5);
+    assertThat(result.getTotalElements()).isEqualTo(6);
     assertThat(result.getTotalPages()).isEqualTo(1);
   }
 
@@ -176,12 +177,12 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getContent()).hasSize(4);
+    assertThat(result.getContent()).hasSize(5);
     assertThat(result.getContent()).extracting("name")
         .doesNotContain("Leanne Graham");
     assertThat(result.getContent()).extracting("uuid")
         .doesNotContain(LEANNE_UUID);
-    assertThat(result.getTotalElements()).isEqualTo(4);
+    assertThat(result.getTotalElements()).isEqualTo(5);
     assertThat(result.getTotalPages()).isEqualTo(1);
   }
 
@@ -279,16 +280,16 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     // Then
     assertThat(firstResult).isNotNull();
     assertThat(secondResult).isNotNull();
-    assertThat(firstResult.getContent()).hasSize(5);
-    assertThat(secondResult.getContent()).hasSize(5);
+    assertThat(firstResult.getContent()).hasSize(6);
+    assertThat(secondResult.getContent()).hasSize(6);
     assertThat(firstResult.getContent()).extracting("uuid")
         .containsExactlyInAnyOrder(LEANNE_UUID, ERVIN_UUID, CLEMENTINE_UUID,
-            PATRICIA_UUID, CHELSEY_UUID);
+            PATRICIA_UUID, CHELSEY_UUID, ADMIN_UUID);
     assertThat(secondResult.getContent()).extracting("uuid")
         .containsExactlyInAnyOrder(LEANNE_UUID, ERVIN_UUID, CLEMENTINE_UUID,
-            PATRICIA_UUID, CHELSEY_UUID);
-    assertThat(firstResult.getTotalElements()).isEqualTo(5);
-    assertThat(secondResult.getTotalElements()).isEqualTo(5);
+            PATRICIA_UUID, CHELSEY_UUID, ADMIN_UUID);
+    assertThat(firstResult.getTotalElements()).isEqualTo(6);
+    assertThat(secondResult.getTotalElements()).isEqualTo(6);
     assertThat(firstResult.getTotalPages()).isEqualTo(1);
     assertThat(secondResult.getTotalPages()).isEqualTo(1);
   }

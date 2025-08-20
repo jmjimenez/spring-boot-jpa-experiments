@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 
 import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
@@ -217,6 +218,23 @@ public class GlobalExceptionHandler {
         .path(request.getDescription(false))
         .build();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
+
+  @ExceptionHandler(ResponseStatusException.class)
+  public ResponseEntity<ApiErrorResponse> handleResponseStatusException(
+      ResponseStatusException ex, WebRequest request) {
+    log.warn("Response status exception: {}", ex.getMessage());
+
+    HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(status.value())
+        .error(status.getReasonPhrase())
+        .message(ex.getReason() != null ? ex.getReason() : ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+
+    return ResponseEntity.status(status).body(errorResponse);
   }
 
   @ExceptionHandler(Exception.class)

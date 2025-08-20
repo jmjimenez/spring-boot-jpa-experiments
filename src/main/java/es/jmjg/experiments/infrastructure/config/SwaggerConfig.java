@@ -9,6 +9,10 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
@@ -35,6 +39,25 @@ public class SwaggerConfig {
                 new Server().url("http://localhost:8080").description("Local development server"),
                 new Server()
                     .url("https://your-production-domain.com")
-                    .description("Production server")));
+                    .description("Production server")))
+        .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+        .components(
+            new io.swagger.v3.oas.models.Components()
+                .addSecuritySchemes("Bearer Authentication", createOAuth2Scheme()));
+  }
+
+  private SecurityScheme createOAuth2Scheme() {
+    return new SecurityScheme()
+        .type(SecurityScheme.Type.OAUTH2)
+        .description("OAuth2 password flow for JWT authentication")
+        .flows(
+            new OAuthFlows()
+                .password(
+                    new OAuthFlow()
+                        .tokenUrl("/authenticate")
+                        .scopes(
+                            new io.swagger.v3.oas.models.security.Scopes()
+                                .addString("read", "Read access")
+                                .addString("write", "Write access"))));
   }
 }

@@ -26,8 +26,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID tagUuid = TECHNOLOGY_UUID;
 
     // When
-    ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.getForEntity("/api/tags/" + tagUuid,
-        FindTagByUuidResponseDto.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(
+        "/api/tags/" + tagUuid,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<FindTagByUuidResponseDto>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -50,8 +55,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID tagUuid = NOT_USED_UUID;
 
     // When
-    ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.getForEntity("/api/tags/" + tagUuid,
-        FindTagByUuidResponseDto.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(
+        "/api/tags/" + tagUuid,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<FindTagByUuidResponseDto>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -75,8 +85,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "tech";
 
     // When
-    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
-        FindTagByPatternResponseDto[].class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.exchange(
+        "/api/tags/search?pattern=" + pattern,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<FindTagByPatternResponseDto[]>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -99,8 +114,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "nonexistent";
 
     // When
-    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
-        FindTagByPatternResponseDto[].class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.exchange(
+        "/api/tags/search?pattern=" + pattern,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<FindTagByPatternResponseDto[]>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -115,8 +135,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID nonExistentUuid = UUID.randomUUID();
 
     // When
-    ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.getForEntity("/api/tags/" + nonExistentUuid,
-        FindTagByUuidResponseDto.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(
+        "/api/tags/" + nonExistentUuid,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<FindTagByUuidResponseDto>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -128,8 +153,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID tagUuid = TECHNOLOGY_UUID;
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/" + tagUuid + "/users",
-        Object.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags/" + tagUuid + "/users",
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<Object>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -143,8 +173,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID tagUuid = TECHNOLOGY_UUID;
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/" + tagUuid + "/posts",
-        Object.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags/" + tagUuid + "/posts",
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<Object>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -158,8 +193,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String tagName = "technology";
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search/users?name=" + tagName,
-        Object.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags/search/users?name=" + tagName,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<Object>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -173,8 +213,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String tagName = "technology";
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search/posts?name=" + tagName,
-        Object.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags/search/posts?name=" + tagName,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<Object>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -188,8 +233,9 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "new-tag");
 
     // When
+    HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto);
     ResponseEntity<SaveTagResponseDto> response = restTemplate.exchange(
-        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto), SaveTagResponseDto.class);
+        "/api/tags", HttpMethod.POST, request, SaveTagResponseDto.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -215,8 +261,9 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UpdateTagRequestDto updateDto = new UpdateTagRequestDto(tagUuid, "updated-java");
 
     // When
+    HttpEntity<UpdateTagRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, updateDto);
     ResponseEntity<UpdateTagResponseDto> response = restTemplate.exchange(
-        "/api/tags/" + tagUuid, HttpMethod.PUT, new HttpEntity<>(updateDto),
+        "/api/tags/" + tagUuid, HttpMethod.PUT, request,
         UpdateTagResponseDto.class);
 
     // Then
@@ -235,8 +282,9 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID tagUuid = DEVELOPER_UUID;
 
     // When
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
-        "/api/tags/" + tagUuid, HttpMethod.DELETE, null, Void.class);
+        "/api/tags/" + tagUuid, HttpMethod.DELETE, request, Void.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -248,8 +296,9 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID tagUuid = NOT_USED_UUID;
 
     // When
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
-        "/api/tags/" + tagUuid, HttpMethod.DELETE, null, Void.class);
+        "/api/tags/" + tagUuid, HttpMethod.DELETE, request, Void.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -261,8 +310,9 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID tagUuid = TECHNOLOGY_UUID;
 
     // When
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
-        "/api/tags/" + tagUuid, HttpMethod.DELETE, null, Void.class);
+        "/api/tags/" + tagUuid, HttpMethod.DELETE, request, Void.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -274,8 +324,9 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID nonExistentUuid = UUID.randomUUID();
 
     // When
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
-        "/api/tags/" + nonExistentUuid, HttpMethod.DELETE, null, Void.class);
+        "/api/tags/" + nonExistentUuid, HttpMethod.DELETE, request, Void.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -288,8 +339,9 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UpdateTagRequestDto updateDto = new UpdateTagRequestDto(nonExistentUuid, "updated-tag");
 
     // When
+    HttpEntity<UpdateTagRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, updateDto);
     ResponseEntity<UpdateTagResponseDto> response = restTemplate.exchange(
-        "/api/tags/" + nonExistentUuid, HttpMethod.PUT, new HttpEntity<>(updateDto),
+        "/api/tags/" + nonExistentUuid, HttpMethod.PUT, request,
         UpdateTagResponseDto.class);
 
     // Then
@@ -302,8 +354,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID nonExistentUuid = UUID.randomUUID();
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/" + nonExistentUuid + "/users",
-        Object.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags/" + nonExistentUuid + "/users",
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<Object>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -315,8 +372,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     UUID nonExistentUuid = UUID.randomUUID();
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/" + nonExistentUuid + "/posts",
-        Object.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags/" + nonExistentUuid + "/posts",
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<Object>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -328,8 +390,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String nonExistentTagName = "nonexistent-tag";
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search/users?name=" + nonExistentTagName,
-        Object.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags/search/users?name=" + nonExistentTagName,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<Object>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -341,8 +408,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String nonExistentTagName = "nonexistent-tag";
 
     // When
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/tags/search/posts?name=" + nonExistentTagName,
-        Object.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<Object> response = restTemplate.exchange(
+        "/api/tags/search/posts?name=" + nonExistentTagName,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<Object>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -355,11 +427,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     SaveTagRequestDto tagDto2 = new SaveTagRequestDto(UUID.randomUUID(), "duplicate-tag");
 
     // Create first tag
-    restTemplate.exchange("/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto1), SaveTagResponseDto.class);
+    HttpEntity<SaveTagRequestDto> request1 = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto1);
+    restTemplate.exchange("/api/tags", HttpMethod.POST, request1, SaveTagResponseDto.class);
 
     // When - Try to create second tag with same name
+    HttpEntity<SaveTagRequestDto> request2 = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto2);
     ResponseEntity<Object> response = restTemplate.exchange(
-        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto2), Object.class);
+        "/api/tags", HttpMethod.POST, request2, Object.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -373,11 +447,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     SaveTagRequestDto tagDto2 = new SaveTagRequestDto(duplicateUuid, "second-tag");
 
     // Create first tag
-    restTemplate.exchange("/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto1), SaveTagResponseDto.class);
+    HttpEntity<SaveTagRequestDto> request1 = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto1);
+    restTemplate.exchange("/api/tags", HttpMethod.POST, request1, SaveTagResponseDto.class);
 
     // When - Try to create second tag with same UUID
+    HttpEntity<SaveTagRequestDto> request2 = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto2);
     ResponseEntity<Object> response = restTemplate.exchange(
-        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto2), Object.class);
+        "/api/tags", HttpMethod.POST, request2, Object.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -389,8 +465,9 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "technology");
 
     // When
+    HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, tagDto);
     ResponseEntity<Object> response = restTemplate.exchange(
-        "/api/tags", HttpMethod.POST, new HttpEntity<>(tagDto), Object.class);
+        "/api/tags", HttpMethod.POST, request, Object.class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -403,8 +480,13 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
     String pattern = "tech";
 
     // When
-    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.getForEntity("/api/tags/search?pattern=" + pattern,
-        FindTagByPatternResponseDto[].class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.exchange(
+        "/api/tags/search?pattern=" + pattern,
+        HttpMethod.GET,
+        request,
+        new org.springframework.core.ParameterizedTypeReference<FindTagByPatternResponseDto[]>() {
+        });
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

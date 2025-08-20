@@ -24,10 +24,12 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnAllPosts() {
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+
     ResponseEntity<PagedResponseDto<FindAllPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts",
         HttpMethod.GET,
-        null,
+        request,
         new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<FindAllPostsResponseDto>>() {
         });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -45,10 +47,12 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnAllPostsWithPagination() {
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+
     ResponseEntity<PagedResponseDto<FindAllPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts?page=0&size=5",
         HttpMethod.GET,
-        null,
+        request,
         new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<FindAllPostsResponseDto>>() {
         });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -66,8 +70,13 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnPostByUuid() {
-    ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.getForEntity(
-        "/api/posts/" + POST_2_UUID, FindPostByUuidResponseDto.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+
+    ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
+        "/api/posts/" + POST_2_UUID,
+        HttpMethod.GET,
+        request,
+        FindPostByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindPostByUuidResponseDto post = response.getBody();
@@ -82,18 +91,25 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnNotFoundForInvalidUuid() {
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+
     String randomUuid = java.util.UUID.randomUUID().toString();
-    ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.getForEntity("/api/posts/" + randomUuid,
+    ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
+        "/api/posts/" + randomUuid,
+        HttpMethod.GET,
+        request,
         FindPostByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
   void shouldSearchPosts() {
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+
     ResponseEntity<List<SearchPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts/search?q=" + SEARCH_TERM_SUNT + "&limit=20",
         HttpMethod.GET,
-        null,
+        request,
         new org.springframework.core.ParameterizedTypeReference<List<SearchPostsResponseDto>>() {
         });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -119,10 +135,13 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), LEANNE_UUID,
         postTitle, postBody, List.of(existingTagName, newTagName));
 
+    final String accessToken = getAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<SavePostRequestDto> request = new HttpEntity<>(postDto, generateHeadersWithAccessToken(accessToken));
+
     final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
         "/api/posts",
         HttpMethod.POST,
-        new HttpEntity<>(postDto),
+        request,
         SavePostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -148,8 +167,13 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
     // Verify the post can be found and has the expected tags
     assertThat(post).isNotNull().satisfies(p -> {
-      ResponseEntity<FindPostByUuidResponseDto> foundPostResponse = restTemplate.getForEntity(
-          "/api/posts/" + p.getUuid(), FindPostByUuidResponseDto.class);
+      HttpEntity<String> getRequest = generateRequestWithAccessToken(accessToken);
+
+      ResponseEntity<FindPostByUuidResponseDto> foundPostResponse = restTemplate.exchange(
+          "/api/posts/" + p.getUuid(),
+          HttpMethod.GET,
+          getRequest,
+          FindPostByUuidResponseDto.class);
       assertThat(foundPostResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
       FindPostByUuidResponseDto foundPost = foundPostResponse.getBody();
@@ -165,10 +189,14 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldNotCreateNewPostWhenValidationFails() {
     SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), LEANNE_UUID, "", "", null);
+
+    final String accessToken = getAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<SavePostRequestDto> request = new HttpEntity<>(postDto, generateHeadersWithAccessToken(accessToken));
+
     final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
         "/api/posts",
         HttpMethod.POST,
-        new HttpEntity<>(postDto),
+        request,
         SavePostResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -185,8 +213,11 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
         updatedTitle, updatedBody,
         List.of(existingTagName, newTagName));
 
+    final String accessToken = getAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<UpdatePostRequestDto> request = new HttpEntity<>(postDto, generateHeadersWithAccessToken(accessToken));
+
     ResponseEntity<UpdatePostResponseDto> response = restTemplate.exchange(
-        "/api/posts/" + POST_1_UUID, HttpMethod.PUT, new HttpEntity<>(postDto), UpdatePostResponseDto.class);
+        "/api/posts/" + POST_1_UUID, HttpMethod.PUT, request, UpdatePostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     UpdatePostResponseDto post = response.getBody();
@@ -202,8 +233,13 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
                   .containsExactlyInAnyOrder(existingTagName, newTagName);
             });
 
-    ResponseEntity<FindPostByUuidResponseDto> foundPostResponse = restTemplate.getForEntity(
-        "/api/posts/" + POST_1_UUID, FindPostByUuidResponseDto.class);
+    HttpEntity<String> getRequest = generateRequestWithAccessToken(accessToken);
+
+    ResponseEntity<FindPostByUuidResponseDto> foundPostResponse = restTemplate.exchange(
+        "/api/posts/" + POST_1_UUID,
+        HttpMethod.GET,
+        getRequest,
+        FindPostByUuidResponseDto.class);
     assertThat(foundPostResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindPostByUuidResponseDto foundPost = foundPostResponse.getBody();
@@ -220,6 +256,9 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldDeletePostByUuid() {
+    final String accessToken = getAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    HttpEntity<String> request = generateRequestWithAccessToken(accessToken);
+
     // Given: Post with UUID POST_3_UUID exists
     final String postUuid = POST_3_UUID.toString();
 
@@ -227,15 +266,19 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     ResponseEntity<Void> deleteResponse = restTemplate.exchange(
         "/api/posts/" + postUuid,
         HttpMethod.DELETE,
-        null,
+        request,
         Void.class);
 
     // Then: Should return 204 No Content
     assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
     // And: Retrieving the post by UUID should return 404
-    ResponseEntity<FindAllPostsResponseDto> getResponse = restTemplate.getForEntity(
+    HttpEntity<String> getRequest = generateRequestWithAccessToken(accessToken);
+
+    ResponseEntity<FindAllPostsResponseDto> getResponse = restTemplate.exchange(
         "/api/posts/" + postUuid,
+        HttpMethod.GET,
+        getRequest,
         FindAllPostsResponseDto.class);
     assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }

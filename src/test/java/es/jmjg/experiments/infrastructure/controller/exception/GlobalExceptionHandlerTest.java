@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 class GlobalExceptionHandlerTest {
 
@@ -29,8 +30,7 @@ class GlobalExceptionHandlerTest {
     PostNotFoundException exception = new PostNotFoundException("Post with id 1 not found");
 
     // When
-    ResponseEntity<ApiErrorResponse> response =
-        exceptionHandler.handlePostNotFoundException(exception, webRequest);
+    ResponseEntity<ApiErrorResponse> response = exceptionHandler.handlePostNotFoundException(exception, webRequest);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -51,8 +51,7 @@ class GlobalExceptionHandlerTest {
     RuntimeException exception = new RuntimeException("Database connection failed");
 
     // When
-    ResponseEntity<ApiErrorResponse> response =
-        exceptionHandler.handleAllExceptions(exception, webRequest);
+    ResponseEntity<ApiErrorResponse> response = exceptionHandler.handleAllExceptions(exception, webRequest);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -73,8 +72,7 @@ class GlobalExceptionHandlerTest {
     PostNotFoundException exception = new PostNotFoundException();
 
     // When
-    ResponseEntity<ApiErrorResponse> response =
-        exceptionHandler.handlePostNotFoundException(exception, webRequest);
+    ResponseEntity<ApiErrorResponse> response = exceptionHandler.handlePostNotFoundException(exception, webRequest);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -85,6 +83,47 @@ class GlobalExceptionHandlerTest {
               assertThat(body.getStatus()).isEqualTo(404);
               assertThat(body.getError()).isEqualTo("Not Found");
               assertThat(body.getMessage()).isEqualTo("Post not found");
+            });
+  }
+
+  @Test
+  void handleResponseStatusException_ShouldReturnCorrectStatus() {
+    // Given
+    ResponseStatusException exception = new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+
+    // When
+    ResponseEntity<ApiErrorResponse> response = exceptionHandler.handleResponseStatusException(exception, webRequest);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    assertThat(response.getBody())
+        .isNotNull()
+        .satisfies(
+            body -> {
+              assertThat(body.getStatus()).isEqualTo(401);
+              assertThat(body.getError()).isEqualTo("Unauthorized");
+              assertThat(body.getMessage()).isEqualTo("Invalid credentials");
+              assertThat(body.getPath()).isEqualTo("uri=/api/posts/1");
+            });
+  }
+
+  @Test
+  void handleResponseStatusException_WithoutReason_ShouldUseMessage() {
+    // Given
+    ResponseStatusException exception = new ResponseStatusException(HttpStatus.FORBIDDEN);
+
+    // When
+    ResponseEntity<ApiErrorResponse> response = exceptionHandler.handleResponseStatusException(exception, webRequest);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(response.getBody())
+        .isNotNull()
+        .satisfies(
+            body -> {
+              assertThat(body.getStatus()).isEqualTo(403);
+              assertThat(body.getError()).isEqualTo("Forbidden");
+              assertThat(body.getMessage()).isNotEmpty();
             });
   }
 }

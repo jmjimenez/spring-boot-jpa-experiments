@@ -18,7 +18,8 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldGetAllUsers() {
-    ResponseEntity<Object> response = restTemplate.getForEntity("/api/users", Object.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<Object> response = restTemplate.exchange("/api/users", HttpMethod.GET, request, Object.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     Object responseBody = response.getBody();
@@ -27,8 +28,9 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldFindUserByUuid() {
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.getForEntity("/api/users/" + LEANNE_UUID,
-        FindAllUsersResponseDto.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange("/api/users/" + LEANNE_UUID,
+        HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindAllUsersResponseDto user = response.getBody();
@@ -44,9 +46,10 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldFindUserByEmail() {
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.getForEntity(
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
         "/api/users/search/email?email=" + ERVIN_EMAIL,
-        FindAllUsersResponseDto.class);
+        HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindAllUsersResponseDto user = response.getBody();
@@ -61,9 +64,10 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldFindUserByUsername() {
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.getForEntity(
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
         "/api/users/search/username?username=" + CLEMENTINE_USERNAME,
-        FindAllUsersResponseDto.class);
+        HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindAllUsersResponseDto user = response.getBody();
@@ -81,8 +85,9 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
     SaveUserRequestDto userDto = new SaveUserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser",
         "password123");
 
+    HttpEntity<SaveUserRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, userDto);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users", HttpMethod.POST, new HttpEntity<>(userDto), FindAllUsersResponseDto.class);
+        "/api/users", HttpMethod.POST, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     // Verify Location header is present and correct
@@ -108,9 +113,9 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
     SaveUserRequestDto updateDto = new SaveUserRequestDto(PATRICIA_UUID, "Updated User", "updated@example.com",
         "updateduser", "password123");
 
+    HttpEntity<SaveUserRequestDto> request = createAuthenticatedRequest(ADMIN_USERNAME, ADMIN_PASSWORD, updateDto);
     ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users/" + PATRICIA_UUID, HttpMethod.PUT, new HttpEntity<>(updateDto),
-        FindAllUsersResponseDto.class);
+        "/api/users/" + PATRICIA_UUID, HttpMethod.PUT, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     FindAllUsersResponseDto updatedUser = response.getBody();
@@ -126,8 +131,9 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldDeleteUserByUuid() {
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
     ResponseEntity<Void> response = restTemplate.exchange(
-        "/api/users/" + CHELSEY_UUID, HttpMethod.DELETE, null, Void.class);
+        "/api/users/" + CHELSEY_UUID, HttpMethod.DELETE, request, Void.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
@@ -135,8 +141,9 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnNotFoundWhenUserDoesNotExist() {
     UUID nonExistentUuid = UUID.randomUUID();
 
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.getForEntity("/api/users/" + nonExistentUuid,
-        FindAllUsersResponseDto.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/" + nonExistentUuid, HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
@@ -144,8 +151,9 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnNotFoundWhenUserByUuidDoesNotExist() {
     UUID nonExistentUuid = UUID.randomUUID();
 
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.getForEntity("/api/users/" + nonExistentUuid,
-        FindAllUsersResponseDto.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/" + nonExistentUuid, HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
@@ -153,9 +161,9 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnNotFoundWhenUserByEmailDoesNotExist() {
     String nonExistentEmail = "nonexistent@example.com";
 
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.getForEntity(
-        "/api/users/search/email?email=" + nonExistentEmail,
-        FindAllUsersResponseDto.class);
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/search/email?email=" + nonExistentEmail, HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
@@ -163,8 +171,9 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   void shouldReturnNotFoundWhenUserByUsernameDoesNotExist() {
     String nonExistentUsername = "nonexistentuser";
 
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.getForEntity(
-        "/api/users/search/username?username=" + nonExistentUsername,
+    HttpEntity<String> request = generateRequestWithAccessToken(ADMIN_USERNAME, ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/search/username?username=" + nonExistentUsername, HttpMethod.GET, request,
         FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }

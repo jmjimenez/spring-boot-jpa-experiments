@@ -140,5 +140,7 @@
         "actions.find"
       ]
     }
-  ]
+  ],
+  "editor.fontFamily": "'Source Code Pro'",
+  "editor.fontSize": 16
 }

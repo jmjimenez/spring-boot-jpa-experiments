@@ -46,11 +46,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/tags")
 @io.swagger.v3.oas.annotations.tags.Tag(name = "Tags", description = "Tag management operations")
+@SecurityRequirement(name = "Bearer Authentication")
 public class TagController {
 
   private final TagMapper tagMapper;

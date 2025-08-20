@@ -3,6 +3,8 @@ package es.jmjg.experiments.infrastructure.controller.post;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -43,6 +45,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -50,7 +53,10 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/posts")
 @Tag(name = "Posts", description = "Post management operations")
+@SecurityRequirement(name = "Bearer Authentication")
 public class PostController {
+
+  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   private final PostMapper postMapper;
   private final FindPosts findPosts;
@@ -92,6 +98,7 @@ public class PostController {
   }
 
   @GetMapping("/{uuid}")
+  @Transactional(readOnly = true)
   @Operation(summary = "Get post by UUID", description = "Retrieves a specific post by its UUID")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved post", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostByUuidResponseDto.class))),
@@ -99,8 +106,27 @@ public class PostController {
   })
   FindPostByUuidResponseDto findByUuid(
       @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID uuid) {
-    Post post = findPostByUuid.findByUuid(uuid).orElseThrow(PostNotFoundException::new);
-    return postMapper.toFindByUuidResponseDto(post);
+    logger.info("Starting findByUuid request for UUID: {}", uuid);
+
+    try {
+      logger.debug("Calling findPostByUuid.findByUuid() for UUID: {}", uuid);
+      Post post = findPostByUuid.findByUuid(uuid).orElseThrow(PostNotFoundException::new);
+      logger.debug("Post found successfully. Post ID: {}, Title: {}", post.getId(), post.getTitle());
+
+      logger.debug(
+          "About to call postMapper.toFindByUuidResponseDto() - this is where LazyInitializationException might occur");
+      FindPostByUuidResponseDto response = postMapper.toFindByUuidResponseDto(post);
+      logger.info("Successfully mapped post to response DTO for UUID: {}", uuid);
+
+      return response;
+    } catch (org.hibernate.LazyInitializationException e) {
+      logger.error("LazyInitializationException occurred while processing UUID: {}. Error: {}", uuid, e.getMessage(),
+          e);
+      throw e;
+    } catch (Exception e) {
+      logger.error("Unexpected error occurred while processing UUID: {}. Error: {}", uuid, e.getMessage(), e);
+      throw e;
+    }
   }
 
   @GetMapping("/search")
@@ -117,6 +143,7 @@ public class PostController {
   }
 
   @PostMapping("")
+  @Transactional
   @Operation(summary = "Create a new post", description = "Creates a new post with the provided data")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Post created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SavePostResponseDto.class))),
@@ -138,6 +165,7 @@ public class PostController {
   }
 
   @PutMapping("/{uuid}")
+  @Transactional
   @Operation(summary = "Update a post", description = "Updates an existing post with the provided data")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Post updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdatePostResponseDto.class))),
@@ -154,6 +182,7 @@ public class PostController {
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{uuid}")
+  @Transactional
   @Operation(summary = "Delete a post", description = "Deletes a post by its UUID")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "204", description = "Post deleted successfully"),

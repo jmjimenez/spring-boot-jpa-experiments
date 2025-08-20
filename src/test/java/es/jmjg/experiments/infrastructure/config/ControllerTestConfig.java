@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,6 +36,8 @@ import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import es.jmjg.experiments.infrastructure.controller.tag.mapper.TagMapper;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
+import es.jmjg.experiments.infrastructure.security.JwtTokenService;
+import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
 
 @TestConfiguration
 public class ControllerTestConfig {
@@ -197,4 +200,23 @@ public class ControllerTestConfig {
 
     return http.build();
   }
+
+  @Bean
+  @Primary
+  public AuthenticationManager authenticationManager() {
+    return mock(AuthenticationManager.class);
+  }
+
+  @Bean
+  @Primary
+  public JwtUserDetailsService jwtUserDetailsService() {
+    return mock(JwtUserDetailsService.class);
+  }
+
+  @Bean
+  @Primary
+  public JwtTokenService jwtTokenService() {
+    return mock(JwtTokenService.class);
+  }
+
 }
