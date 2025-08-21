@@ -24,14 +24,35 @@ import es.jmjg.experiments.shared.TestDataSamples;
 class PostControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
-  void shouldReturnAllPosts() {
-    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD);
+  void authenticatedUserShouldReturnAllPosts() {
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.LEANNE_USERNAME,
+        TestDataSamples.USER_PASSWORD);
 
     ResponseEntity<PagedResponseDto<FindAllPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts",
         HttpMethod.GET,
         request,
+        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<FindAllPostsResponseDto>>() {
+        });
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    PagedResponseDto<FindAllPostsResponseDto> pagedResponse = response.getBody();
+    assertThat(pagedResponse).isNotNull().satisfies(p -> {
+      assertThat(p.getContent()).isNotNull();
+      assertThat(p.getContent()).hasSizeGreaterThan(0);
+      assertThat(p.getPageNumber()).isEqualTo(0);
+      assertThat(p.getPageSize()).isEqualTo(20);
+      assertThat(p.getTotalElements()).isGreaterThan(0);
+      assertThat(p.getTotalPages()).isGreaterThan(0);
+    });
+  }
+
+  @Test
+  void unauthenticatedUserShouldNotReturnAllPosts() {
+    ResponseEntity<PagedResponseDto<FindAllPostsResponseDto>> response = restTemplate.exchange(
+        "/api/posts",
+        HttpMethod.GET,
+        null,
         new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<FindAllPostsResponseDto>>() {
         });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

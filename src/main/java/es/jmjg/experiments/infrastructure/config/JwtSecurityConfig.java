@@ -52,6 +52,8 @@ public class JwtSecurityConfig {
             authorize -> authorize
                 .requestMatchers("/", "/authenticate", "/api-docs/**", "/swagger-ui/**")
                 .permitAll()
+                .requestMatchers("/api/posts")
+                .permitAll()
                 .requestMatchers("/api/**")
                 .hasAuthority(JwtUserDetailsService.ROLE_USER)
                 .anyRequest()
