@@ -14,12 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import es.jmjg.experiments.application.post.exception.InvalidRequest;
-import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.PostRepository;
 import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.shared.PostFactory;
 
 @ExtendWith(MockitoExtension.class)
 class SavePostTest {
@@ -43,70 +42,54 @@ class SavePostTest {
   @Test
   void save_ShouldSaveAndReturnPost() {
     // Given
-    UUID newUuid = UUID.randomUUID();
-    Post newPost = new Post(null, newUuid, testUser, "New Post", "New Body");
-    Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
+    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, "New Post", "New Body");
+    Post savedPost = new Post(3, savePostDto.uuid(), testUser, "New Post", "New Body");
 
+    when(userRepository.findByUuid(savePostDto.userUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(savedPost);
 
     // When
-    Post result = savePost.save(newPost);
+    Post result = savePost.save(savePostDto);
 
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(3);
     assertThat(result.getTitle()).isEqualTo("New Post");
     assertThat(result.getBody()).isEqualTo("New Body");
-    verify(postRepository, times(1)).save(newPost);
+    verify(userRepository, times(1)).findByUuid(savePostDto.userUuid());
+    verify(postRepository, times(1)).save(any(Post.class));
   }
 
   @Test
   void save_WhenPostAlreadyHasUser_ShouldNotFetchUser() {
     // Given
-    UUID newUuid = UUID.randomUUID();
-    Post newPost = new Post(null, newUuid, testUser, "New Post", "New Body");
-    Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
+    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, "New Post", "New Body");
+    Post savedPost = new Post(3, savePostDto.uuid(), testUser, "New Post", "New Body");
 
+    when(userRepository.findByUuid(savePostDto.userUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(savedPost);
 
     // When
-    Post result = savePost.save(newPost);
+    Post result = savePost.save(savePostDto);
 
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(3);
-    verify(userRepository, never()).findById(any());
-    verify(postRepository, times(1)).save(newPost);
-  }
-
-  @Test
-  void save_WhenPostHasNoUser_ShouldThrowInvalidRequest() {
-    // Given
-    UUID newUuid = UUID.randomUUID();
-    Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
-
-    // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost))
-        .isInstanceOf(InvalidRequest.class)
-        .hasMessage("Post must have a user");
-
-    verify(userRepository, never()).findById(any());
-    verify(postRepository, never()).save(any());
+    verify(userRepository, times(1)).findByUuid(savePostDto.userUuid());
+    verify(postRepository, times(1)).save(any(Post.class));
   }
 
   @Test
   void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
     // Given
-    UUID userUuid = testUser.getUuid();
-    UUID newUuid = UUID.randomUUID();
-    Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
-    Post savedPost = new Post(3, newUuid, testUser, "New Post", "New Body");
+    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, "New Post", "New Body");
+    Post savedPost = new Post(3, savePostDto.uuid(), testUser, "New Post", "New Body");
 
-    when(userRepository.findByUuid(userUuid)).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUuid(savePostDto.userUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(savedPost);
 
     // When
-    Post result = savePost.save(newPost, userUuid);
+    Post result = savePost.save(savePostDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -115,25 +98,7 @@ class SavePostTest {
     assertThat(result.getBody()).isEqualTo("New Body");
     assertThat(result.getUser()).isEqualTo(testUser);
 
-    verify(userRepository, times(1)).findByUuid(userUuid);
+    verify(userRepository, times(1)).findByUuid(savePostDto.userUuid());
     verify(postRepository, times(1)).save(any(Post.class));
-  }
-
-  @Test
-  void save_WhenUserIdProvidedButUserNotFound_ShouldThrowUserNotFound() {
-    // Given
-    UUID nonExistentUserUuid = UUID.randomUUID();
-    UUID newUuid = UUID.randomUUID();
-    Post newPost = new Post(null, newUuid, null, "New Post", "New Body");
-
-    when(userRepository.findByUuid(nonExistentUserUuid)).thenReturn(Optional.empty());
-
-    // When & Then
-    assertThatThrownBy(() -> savePost.save(newPost, nonExistentUserUuid))
-        .isInstanceOf(UserNotFound.class)
-        .hasMessage("User not found with uuid: " + nonExistentUserUuid);
-
-    verify(userRepository, times(1)).findByUuid(nonExistentUserUuid);
-    verify(postRepository, never()).save(any());
   }
 }

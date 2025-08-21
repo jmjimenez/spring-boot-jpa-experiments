@@ -2,6 +2,7 @@ package es.jmjg.experiments.infrastructure.controller.post;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -27,11 +29,14 @@ import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
 import es.jmjg.experiments.application.post.SavePost;
+import es.jmjg.experiments.application.post.SavePostDto;
 import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
+import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
+import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
@@ -201,7 +206,7 @@ class PostControllerTest {
 
   @Test
   void shouldFindPostWhenGivenValidUuid() throws Exception {
-    User user = UserFactory.createTestUserWithId1();
+    User user = UserFactory.createBasicUser();
 
     UUID uuid = UUID.randomUUID();
     Post post = PostFactory.createPost(user, uuid, "Test Title", "Test Body");
@@ -239,25 +244,28 @@ class PostControllerTest {
 
   @Test
   void shouldCreateNewPostWhenGivenValidID() throws Exception {
-    User user = UserFactory.createTestUserWithId1();
+    User user = UserFactory.createBasicUser();
+
+    JwtUserDetails userDetails = new JwtUserDetails(
+        user.getUuid(),
+        user.getUsername(),
+        user.getPassword(),
+        List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_USER)));
 
     Post post = PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
     post.setId(3);
 
-    when(savePost.save(any(Post.class), eq(user.getUuid()), any())).thenReturn(post);
+    when(savePost.save(any(SavePostDto.class))).thenReturn(post);
 
-    // Request body should be a PostDto (without id, since it's a new post)
     String requestBody = """
         {
             "uuid":"%s",
-            "userId":"%s",
             "title":"%s",
             "body":"%s"
         }
         """
-        .formatted(post.getUuid(), user.getUuid(), post.getTitle(), post.getBody());
+        .formatted(post.getUuid(), post.getTitle(), post.getBody());
 
-    // Expected response should not include the id
     String expectedResponse = """
         {
             "uuid":"%s",
@@ -274,7 +282,10 @@ class PostControllerTest {
             post.getBody());
 
     mockMvc
-        .perform(post("/api/posts").contentType("application/json").content(requestBody))
+        .perform(post("/api/posts")
+            .contentType("application/json")
+            .content(requestBody)
+            .with(user(userDetails)))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", "/api/posts/" + post.getUuid().toString()))
         .andExpect(content().json(expectedResponse));
@@ -282,42 +293,50 @@ class PostControllerTest {
 
   @Test
   void shouldUpdatePostWhenGivenValidPost() throws Exception {
-    User user = UserFactory.createTestUserWithId1();
+    User user = UserFactory.createBasicUser();
+
+    JwtUserDetails userDetails = new JwtUserDetails(
+        user.getUuid(),
+        user.getUsername(),
+        user.getPassword(),
+        List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_USER)));
 
     Post updated = PostFactory.createPost(
         user, UUID.randomUUID(), "This is my brand new post", "UPDATED BODY");
     updated.setId(1);
 
-    when(updatePost.update(eq(TestDataSamples.POST_2_UUID), any(Post.class), any())).thenReturn(updated);
+    when(updatePost.update(any())).thenReturn(updated);
+
     String requestBody = """
         {
             "uuid":"%s",
-            "userId":"%s",
             "title":"%s",
             "body":"%s"
         }
         """
         .formatted(
             updated.getUuid(),
-            updated.getUser().getUuid(),
             updated.getTitle(),
             updated.getBody());
 
     mockMvc
-        .perform(put("/api/posts/" + TestDataSamples.POST_2_UUID).contentType("application/json").content(requestBody))
+        .perform(put("/api/posts/" + TestDataSamples.POST_2_UUID)
+            .contentType("application/json")
+            .content(requestBody)
+            .with(user(userDetails)))
         .andExpect(status().isOk())
         .andExpect(content().json(requestBody + ",\"tags\":[]"));
   }
 
   @Test
   void shouldNotUpdateAndThrowNotFoundWhenGivenAnInvalidPostUUID() throws Exception {
-    User user = new User();
-    user.setId(1);
-    user.setUuid(UUID.randomUUID());
-    user.setName("Test User");
-    user.setEmail("test@example.com");
-    user.setUsername("testuser");
-    user.setPassword("encodedPassword123");
+    User user = UserFactory.createBasicUser();
+
+    JwtUserDetails userDetails = new JwtUserDetails(
+        user.getUuid(),
+        user.getUsername(),
+        user.getPassword(),
+        List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_USER)));
 
     Post updated = new Post();
     updated.setId(50);
@@ -327,24 +346,25 @@ class PostControllerTest {
     updated.setBody("UPDATED BODY");
 
     UUID nonExistentUuid = UUID.randomUUID();
-    when(updatePost.update(eq(nonExistentUuid), any(Post.class), any()))
+    when(updatePost.update(any()))
         .thenThrow(new PostNotFound("Post not found with uuid: " + nonExistentUuid));
     String json = """
         {
             "uuid":"%s",
-            "userId":"%s",
             "title":"%s",
             "body":"%s"
         }
         """
         .formatted(
             updated.getUuid(),
-            updated.getUser().getUuid(),
             updated.getTitle(),
             updated.getBody());
 
     mockMvc
-        .perform(put("/api/posts/" + nonExistentUuid).contentType("application/json").content(json))
+        .perform(put("/api/posts/" + nonExistentUuid)
+            .contentType("application/json")
+            .content(json)
+            .with(user(userDetails)))
         .andExpect(status().isNotFound());
   }
 
@@ -382,23 +402,19 @@ class PostControllerTest {
         [
             {
                 "uuid":"%s",
-                "userId":"%s",
                 "title":"Spring Boot Tutorial",
                 "body":"Learn Spring Boot",
                 "tags":[]
             },
             {
                 "uuid":"%s",
-                "userId":"%s",
                 "title":"JPA Best Practices",
                 "body":"Learn JPA",
                 "tags":[]
             }
         ]
         """
-        .formatted(searchResult1.getUuid(), searchResult1.getUser().getUuid(),
-            searchResult2.getUuid(),
-            searchResult2.getUser().getUuid());
+        .formatted(searchResult1.getUuid(), searchResult2.getUuid());
 
     mockMvc
         .perform(get("/api/posts/search?q=Spring&limit=10"))

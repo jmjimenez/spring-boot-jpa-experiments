@@ -19,6 +19,7 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.PostRepository;
 import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.shared.PostFactory;
 
 @ExtendWith(MockitoExtension.class)
 class UpdatePostTest {
@@ -46,7 +47,7 @@ class UpdatePostTest {
   @Test
   void update_WhenPostExists_ShouldUpdatePost() {
     // Given
-    Post updateData = new Post(null, testPostUuid, testUser, "Updated Title", "Updated Body");
+    var updatePostDto = PostFactory.createPostUpdateDto(testPostUuid, "Updated Title", "Updated Body");
 
     when(postRepository.findByUuid(testPostUuid)).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
@@ -57,7 +58,7 @@ class UpdatePostTest {
             });
 
     // When
-    Post result = updatePost.update(testPostUuid, updateData);
+    Post result = updatePost.update(updatePostDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -73,12 +74,12 @@ class UpdatePostTest {
   void update_WhenPostDoesNotExist_ShouldThrowPostNotFound() {
     // Given
     UUID nonExistentPostUuid = UUID.randomUUID();
-    Post updateData = new Post(null, nonExistentPostUuid, testUser, "Updated Title", "Updated Body");
+    var updatePostDto = PostFactory.createPostUpdateDto(nonExistentPostUuid, "Updated Title", "Updated Body");
 
     when(postRepository.findByUuid(nonExistentPostUuid)).thenReturn(Optional.empty());
 
     // When & Then
-    assertThatThrownBy(() -> updatePost.update(nonExistentPostUuid, updateData))
+    assertThatThrownBy(() -> updatePost.update(updatePostDto))
         .isInstanceOf(PostNotFound.class)
         .hasMessage("Post not found with uuid: " + nonExistentPostUuid);
 
@@ -89,9 +90,7 @@ class UpdatePostTest {
   @Test
   void update_ShouldPreserveOriginalUuidAndUserId() {
     // Given
-    User updatedUser = new User(5, UUID.randomUUID(), "Test User", "test@example.com", "testuser", "encodedPassword123",
-        null);
-    Post updateData = new Post(999, UUID.randomUUID(), updatedUser, "Updated Title", "Updated Body");
+    var updatePostDto = PostFactory.createPostUpdateDto(testPostUuid, "Updated Title", "Updated Body");
 
     when(postRepository.findByUuid(testPostUuid)).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
@@ -102,7 +101,7 @@ class UpdatePostTest {
             });
 
     // When
-    Post result = updatePost.update(testPostUuid, updateData);
+    Post result = updatePost.update(updatePostDto);
 
     // Then
     assertThat(result.getUuid()).isEqualTo(testPostUuid);
@@ -118,10 +117,7 @@ class UpdatePostTest {
   @Test
   void update_WhenPostHasUser_ShouldNotUsePostUser() {
     // Given
-    User postUser = new User(3, UUID.randomUUID(), "Post User", "post@example.com", "postuser", "encodedPassword123",
-        null);
-    UUID updateUuid = UUID.randomUUID();
-    Post updateData = new Post(null, updateUuid, postUser, "Updated Title", "Updated Body");
+    var updatePostDto = PostFactory.createPostUpdateDto(testPostUuid, "Updated Title", "Updated Body");
 
     when(postRepository.findByUuid(testPostUuid)).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
@@ -132,7 +128,7 @@ class UpdatePostTest {
             });
 
     // When
-    Post result = updatePost.update(testPostUuid, updateData);
+    Post result = updatePost.update(updatePostDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -149,8 +145,7 @@ class UpdatePostTest {
   @Test
   void update_WhenUuidProvided_ShouldNotUpdateUuid() {
     // Given
-    UUID newUuid = UUID.randomUUID();
-    Post updateData = new Post(null, newUuid, testUser, "Updated Title", "Updated Body");
+    var updatePostDto = PostFactory.createPostUpdateDto(testPostUuid, "Updated Title", "Updated Body");
 
     when(postRepository.findByUuid(testPostUuid)).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
@@ -161,7 +156,7 @@ class UpdatePostTest {
             });
 
     // When
-    Post result = updatePost.update(testPostUuid, updateData);
+    Post result = updatePost.update(updatePostDto);
 
     // Then
     assertThat(result.getUuid()).isEqualTo(testPostUuid);
@@ -175,7 +170,7 @@ class UpdatePostTest {
     // Given
     UUID originalUuid = UUID.randomUUID();
     Post existingPost = new Post(1, originalUuid, testUser, "Original Title", "Original Body");
-    Post updateData = new Post(null, null, testUser, "Updated Title", "Updated Body");
+    var updatePostDto = PostFactory.createPostUpdateDto(testPostUuid, "Updated Title", "Updated Body");
 
     when(postRepository.findByUuid(testPostUuid)).thenReturn(Optional.of(existingPost));
     when(postRepository.save(any(Post.class)))
@@ -186,7 +181,7 @@ class UpdatePostTest {
             });
 
     // When
-    Post result = updatePost.update(testPostUuid, updateData);
+    Post result = updatePost.update(updatePostDto);
 
     // Then
     assertThat(result.getUuid()).isEqualTo(originalUuid);

@@ -29,6 +29,7 @@ public final class TestDataSamples {
   public static final String ERVIN_EMAIL = "ervin.howell@example.com";
   public static final String ERVIN_USERNAME = "ervin_howell";
 
+  public static final UUID CLEMENTINE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
   public static final String CLEMENTINE_NAME = "Clementine Bauch";
   public static final String CLEMENTINE_EMAIL = "clementine.bauch@example.com";
   public static final String CLEMENTINE_USERNAME = "clementine_bauch";
@@ -38,8 +39,12 @@ public final class TestDataSamples {
   public static final String USER_PASSWORD = "testpass";
 
   public static final UUID PATRICIA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440004");
+  public static final String PATRICIA_EMAIL = "patricia.lebsack@example.com";
+  public static final String PATRICIA_USERNAME = "patricia_lebsack";
 
   public static final UUID CHELSEY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440005");
+  public static final String CHELSEY_EMAIL = "chelsey.dietrich@example.com";
+  public static final String CHELSEY_USERNAME = "chelsey_dietrich";
 
   // Sample posts from Flyway migration data
   public static final UUID POST_1_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");

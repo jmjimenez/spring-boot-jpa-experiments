@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import es.jmjg.experiments.application.post.SavePostDto;
+import es.jmjg.experiments.application.post.UpdatePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
@@ -23,6 +25,7 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDt
 import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
+import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
 
 @Component
 public class PostMapper {
@@ -131,8 +134,22 @@ public class PostMapper {
     return createPostFromDto(postRequestDto, this::createPostFromUpdateDto);
   }
 
-  public Post toDomain(SavePostRequestDto postRequestDto) {
-    return createPostFromDto(postRequestDto, this::createPostFromSaveDto);
+  public SavePostDto toSavePostDto(SavePostRequestDto postRequestDto, UUID userUuid) {
+    return new SavePostDto(
+        postRequestDto.getUuid(),
+        postRequestDto.getTitle(),
+        postRequestDto.getBody(),
+        userUuid,
+        postRequestDto.getTagNames());
+  }
+
+  public UpdatePostDto toUpdatePostDto(UpdatePostRequestDto postRequestDto, UUID PostUuid, JwtUserDetails userDetails) {
+    return new UpdatePostDto(
+        PostUuid,
+        postRequestDto.getTitle(),
+        postRequestDto.getBody(),
+        postRequestDto.getTagNames(),
+        userDetails);
   }
 
   // Private helper methods for creating specific response DTOs
@@ -308,16 +325,6 @@ public class PostMapper {
   private Post createPostFromUpdateDto(Object dto) {
     UpdatePostRequestDto postRequestDto = (UpdatePostRequestDto) dto;
     Post post = new Post();
-    post.setTitle(postRequestDto.getTitle());
-    post.setBody(postRequestDto.getBody());
-    // Note: tagUuids will be handled in the service layer
-    return post;
-  }
-
-  private Post createPostFromSaveDto(Object dto) {
-    SavePostRequestDto postRequestDto = (SavePostRequestDto) dto;
-    Post post = new Post();
-    post.setUuid(postRequestDto.getUuid());
     post.setTitle(postRequestDto.getTitle());
     post.setBody(postRequestDto.getBody());
     // Note: tagUuids will be handled in the service layer

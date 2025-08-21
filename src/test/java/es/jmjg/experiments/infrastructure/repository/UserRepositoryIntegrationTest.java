@@ -13,6 +13,7 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
 import es.jmjg.experiments.shared.PostFactory;
+import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
 @Import({ UserRepositoryImpl.class, PostRepositoryImpl.class })
@@ -24,36 +25,16 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
   @Autowired
   private PostRepositoryImpl postRepository;
 
-  // Sample users from Flyway migration data
-  private static final String LEANNE_NAME = "Leanne Graham";
-  private static final String LEANNE_EMAIL = "leanne.graham@example.com";
-  private static final String LEANNE_USERNAME = "leanne_graham";
-
-  private static final String ERVIN_EMAIL = "ervin.howell@example.com";
-  private static final String ERVIN_USERNAME = "ervin_howell";
-
-  private static final UUID CLEMENTINE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
-  private static final String CLEMENTINE_NAME = "Clementine Bauch";
-  private static final String CLEMENTINE_EMAIL = "clementine.bauch@example.com";
-  private static final String CLEMENTINE_USERNAME = "clementine_bauch";
-
-  private static final UUID PATRICIA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440004");
-  private static final String PATRICIA_EMAIL = "patricia.lebsack@example.com";
-  private static final String PATRICIA_USERNAME = "patricia_lebsack";
-
-  private static final String CHELSEY_EMAIL = "chelsey.dietrich@example.com";
-  private static final String CHELSEY_USERNAME = "chelsey_dietrich";
-
   @Test
   void shouldFindUserByEmail() {
     // When
-    Optional<User> foundUser = userRepository.findByEmail(LEANNE_EMAIL);
+    Optional<User> foundUser = userRepository.findByEmail(TestDataSamples.LEANNE_EMAIL);
 
     // Then
     assertThat(foundUser).isPresent();
-    assertThat(foundUser.get().getEmail()).isEqualTo(LEANNE_EMAIL);
-    assertThat(foundUser.get().getName()).isEqualTo(LEANNE_NAME);
-    assertThat(foundUser.get().getUsername()).isEqualTo(LEANNE_USERNAME);
+    assertThat(foundUser.get().getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
+    assertThat(foundUser.get().getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
+    assertThat(foundUser.get().getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
   }
 
   @Test
@@ -68,12 +49,12 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldFindUserByUsername() {
     // When
-    Optional<User> foundUser = userRepository.findByUsername(ERVIN_USERNAME);
+    Optional<User> foundUser = userRepository.findByUsername(TestDataSamples.ERVIN_USERNAME);
 
     // Then
     assertThat(foundUser).isPresent();
-    assertThat(foundUser.get().getUsername()).isEqualTo(ERVIN_USERNAME);
-    assertThat(foundUser.get().getEmail()).isEqualTo(ERVIN_EMAIL);
+    assertThat(foundUser.get().getUsername()).isEqualTo(TestDataSamples.ERVIN_USERNAME);
+    assertThat(foundUser.get().getEmail()).isEqualTo(TestDataSamples.ERVIN_EMAIL);
   }
 
   @Test
@@ -88,12 +69,12 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldFindUserByUuid() {
     // When
-    Optional<User> foundUser = userRepository.findByUuid(CLEMENTINE_UUID);
+    Optional<User> foundUser = userRepository.findByUuid(TestDataSamples.CLEMENTINE_UUID);
 
     // Then
     assertThat(foundUser).isPresent();
-    assertThat(foundUser.get().getUuid()).isEqualTo(CLEMENTINE_UUID);
-    assertThat(foundUser.get().getName()).isEqualTo(CLEMENTINE_NAME);
+    assertThat(foundUser.get().getUuid()).isEqualTo(TestDataSamples.CLEMENTINE_UUID);
+    assertThat(foundUser.get().getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
   }
 
   @Test
@@ -109,13 +90,13 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldDeleteUserByUuid() {
     // Given - using existing user from migration data
-    assertThat(userRepository.findByUuid(PATRICIA_UUID)).isPresent();
+    assertThat(userRepository.findByUuid(TestDataSamples.PATRICIA_UUID)).isPresent();
 
     // When
-    userRepository.deleteByUuid(PATRICIA_UUID);
+    userRepository.deleteByUuid(TestDataSamples.PATRICIA_UUID);
 
     // Then
-    assertThat(userRepository.findByUuid(PATRICIA_UUID)).isEmpty();
+    assertThat(userRepository.findByUuid(TestDataSamples.PATRICIA_UUID)).isEmpty();
   }
 
   @Test
@@ -145,17 +126,17 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
     // Given - using existing users from migration data
     // When - verify all migration users exist
     // Then
-    assertThat(userRepository.findByEmail(LEANNE_EMAIL)).isPresent();
-    assertThat(userRepository.findByEmail(ERVIN_EMAIL)).isPresent();
-    assertThat(userRepository.findByEmail(CLEMENTINE_EMAIL)).isPresent();
-    assertThat(userRepository.findByEmail(PATRICIA_EMAIL)).isPresent();
-    assertThat(userRepository.findByEmail(CHELSEY_EMAIL)).isPresent();
+    assertThat(userRepository.findByEmail(TestDataSamples.LEANNE_EMAIL)).isPresent();
+    assertThat(userRepository.findByEmail(TestDataSamples.ERVIN_EMAIL)).isPresent();
+    assertThat(userRepository.findByEmail(TestDataSamples.CLEMENTINE_EMAIL)).isPresent();
+    assertThat(userRepository.findByEmail(TestDataSamples.PATRICIA_EMAIL)).isPresent();
+    assertThat(userRepository.findByEmail(TestDataSamples.CHELSEY_EMAIL)).isPresent();
 
-    assertThat(userRepository.findByUsername(LEANNE_USERNAME)).isPresent();
-    assertThat(userRepository.findByUsername(ERVIN_USERNAME)).isPresent();
-    assertThat(userRepository.findByUsername(CLEMENTINE_USERNAME)).isPresent();
-    assertThat(userRepository.findByUsername(PATRICIA_USERNAME)).isPresent();
-    assertThat(userRepository.findByUsername(CHELSEY_USERNAME)).isPresent();
+    assertThat(userRepository.findByUsername(TestDataSamples.LEANNE_USERNAME)).isPresent();
+    assertThat(userRepository.findByUsername(TestDataSamples.ERVIN_USERNAME)).isPresent();
+    assertThat(userRepository.findByUsername(TestDataSamples.CLEMENTINE_USERNAME)).isPresent();
+    assertThat(userRepository.findByUsername(TestDataSamples.PATRICIA_USERNAME)).isPresent();
+    assertThat(userRepository.findByUsername(TestDataSamples.CHELSEY_USERNAME)).isPresent();
   }
 
   @Test

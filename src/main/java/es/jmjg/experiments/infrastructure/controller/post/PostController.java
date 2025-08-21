@@ -141,8 +141,8 @@ public class PostController {
       @AuthenticationPrincipal JwtUserDetails userDetails) {
 
     UUID userUuid = userDetails.id;
-    Post post = postMapper.toDomain(postDto);
-    Post savedPost = savePost.save(post, userUuid, postDto.getTagNames());
+    var savePostDto = postMapper.toSavePostDto(postDto, userUuid);
+    Post savedPost = savePost.save(savePostDto);
     SavePostResponseDto responseDto = postMapper.toSavePostResponseDto(savedPost);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{uuid}")
@@ -168,9 +168,8 @@ public class PostController {
       @Parameter(description = "Updated post data", required = true) @RequestBody @Valid UpdatePostRequestDto postDto,
       @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    UUID userUuid = userDetails.id;
-    Post post = postMapper.toDomain(postDto);
-    Post updatedPost = updatePost.update(uuid, post, postDto.getTagNames(), userUuid);
+    var updatePostDto = postMapper.toUpdatePostDto(postDto, uuid, userDetails);
+    Post updatedPost = updatePost.update(updatePostDto);
     return postMapper.toUpdatePostResponseDto(updatedPost);
   }
 

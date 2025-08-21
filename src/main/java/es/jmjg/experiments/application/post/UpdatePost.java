@@ -1,8 +1,6 @@
 package es.jmjg.experiments.application.post;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,29 +22,21 @@ public class UpdatePost {
     this.processPostTags = processPostTags;
   }
 
-  public Post update(UUID uuid, Post post) {
-    return update(uuid, post, null);
-  }
-
   @Transactional
-  public Post update(UUID uuid, Post post, List<String> tagNames) {
-    return update(uuid, post, tagNames, null);
-  }
-
-  @Transactional
-  public Post update(UUID uuid, Post post, List<String> tagNames, UUID userUuid) {
-    Optional<Post> existing = postRepository.findByUuid(uuid);
+  public Post update(UpdatePostDto updatePostDto) {
+    //TODO: Check if the user is the owner of the post
+    Optional<Post> existing = postRepository.findByUuid(updatePostDto.uuid());
     if (existing.isEmpty()) {
-      throw new PostNotFound(uuid);
+      throw new PostNotFound(updatePostDto.uuid());
     }
 
     Post existingPost = existing.get();
-    existingPost.setTitle(post.getTitle());
-    existingPost.setBody(post.getBody());
+    existingPost.setTitle(updatePostDto.title());
+    existingPost.setBody(updatePostDto.body());
 
     // Process tags if provided
-    if (tagNames != null) {
-      processPostTags.processTagsForPost(existingPost, tagNames);
+    if (updatePostDto.tagNames() != null) {
+      processPostTags.processTagsForPost(existingPost, updatePostDto.tagNames());
     }
 
     return postRepository.save(existingPost);
