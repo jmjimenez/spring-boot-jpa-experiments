@@ -30,6 +30,11 @@ public class UpdatePost {
 
   @Transactional
   public Post update(UUID uuid, Post post, List<String> tagNames) {
+    return update(uuid, post, tagNames, null);
+  }
+
+  @Transactional
+  public Post update(UUID uuid, Post post, List<String> tagNames, UUID userUuid) {
     Optional<Post> existing = postRepository.findByUuid(uuid);
     if (existing.isEmpty()) {
       throw new PostNotFound(uuid);

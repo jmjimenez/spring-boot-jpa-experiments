@@ -3,8 +3,6 @@ package es.jmjg.experiments.infrastructure.controller.post;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -58,8 +56,6 @@ import jakarta.validation.Valid;
 @SecurityRequirement(name = "Bearer Authentication")
 public class PostController {
 
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
-
   private final PostMapper postMapper;
   private final FindPosts findPosts;
   private final UpdatePost updatePost;
@@ -89,7 +85,8 @@ public class PostController {
   @Transactional(readOnly = true)
   @Operation(summary = "Get all posts", description = "Retrieves a paginated list of all posts", security = {})
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagedResponseDto.class)))
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagedResponseDto.class))),
+      @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   PagedResponseDto<FindAllPostsResponseDto> findAll(
       @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
@@ -105,7 +102,8 @@ public class PostController {
   @Operation(summary = "Get post by UUID", description = "Retrieves a specific post by its UUID", security = {})
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved post", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostByUuidResponseDto.class))),
-      @ApiResponse(responseCode = "404", description = "Post not found")
+      @ApiResponse(responseCode = "404", description = "Post not found"),
+      @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   FindPostByUuidResponseDto findByUuid(
       @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID uuid) {
@@ -118,7 +116,8 @@ public class PostController {
   @Transactional(readOnly = true)
   @Operation(summary = "Search posts by content", description = "Finds posts containing specified words", security = {})
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SearchPostsResponseDto.class)))
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SearchPostsResponseDto.class))),
+      @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   List<SearchPostsResponseDto> searchPosts(
       @Parameter(description = "Search terms to find in post content") @RequestParam String q,
@@ -133,7 +132,9 @@ public class PostController {
   @Operation(summary = "Create a new post", description = "Creates a new post with the provided data")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Post created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SavePostResponseDto.class))),
-      @ApiResponse(responseCode = "400", description = "Invalid input data")
+      @ApiResponse(responseCode = "400", description = "Invalid input data"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+      @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   ResponseEntity<SavePostResponseDto> save(
       @Parameter(description = "Post data to create", required = true) @RequestBody @Valid SavePostRequestDto postDto,
@@ -159,14 +160,17 @@ public class PostController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Post updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdatePostResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Post not found"),
-      @ApiResponse(responseCode = "400", description = "Invalid input data")
+      @ApiResponse(responseCode = "400", description = "Invalid input data"),
+      @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   UpdatePostResponseDto update(
       @Parameter(description = "UUID of the post to update") @PathVariable UUID uuid,
-      @Parameter(description = "Updated post data", required = true) @RequestBody @Valid UpdatePostRequestDto postDto) {
+      @Parameter(description = "Updated post data", required = true) @RequestBody @Valid UpdatePostRequestDto postDto,
+      @AuthenticationPrincipal JwtUserDetails userDetails) {
 
+    UUID userUuid = userDetails.id;
     Post post = postMapper.toDomain(postDto);
-    Post updatedPost = updatePost.update(uuid, post, postDto.getTagNames());
+    Post updatedPost = updatePost.update(uuid, post, postDto.getTagNames(), userUuid);
     return postMapper.toUpdatePostResponseDto(updatedPost);
   }
 
@@ -176,7 +180,8 @@ public class PostController {
   @Operation(summary = "Delete a post", description = "Deletes a post by its UUID")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "204", description = "Post deleted successfully"),
-      @ApiResponse(responseCode = "404", description = "Post not found")
+      @ApiResponse(responseCode = "404", description = "Post not found"),
+      @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   void delete(@Parameter(description = "UUID of the post to delete") @PathVariable UUID uuid) {
 
