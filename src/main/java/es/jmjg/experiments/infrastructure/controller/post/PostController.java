@@ -114,7 +114,7 @@ public class PostController {
 
   @GetMapping("/search")
   @Transactional(readOnly = true)
-  @Operation(summary = "Search posts by content", description = "Finds posts containing specified words")
+  @Operation(summary = "Search posts by content", description = "Finds posts containing specified words", security = {})
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SearchPostsResponseDto.class)))
   })

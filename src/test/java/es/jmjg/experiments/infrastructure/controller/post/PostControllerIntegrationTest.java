@@ -93,6 +93,27 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
+  void shouldReturnAllPostsWithDefaultPagination() {
+    ResponseEntity<PagedResponseDto<FindAllPostsResponseDto>> response = restTemplate.exchange(
+        "/api/posts",
+        HttpMethod.GET,
+        null,
+        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<FindAllPostsResponseDto>>() {
+        });
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    PagedResponseDto<FindAllPostsResponseDto> pagedResponse = response.getBody();
+    assertThat(pagedResponse).isNotNull().satisfies(p -> {
+      assertThat(p.getContent()).isNotNull();
+      assertThat(p.getContent()).hasSizeLessThanOrEqualTo(20);
+      assertThat(p.getPageNumber()).isEqualTo(0);
+      assertThat(p.getPageSize()).isEqualTo(20);
+      assertThat(p.getTotalElements()).isGreaterThan(0);
+      assertThat(p.getTotalPages()).isGreaterThan(0);
+    });
+  }
+
+  @Test
   void authenticatedUserShouldReturnPostByUuid() {
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.LEANNE_USERNAME,
         TestDataSamples.USER_PASSWORD);
@@ -150,14 +171,35 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  void shouldSearchPosts() {
-    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD);
+  void authenticatedUserShouldSearchPosts() {
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.LEANNE_USERNAME,
+        TestDataSamples.USER_PASSWORD);
 
     ResponseEntity<List<SearchPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts/search?q=" + TestDataSamples.SEARCH_TERM_SUNT + "&limit=20",
         HttpMethod.GET,
         request,
+        new org.springframework.core.ParameterizedTypeReference<List<SearchPostsResponseDto>>() {
+        });
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    List<SearchPostsResponseDto> posts = response.getBody();
+    assertThat(posts).isNotNull().satisfies(p -> {
+      assertThat(p).isNotNull();
+      assertThat(p).hasSize(TestDataSamples.EXPECTED_SUNT_SEARCH_COUNT);
+      // Verify that all posts have the tags field
+      for (SearchPostsResponseDto post : p) {
+        assertThat(post.getTags()).isNotNull();
+      }
+    });
+  }
+
+  @Test
+  void unauthenticatedUserShouldNotSearchPosts() {
+    ResponseEntity<List<SearchPostsResponseDto>> response = restTemplate.exchange(
+        "/api/posts/search?q=" + TestDataSamples.SEARCH_TERM_SUNT + "&limit=20",
+        HttpMethod.GET,
+        null,
         new org.springframework.core.ParameterizedTypeReference<List<SearchPostsResponseDto>>() {
         });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

@@ -80,7 +80,7 @@ class PostControllerTest {
   }
 
   @Test
-  void shouldFindAllPosts() throws Exception {
+  void shouldFindAllPostsUsingWhen() throws Exception {
     String jsonResponse = """
         {
             "content":[
@@ -122,7 +122,7 @@ class PostControllerTest {
   }
 
   @Test
-  void shouldFindAllPostsV2() throws Exception {
+  void shouldFindAllPostsUsingDoReturn() throws Exception {
     String jsonResponse = """
         {
             "content":[
