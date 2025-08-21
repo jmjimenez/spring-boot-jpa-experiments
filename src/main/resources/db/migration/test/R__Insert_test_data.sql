@@ -34,35 +34,35 @@ VALUES (
         'Leanne Graham',
         'leanne.graham@example.com',
         'leanne_graham',
-        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
+        '$2a$10$nJepjv6WEk5NlbiaU2ka3uR/5N7/wqtrw6/1acgPw7Rvr4qxoidR.'
     ),
     (
         '550e8400-e29b-41d4-a716-446655440002',
         'Ervin Howell',
         'ervin.howell@example.com',
         'ervin_howell',
-        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
+        '$2a$10$nJepjv6WEk5NlbiaU2ka3uR/5N7/wqtrw6/1acgPw7Rvr4qxoidR.'
     ),
     (
         '550e8400-e29b-41d4-a716-446655440003',
         'Clementine Bauch',
         'clementine.bauch@example.com',
         'clementine_bauch',
-        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
+        '$2a$10$nJepjv6WEk5NlbiaU2ka3uR/5N7/wqtrw6/1acgPw7Rvr4qxoidR.'
     ),
     (
         '550e8400-e29b-41d4-a716-446655440004',
         'Patricia Lebsack',
         'patricia.lebsack@example.com',
         'patricia_lebsack',
-        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
+        '$2a$10$nJepjv6WEk5NlbiaU2ka3uR/5N7/wqtrw6/1acgPw7Rvr4qxoidR.'
     ),
     (
         '550e8400-e29b-41d4-a716-446655440005',
         'Chelsey Dietrich',
         'chelsey.dietrich@example.com',
         'chelsey_dietrich',
-        '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa'
+        '$2a$10$nJepjv6WEk5NlbiaU2ka3uR/5N7/wqtrw6/1acgPw7Rvr4qxoidR.'
     ),
     (
         '550e8400-e29b-41d4-a716-446655440006',

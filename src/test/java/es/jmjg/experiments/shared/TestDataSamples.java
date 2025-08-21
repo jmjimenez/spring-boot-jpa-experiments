@@ -35,6 +35,7 @@ public final class TestDataSamples {
 
   public static final String ADMIN_USERNAME = "admin";
   public static final String ADMIN_PASSWORD = "testpass";
+  public static final String USER_PASSWORD = "testpass";
 
   public static final UUID PATRICIA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440004");
 

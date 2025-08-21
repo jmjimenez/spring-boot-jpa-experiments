@@ -3,7 +3,6 @@ package es.jmjg.experiments.infrastructure.security;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +12,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import es.jmjg.experiments.infrastructure.config.AppProperties;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -22,8 +22,8 @@ public class JwtTokenService {
   private final Algorithm hmac512;
   private final JWTVerifier verifier;
 
-  public JwtTokenService(@Value("${jwt.secret}") final String secret) {
-    this.hmac512 = Algorithm.HMAC512(secret);
+  public JwtTokenService(final AppProperties appProperties) {
+    this.hmac512 = Algorithm.HMAC512(appProperties.getJwtSecret());
     this.verifier = JWT.require(this.hmac512).build();
   }
 
