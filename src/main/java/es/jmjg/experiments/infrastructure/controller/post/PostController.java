@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,7 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsRespons
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
+import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -106,7 +108,7 @@ public class PostController {
       @ApiResponse(responseCode = "404", description = "Post not found")
   })
   FindPostByUuidResponseDto findByUuid(
-    @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID uuid) {
+      @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID uuid) {
 
     Post post = findPostByUuid.findByUuid(uuid).orElseThrow(PostNotFoundException::new);
     return postMapper.toFindByUuidResponseDto(post);
@@ -134,10 +136,12 @@ public class PostController {
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
   ResponseEntity<SavePostResponseDto> save(
-      @Parameter(description = "Post data to create", required = true) @RequestBody @Valid SavePostRequestDto postDto) {
+      @Parameter(description = "Post data to create", required = true) @RequestBody @Valid SavePostRequestDto postDto,
+      @AuthenticationPrincipal JwtUserDetails userDetails) {
 
+    UUID userUuid = userDetails.id;
     Post post = postMapper.toDomain(postDto);
-    Post savedPost = savePost.save(post, postDto.getUserId(), postDto.getTagNames());
+    Post savedPost = savePost.save(post, userUuid, postDto.getTagNames());
     SavePostResponseDto responseDto = postMapper.toSavePostResponseDto(savedPost);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{uuid}")

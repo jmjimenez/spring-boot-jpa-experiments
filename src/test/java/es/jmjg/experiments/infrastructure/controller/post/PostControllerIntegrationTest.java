@@ -222,10 +222,10 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     final String postTitle = "101 Title";
     final String postBody = "101 Body";
 
-    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), TestDataSamples.LEANNE_UUID,
+    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), 
         postTitle, postBody, List.of(existingTagName, newTagName));
 
-    final String accessToken = createAccessToken(TestDataSamples.ADMIN_USERNAME, TestDataSamples.ADMIN_PASSWORD);
+    final String accessToken = createAccessToken(TestDataSamples.LEANNE_USERNAME, TestDataSamples.USER_PASSWORD);
     HttpEntity<SavePostRequestDto> request = createAuthenticatedRequestWithAccessToken(accessToken, postDto);
 
     final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
@@ -277,8 +277,21 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
+  void shouldNotCreateNewPostWhenUserIsNotAuthenticated() {
+    new SavePostRequestDto(java.util.UUID.randomUUID(), "", "", null);
+
+    final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
+        "/api/posts",
+        HttpMethod.POST,
+        null,
+        SavePostResponseDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  @Test
   void shouldNotCreateNewPostWhenValidationFails() {
-    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), TestDataSamples.LEANNE_UUID, "",
+    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), "",
         "", null);
 
     HttpEntity<SavePostRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,

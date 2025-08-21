@@ -2,6 +2,7 @@ package es.jmjg.experiments.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -52,11 +53,11 @@ public class JwtSecurityConfig {
             authorize -> authorize
                 .requestMatchers("/", "/authenticate", "/api-docs/**", "/swagger-ui/**")
                 .permitAll()
-                .requestMatchers("/api/posts")
+                .requestMatchers(HttpMethod.GET, "/api/posts")
                 .permitAll()
-                .requestMatchers("/api/posts/{uuid}")
+                .requestMatchers(HttpMethod.GET, "/api/posts/{uuid}")
                 .permitAll()
-                .requestMatchers("/api/posts/search")
+                .requestMatchers(HttpMethod.GET, "/api/posts/search")
                 .permitAll()
                 .requestMatchers("/api/**")
                 .hasAuthority(JwtUserDetailsService.ROLE_USER)

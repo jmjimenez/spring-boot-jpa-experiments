@@ -19,10 +19,6 @@ public class SavePostRequestDto {
   @Schema(description = "Unique identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
   private UUID uuid;
 
-  @NotNull(message = "User ID is required")
-  @Schema(description = "UUID of the user creating the post", example = "123e4567-e89b-12d3-a456-426614174001")
-  private UUID userId;
-
   @NotEmpty(message = "Title is required")
   @Schema(description = "Title of the post", example = "My First Post")
   private String title;
