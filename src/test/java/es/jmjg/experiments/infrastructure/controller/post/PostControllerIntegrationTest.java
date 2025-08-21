@@ -93,14 +93,34 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  void shouldReturnPostByUuid() {
-    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD);
+  void authenticatedUserShouldReturnPostByUuid() {
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.LEANNE_USERNAME,
+        TestDataSamples.USER_PASSWORD);
 
     ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
         "/api/posts/" + TestDataSamples.POST_2_UUID,
         HttpMethod.GET,
         request,
+        FindPostByUuidResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    FindPostByUuidResponseDto post = response.getBody();
+    assertThat(post).isNotNull().satisfies(p -> {
+      assertThat(p.getTitle()).isEqualTo(TestDataSamples.POST_2_TITLE);
+      assertThat(p.getTags()).isNotNull();
+      assertThat(p.getTags()).hasSize(3);
+      assertThat(p.getTags()).extracting("name")
+          .containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.SPRING_BOOT_TAG_NAME,
+              TestDataSamples.JPA_TAG_NAME);
+    });
+  }
+
+  @Test
+  void unauthenticatedUserShouldNotReturnPostByUuid() {
+    ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
+        "/api/posts/" + TestDataSamples.POST_2_UUID,
+        HttpMethod.GET,
+        null,
         FindPostByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 

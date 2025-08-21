@@ -54,6 +54,8 @@ public class JwtSecurityConfig {
                 .permitAll()
                 .requestMatchers("/api/posts")
                 .permitAll()
+                .requestMatchers("/api/posts/{uuid}")
+                .permitAll()
                 .requestMatchers("/api/**")
                 .hasAuthority(JwtUserDetailsService.ROLE_USER)
                 .anyRequest()

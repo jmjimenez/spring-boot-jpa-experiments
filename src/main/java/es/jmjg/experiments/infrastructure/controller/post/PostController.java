@@ -85,7 +85,7 @@ public class PostController {
 
   @GetMapping("")
   @Transactional(readOnly = true)
-  @Operation(summary = "Get all posts", description = "Retrieves a paginated list of all posts")
+  @Operation(summary = "Get all posts", description = "Retrieves a paginated list of all posts", security = {})
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagedResponseDto.class)))
   })
@@ -99,7 +99,7 @@ public class PostController {
 
   @GetMapping("/{uuid}")
   @Transactional(readOnly = true)
-  @Operation(summary = "Get post by UUID", description = "Retrieves a specific post by its UUID")
+  @Operation(summary = "Get post by UUID", description = "Retrieves a specific post by its UUID", security = {})
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved post", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostByUuidResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Post not found")
