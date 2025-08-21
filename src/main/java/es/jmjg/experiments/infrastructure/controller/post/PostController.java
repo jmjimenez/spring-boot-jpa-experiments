@@ -94,6 +94,7 @@ public class PostController {
       @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
     Pageable pageable = PageRequest.of(page, size);
     var postsPage = findAllPosts.findAll(pageable);
+
     return postMapper.toPagedResponseDto(postsPage);
   }
 
@@ -105,28 +106,10 @@ public class PostController {
       @ApiResponse(responseCode = "404", description = "Post not found")
   })
   FindPostByUuidResponseDto findByUuid(
-      @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID uuid) {
-    logger.info("Starting findByUuid request for UUID: {}", uuid);
+    @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID uuid) {
 
-    try {
-      logger.debug("Calling findPostByUuid.findByUuid() for UUID: {}", uuid);
-      Post post = findPostByUuid.findByUuid(uuid).orElseThrow(PostNotFoundException::new);
-      logger.debug("Post found successfully. Post ID: {}, Title: {}", post.getId(), post.getTitle());
-
-      logger.debug(
-          "About to call postMapper.toFindByUuidResponseDto() - this is where LazyInitializationException might occur");
-      FindPostByUuidResponseDto response = postMapper.toFindByUuidResponseDto(post);
-      logger.info("Successfully mapped post to response DTO for UUID: {}", uuid);
-
-      return response;
-    } catch (org.hibernate.LazyInitializationException e) {
-      logger.error("LazyInitializationException occurred while processing UUID: {}. Error: {}", uuid, e.getMessage(),
-          e);
-      throw e;
-    } catch (Exception e) {
-      logger.error("Unexpected error occurred while processing UUID: {}. Error: {}", uuid, e.getMessage(), e);
-      throw e;
-    }
+    Post post = findPostByUuid.findByUuid(uuid).orElseThrow(PostNotFoundException::new);
+    return postMapper.toFindByUuidResponseDto(post);
   }
 
   @GetMapping("/search")
@@ -138,6 +121,7 @@ public class PostController {
   List<SearchPostsResponseDto> searchPosts(
       @Parameter(description = "Search terms to find in post content") @RequestParam String q,
       @Parameter(description = "Maximum number of results to return") @RequestParam(defaultValue = "20") int limit) {
+
     List<Post> posts = findPosts.find(q, limit);
     return postMapper.toSearchPostsResponseDto(posts);
   }
@@ -151,6 +135,7 @@ public class PostController {
   })
   ResponseEntity<SavePostResponseDto> save(
       @Parameter(description = "Post data to create", required = true) @RequestBody @Valid SavePostRequestDto postDto) {
+
     Post post = postMapper.toDomain(postDto);
     Post savedPost = savePost.save(post, postDto.getUserId(), postDto.getTagNames());
     SavePostResponseDto responseDto = postMapper.toSavePostResponseDto(savedPost);
@@ -175,6 +160,7 @@ public class PostController {
   UpdatePostResponseDto update(
       @Parameter(description = "UUID of the post to update") @PathVariable UUID uuid,
       @Parameter(description = "Updated post data", required = true) @RequestBody @Valid UpdatePostRequestDto postDto) {
+
     Post post = postMapper.toDomain(postDto);
     Post updatedPost = updatePost.update(uuid, post, postDto.getTagNames());
     return postMapper.toUpdatePostResponseDto(updatedPost);
@@ -189,6 +175,7 @@ public class PostController {
       @ApiResponse(responseCode = "404", description = "Post not found")
   })
   void delete(@Parameter(description = "UUID of the post to delete") @PathVariable UUID uuid) {
+
     deletePostById.deleteByUuid(uuid);
   }
 }
