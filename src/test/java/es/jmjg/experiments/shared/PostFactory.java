@@ -2,10 +2,14 @@ package es.jmjg.experiments.shared;
 
 import java.util.UUID;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import es.jmjg.experiments.application.post.SavePostDto;
 import es.jmjg.experiments.application.post.UpdatePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
+import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
 
 public class PostFactory {
 
@@ -79,12 +83,22 @@ public class PostFactory {
         null);
   }
 
-  public static UpdatePostDto createPostUpdateDto(UUID uuid, String title, String body) {
+  public static UpdatePostDto createPostUpdateDto(UUID uuid, String title, String body, User authenticatedUser) {
     return new UpdatePostDto(
         uuid,
         title,
         body,
         null,
-        null);
+        generateRegularUserJwtUserDetails(authenticatedUser));
+  }
+
+  private static JwtUserDetails generateRegularUserJwtUserDetails(User authenticatedUser) {
+    return new JwtUserDetails(
+        authenticatedUser.getUuid(),
+        authenticatedUser.getUsername(),
+        authenticatedUser.getPassword(),
+        authenticatedUser.getUsername().equals(TestDataSamples.ADMIN_USERNAME)
+            ? java.util.List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_ADMIN))
+            : java.util.List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_USER)));
   }
 }

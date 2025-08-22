@@ -355,7 +355,41 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
       assertThat(p.getTags()).extracting("name")
           .containsExactlyInAnyOrder(existingTagName, newTagName);
     });
+  }
 
+  @Test
+  void shouldNotUpdatePostWhenUserIsNotAuthenticated() {
+    final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
+    final String newTagName = "update-test-tag";
+    final String updatedTitle = "Updated Title";
+    final String updatedBody = "Updated Body";
+
+    new UpdatePostRequestDto(
+        updatedTitle, updatedBody,
+        List.of(existingTagName, newTagName));
+
+    ResponseEntity<UpdatePostResponseDto> response = restTemplate.exchange(
+        "/api/posts/" + TestDataSamples.POST_1_UUID, HttpMethod.PUT, null, UpdatePostResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  @Test
+  void shouldNotUpdatePostWhenUserIsNotOwner() {
+    final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
+    final String newTagName = "update-test-tag";
+    final String updatedTitle = "Updated Title";
+    final String updatedBody = "Updated Body";
+
+    UpdatePostRequestDto postDto = new UpdatePostRequestDto(
+        updatedTitle, updatedBody,
+        List.of(existingTagName, newTagName));
+
+    final String accessToken = createAccessToken(TestDataSamples.ERVIN_USERNAME, TestDataSamples.USER_PASSWORD);
+    HttpEntity<UpdatePostRequestDto> request = createAuthenticatedRequestWithAccessToken(accessToken, postDto);
+
+    ResponseEntity<UpdatePostResponseDto> response = restTemplate.exchange(
+        "/api/posts/" + TestDataSamples.POST_1_UUID, HttpMethod.PUT, request, UpdatePostResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
   @Test

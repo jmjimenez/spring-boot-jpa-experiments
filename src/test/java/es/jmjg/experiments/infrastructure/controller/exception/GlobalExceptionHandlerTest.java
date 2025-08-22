@@ -11,6 +11,8 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
+import es.jmjg.experiments.application.post.exception.Forbidden;
+
 class GlobalExceptionHandlerTest {
 
   private GlobalExceptionHandler exceptionHandler;
@@ -124,6 +126,27 @@ class GlobalExceptionHandlerTest {
               assertThat(body.getStatus()).isEqualTo(403);
               assertThat(body.getError()).isEqualTo("Forbidden");
               assertThat(body.getMessage()).isNotEmpty();
+            });
+  }
+
+  @Test
+  void handleForbidden_ShouldReturn403() {
+    // Given
+    Forbidden exception = new Forbidden("User is not authorized to update this post");
+
+    // When
+    ResponseEntity<ApiErrorResponse> response = exceptionHandler.handleForbidden(exception, webRequest);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(response.getBody())
+        .isNotNull()
+        .satisfies(
+            body -> {
+              assertThat(body.getStatus()).isEqualTo(403);
+              assertThat(body.getError()).isEqualTo("Forbidden");
+              assertThat(body.getMessage()).isEqualTo("User is not authorized to update this post");
+              assertThat(body.getPath()).isEqualTo("uri=/api/posts/1");
             });
   }
 }

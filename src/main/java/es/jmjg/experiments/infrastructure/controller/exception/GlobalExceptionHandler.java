@@ -16,6 +16,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 
+import es.jmjg.experiments.application.post.exception.Forbidden;
 import es.jmjg.experiments.application.post.exception.InvalidRequest;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.tag.exception.TagAlreadyExistsException;
@@ -176,6 +177,23 @@ public class GlobalExceptionHandler {
         .build();
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
+
+  @ExceptionHandler(Forbidden.class)
+  public ResponseEntity<ApiErrorResponse> handleForbidden(
+      Forbidden ex, WebRequest request) {
+
+    log.warn("Access forbidden: {}", ex.getMessage());
+
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.FORBIDDEN.value())
+        .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

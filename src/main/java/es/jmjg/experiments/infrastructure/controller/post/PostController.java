@@ -159,6 +159,8 @@ public class PostController {
   @Operation(summary = "Update a post", description = "Updates an existing post with the provided data")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Post updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdatePostResponseDto.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+      @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to update this post"),
       @ApiResponse(responseCode = "404", description = "Post not found"),
       @ApiResponse(responseCode = "400", description = "Invalid input data"),
       @ApiResponse(responseCode = "500", description = "Internal server error")
