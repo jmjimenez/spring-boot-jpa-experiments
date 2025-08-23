@@ -48,7 +48,6 @@ class DeletePostIntegrationTest extends BaseIntegration {
   @Test
   void deleteByUuid_WhenUserIsAdmin_ShouldDeletePost() {
     // Given - using existing test data from migration
-    userRepository.findByUuid(TestDataSamples.ERVIN_UUID).orElseThrow();
     User adminUser = userRepository.findByUsername(TestDataSamples.ADMIN_USERNAME).orElseThrow();
     Post existingPost = postRepository.findByUuid(TestDataSamples.POST_16_UUID).orElseThrow();
     assertThat(postRepository.findById(existingPost.getId())).isPresent();
@@ -65,7 +64,6 @@ class DeletePostIntegrationTest extends BaseIntegration {
   @Test
   void deleteByUuid_WhenUserIsNotOwnerAndNotAdmin_ShouldThrowForbidden() {
     // Given - using existing test data from migration
-    userRepository.findByUuid(TestDataSamples.CLEMENTINE_UUID).orElseThrow();
     User nonOwnerUser = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
     Post existingPost = postRepository.findByUuid(TestDataSamples.POST_3_UUID).orElseThrow();
     assertThat(postRepository.findById(existingPost.getId())).isPresent();
@@ -93,5 +91,21 @@ class DeletePostIntegrationTest extends BaseIntegration {
     assertThatThrownBy(() -> deletePost.delete(deletePostDto))
         .isInstanceOf(es.jmjg.experiments.application.post.exception.PostNotFound.class)
         .hasMessage("Post not found with uuid: " + nonExistentUuid);
+  }
+
+  @Test
+  void deleteByUuid_WhenUserIsNotAuthenticated_ShouldThrowNullPointerException() {
+    // Given - using existing test data from migration
+    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    assertThat(postRepository.findById(existingPost.getId())).isPresent();
+
+    final DeletePostDto deletePostDto = new DeletePostDto(existingPost.getUuid(), null);
+
+    // When & Then
+    assertThatThrownBy(() -> deletePost.delete(deletePostDto))
+        .isInstanceOf(NullPointerException.class);
+
+    // Verify post still exists
+    assertThat(postRepository.findById(existingPost.getId())).isPresent();
   }
 }

@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.user;
+package es.jmjg.experiments.infrastructure.controller.user.integration;
 
 import static org.assertj.core.api.Assertions.*;
 

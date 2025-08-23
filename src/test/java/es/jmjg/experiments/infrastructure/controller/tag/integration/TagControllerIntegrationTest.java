@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.tag;
+package es.jmjg.experiments.infrastructure.controller.tag.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
