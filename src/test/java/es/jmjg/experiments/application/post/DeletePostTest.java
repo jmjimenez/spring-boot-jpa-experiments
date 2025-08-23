@@ -57,7 +57,7 @@ class DeletePostTest {
     doNothing().when(postRepository).deleteById(POST_ID);
 
     // When
-    deletePost.deleteByUuid(deletePostDto);
+    deletePost.delete(deletePostDto);
 
     // Then
     verify(postRepository, times(1)).findByUuid(POST_UUID);
@@ -85,7 +85,7 @@ class DeletePostTest {
     doNothing().when(postRepository).deleteById(POST_ID);
 
     // When
-    deletePost.deleteByUuid(deletePostDto);
+    deletePost.delete(deletePostDto);
 
     // Then
     verify(postRepository, times(1)).findByUuid(POST_UUID);
@@ -104,7 +104,7 @@ class DeletePostTest {
     when(postRepository.findByUuid(POST_UUID)).thenReturn(Optional.empty());
 
     // When & Then
-    assertThatThrownBy(() -> deletePost.deleteByUuid(deletePostDto))
+    assertThatThrownBy(() -> deletePost.delete(deletePostDto))
         .isInstanceOf(PostNotFound.class)
         .hasMessage("Post not found with uuid: " + POST_UUID);
 
@@ -132,7 +132,7 @@ class DeletePostTest {
     when(postRepository.findByUuid(POST_UUID)).thenReturn(Optional.of(post));
 
     // When & Then
-    assertThatThrownBy(() -> deletePost.deleteByUuid(deletePostDto))
+    assertThatThrownBy(() -> deletePost.delete(deletePostDto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("You are not the owner of this post");
 
@@ -161,7 +161,7 @@ class DeletePostTest {
     doNothing().when(postRepository).deleteById(POST_ID);
 
     // When
-    deletePost.deleteByUuid(deletePostDto);
+    deletePost.delete(deletePostDto);
 
     // Then
     verify(postRepository, times(1)).findByUuid(POST_UUID);

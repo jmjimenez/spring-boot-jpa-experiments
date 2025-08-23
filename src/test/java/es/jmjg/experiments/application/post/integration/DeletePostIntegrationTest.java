@@ -39,7 +39,7 @@ class DeletePostIntegrationTest extends BaseIntegration {
     DeletePostDto deletePostDto = PostFactory.createDeletePostDto(existingPost.getUuid(), postOwner);
 
     // When
-    deletePost.deleteByUuid(deletePostDto);
+    deletePost.delete(deletePostDto);
 
     // Then
     assertThat(postRepository.findById(existingPost.getId())).isEmpty();
@@ -56,7 +56,7 @@ class DeletePostIntegrationTest extends BaseIntegration {
     DeletePostDto deletePostDto = PostFactory.createDeletePostDto(existingPost.getUuid(), adminUser);
 
     // When
-    deletePost.deleteByUuid(deletePostDto);
+    deletePost.delete(deletePostDto);
 
     // Then
     assertThat(postRepository.findById(existingPost.getId())).isEmpty();
@@ -73,7 +73,7 @@ class DeletePostIntegrationTest extends BaseIntegration {
     DeletePostDto deletePostDto = PostFactory.createDeletePostDto(existingPost.getUuid(), nonOwnerUser);
 
     // When & Then
-    assertThatThrownBy(() -> deletePost.deleteByUuid(deletePostDto))
+    assertThatThrownBy(() -> deletePost.delete(deletePostDto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("You are not the owner of this post");
 
@@ -90,7 +90,7 @@ class DeletePostIntegrationTest extends BaseIntegration {
     DeletePostDto deletePostDto = PostFactory.createDeletePostDto(nonExistentUuid, testUser);
 
     // When & Then
-    assertThatThrownBy(() -> deletePost.deleteByUuid(deletePostDto))
+    assertThatThrownBy(() -> deletePost.delete(deletePostDto))
         .isInstanceOf(es.jmjg.experiments.application.post.exception.PostNotFound.class)
         .hasMessage("Post not found with uuid: " + nonExistentUuid);
   }

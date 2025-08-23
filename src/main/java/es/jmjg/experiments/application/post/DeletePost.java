@@ -19,7 +19,7 @@ public class DeletePost {
   }
 
   @Transactional
-  public void deleteByUuid(DeletePostDto deletePostDto) {
+  public void delete(DeletePostDto deletePostDto) {
     var post = postRepository.findByUuid(deletePostDto.uuid());
 
     if (post.isEmpty()) {

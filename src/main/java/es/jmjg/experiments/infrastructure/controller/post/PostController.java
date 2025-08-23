@@ -191,6 +191,6 @@ public class PostController {
       @AuthenticationPrincipal JwtUserDetails userDetails) {
 
     var deletePostDto = new DeletePostDto(uuid, userDetails);
-    deletePost.deleteByUuid(deletePostDto);
+    deletePost.delete(deletePostDto);
   }
 }
