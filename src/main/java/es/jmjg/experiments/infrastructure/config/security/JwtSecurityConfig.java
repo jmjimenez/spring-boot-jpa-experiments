@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.config;
+package es.jmjg.experiments.infrastructure.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import es.jmjg.experiments.infrastructure.security.JwtRequestFilter;
-import es.jmjg.experiments.infrastructure.security.JwtTokenService;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
 
 @Configuration
 @EnableWebSecurity

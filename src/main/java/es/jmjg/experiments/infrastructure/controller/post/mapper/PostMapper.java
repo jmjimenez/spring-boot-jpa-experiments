@@ -25,7 +25,7 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDt
 import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 
 @Component
 public class PostMapper {

@@ -13,8 +13,8 @@ import es.jmjg.experiments.application.post.DeletePostDto;
 import es.jmjg.experiments.application.post.exception.Forbidden;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 

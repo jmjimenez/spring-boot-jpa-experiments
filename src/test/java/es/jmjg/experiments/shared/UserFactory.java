@@ -3,7 +3,7 @@ package es.jmjg.experiments.shared;
 import java.util.UUID;
 
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 
 public class UserFactory {
 

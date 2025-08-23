@@ -13,8 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationRequest;
 import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationResponse;
-import es.jmjg.experiments.infrastructure.security.JwtTokenService;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
+import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

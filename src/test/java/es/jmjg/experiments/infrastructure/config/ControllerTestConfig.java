@@ -36,8 +36,8 @@ import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import es.jmjg.experiments.infrastructure.controller.tag.mapper.TagMapper;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
-import es.jmjg.experiments.infrastructure.security.JwtTokenService;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
+import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 
 @TestConfiguration
 public class ControllerTestConfig {

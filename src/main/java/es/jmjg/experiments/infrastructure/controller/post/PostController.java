@@ -39,7 +39,7 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsRespons
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

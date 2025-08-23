@@ -11,7 +11,7 @@ import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.repository.PostRepository;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 
 @Service
 public class UpdatePost {

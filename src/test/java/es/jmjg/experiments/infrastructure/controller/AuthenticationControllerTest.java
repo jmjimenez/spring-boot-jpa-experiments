@@ -26,9 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
 import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationRequest;
-import es.jmjg.experiments.infrastructure.security.JwtTokenService;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
+import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(AuthenticationController.class)

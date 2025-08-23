@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.security;
+package es.jmjg.experiments.infrastructure.config.security;
 
 import java.util.ArrayList;
 import java.util.List;

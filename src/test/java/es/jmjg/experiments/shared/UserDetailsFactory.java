@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 
 public class UserDetailsFactory {
 
