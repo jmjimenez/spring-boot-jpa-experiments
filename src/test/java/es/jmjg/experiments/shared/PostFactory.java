@@ -2,14 +2,11 @@ package es.jmjg.experiments.shared;
 
 import java.util.UUID;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
+import es.jmjg.experiments.application.post.DeletePostDto;
 import es.jmjg.experiments.application.post.SavePostDto;
 import es.jmjg.experiments.application.post.UpdatePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
 
 public class PostFactory {
 
@@ -89,16 +86,12 @@ public class PostFactory {
         title,
         body,
         null,
-        generateRegularUserJwtUserDetails(authenticatedUser));
+        UserDetailsFactory.createRegularUserJwtUserDetails(authenticatedUser));
   }
 
-  private static JwtUserDetails generateRegularUserJwtUserDetails(User authenticatedUser) {
-    return new JwtUserDetails(
-        authenticatedUser.getUuid(),
-        authenticatedUser.getUsername(),
-        authenticatedUser.getPassword(),
-        authenticatedUser.getUsername().equals(TestDataSamples.ADMIN_USERNAME)
-            ? java.util.List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_ADMIN))
-            : java.util.List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_USER)));
+  public static DeletePostDto createDeletePostDto(UUID uuid, User authenticatedUser) {
+    return new DeletePostDto(
+        uuid,
+        UserDetailsFactory.createRegularUserJwtUserDetails(authenticatedUser));
   }
 }

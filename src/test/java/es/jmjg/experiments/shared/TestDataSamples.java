@@ -76,4 +76,8 @@ public final class TestDataSamples {
   // Sample search terms and expected counts from Flyway migration data
   public static final String SEARCH_TERM_SUNT = "fugiat";
   public static final int EXPECTED_SUNT_SEARCH_COUNT = 3;
+
+  // Test post data for new posts (not from migration data)
+  public static final String NEW_POST_TITLE = "Test Post 1";
+  public static final String NEW_POST_BODY = "Test Body 1";
 }

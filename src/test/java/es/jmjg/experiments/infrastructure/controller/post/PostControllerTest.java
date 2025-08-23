@@ -20,11 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import es.jmjg.experiments.application.post.DeletePostByUuid;
+import es.jmjg.experiments.application.post.DeletePost;
+import es.jmjg.experiments.application.post.DeletePostDto;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
@@ -36,7 +36,6 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
 import es.jmjg.experiments.infrastructure.security.JwtUserDetails;
-import es.jmjg.experiments.infrastructure.security.JwtUserDetailsService;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
@@ -49,7 +48,7 @@ class PostControllerTest {
   private MockMvc mockMvc;
 
   @Autowired
-  private DeletePostByUuid deletePostById;
+  private DeletePost deletePost;
 
   @Autowired
   private FindPosts findPosts;
@@ -246,11 +245,7 @@ class PostControllerTest {
   void shouldCreateNewPostWhenGivenValidID() throws Exception {
     User user = UserFactory.createBasicUser();
 
-    JwtUserDetails userDetails = new JwtUserDetails(
-        user.getUuid(),
-        user.getUsername(),
-        user.getPassword(),
-        List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_USER)));
+    JwtUserDetails userDetails = UserFactory.createUserUserDetails(user);
 
     Post post = PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
     post.setId(3);
@@ -295,11 +290,7 @@ class PostControllerTest {
   void shouldUpdatePostWhenGivenValidPost() throws Exception {
     User user = UserFactory.createBasicUser();
 
-    JwtUserDetails userDetails = new JwtUserDetails(
-        user.getUuid(),
-        user.getUsername(),
-        user.getPassword(),
-        List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_USER)));
+    JwtUserDetails userDetails = UserFactory.createUserUserDetails(user);
 
     Post updated = PostFactory.createPost(
         user, UUID.randomUUID(), "This is my brand new post", "UPDATED BODY");
@@ -332,11 +323,7 @@ class PostControllerTest {
   void shouldNotUpdateAndThrowNotFoundWhenGivenAnInvalidPostUUID() throws Exception {
     User user = UserFactory.createBasicUser();
 
-    JwtUserDetails userDetails = new JwtUserDetails(
-        user.getUuid(),
-        user.getUsername(),
-        user.getPassword(),
-        List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_USER)));
+    JwtUserDetails userDetails = UserFactory.createUserUserDetails(user);
 
     Post updated = new Post();
     updated.setId(50);
@@ -369,12 +356,18 @@ class PostControllerTest {
   }
 
   @Test
-  void shouldDeletePostWhenGivenValidUUID() throws Exception {
-    doNothing().when(deletePostById).deleteByUuid(TestDataSamples.POST_2_UUID);
+  void shouldDeletePostWhenGivenValidUUIDAndValidOwner() throws Exception {
+    User user = UserFactory.createBasicUser();
+    JwtUserDetails userDetails = UserFactory.createUserUserDetails(user);
 
-    mockMvc.perform(delete("/api/posts/" + TestDataSamples.POST_2_UUID)).andExpect(status().isNoContent());
+    DeletePostDto deletePostDto = new DeletePostDto(TestDataSamples.POST_2_UUID, userDetails);
+    doNothing().when(deletePost).deleteByUuid(deletePostDto);
 
-    verify(deletePostById, times(1)).deleteByUuid(TestDataSamples.POST_2_UUID);
+    mockMvc.perform(delete("/api/posts/" + TestDataSamples.POST_2_UUID)
+        .with(user(userDetails)))
+        .andExpect(status().isNoContent());
+
+    verify(deletePost, times(1)).deleteByUuid(deletePostDto);
   }
 
   @Test

@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import es.jmjg.experiments.application.post.DeletePostByUuid;
+import es.jmjg.experiments.application.post.DeletePost;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
@@ -44,8 +44,8 @@ public class ControllerTestConfig {
 
   @Bean
   @Primary
-  public DeletePostByUuid deletePostById() {
-    return mock(DeletePostByUuid.class);
+  public DeletePost deletePostById() {
+    return mock(DeletePost.class);
   }
 
   @Bean

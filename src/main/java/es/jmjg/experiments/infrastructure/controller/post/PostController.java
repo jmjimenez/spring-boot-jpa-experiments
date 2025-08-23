@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import es.jmjg.experiments.application.post.DeletePostByUuid;
+import es.jmjg.experiments.application.post.DeletePost;
+import es.jmjg.experiments.application.post.DeletePostDto;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
@@ -62,7 +63,7 @@ public class PostController {
   private final SavePost savePost;
   private final FindPostByUuid findPostByUuid;
   private final FindAllPosts findAllPosts;
-  private final DeletePostByUuid deletePostById;
+  private final DeletePost deletePost;
 
   public PostController(
       PostMapper postMapper,
@@ -71,14 +72,14 @@ public class PostController {
       SavePost savePost,
       FindPostByUuid findPostByUuid,
       FindAllPosts findAllPosts,
-      DeletePostByUuid deletePostById) {
+      DeletePost deletePost) {
     this.postMapper = postMapper;
     this.findPosts = findPosts;
     this.updatePost = updatePost;
     this.savePost = savePost;
     this.findPostByUuid = findPostByUuid;
     this.findAllPosts = findAllPosts;
-    this.deletePostById = deletePostById;
+    this.deletePost = deletePost;
   }
 
   @GetMapping("")
@@ -181,11 +182,15 @@ public class PostController {
   @Operation(summary = "Delete a post", description = "Deletes a post by its UUID")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "204", description = "Post deleted successfully"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+      @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete this post"),
       @ApiResponse(responseCode = "404", description = "Post not found"),
       @ApiResponse(responseCode = "500", description = "Internal server error")
   })
-  void delete(@Parameter(description = "UUID of the post to delete") @PathVariable UUID uuid) {
+  void delete(@Parameter(description = "UUID of the post to delete") @PathVariable UUID uuid,
+      @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    deletePostById.deleteByUuid(uuid);
+    var deletePostDto = new DeletePostDto(uuid, userDetails);
+    deletePost.deleteByUuid(deletePostDto);
   }
 }
