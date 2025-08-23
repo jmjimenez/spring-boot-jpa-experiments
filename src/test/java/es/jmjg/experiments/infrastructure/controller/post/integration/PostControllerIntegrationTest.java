@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.post;
+package es.jmjg.experiments.infrastructure.controller.post.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -222,7 +222,7 @@ class PostControllerIntegrationTest extends BaseControllerIntegration {
     final String postTitle = "101 Title";
     final String postBody = "101 Body";
 
-    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), 
+    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(),
         postTitle, postBody, List.of(existingTagName, newTagName));
 
     final String accessToken = createAccessToken(TestDataSamples.LEANNE_USERNAME, TestDataSamples.USER_PASSWORD);
