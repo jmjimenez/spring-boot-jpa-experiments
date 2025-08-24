@@ -40,7 +40,8 @@ public class JwtSecurityConfig {
   public SecurityFilterChain configure(
       final HttpSecurity http,
       final JwtUserDetailsService jwtUserDetailsService,
-      final JwtTokenService jwtTokenService)
+      final JwtTokenService jwtTokenService,
+      final JwtRequestFilter jwtRequestFilter)
       throws Exception {
     return http
         .cors(cors -> cors.disable())
@@ -65,7 +66,7 @@ public class JwtSecurityConfig {
             exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .addFilterBefore(
-            jwtRequestFilter(jwtUserDetailsService, jwtTokenService),
+            jwtRequestFilter,
             UsernamePasswordAuthenticationFilter.class)
         .build();
   }
