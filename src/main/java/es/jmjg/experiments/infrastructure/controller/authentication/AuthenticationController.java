@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller;
+package es.jmjg.experiments.infrastructure.controller.authentication;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationRequest;
-import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationResponse;
+import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationRequestDto;
+import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationResponseDto;
 import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,27 +37,27 @@ public class AuthenticationController {
   @PostMapping("/authenticate")
   @Operation(summary = "Authenticate user", description = "Authenticates a user and returns a JWT token. Use this endpoint to get a token for accessing protected API endpoints.", security = {})
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponse.class))),
+      @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
       @ApiResponse(responseCode = "401", description = "Invalid credentials")
   })
-  public AuthenticationResponse authenticate(
-      @Parameter(description = "User credentials", required = true) @RequestBody @Valid final AuthenticationRequest authenticationRequest) {
+  public AuthenticationResponseDto authenticate(
+      @Parameter(description = "User credentials", required = true) @RequestBody @Valid final AuthenticationRequestDto authenticationRequest) {
     return authenticateUser(authenticationRequest.getLogin(), authenticationRequest.getPassword());
   }
 
   @PostMapping(value = "/authenticate", consumes = "application/x-www-form-urlencoded")
   @Operation(summary = "Authenticate user (OAuth2)", description = "OAuth2 password flow endpoint for authentication", security = {})
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponse.class))),
+      @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
       @ApiResponse(responseCode = "401", description = "Invalid credentials")
   })
-  public AuthenticationResponse authenticateOAuth2(
+  public AuthenticationResponseDto authenticateOAuth2(
       @Parameter(description = "Username for authentication", required = true) @RequestParam("username") String username,
       @Parameter(description = "Password for authentication", required = true) @RequestParam("password") String password) {
     return authenticateUser(username, password);
   }
 
-  private AuthenticationResponse authenticateUser(String username, String password) {
+  private AuthenticationResponseDto authenticateUser(String username, String password) {
     try {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(username, password));
@@ -66,7 +66,7 @@ public class AuthenticationController {
     }
 
     final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
-    final AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+    final AuthenticationResponseDto authenticationResponse = new AuthenticationResponseDto();
     authenticationResponse.setAccessToken(jwtTokenService.generateToken(userDetails));
     return authenticationResponse;
   }

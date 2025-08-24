@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller;
+package es.jmjg.experiments.infrastructure.controller.authentication;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -25,10 +25,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
-import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationRequest;
 import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
+import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationRequestDto;
+import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(AuthenticationController.class)
@@ -37,9 +38,6 @@ import es.jmjg.experiments.shared.UserFactory;
 class AuthenticationControllerTest {
 
   private static final String AUTHENTICATE_ENDPOINT = "/authenticate";
-  private static final String TEST_USERNAME = "admin";
-  private static final String TEST_PASSWORD = "testpass";
-  private static final String TEST_PASSWORD_HASH = "$0a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa";
 
   @Autowired
   private MockMvc mockMvc;
@@ -63,19 +61,21 @@ class AuthenticationControllerTest {
   @Test
   void authenticate_WithValidCredentials_ShouldReturnJwtToken() throws Exception {
     // Given
-    AuthenticationRequest request = new AuthenticationRequest();
-    request.setLogin(TEST_USERNAME);
-    request.setPassword(TEST_PASSWORD);
+    AuthenticationRequestDto request = new AuthenticationRequestDto();
+    request.setLogin(TestDataSamples.ADMIN_USERNAME);
+    request.setPassword(TestDataSamples.ADMIN_PASSWORD);
 
     // Configure mocks for successful authentication
-    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(TEST_USERNAME,
-        TEST_PASSWORD, null);
+    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+        TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD, null);
     when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
         .thenReturn(authToken);
 
     // Create a test user for authentication
-    User testUser = UserFactory.createUser(TEST_USERNAME, "test@example.com", TEST_USERNAME);
-    testUser.setPassword(TEST_PASSWORD_HASH);
+    User testUser = UserFactory.createUser(TestDataSamples.ADMIN_USERNAME, TestDataSamples.ADMIN_EMAIL,
+        TestDataSamples.ADMIN_USERNAME);
+    testUser.setPassword(TestDataSamples.ADMIN_PASSWORD_HASH);
 
     // Configure JwtUserDetailsService to return valid user details
     JwtUserDetails userDetails = new JwtUserDetails(
@@ -83,7 +83,7 @@ class AuthenticationControllerTest {
         testUser.getUsername(),
         testUser.getPassword(),
         List.of(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_USER)));
-    when(jwtUserDetailsService.loadUserByUsername(TEST_USERNAME)).thenReturn(userDetails);
+    when(jwtUserDetailsService.loadUserByUsername(TestDataSamples.ADMIN_USERNAME)).thenReturn(userDetails);
 
     // Configure JwtTokenService to return a valid token
     when(jwtTokenService.generateToken(any(UserDetails.class))).thenReturn("test.jwt.token");
@@ -102,8 +102,8 @@ class AuthenticationControllerTest {
   @Test
   void authenticate_WithInvalidCredentials_ShouldReturnUnauthorized() throws Exception {
     // Given
-    AuthenticationRequest request = new AuthenticationRequest();
-    request.setLogin(TEST_USERNAME);
+    AuthenticationRequestDto request = new AuthenticationRequestDto();
+    request.setLogin(TestDataSamples.ADMIN_USERNAME);
     request.setPassword("wrongpassword");
 
     // Configure mock to throw BadCredentialsException for invalid credentials
@@ -121,9 +121,9 @@ class AuthenticationControllerTest {
   @Test
   void authenticate_WithNonExistentUser_ShouldReturnUnauthorized() throws Exception {
     // Given
-    AuthenticationRequest request = new AuthenticationRequest();
+    AuthenticationRequestDto request = new AuthenticationRequestDto();
     request.setLogin("nonexistentuser");
-    request.setPassword(TEST_PASSWORD);
+    request.setPassword(TestDataSamples.ADMIN_PASSWORD);
 
     // Configure mock to throw BadCredentialsException for non-existent user
     when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("User not found"));

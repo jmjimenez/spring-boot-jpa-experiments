@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.dto;
+package es.jmjg.experiments.infrastructure.controller.authentication.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Schema(description = "Authentication request containing user credentials")
-public class AuthenticationRequest {
+public class AuthenticationRequestDto {
   @NotNull
   @Size(max = 255)
   @Schema(description = "Username or email for authentication", example = "leanne_graham", required = true)

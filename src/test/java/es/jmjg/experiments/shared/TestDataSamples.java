@@ -34,15 +34,21 @@ public final class TestDataSamples {
   public static final String CLEMENTINE_EMAIL = "clementine.bauch@example.com";
   public static final String CLEMENTINE_USERNAME = "clementine_bauch";
 
+  public static final UUID ADMIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
+  public static final String ADMIN_NAME = "Admin User";
   public static final String ADMIN_USERNAME = "admin";
   public static final String ADMIN_PASSWORD = "testpass";
+  public static final String ADMIN_EMAIL = "admin@example.com";
+  public static final String ADMIN_PASSWORD_HASH = "$2a$10$nJepjv6WEk5NlbiaU2ka3uR/5N7/wqtrw6/1acgPw7Rvr4qxoidR.";
   public static final String USER_PASSWORD = "testpass";
 
   public static final UUID PATRICIA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440004");
+  public static final String PATRICIA_NAME = "Patricia Lebsack";
   public static final String PATRICIA_EMAIL = "patricia.lebsack@example.com";
   public static final String PATRICIA_USERNAME = "patricia_lebsack";
 
   public static final UUID CHELSEY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440005");
+  public static final String CHELSEY_NAME = "Chelsey Dietrich";
   public static final String CHELSEY_EMAIL = "chelsey.dietrich@example.com";
   public static final String CHELSEY_USERNAME = "chelsey_dietrich";
 

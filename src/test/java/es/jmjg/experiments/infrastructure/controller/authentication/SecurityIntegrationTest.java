@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller;
+package es.jmjg.experiments.infrastructure.controller.authentication;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationRequest;
+import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationRequestDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
@@ -34,12 +34,12 @@ class SecurityIntegrationTest extends BaseControllerIntegration {
   @Test
   void accessProtectedEndpoint_WithValidToken_ShouldReturnOk() throws Exception {
     // Given - Get a valid token
-    AuthenticationRequest authRequest = createAuthenticationRequest(TestDataSamples.ADMIN_USERNAME,
+    AuthenticationRequestDto authRequest = createAuthenticationRequest(TestDataSamples.ADMIN_USERNAME,
         TestDataSamples.ADMIN_PASSWORD);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<AuthenticationRequest> request = new HttpEntity<>(authRequest, headers);
+    HttpEntity<AuthenticationRequestDto> request = new HttpEntity<>(authRequest, headers);
 
     ResponseEntity<String> authResponse = restTemplate.postForEntity(AUTHENTICATE_ENDPOINT, request, String.class);
     assertThat(authResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -77,12 +77,12 @@ class SecurityIntegrationTest extends BaseControllerIntegration {
   @Test
   void authenticate_WithValidCredentials_ShouldReturnJwtToken() throws Exception {
     // Given
-    AuthenticationRequest request = createAuthenticationRequest(TestDataSamples.ADMIN_USERNAME,
+    AuthenticationRequestDto request = createAuthenticationRequest(TestDataSamples.ADMIN_USERNAME,
         TestDataSamples.ADMIN_PASSWORD);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<AuthenticationRequest> httpRequest = new HttpEntity<>(request, headers);
+    HttpEntity<AuthenticationRequestDto> httpRequest = new HttpEntity<>(request, headers);
 
     // When & Then
     ResponseEntity<String> response = restTemplate.postForEntity(AUTHENTICATE_ENDPOINT, httpRequest, String.class);
@@ -96,11 +96,11 @@ class SecurityIntegrationTest extends BaseControllerIntegration {
   @Test
   void authenticate_WithInvalidCredentials_ShouldReturnUnauthorized() throws Exception {
     // Given
-    AuthenticationRequest request = createAuthenticationRequest(TestDataSamples.ADMIN_USERNAME, "wrongpassword");
+    AuthenticationRequestDto request = createAuthenticationRequest(TestDataSamples.ADMIN_USERNAME, "wrongpassword");
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<AuthenticationRequest> httpRequest = new HttpEntity<>(request, headers);
+    HttpEntity<AuthenticationRequestDto> httpRequest = new HttpEntity<>(request, headers);
 
     // When & Then
     ResponseEntity<String> response = restTemplate.postForEntity(AUTHENTICATE_ENDPOINT, httpRequest, String.class);
@@ -110,19 +110,19 @@ class SecurityIntegrationTest extends BaseControllerIntegration {
   @Test
   void authenticate_WithNonExistentUser_ShouldReturnUnauthorized() throws Exception {
     // Given
-    AuthenticationRequest request = createAuthenticationRequest("nonexistentuser", TestDataSamples.ADMIN_PASSWORD);
+    AuthenticationRequestDto request = createAuthenticationRequest("nonexistentuser", TestDataSamples.ADMIN_PASSWORD);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<AuthenticationRequest> httpRequest = new HttpEntity<>(request, headers);
+    HttpEntity<AuthenticationRequestDto> httpRequest = new HttpEntity<>(request, headers);
 
     // When & Then
     ResponseEntity<String> response = restTemplate.postForEntity(AUTHENTICATE_ENDPOINT, httpRequest, String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
-  private AuthenticationRequest createAuthenticationRequest(String username, String password) {
-    AuthenticationRequest request = new AuthenticationRequest();
+  private AuthenticationRequestDto createAuthenticationRequest(String username, String password) {
+    AuthenticationRequestDto request = new AuthenticationRequestDto();
     request.setLogin(username);
     request.setPassword(password);
     return request;

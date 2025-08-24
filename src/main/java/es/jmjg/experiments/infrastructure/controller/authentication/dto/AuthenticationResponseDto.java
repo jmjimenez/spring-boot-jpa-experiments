@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.dto;
+package es.jmjg.experiments.infrastructure.controller.authentication.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Schema(description = "Authentication response containing the JWT access token")
-public class AuthenticationResponse {
+public class AuthenticationResponseDto {
   @Schema(description = "JWT access token for API authentication", example = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9...")
   private String accessToken;
 

@@ -67,7 +67,7 @@ VALUES (
     (
         '550e8400-e29b-41d4-a716-446655440006',
         'Admin User',
-        'admin@test.com',
+        'admin@example.com',
         'admin',
         '$2a$10$nJepjv6WEk5NlbiaU2ka3uR/5N7/wqtrw6/1acgPw7Rvr4qxoidR.'
     );

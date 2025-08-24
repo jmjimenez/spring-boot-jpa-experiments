@@ -15,8 +15,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
-import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationRequest;
-import es.jmjg.experiments.infrastructure.controller.dto.AuthenticationResponse;
+import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationRequestDto;
+import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationResponseDto;
 
 //TODO: add archUnit tests like in https://www.wimdeblauwe.com/blog/2025/07/30/how-i-test-production-ready-spring-boot-applications/
 
@@ -64,14 +64,14 @@ public abstract class BaseControllerIntegration extends TestContainersConfig {
 
   @SuppressWarnings("null")
   protected String createAccessToken(final String username, final String password) {
-    AuthenticationRequest authRequest = new AuthenticationRequest();
+    AuthenticationRequestDto authRequest = new AuthenticationRequestDto();
     authRequest.setLogin(username);
     authRequest.setPassword(password);
 
-    ResponseEntity<AuthenticationResponse> authResponse = restTemplate.postForEntity(
+    ResponseEntity<AuthenticationResponseDto> authResponse = restTemplate.postForEntity(
         "/authenticate",
         new HttpEntity<>(authRequest),
-        AuthenticationResponse.class);
+        AuthenticationResponseDto.class);
 
     assertThat(authResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(authResponse.getBody()).isNotNull();
