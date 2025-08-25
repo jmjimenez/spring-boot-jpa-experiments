@@ -18,7 +18,7 @@ public class FindUserByEmail {
   }
 
   @Transactional(readOnly = true)
-  public Optional<User> findByEmail(String email) {
-    return userRepository.findByEmail(email);
+  public Optional<User> findByEmail(FindUserByEmailDto findUserByEmailDto) {
+    return userRepository.findByEmail(findUserByEmailDto.getEmail());
   }
 }

@@ -29,6 +29,7 @@ import es.jmjg.experiments.application.user.DeleteUserDto;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
+import es.jmjg.experiments.application.user.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
@@ -198,7 +199,7 @@ class UserControllerTest {
   void shouldFindUserWhenGivenValidEmail() throws Exception {
     // Given
     String email = "test@example.com";
-    when(findUserByEmail.findByEmail(email)).thenReturn(Optional.of(testUser));
+    when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(Optional.of(testUser));
 
     String expectedJson = """
         {
@@ -222,7 +223,7 @@ class UserControllerTest {
   void shouldNotFindUserWhenGivenInvalidEmail() throws Exception {
     // Given
     String invalidEmail = "nonexistent@example.com";
-    when(findUserByEmail.findByEmail(invalidEmail)).thenReturn(Optional.empty());
+    when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(Optional.empty());
 
     // When & Then
     mockMvc

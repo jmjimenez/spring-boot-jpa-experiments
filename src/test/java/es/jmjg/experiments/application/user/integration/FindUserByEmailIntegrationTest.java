@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.FindUserByEmail;
+import es.jmjg.experiments.application.user.FindUserByEmailDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
@@ -28,7 +29,8 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(testUser);
 
     // When
-    Optional<User> result = findUserByEmail.findByEmail(savedUser.getEmail());
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail());
+    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isPresent();
@@ -42,7 +44,8 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @Test
   void findByEmail_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByEmail.findByEmail("nonexistent@example.com");
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("nonexistent@example.com");
+    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -51,7 +54,8 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @Test
   void findByEmail_WhenEmailIsNull_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByEmail.findByEmail(null);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(null);
+    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -66,8 +70,10 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     User savedThirdUser = userRepository.save(thirdUser);
 
     // When
-    Optional<User> secondResult = findUserByEmail.findByEmail(secondUser.getEmail());
-    Optional<User> thirdResult = findUserByEmail.findByEmail(thirdUser.getEmail());
+    FindUserByEmailDto findUserByEmailDto1 = new FindUserByEmailDto(secondUser.getEmail());
+    FindUserByEmailDto findUserByEmailDto2 = new FindUserByEmailDto(thirdUser.getEmail());
+    Optional<User> secondResult = findUserByEmail.findByEmail(findUserByEmailDto1);
+    Optional<User> thirdResult = findUserByEmail.findByEmail(findUserByEmailDto2);
 
     // Then
     assertThat(secondResult).isPresent();
@@ -91,20 +97,23 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     userRepository.save(savedUser);
 
     // When
-    Optional<User> result = findUserByEmail.findByEmail("updated@example.com");
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("updated@example.com");
+    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isPresent();
     assertThat(result.get().getName()).isEqualTo("Updated Test User");
     assertThat(result.get().getEmail()).isEqualTo("updated@example.com");
     assertThat(result.get().getUsername()).isEqualTo(fourthUser.getUsername());
-    assertThat(result.get().getUuid()).isEqualTo(savedUser.getUuid());
+    assertThat(result.get().getUuid()).isEqualTo(fourthUser.getUuid());
+    assertThat(result.get().getId()).isEqualTo(savedUser.getId());
   }
 
   @Test
   void findByEmail_WhenEmailIsEmpty_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByEmail.findByEmail("");
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("");
+    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -113,7 +122,8 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @Test
   void findByEmail_WhenEmailIsBlank_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByEmail.findByEmail("   ");
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("   ");
+    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -126,13 +136,19 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(fifthUser);
     String userEmail = savedUser.getEmail();
 
-    // When
-    Optional<User> resultBeforeDelete = findUserByEmail.findByEmail(userEmail);
+    // Verify user exists before deletion
+    FindUserByEmailDto findUserByEmailDto1 = new FindUserByEmailDto(userEmail);
+    Optional<User> resultBeforeDelete = findUserByEmail.findByEmail(findUserByEmailDto1);
+    assertThat(resultBeforeDelete).isPresent();
+
+    // Delete the user
     userRepository.deleteById(savedUser.getId());
-    Optional<User> resultAfterDelete = findUserByEmail.findByEmail(userEmail);
+
+    // When
+    FindUserByEmailDto findUserByEmailDto2 = new FindUserByEmailDto(userEmail);
+    Optional<User> resultAfterDelete = findUserByEmail.findByEmail(findUserByEmailDto2);
 
     // Then
-    assertThat(resultBeforeDelete).isPresent();
     assertThat(resultAfterDelete).isEmpty();
   }
 
@@ -143,7 +159,8 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     userRepository.save(sixthUser);
 
     // When
-    Optional<User> result = findUserByEmail.findByEmail(sixthUser.getEmail().toUpperCase());
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(sixthUser.getEmail().toUpperCase());
+    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -156,12 +173,15 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(specialUser);
 
     // When
-    Optional<User> result = findUserByEmail.findByEmail("test+tag@example.com");
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail());
+    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo("Special User");
-    assertThat(result.get().getEmail()).isEqualTo("test+tag@example.com");
+    assertThat(result.get().getName()).isEqualTo(specialUser.getName());
+    assertThat(result.get().getEmail()).isEqualTo(specialUser.getEmail());
+    assertThat(result.get().getUsername()).isEqualTo(specialUser.getUsername());
+    assertThat(result.get().getUuid()).isEqualTo(specialUser.getUuid());
     assertThat(result.get().getId()).isEqualTo(savedUser.getId());
   }
 
@@ -172,12 +192,15 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(subdomainUser);
 
     // When
-    Optional<User> result = findUserByEmail.findByEmail("user@subdomain.example.com");
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail());
+    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo("Subdomain User");
-    assertThat(result.get().getEmail()).isEqualTo("user@subdomain.example.com");
+    assertThat(result.get().getName()).isEqualTo(subdomainUser.getName());
+    assertThat(result.get().getEmail()).isEqualTo(subdomainUser.getEmail());
+    assertThat(result.get().getUsername()).isEqualTo(subdomainUser.getUsername());
+    assertThat(result.get().getUuid()).isEqualTo(subdomainUser.getUuid());
     assertThat(result.get().getId()).isEqualTo(savedUser.getId());
   }
 }
