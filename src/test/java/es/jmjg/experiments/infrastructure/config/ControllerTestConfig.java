@@ -28,7 +28,6 @@ import es.jmjg.experiments.application.tag.UpdateTagName;
 import es.jmjg.experiments.application.user.DeleteUser;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.FindUserByEmail;
-import es.jmjg.experiments.application.user.FindUserById;
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
@@ -105,12 +104,6 @@ public class ControllerTestConfig {
   @Primary
   public UpdateUser updateUser() {
     return mock(UpdateUser.class);
-  }
-
-  @Bean
-  @Primary
-  public FindUserById findUserById() {
-    return mock(FindUserById.class);
   }
 
   @Bean

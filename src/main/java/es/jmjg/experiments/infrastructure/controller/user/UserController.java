@@ -25,7 +25,6 @@ import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
 import es.jmjg.experiments.application.user.FindUserByEmailDto;
-import es.jmjg.experiments.application.user.FindUserById;
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
@@ -70,7 +69,6 @@ public class UserController {
       UserMapper userMapper,
       SaveUser saveUser,
       UpdateUser updateUser,
-      FindUserById findUserById,
       FindUserByUuid findUserByUuid,
       FindUserByEmail findUserByEmail,
       FindUserByUsername findUserByUsername,
