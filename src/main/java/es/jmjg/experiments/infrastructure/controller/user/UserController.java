@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ import es.jmjg.experiments.application.user.SaveUserDto;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.application.user.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.controller.exception.UserNotFoundException;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByEmailResponseDto;
@@ -92,9 +94,13 @@ public class UserController {
   @Transactional(readOnly = true)
   @Operation(summary = "Get all users", description = "Retrieves a paginated list of all users")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class)))
+      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized"),
+      @ApiResponse(responseCode = "403", description = "Forbidden")
   })
-  Page<FindAllUsersResponseDto> findAll(Pageable pageable) {
+  Page<FindAllUsersResponseDto> findAll(
+      @AuthenticationPrincipal JwtUserDetails userDetails,
+      Pageable pageable) {
     FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
     Page<User> users = findAllUsers.findAll(findAllUsersDto);
     return users.map(userMapper::toFindAllUsersResponseDto);
@@ -105,9 +111,12 @@ public class UserController {
   @Operation(summary = "Get user by UUID", description = "Retrieves a specific user by its UUID")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByUuidResponseDto.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized"),
+      @ApiResponse(responseCode = "403", description = "Forbidden"),
       @ApiResponse(responseCode = "404", description = "User not found")
   })
   FindUserByUuidResponseDto findByUuid(
+      @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "UUID of the user to retrieve") @PathVariable UUID uuid) {
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid);
     User user = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
@@ -119,9 +128,12 @@ public class UserController {
   @Operation(summary = "Find user by email", description = "Finds a user by their email address")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByEmailResponseDto.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized"),
+      @ApiResponse(responseCode = "403", description = "Forbidden"),
       @ApiResponse(responseCode = "404", description = "User not found")
   })
   FindUserByEmailResponseDto findByEmail(
+      @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "Email address to search for") @RequestParam String email) {
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(email);
     User user = findUserByEmail.findByEmail(findUserByEmailDto).orElseThrow(UserNotFoundException::new);
@@ -133,9 +145,12 @@ public class UserController {
   @Operation(summary = "Find user by username", description = "Finds a user by their username")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByUsernameResponseDto.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized"),
+      @ApiResponse(responseCode = "403", description = "Forbidden"),
       @ApiResponse(responseCode = "404", description = "User not found")
   })
   FindUserByUsernameResponseDto findByUsername(
+      @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "Username to search for") @RequestParam String username) {
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(username);
     User user = findUserByUsername.findByUsername(findUserByUsernameDto).orElseThrow(UserNotFoundException::new);
@@ -146,9 +161,12 @@ public class UserController {
   @Operation(summary = "Create a new user", description = "Creates a new user with the provided data")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveUserResponseDto.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized"),
+      @ApiResponse(responseCode = "403", description = "Forbidden"),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
   ResponseEntity<SaveUserResponseDto> save(
+      @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "User data to create") @RequestBody @Valid SaveUserRequestDto userDto) {
     SaveUserDto saveUserDto = new SaveUserDto(
         userDto.getUuid(),
@@ -172,10 +190,14 @@ public class UserController {
   @Operation(summary = "Update a user", description = "Updates an existing user with the provided data")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUserResponseDto.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized"),
+      @ApiResponse(responseCode = "403", description = "Forbidden"),
       @ApiResponse(responseCode = "404", description = "User not found"),
       @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  UpdateUserResponseDto update(@Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
+  UpdateUserResponseDto update(
+      @AuthenticationPrincipal JwtUserDetails userDetails,
+      @Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
       @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid);
     User existing = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
@@ -197,9 +219,13 @@ public class UserController {
   @Operation(summary = "Delete a user by UUID", description = "Deletes a user by its UUID")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "204", description = "User deleted successfully"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized"),
+      @ApiResponse(responseCode = "403", description = "Forbidden"),
       @ApiResponse(responseCode = "404", description = "User not found")
   })
-  void deleteByUuid(@PathVariable UUID uuid) {
+  void deleteByUuid(
+      @AuthenticationPrincipal JwtUserDetails userDetails,
+      @PathVariable UUID uuid) {
     DeleteUserDto deleteUserDto = new DeleteUserDto(uuid);
     deleteUser.deleteByUuid(deleteUserDto);
   }
