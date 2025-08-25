@@ -31,6 +31,7 @@ import es.jmjg.experiments.application.user.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
 import es.jmjg.experiments.application.user.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.FindUserByUsername;
+import es.jmjg.experiments.application.user.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
@@ -235,7 +236,7 @@ class UserControllerTest {
   void shouldFindUserWhenGivenValidUsername() throws Exception {
     // Given
     String username = "testuser";
-    when(findUserByUsername.findByUsername(username)).thenReturn(Optional.of(testUser));
+    when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenReturn(Optional.of(testUser));
 
     String expectedJson = """
         {
@@ -259,7 +260,7 @@ class UserControllerTest {
   void shouldNotFindUserWhenGivenInvalidUsername() throws Exception {
     // Given
     String invalidUsername = "nonexistentuser";
-    when(findUserByUsername.findByUsername(invalidUsername)).thenReturn(Optional.empty());
+    when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenReturn(Optional.empty());
 
     // When & Then
     mockMvc

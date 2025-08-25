@@ -18,7 +18,7 @@ public class FindUserByUsername {
   }
 
   @Transactional(readOnly = true)
-  public Optional<User> findByUsername(String username) {
-    return userRepository.findByUsername(username);
+  public Optional<User> findByUsername(FindUserByUsernameDto findUserByUsernameDto) {
+    return userRepository.findByUsername(findUserByUsernameDto.getUsername());
   }
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.FindUserByUsername;
+import es.jmjg.experiments.application.user.FindUserByUsernameDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
@@ -39,7 +40,8 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String testUsername = ERVIN_USERNAME;
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername(testUsername);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername);
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isPresent();
@@ -53,7 +55,8 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUsername.findByUsername("nonexistentuser");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("nonexistentuser");
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -62,7 +65,8 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameIsNull_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUsername.findByUsername(null);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(null);
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -75,8 +79,10 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String thirdUsername = CLEMENTINE_USERNAME;
 
     // When
-    Optional<User> secondResult = findUserByUsername.findByUsername(secondUsername);
-    Optional<User> thirdResult = findUserByUsername.findByUsername(thirdUsername);
+    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(secondUsername);
+    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(thirdUsername);
+    Optional<User> secondResult = findUserByUsername.findByUsername(findUserByUsernameDto1);
+    Optional<User> thirdResult = findUserByUsername.findByUsername(findUserByUsernameDto2);
 
     // Then
     assertThat(secondResult).isPresent();
@@ -92,7 +98,8 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   void findByUsername_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given - using existing test data from migration
     String testUsername = LEANNE_USERNAME;
-    User existingUser = findUserByUsername.findByUsername(testUsername).orElseThrow();
+    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(testUsername);
+    User existingUser = findUserByUsername.findByUsername(findUserByUsernameDto1).orElseThrow();
 
     // Update the user
     existingUser.setName("Updated Test User");
@@ -100,20 +107,22 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     userRepository.save(existingUser);
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername(testUsername);
+    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(testUsername);
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto2);
 
     // Then
     assertThat(result).isPresent();
     assertThat(result.get().getName()).isEqualTo("Updated Test User");
     assertThat(result.get().getEmail()).isEqualTo("updated@example.com");
-    assertThat(result.get().getUsername()).isEqualTo(testUsername);
+    assertThat(result.get().getUsername()).isEqualTo(LEANNE_USERNAME);
     assertThat(result.get().getUuid()).isEqualTo(LEANNE_UUID);
   }
 
   @Test
   void findByUsername_WhenUsernameIsEmpty_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUsername.findByUsername("");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("");
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -122,30 +131,34 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameIsBlank_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUsername.findByUsername("   ");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("   ");
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isEmpty();
   }
 
   @Test
-  void findByUsername_WhenUsernameCaseSensitive_ShouldReturnCorrectUser() {
-    // Given - using existing test data from migration
-
-    // When
-    Optional<User> result = findUserByUsername.findByUsername("LEANNE_GRAHAM");
-
-    // Then
-    assertThat(result).isEmpty(); // Username search is case-sensitive
-  }
-
-  @Test
-  void findByUsername_WhenUsernameWithSpaces_ShouldReturnEmpty() {
+  void findByUsername_WhenUsernameHasDifferentCase_ShouldReturnEmpty() {
     // Given - using existing test data from migration
     String testUsername = LEANNE_USERNAME;
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername(" " + testUsername + " ");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("LEANNE_GRAHAM");
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
+
+    // Then
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void findByUsername_WhenUsernameHasLeadingAndTrailingSpaces_ShouldReturnEmpty() {
+    // Given - using existing test data from migration
+    String testUsername = LEANNE_USERNAME;
+
+    // When
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(" " + testUsername + " ");
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isEmpty();

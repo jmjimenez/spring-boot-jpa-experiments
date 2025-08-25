@@ -2,8 +2,10 @@ package es.jmjg.experiments.application.user;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,17 +32,17 @@ class FindUserByUsernameTest {
   @BeforeEach
   void setUp() {
     testUsername = "testuser";
-    testUser =
-        UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", testUsername);
+    testUser = UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", testUsername);
   }
 
   @Test
   void findByUsername_WhenUserExists_ShouldReturnUser() {
     // Given
     when(userRepository.findByUsername(testUsername)).thenReturn(Optional.of(testUser));
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername);
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername(testUsername);
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isPresent();
@@ -56,9 +58,10 @@ class FindUserByUsernameTest {
     // Given
     String nonExistentUsername = "nonexistentuser";
     when(userRepository.findByUsername(nonExistentUsername)).thenReturn(Optional.empty());
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(nonExistentUsername);
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername(nonExistentUsername);
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -69,9 +72,10 @@ class FindUserByUsernameTest {
   void findByUsername_WhenUsernameIsNull_ShouldReturnEmpty() {
     // Given
     when(userRepository.findByUsername(null)).thenReturn(Optional.empty());
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(null);
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername(null);
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -82,9 +86,10 @@ class FindUserByUsernameTest {
   void findByUsername_WhenUsernameIsEmpty_ShouldReturnEmpty() {
     // Given
     when(userRepository.findByUsername("")).thenReturn(Optional.empty());
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("");
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername("");
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -96,9 +101,10 @@ class FindUserByUsernameTest {
     // Given
     when(userRepository.findByUsername(testUsername))
         .thenThrow(new RuntimeException("Database error"));
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername);
 
     // When & Then
-    assertThatThrownBy(() -> findUserByUsername.findByUsername(testUsername))
+    assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
     verify(userRepository, times(1)).findByUsername(testUsername);
@@ -108,9 +114,10 @@ class FindUserByUsernameTest {
   void findByUsername_WhenUsernameIsBlank_ShouldReturnEmpty() {
     // Given
     when(userRepository.findByUsername("   ")).thenReturn(Optional.empty());
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("   ");
 
     // When
-    Optional<User> result = findUserByUsername.findByUsername("   ");
+    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
     assertThat(result).isEmpty();

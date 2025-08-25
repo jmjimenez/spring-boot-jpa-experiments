@@ -26,6 +26,7 @@ import es.jmjg.experiments.application.user.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
 import es.jmjg.experiments.application.user.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.FindUserByUsername;
+import es.jmjg.experiments.application.user.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
@@ -132,7 +133,8 @@ public class UserController {
   })
   FindUserByUsernameResponseDto findByUsername(
       @Parameter(description = "Username to search for") @RequestParam String username) {
-    User user = findUserByUsername.findByUsername(username).orElseThrow(UserNotFoundException::new);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(username);
+    User user = findUserByUsername.findByUsername(findUserByUsernameDto).orElseThrow(UserNotFoundException::new);
     return userMapper.toFindUserByUsernameResponseDto(user);
   }
 
