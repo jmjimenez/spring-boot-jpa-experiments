@@ -1,12 +1,15 @@
 package es.jmjg.experiments.application.user.integration;
 
 import static org.assertj.core.api.Assertions.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.FindUserByUuid;
+import es.jmjg.experiments.application.user.FindUserByUuidDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
@@ -28,7 +31,8 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(testUser);
 
     // When
-    Optional<User> result = findUserByUuid.findByUuid(testUuid);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid);
+    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
     assertThat(result).isPresent();
@@ -42,7 +46,8 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUuid.findByUuid(UUID.randomUUID());
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UUID.randomUUID());
+    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -51,7 +56,8 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenUuidIsNull_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUuid.findByUuid(null);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(null);
+    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -70,8 +76,10 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     User savedThirdUser = userRepository.save(thirdUser);
 
     // When
-    Optional<User> firstResult = findUserByUuid.findByUuid(secondUuid);
-    Optional<User> secondResult = findUserByUuid.findByUuid(thirdUuid);
+    FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(secondUuid);
+    FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(thirdUuid);
+    Optional<User> firstResult = findUserByUuid.findByUuid(findUserByUuidDto1);
+    Optional<User> secondResult = findUserByUuid.findByUuid(findUserByUuidDto2);
 
     // Then
     assertThat(firstResult).isPresent();
@@ -95,7 +103,8 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     userRepository.save(savedUser);
 
     // When
-    Optional<User> result = findUserByUuid.findByUuid(fourthUuid);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(fourthUuid);
+    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
     assertThat(result).isPresent();

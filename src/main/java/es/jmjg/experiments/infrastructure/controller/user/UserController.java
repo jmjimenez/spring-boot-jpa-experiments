@@ -28,6 +28,7 @@ import es.jmjg.experiments.application.user.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.FindUserByUuid;
+import es.jmjg.experiments.application.user.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.domain.entity.User;
@@ -106,7 +107,8 @@ public class UserController {
   })
   FindUserByUuidResponseDto findByUuid(
       @Parameter(description = "UUID of the user to retrieve") @PathVariable UUID uuid) {
-    User user = findUserByUuid.findByUuid(uuid).orElseThrow(UserNotFoundException::new);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid);
+    User user = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
     return userMapper.toFindUserByUuidResponseDto(user);
   }
 
@@ -169,7 +171,8 @@ public class UserController {
   UpdateUserResponseDto update(@Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
       @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
     User user = userMapper.toDomain(userDto);
-    User existing = findUserByUuid.findByUuid(uuid).orElseThrow(UserNotFoundException::new);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid);
+    User existing = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
     User updatedUser = updateUser.update(existing.getId(), user);
     return userMapper.toUpdateUserResponseDto(updatedUser);
   }

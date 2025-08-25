@@ -3,8 +3,10 @@ package es.jmjg.experiments.application.user;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,9 +40,10 @@ class FindUserByUuidTest {
   void findByUuid_WhenUserExists_ShouldReturnUser() {
     // Given
     when(userRepository.findByUuid(testUuid)).thenReturn(Optional.of(testUser));
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid);
 
     // When
-    Optional<User> result = findUserByUuid.findByUuid(testUuid);
+    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
     assertThat(result).isPresent();
@@ -57,9 +60,10 @@ class FindUserByUuidTest {
     // Given
     UUID nonExistentUuid = UUID.randomUUID();
     when(userRepository.findByUuid(nonExistentUuid)).thenReturn(Optional.empty());
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(nonExistentUuid);
 
     // When
-    Optional<User> result = findUserByUuid.findByUuid(nonExistentUuid);
+    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -69,7 +73,8 @@ class FindUserByUuidTest {
   @Test
   void findByUuid_WhenUuidIsNull_ShouldReturnEmpty() {
     // When
-    Optional<User> result = findUserByUuid.findByUuid(null);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(null);
+    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
     assertThat(result).isEmpty();
@@ -81,9 +86,10 @@ class FindUserByUuidTest {
     // Given
     when(userRepository.findByUuid(testUuid))
         .thenThrow(new RuntimeException("Database error"));
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid);
 
     // When & Then
-    assertThatThrownBy(() -> findUserByUuid.findByUuid(testUuid))
+    assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
     verify(userRepository, times(1)).findByUuid(testUuid);

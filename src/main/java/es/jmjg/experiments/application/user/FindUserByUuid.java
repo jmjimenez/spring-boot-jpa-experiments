@@ -1,7 +1,6 @@
 package es.jmjg.experiments.application.user;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +18,10 @@ public class FindUserByUuid {
   }
 
   @Transactional(readOnly = true)
-  public Optional<User> findByUuid(UUID uuid) {
-    if (uuid == null) {
+  public Optional<User> findByUuid(FindUserByUuidDto findUserByUuidDto) {
+    if (findUserByUuidDto.getUuid() == null) {
       return Optional.empty();
     }
-    return userRepository.findByUuid(uuid);
+    return userRepository.findByUuid(findUserByUuidDto.getUuid());
   }
 }

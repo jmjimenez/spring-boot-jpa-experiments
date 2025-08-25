@@ -33,6 +33,7 @@ import es.jmjg.experiments.application.user.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.FindUserByUuid;
+import es.jmjg.experiments.application.user.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.domain.entity.Post;
@@ -166,7 +167,7 @@ class UserControllerTest {
   @Test
   void shouldFindUserWhenGivenValidUuid() throws Exception {
     // Given
-    when(findUserByUuid.findByUuid(testUuid)).thenReturn(Optional.of(testUser));
+    when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.of(testUser));
 
     String expectedJson = """
         {
@@ -190,7 +191,7 @@ class UserControllerTest {
   void shouldNotFindUserWhenGivenInvalidUuid() throws Exception {
     // Given
     UUID invalidUuid = UUID.randomUUID();
-    when(findUserByUuid.findByUuid(invalidUuid)).thenReturn(Optional.empty());
+    when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.empty());
 
     // When & Then
     mockMvc.perform(get("/api/users/" + invalidUuid)).andExpect(status().isNotFound());
@@ -314,7 +315,7 @@ class UserControllerTest {
     User updatedUser = UserFactory.createUser(testId, testUuid, "Updated User", "updated@example.com", "updateduser");
     updatedUser.setPosts(testPosts);
     updatedUser.setTags(testTags);
-    when(findUserByUuid.findByUuid(testUuid)).thenReturn(Optional.of(testUser));
+    when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.of(testUser));
     when(updateUser.update(eq(testId), any(User.class))).thenReturn(updatedUser);
 
     String requestBody = """
