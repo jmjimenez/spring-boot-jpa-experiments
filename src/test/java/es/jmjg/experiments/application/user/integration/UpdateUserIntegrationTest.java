@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.UpdateUser;
+import es.jmjg.experiments.application.user.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
@@ -33,10 +34,15 @@ class UpdateUserIntegrationTest extends BaseIntegration {
 
   @Test
   void update_WhenUserExists_ShouldUpdateFields() {
-    User updateData = UserFactory.createUser("Updated Name", "updated@example.com", "updateduser");
-    updateData.setUuid(null);
+    UpdateUserDto updateUserDto = new UpdateUserDto(
+        existingUser.getId(),
+        null,
+        "Updated Name",
+        "updated@example.com",
+        "updateduser",
+        null);
 
-    User result = updateUser.update(existingUser.getId(), updateData);
+    User result = updateUser.update(updateUserDto);
 
     assertThat(result.getName()).isEqualTo("Updated Name");
     assertThat(result.getEmail()).isEqualTo("updated@example.com");
@@ -51,10 +57,15 @@ class UpdateUserIntegrationTest extends BaseIntegration {
   @Test
   void update_WhenUserExistsAndUuidProvided_ShouldUpdateUuid() {
     UUID newUuid = UUID.randomUUID();
-    User updateData = UserFactory.createUser("Updated Name", "updated@example.com", "updateduser");
-    updateData.setUuid(newUuid);
+    UpdateUserDto updateUserDto = new UpdateUserDto(
+        existingUser.getId(),
+        newUuid,
+        "Updated Name",
+        "updated@example.com",
+        "updateduser",
+        null);
 
-    User result = updateUser.update(existingUser.getId(), updateData);
+    User result = updateUser.update(updateUserDto);
 
     assertThat(result.getUuid()).isEqualTo(newUuid);
     Optional<User> dbUser = userRepository.findById(existingUser.getId());
@@ -64,11 +75,16 @@ class UpdateUserIntegrationTest extends BaseIntegration {
 
   @Test
   void update_WhenUserDoesNotExist_ShouldThrow() {
-    User updateData = UserFactory.createUser("Updated Name", "updated@example.com", "updateduser");
-    updateData.setUuid(null);
-    int nonExistentId = 9999;
-    assertThatThrownBy(() -> updateUser.update(nonExistentId, updateData))
+    UpdateUserDto updateUserDto = new UpdateUserDto(
+        9999,
+        null,
+        "Updated Name",
+        "updated@example.com",
+        "updateduser",
+        null);
+
+    assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)
-        .hasMessageContaining("User not found with id: " + nonExistentId);
+        .hasMessageContaining("User not found with id: 9999");
   }
 }

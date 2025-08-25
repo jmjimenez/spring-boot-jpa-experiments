@@ -28,13 +28,18 @@ class UpdateUserTest {
   private UpdateUser updateUser;
 
   private User existingUser;
-  private User updateData;
+  private UpdateUserDto updateUserDto;
 
   @BeforeEach
   void setUp() {
     existingUser = UserFactory.createUser(1, UUID.randomUUID(), "Old Name", "old@example.com", "olduser");
-    updateData = UserFactory.createUser("New Name", "new@example.com", "newuser");
-    updateData.setUuid(null);
+    updateUserDto = new UpdateUserDto(
+        1,
+        null,
+        "New Name",
+        "new@example.com",
+        "newuser",
+        null);
   }
 
   @Test
@@ -42,7 +47,7 @@ class UpdateUserTest {
     when(userRepository.findById(1)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-    User result = updateUser.update(1, updateData);
+    User result = updateUser.update(updateUserDto);
 
     assertThat(result.getName()).isEqualTo("New Name");
     assertThat(result.getEmail()).isEqualTo("new@example.com");
@@ -54,11 +59,11 @@ class UpdateUserTest {
   @Test
   void update_WhenUserExistsAndUuidProvided_ShouldUpdateUuid() {
     UUID newUuid = UUID.randomUUID();
-    updateData.setUuid(newUuid);
+    updateUserDto.setUuid(newUuid);
     when(userRepository.findById(1)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-    User result = updateUser.update(1, updateData);
+    User result = updateUser.update(updateUserDto);
 
     assertThat(result.getUuid()).isEqualTo(newUuid);
     verify(userRepository).save(existingUser);
@@ -66,8 +71,9 @@ class UpdateUserTest {
 
   @Test
   void update_WhenUserDoesNotExist_ShouldThrow() {
+    updateUserDto.setId(99);
     when(userRepository.findById(99)).thenReturn(Optional.empty());
-    assertThatThrownBy(() -> updateUser.update(99, updateData))
+    assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("User not found with id: 99");
     verify(userRepository, never()).save(any());

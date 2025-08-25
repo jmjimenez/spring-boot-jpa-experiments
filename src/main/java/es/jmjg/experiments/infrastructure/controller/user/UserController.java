@@ -32,6 +32,7 @@ import es.jmjg.experiments.application.user.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.SaveUserDto;
 import es.jmjg.experiments.application.user.UpdateUser;
+import es.jmjg.experiments.application.user.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.controller.exception.UserNotFoundException;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersResponseDto;
@@ -176,10 +177,18 @@ public class UserController {
   })
   UpdateUserResponseDto update(@Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
       @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
-    User user = userMapper.toDomain(userDto);
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid);
     User existing = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
-    User updatedUser = updateUser.update(existing.getId(), user);
+
+    UpdateUserDto updateUserDto = new UpdateUserDto(
+        existing.getId(),
+        userDto.getUuid(),
+        userDto.getName(),
+        userDto.getEmail(),
+        userDto.getUsername(),
+        userDto.getPassword());
+
+    User updatedUser = updateUser.update(updateUserDto);
     return userMapper.toUpdateUserResponseDto(updatedUser);
   }
 

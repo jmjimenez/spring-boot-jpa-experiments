@@ -18,22 +18,22 @@ public class UpdateUser {
   }
 
   @Transactional
-  public User update(Integer id, User user) {
-    Optional<User> existing = userRepository.findById(id);
+  public User update(UpdateUserDto updateUserDto) {
+    Optional<User> existing = userRepository.findById(updateUserDto.getId());
     if (existing.isPresent()) {
       User existingUser = existing.get();
-      existingUser.setName(user.getName());
-      existingUser.setEmail(user.getEmail());
-      existingUser.setUsername(user.getUsername());
-      if (user.getPassword() != null) {
-        existingUser.setPassword(user.getPassword());
+      existingUser.setName(updateUserDto.getName());
+      existingUser.setEmail(updateUserDto.getEmail());
+      existingUser.setUsername(updateUserDto.getUsername());
+      if (updateUserDto.getPassword() != null) {
+        existingUser.setPassword(updateUserDto.getPassword());
       }
-      if (user.getUuid() != null) {
-        existingUser.setUuid(user.getUuid());
+      if (updateUserDto.getUuid() != null) {
+        existingUser.setUuid(updateUserDto.getUuid());
       }
       return userRepository.save(existingUser);
     } else {
-      throw new RuntimeException("User not found with id: " + id);
+      throw new RuntimeException("User not found with id: " + updateUserDto.getId());
     }
   }
 }
