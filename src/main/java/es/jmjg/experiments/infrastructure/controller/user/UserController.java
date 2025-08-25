@@ -30,6 +30,7 @@ import es.jmjg.experiments.application.user.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.SaveUser;
+import es.jmjg.experiments.application.user.SaveUserDto;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.controller.exception.UserNotFoundException;
@@ -148,8 +149,13 @@ public class UserController {
   })
   ResponseEntity<SaveUserResponseDto> save(
       @Parameter(description = "User data to create") @RequestBody @Valid SaveUserRequestDto userDto) {
-    User user = userMapper.toDomain(userDto);
-    User savedUser = saveUser.save(user);
+    SaveUserDto saveUserDto = new SaveUserDto(
+        userDto.getUuid(),
+        userDto.getName(),
+        userDto.getEmail(),
+        userDto.getUsername(),
+        userDto.getPassword());
+    User savedUser = saveUser.save(saveUserDto);
     SaveUserResponseDto responseDto = userMapper.toSaveUserResponseDto(savedUser);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/users/{uuid}")

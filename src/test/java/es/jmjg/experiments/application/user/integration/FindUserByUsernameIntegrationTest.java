@@ -141,10 +141,10 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameHasDifferentCase_ShouldReturnEmpty() {
     // Given - using existing test data from migration
-    String testUsername = LEANNE_USERNAME;
+    String testUsername = LEANNE_USERNAME.toUpperCase();
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("LEANNE_GRAHAM");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then

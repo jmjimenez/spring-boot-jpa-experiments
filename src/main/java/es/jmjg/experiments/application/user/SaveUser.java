@@ -16,7 +16,14 @@ public class SaveUser {
   }
 
   @Transactional
-  public User save(User user) {
+  public User save(SaveUserDto saveUserDto) {
+    User user = new User();
+    user.setUuid(saveUserDto.getUuid());
+    user.setName(saveUserDto.getName());
+    user.setEmail(saveUserDto.getEmail());
+    user.setUsername(saveUserDto.getUsername());
+    user.setPassword(saveUserDto.getPassword());
+
     return userRepository.save(user);
   }
 }

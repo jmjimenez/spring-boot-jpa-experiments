@@ -35,6 +35,7 @@ import es.jmjg.experiments.application.user.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.SaveUser;
+import es.jmjg.experiments.application.user.SaveUserDto;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
@@ -275,7 +276,7 @@ class UserControllerTest {
     User savedUser = UserFactory.createUser(testId, testUuid, "Test User", "test@example.com", "testuser");
     savedUser.setPosts(testPosts);
     savedUser.setTags(testTags);
-    when(saveUser.save(any(User.class))).thenReturn(savedUser);
+    when(saveUser.save(any(SaveUserDto.class))).thenReturn(savedUser);
 
     String requestBody = """
         {

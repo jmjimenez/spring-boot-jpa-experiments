@@ -24,55 +24,61 @@ class SaveUserTest {
   @InjectMocks
   private SaveUser saveUser;
 
-  private User userToSave;
+  private SaveUserDto saveUserDto;
 
   @BeforeEach
   void setUp() {
-    userToSave = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    User userToSave = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    saveUserDto = new SaveUserDto(
+        userToSave.getUuid(),
+        userToSave.getName(),
+        userToSave.getEmail(),
+        userToSave.getUsername(),
+        userToSave.getPassword());
   }
 
   @Test
   void save_WhenUserIsValid_ShouldSaveAndReturnUser() {
-    User savedUser = UserFactory.createUser(1, userToSave.getUuid(), "Test User",
+    User savedUser = UserFactory.createUser(1, saveUserDto.getUuid(), "Test User",
         "test@example.com", "testuser");
     when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-    User result = saveUser.save(userToSave);
+    User result = saveUser.save(saveUserDto);
 
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(1);
     assertThat(result.getName()).isEqualTo("Test User");
     assertThat(result.getEmail()).isEqualTo("test@example.com");
     assertThat(result.getUsername()).isEqualTo("testuser");
-    assertThat(result.getUuid()).isEqualTo(userToSave.getUuid());
-    verify(userRepository).save(userToSave);
+    assertThat(result.getUuid()).isEqualTo(saveUserDto.getUuid());
+    verify(userRepository).save(any(User.class));
   }
 
-    @Test
+  @Test
   void save_WhenUserHasValidData_ShouldSaveAndReturnUser() {
-    User savedUser = UserFactory.createUser(1, userToSave.getUuid(), "Test User", 
+    User savedUser = UserFactory.createUser(1, saveUserDto.getUuid(), "Test User",
         "test@example.com", "testuser");
     when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-    User result = saveUser.save(userToSave);
+    User result = saveUser.save(saveUserDto);
 
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(1);
-    assertThat(result.getUuid()).isEqualTo(userToSave.getUuid());
-    verify(userRepository).save(userToSave);
+    assertThat(result.getUuid()).isEqualTo(saveUserDto.getUuid());
+    verify(userRepository).save(any(User.class));
   }
 
   @Test
   void save_WhenUserHasNoId_ShouldSaveAndReturnUserWithGeneratedId() {
-    User savedUser = UserFactory.createUser(1, userToSave.getUuid(), "Test User",
+    User savedUser = UserFactory.createUser(1, saveUserDto.getUuid(), "Test User",
         "test@example.com", "testuser");
     when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-    User result = saveUser.save(userToSave);
+    User result = saveUser.save(saveUserDto);
 
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(1);
-    verify(userRepository).save(userToSave);
+    verify(userRepository).save(any(User.class));
   }
 
   @Test
@@ -80,9 +86,9 @@ class SaveUserTest {
     when(userRepository.save(any(User.class)))
         .thenThrow(new RuntimeException("Database error"));
 
-    assertThatThrownBy(() -> saveUser.save(userToSave))
+    assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
-    verify(userRepository).save(userToSave);
+    verify(userRepository).save(any(User.class));
   }
 }
