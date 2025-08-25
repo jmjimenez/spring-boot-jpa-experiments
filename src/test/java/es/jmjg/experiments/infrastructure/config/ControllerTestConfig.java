@@ -25,7 +25,7 @@ import es.jmjg.experiments.application.tag.FindTagByUuid;
 import es.jmjg.experiments.application.tag.FindUsersByTag;
 import es.jmjg.experiments.application.tag.SaveTag;
 import es.jmjg.experiments.application.tag.UpdateTagName;
-import es.jmjg.experiments.application.user.DeleteUserByUuid;
+import es.jmjg.experiments.application.user.DeleteUser;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.FindUserByEmail;
 import es.jmjg.experiments.application.user.FindUserById;
@@ -139,8 +139,8 @@ public class ControllerTestConfig {
 
   @Bean
   @Primary
-  public DeleteUserByUuid deleteUserByUuid() {
-    return mock(DeleteUserByUuid.class);
+  public DeleteUser deleteUser() {
+    return mock(DeleteUser.class);
   }
 
   @Bean

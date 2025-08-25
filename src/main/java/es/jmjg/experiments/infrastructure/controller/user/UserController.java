@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import es.jmjg.experiments.application.user.DeleteUserByUuid;
+import es.jmjg.experiments.application.user.DeleteUser;
+import es.jmjg.experiments.application.user.DeleteUserDto;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
@@ -62,7 +63,7 @@ public class UserController {
   private final FindUserByEmail findUserByEmail;
   private final FindUserByUsername findUserByUsername;
   private final FindAllUsers findAllUsers;
-  private final DeleteUserByUuid deleteUserByUuid;
+  private final DeleteUser deleteUser;
 
   public UserController(
       UserMapper userMapper,
@@ -73,7 +74,7 @@ public class UserController {
       FindUserByEmail findUserByEmail,
       FindUserByUsername findUserByUsername,
       FindAllUsers findAllUsers,
-      DeleteUserByUuid deleteUserByUuid) {
+      DeleteUser deleteUser) {
     this.userMapper = userMapper;
     this.saveUser = saveUser;
     this.updateUser = updateUser;
@@ -81,7 +82,7 @@ public class UserController {
     this.findUserByEmail = findUserByEmail;
     this.findUserByUsername = findUserByUsername;
     this.findAllUsers = findAllUsers;
-    this.deleteUserByUuid = deleteUserByUuid;
+    this.deleteUser = deleteUser;
   }
 
   @GetMapping("")
@@ -179,6 +180,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "User not found")
   })
   void deleteByUuid(@PathVariable UUID uuid) {
-    deleteUserByUuid.deleteByUuid(uuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(uuid);
+    deleteUser.deleteByUuid(deleteUserDto);
   }
 }

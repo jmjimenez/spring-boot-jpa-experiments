@@ -24,7 +24,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import es.jmjg.experiments.application.user.DeleteUserByUuid;
+import es.jmjg.experiments.application.user.DeleteUser;
+import es.jmjg.experiments.application.user.DeleteUserDto;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
@@ -64,7 +65,7 @@ class UserControllerTest {
   private FindAllUsers findAllUsers;
 
   @Autowired
-  private DeleteUserByUuid deleteUserByUuid;
+  private DeleteUser deleteUser;
 
   private User testUser;
   private UUID testUuid;
@@ -346,13 +347,13 @@ class UserControllerTest {
   @Test
   void shouldDeleteUserWhenGivenValidUuid() throws Exception {
     // Given
-    doNothing().when(deleteUserByUuid).deleteByUuid(testUuid);
+    doNothing().when(deleteUser).deleteByUuid(any(DeleteUserDto.class));
 
     // When & Then
     mockMvc
         .perform(delete("/api/users/" + testUuid))
         .andExpect(status().isNoContent());
 
-    verify(deleteUserByUuid, times(1)).deleteByUuid(testUuid);
+    verify(deleteUser, times(1)).deleteByUuid(any(DeleteUserDto.class));
   }
 }
