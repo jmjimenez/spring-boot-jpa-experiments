@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.application.user.FindAllUsers;
+import es.jmjg.experiments.application.user.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
@@ -39,7 +40,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Test
   void findAll_WhenUsersExist_ShouldReturnAllUsers() {
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -71,7 +73,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.deleteAll();
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -91,7 +94,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(singleUser);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -122,7 +126,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(user2);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -146,7 +151,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(existingUser);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -167,7 +173,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.deleteById(userToDelete.getId());
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -193,7 +200,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(specialUser2);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -222,7 +230,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(longNameUser);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -249,7 +258,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(subdomainUser2);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -268,8 +278,9 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Test
   void findAll_WhenMultipleCalls_ShouldReturnConsistentResults() {
     // When
-    Page<User> firstResult = findAllUsers.findAll(pageable);
-    Page<User> secondResult = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> firstResult = findAllUsers.findAll(findAllUsersDto);
+    Page<User> secondResult = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(firstResult).isNotNull();
@@ -307,7 +318,8 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(userWithDashes);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();

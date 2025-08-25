@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import es.jmjg.experiments.application.user.DeleteUserByUuid;
 import es.jmjg.experiments.application.user.FindAllUsers;
+import es.jmjg.experiments.application.user.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
@@ -107,7 +108,7 @@ class UserControllerTest {
     // Given
     List<User> users = List.of(testUser);
     Page<User> userPage = new PageImpl<>(users, pageable, users.size());
-    when(findAllUsers.findAll(any(Pageable.class))).thenReturn(userPage);
+    when(findAllUsers.findAll(any(FindAllUsersDto.class))).thenReturn(userPage);
 
     String expectedJson = """
         {

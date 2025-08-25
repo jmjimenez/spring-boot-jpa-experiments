@@ -50,9 +50,10 @@ class FindAllUsersTest {
     List<User> expectedUsers = Arrays.asList(testUser1, testUser2, testUser3);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -77,9 +78,10 @@ class FindAllUsersTest {
     // Given
     Page<User> expectedPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -95,9 +97,10 @@ class FindAllUsersTest {
     List<User> expectedUsers = Collections.singletonList(testUser1);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -115,9 +118,10 @@ class FindAllUsersTest {
   void findAll_WhenRepositoryThrowsException_ShouldPropagateException() {
     // Given
     when(userRepository.findAll(pageable)).thenThrow(new RuntimeException("Database error"));
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
 
     // When & Then
-    assertThatThrownBy(() -> findAllUsers.findAll(pageable))
+    assertThatThrownBy(() -> findAllUsers.findAll(findAllUsersDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
     verify(userRepository, times(1)).findAll(pageable);
@@ -127,9 +131,10 @@ class FindAllUsersTest {
   void findAll_WhenRepositoryReturnsNull_ShouldReturnNull() {
     // Given
     when(userRepository.findAll(pageable)).thenReturn(null);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNull();
@@ -146,10 +151,11 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable))
         .thenReturn(firstPage)
         .thenReturn(secondPage);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
 
     // When
-    Page<User> firstResult = findAllUsers.findAll(pageable);
-    Page<User> secondResult = findAllUsers.findAll(pageable);
+    Page<User> firstResult = findAllUsers.findAll(findAllUsersDto);
+    Page<User> secondResult = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(firstResult.getContent()).hasSize(2);
@@ -165,9 +171,10 @@ class FindAllUsersTest {
     List<User> expectedUsers = Arrays.asList(specialUser1, specialUser2);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
@@ -193,9 +200,10 @@ class FindAllUsersTest {
     List<User> expectedUsers = Collections.singletonList(longNameUser);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
 
     // When
-    Page<User> result = findAllUsers.findAll(pageable);
+    Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();

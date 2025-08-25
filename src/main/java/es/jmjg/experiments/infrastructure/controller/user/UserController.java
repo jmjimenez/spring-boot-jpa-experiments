@@ -21,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import es.jmjg.experiments.application.user.DeleteUserByUuid;
 import es.jmjg.experiments.application.user.FindAllUsers;
+import es.jmjg.experiments.application.user.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
 import es.jmjg.experiments.application.user.FindUserById;
 import es.jmjg.experiments.application.user.FindUserByUsername;
@@ -90,7 +91,8 @@ public class UserController {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class)))
   })
   Page<FindAllUsersResponseDto> findAll(Pageable pageable) {
-    Page<User> users = findAllUsers.findAll(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    Page<User> users = findAllUsers.findAll(findAllUsersDto);
     return users.map(userMapper::toFindAllUsersResponseDto);
   }
 
