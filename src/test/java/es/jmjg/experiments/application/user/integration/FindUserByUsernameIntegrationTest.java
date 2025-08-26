@@ -3,7 +3,6 @@ package es.jmjg.experiments.application.user.integration;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -28,19 +28,6 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
   private JwtUserDetails testUserDetails;
 
-  //TODO: move this constants to a test data class
-  // Test data from migration
-  private static final UUID LEANNE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
-  private static final String LEANNE_USERNAME = "leanne_graham";
-
-  private static final UUID ERVIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
-  private static final String ERVIN_USERNAME = "ervin_howell";
-  private static final String ERVIN_NAME = "Ervin Howell";
-  private static final String ERVIN_EMAIL = "ervin.howell@example.com";
-
-  private static final String CLEMENTINE_USERNAME = "clementine_bauch";
-  private static final String CLEMENTINE_NAME = "Clementine Bauch";
-
   @BeforeEach
   void setUp() {
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
@@ -50,7 +37,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUserExists_ShouldReturnUser() {
     // Given - using existing test data from migration
-    String testUsername = ERVIN_USERNAME;
+    String testUsername = TestDataSamples.ERVIN_USERNAME;
 
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, testUserDetails);
@@ -58,10 +45,10 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo(ERVIN_NAME);
-    assertThat(result.get().getEmail()).isEqualTo(ERVIN_EMAIL);
-    assertThat(result.get().getUsername()).isEqualTo(ERVIN_USERNAME);
-    assertThat(result.get().getUuid()).isEqualTo(ERVIN_UUID);
+    assertThat(result.get().getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
+    assertThat(result.get().getEmail()).isEqualTo(TestDataSamples.ERVIN_EMAIL);
+    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.ERVIN_USERNAME);
+    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.ERVIN_UUID);
     assertThat(result.get().getId()).isEqualTo(2); // Second user from migration
   }
 
@@ -88,8 +75,8 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
     // Given - using existing test data from migration
-    String secondUsername = ERVIN_USERNAME;
-    String thirdUsername = CLEMENTINE_USERNAME;
+    String secondUsername = TestDataSamples.ERVIN_USERNAME;
+    String thirdUsername = TestDataSamples.CLEMENTINE_USERNAME;
 
     // When
     FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(secondUsername, testUserDetails);
@@ -99,18 +86,18 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(secondResult).isPresent();
-    assertThat(secondResult.get().getName()).isEqualTo(ERVIN_NAME);
+    assertThat(secondResult.get().getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
     assertThat(secondResult.get().getId()).isEqualTo(2); // Second user from migration
 
     assertThat(thirdResult).isPresent();
-    assertThat(thirdResult.get().getName()).isEqualTo(CLEMENTINE_NAME);
+    assertThat(thirdResult.get().getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
     assertThat(thirdResult.get().getId()).isEqualTo(3); // Third user from migration
   }
 
   @Test
   void findByUsername_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given - using existing test data from migration
-    String testUsername = LEANNE_USERNAME;
+    String testUsername = TestDataSamples.LEANNE_USERNAME;
     FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(testUsername, testUserDetails);
     User existingUser = findUserByUsername.findByUsername(findUserByUsernameDto1).orElseThrow();
 
@@ -127,8 +114,8 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     assertThat(result).isPresent();
     assertThat(result.get().getName()).isEqualTo("Updated Test User");
     assertThat(result.get().getEmail()).isEqualTo("updated@example.com");
-    assertThat(result.get().getUsername()).isEqualTo(LEANNE_USERNAME);
-    assertThat(result.get().getUuid()).isEqualTo(LEANNE_UUID);
+    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
+    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
   }
 
   @Test
@@ -154,7 +141,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameHasDifferentCase_ShouldReturnEmpty() {
     // Given - using existing test data from migration
-    String testUsername = LEANNE_USERNAME.toUpperCase();
+    String testUsername = TestDataSamples.LEANNE_USERNAME.toUpperCase();
 
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, testUserDetails);
@@ -167,7 +154,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameHasLeadingAndTrailingSpaces_ShouldReturnEmpty() {
     // Given - using existing test data from migration
-    String testUsername = LEANNE_USERNAME;
+    String testUsername = TestDataSamples.LEANNE_USERNAME;
 
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(" " + testUsername + " ", testUserDetails);
