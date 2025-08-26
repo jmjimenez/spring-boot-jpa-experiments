@@ -20,6 +20,6 @@ public class FindUserByUsername {
 
   @Transactional(readOnly = true)
   public Optional<User> findByUsername(FindUserByUsernameDto findUserByUsernameDto) {
-    return userRepository.findByUsername(findUserByUsernameDto.getUsername());
+    return userRepository.findByUsername(findUserByUsernameDto.username());
   }
 }

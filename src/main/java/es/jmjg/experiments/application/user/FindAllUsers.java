@@ -19,6 +19,6 @@ public class FindAllUsers {
 
   @Transactional(readOnly = true)
   public Page<User> findAll(FindAllUsersDto findAllUsersDto) {
-    return userRepository.findAll(findAllUsersDto.getPageable());
+    return userRepository.findAll(findAllUsersDto.pageable());
   }
 }

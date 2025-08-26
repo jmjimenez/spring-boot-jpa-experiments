@@ -17,6 +17,6 @@ public class DeleteUser {
 
   @Transactional
   public void deleteByUuid(DeleteUserDto deleteUserDto) {
-    userRepository.deleteByUuid(deleteUserDto.getUuid());
+    userRepository.deleteByUuid(deleteUserDto.uuid());
   }
 }

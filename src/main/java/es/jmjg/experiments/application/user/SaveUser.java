@@ -19,11 +19,11 @@ public class SaveUser {
   @Transactional
   public User save(SaveUserDto saveUserDto) {
     User user = new User();
-    user.setUuid(saveUserDto.getUuid());
-    user.setName(saveUserDto.getName());
-    user.setEmail(saveUserDto.getEmail());
-    user.setUsername(saveUserDto.getUsername());
-    user.setPassword(saveUserDto.getPassword());
+    user.setUuid(saveUserDto.uuid());
+    user.setName(saveUserDto.name());
+    user.setEmail(saveUserDto.email());
+    user.setUsername(saveUserDto.username());
+    user.setPassword(saveUserDto.password());
 
     return userRepository.save(user);
   }

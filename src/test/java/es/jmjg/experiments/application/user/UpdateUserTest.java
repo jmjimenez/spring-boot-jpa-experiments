@@ -72,7 +72,14 @@ class UpdateUserTest {
   void update_WhenUserExistsAndUuidProvided_ShouldUpdateUuid() {
     // Given
     UUID newUuid = UUID.randomUUID();
-    updateUserDto.setUuid(newUuid);
+    var updateUserDto = new UpdateUserDto(
+        1,
+        newUuid,
+        "New Name",
+        "new@example.com",
+        "newuser",
+        null,
+        testUserDetails);
     when(userRepository.findById(1)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -87,13 +94,21 @@ class UpdateUserTest {
   @Test
   void update_WhenUserDoesNotExist_ShouldThrow() {
     // Given
-    updateUserDto.setId(99);
-    when(userRepository.findById(99)).thenReturn(Optional.empty());
+    var newId = 99;
+    var updateUserDto = new UpdateUserDto(
+        newId,
+        null,
+        "New Name",
+        "new@example.com",
+        "newuser",
+        null,
+        testUserDetails);
+    when(userRepository.findById(newId)).thenReturn(Optional.empty());
 
     // When & Then
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)
-        .hasMessageContaining("User not found with id: 99");
+        .hasMessageContaining("User not found with id: " + newId);
     verify(userRepository, never()).save(any());
   }
 }
