@@ -1,16 +1,16 @@
 package es.jmjg.experiments.infrastructure.config;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+
+import java.util.UUID;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
+
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import es.jmjg.experiments.application.post.DeletePost;
 import es.jmjg.experiments.application.post.FindAllPosts;
@@ -32,11 +32,14 @@ import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
+import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import es.jmjg.experiments.infrastructure.controller.tag.mapper.TagMapper;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
-import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
+import es.jmjg.experiments.shared.TestDataSamples;
+import es.jmjg.experiments.shared.UserFactory;
 
 @TestConfiguration
 public class ControllerTestConfig {
@@ -83,15 +86,8 @@ public class ControllerTestConfig {
   }
 
   @Bean
-  @Primary
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  @Primary
-  public UserMapper userMapper() {
-    return new UserMapper(passwordEncoder());
+  public UserMapper userMapper(PasswordEncoder passwordEncoder) {
+    return new UserMapper(passwordEncoder);
   }
 
   @Bean
@@ -185,31 +181,54 @@ public class ControllerTestConfig {
 
   @Bean
   @Primary
-  public SecurityFilterChain testSecurityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(authz -> authz
-            .anyRequest().permitAll());
-
-    return http.build();
-  }
-
-  @Bean
-  @Primary
-  public AuthenticationManager authenticationManager() {
-    return mock(AuthenticationManager.class);
-  }
-
-  @Bean
-  @Primary
   public JwtUserDetailsService jwtUserDetailsService() {
-    return mock(JwtUserDetailsService.class);
+    JwtUserDetailsService mockService = mock(JwtUserDetailsService.class);
+
+    // Configure the mock to return user details with ROLE_USER authority for any
+    // username
+    when(mockService.loadUserByUsername(anyString()))
+        .thenAnswer(invocation -> {
+          String username = invocation.getArgument(0);
+
+          // Special case for admin user
+          if (TestDataSamples.ADMIN_USERNAME.equals(username)) {
+            User user = UserFactory.createUser(TestDataSamples.ADMIN_UUID, TestDataSamples.ADMIN_NAME,
+                TestDataSamples.ADMIN_EMAIL, TestDataSamples.ADMIN_USERNAME);
+            return UserFactory.createUserUserDetails(user);
+          }
+
+          // For Leanne user
+          if (TestDataSamples.LEANNE_USERNAME.equals(username)) {
+            User user = UserFactory.createUser(TestDataSamples.LEANNE_UUID, TestDataSamples.LEANNE_NAME,
+                TestDataSamples.LEANNE_EMAIL, TestDataSamples.LEANNE_USERNAME);
+            return UserFactory.createUserUserDetails(user);
+          }
+
+          // For all other users, return with ROLE_USER authority
+          User user = UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", username);
+          return UserFactory.createUserUserDetails(user);
+        });
+
+    return mockService;
   }
 
   @Bean
   @Primary
   public JwtTokenService jwtTokenService() {
-    return mock(JwtTokenService.class);
-  }
+    JwtTokenService mockService = mock(JwtTokenService.class);
 
+    // Configure the mock to return a valid JWT for any token
+    when(mockService.validateToken(anyString()))
+        .thenAnswer(invocation -> {
+          String token = invocation.getArgument(0);
+
+          // Create a mock DecodedJWT that returns the token as the username
+          DecodedJWT mockJwt = mock(DecodedJWT.class);
+          when(mockJwt.getSubject()).thenReturn(token); // Use token as username for simplicity
+
+          return mockJwt;
+        });
+
+    return mockService;
+  }
 }

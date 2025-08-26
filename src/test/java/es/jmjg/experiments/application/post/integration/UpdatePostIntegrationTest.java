@@ -114,7 +114,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
         updatedTitle,
         updatedBody,
         null,
-        UserDetailsFactory.createRegularUserJwtUserDetails(adminUser));
+        UserDetailsFactory.createUserUserDetails(adminUser));
 
     // When
     Post result = updatePost.update(updatePostDto);

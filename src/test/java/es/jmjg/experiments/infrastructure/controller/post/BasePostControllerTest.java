@@ -24,11 +24,12 @@ import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
+import es.jmjg.experiments.infrastructure.config.security.JwtSecurityConfig;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(PostController.class)
-@Import(ControllerTestConfig.class)
+@Import({ ControllerTestConfig.class, JwtSecurityConfig.class })
 abstract class BasePostControllerTest {
 
   @Autowired

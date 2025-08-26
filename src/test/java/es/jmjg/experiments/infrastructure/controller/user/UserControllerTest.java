@@ -42,10 +42,11 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
+import es.jmjg.experiments.infrastructure.config.security.JwtSecurityConfig;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(UserController.class)
-@Import(ControllerTestConfig.class)
+@Import({ ControllerTestConfig.class, JwtSecurityConfig.class })
 class UserControllerTest {
 
   @Autowired
@@ -158,7 +159,7 @@ class UserControllerTest {
 
     // When & Then
     ResultActions resultActions = mockMvc
-        .perform(get("/api/users"))
+        .perform(get("/api/users").header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
 
@@ -184,7 +185,7 @@ class UserControllerTest {
 
     // When & Then
     mockMvc
-        .perform(get("/api/users/" + testUuid))
+        .perform(get("/api/users/" + testUuid).header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
@@ -196,7 +197,9 @@ class UserControllerTest {
     when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.empty());
 
     // When & Then
-    mockMvc.perform(get("/api/users/" + invalidUuid)).andExpect(status().isNotFound());
+    mockMvc.perform(get("/api/users/" + invalidUuid)
+        .header("Authorization", "Bearer " + testUser.getUsername()))
+        .andExpect(status().isNotFound());
   }
 
   @Test
@@ -218,7 +221,8 @@ class UserControllerTest {
 
     // When & Then
     mockMvc
-        .perform(get("/api/users/search/email").param("email", email))
+        .perform(get("/api/users/search/email").param("email", email)
+            .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
@@ -231,7 +235,8 @@ class UserControllerTest {
 
     // When & Then
     mockMvc
-        .perform(get("/api/users/search/email").param("email", invalidEmail))
+        .perform(get("/api/users/search/email").param("email", invalidEmail)
+            .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isNotFound());
   }
 
@@ -254,7 +259,8 @@ class UserControllerTest {
 
     // When & Then
     mockMvc
-        .perform(get("/api/users/search/username").param("username", username))
+        .perform(get("/api/users/search/username").param("username", username)
+            .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
@@ -267,7 +273,8 @@ class UserControllerTest {
 
     // When & Then
     mockMvc
-        .perform(get("/api/users/search/username").param("username", invalidUsername))
+        .perform(get("/api/users/search/username").param("username", invalidUsername)
+            .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isNotFound());
   }
 
@@ -305,7 +312,8 @@ class UserControllerTest {
     mockMvc
         .perform(post("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(requestBody)
+            .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", "/api/users/" + testUuid.toString()))
         .andExpect(content().json(expectedResponse));
@@ -344,7 +352,8 @@ class UserControllerTest {
     mockMvc
         .perform(put("/api/users/" + testUuid)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(requestBody)
+            .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedResponse));
   }
@@ -356,7 +365,8 @@ class UserControllerTest {
 
     // When & Then
     mockMvc
-        .perform(delete("/api/users/" + testUuid))
+        .perform(delete("/api/users/" + testUuid)
+            .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isNoContent());
 
     verify(deleteUser, times(1)).deleteByUuid(any(DeleteUserDto.class));

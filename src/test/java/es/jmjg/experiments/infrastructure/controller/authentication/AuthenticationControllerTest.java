@@ -6,25 +6,35 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
 import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
@@ -33,7 +43,7 @@ import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(AuthenticationController.class)
-@Import(ControllerTestConfig.class)
+@Import(AuthenticationControllerTest.AuthenticationTestConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AuthenticationControllerTest {
 
@@ -135,5 +145,89 @@ class AuthenticationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isUnauthorized());
+  }
+
+  @TestConfiguration
+  @EnableWebSecurity
+  static class AuthenticationTestConfig {
+
+    @Bean
+    @Primary
+    public AuthenticationManager authenticationManager() {
+      return mock(AuthenticationManager.class);
+    }
+
+    @Bean
+    @Primary
+    public JwtUserDetailsService jwtUserDetailsService() {
+      JwtUserDetailsService mockService = mock(JwtUserDetailsService.class);
+
+      // Configure the mock to return user details with ROLE_USER authority for any
+      // username
+      when(mockService.loadUserByUsername(anyString()))
+          .thenAnswer(invocation -> {
+            String username = invocation.getArgument(0);
+
+            // Special case for admin user
+            if (TestDataSamples.ADMIN_USERNAME.equals(username)) {
+              User user = UserFactory.createUser(TestDataSamples.ADMIN_UUID, TestDataSamples.ADMIN_NAME,
+                  TestDataSamples.ADMIN_EMAIL, TestDataSamples.ADMIN_USERNAME);
+              return UserFactory.createUserUserDetails(user);
+            }
+
+            // For Leanne user
+            if (TestDataSamples.LEANNE_USERNAME.equals(username)) {
+              User user = UserFactory.createUser(TestDataSamples.LEANNE_UUID, TestDataSamples.LEANNE_NAME,
+                  TestDataSamples.LEANNE_EMAIL, TestDataSamples.LEANNE_USERNAME);
+              return UserFactory.createUserUserDetails(user);
+            }
+
+            // For all other users, return with ROLE_USER authority
+            User user = UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", username);
+            return UserFactory.createUserUserDetails(user);
+          });
+
+      return mockService;
+    }
+
+    @Bean
+    @Primary
+    public JwtTokenService jwtTokenService() {
+      JwtTokenService mockService = mock(JwtTokenService.class);
+
+      // Configure the mock to return a valid JWT for any token
+      when(mockService.validateToken(anyString()))
+          .thenAnswer(invocation -> {
+            String token = invocation.getArgument(0);
+
+            // Create a mock DecodedJWT that returns the token as the username
+            DecodedJWT mockJwt = mock(DecodedJWT.class);
+            when(mockJwt.getSubject()).thenReturn(token); // Use token as username for simplicity
+
+            return mockJwt;
+          });
+
+      return mockService;
+    }
+
+    @Bean
+    @Primary
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+      return http
+          .cors(cors -> cors.disable())
+          .csrf(csrf -> csrf.disable())
+          .authorizeHttpRequests(
+              authorize -> authorize
+                  .requestMatchers("/", "/authenticate", "/api-docs/**", "/swagger-ui/**")
+                  .permitAll()
+                  .anyRequest()
+                  .authenticated())
+          .sessionManagement(
+              session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+          .exceptionHandling(
+              exceptionHandling -> exceptionHandling
+                  .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+          .build();
+    }
   }
 }

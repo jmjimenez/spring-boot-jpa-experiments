@@ -86,12 +86,12 @@ public class PostFactory {
         title,
         body,
         null,
-        UserDetailsFactory.createRegularUserJwtUserDetails(authenticatedUser));
+        UserDetailsFactory.createUserUserDetails(authenticatedUser));
   }
 
   public static DeletePostDto createDeletePostDto(UUID uuid, User authenticatedUser) {
     return new DeletePostDto(
         uuid,
-        UserDetailsFactory.createRegularUserJwtUserDetails(authenticatedUser));
+        UserDetailsFactory.createUserUserDetails(authenticatedUser));
   }
 }
