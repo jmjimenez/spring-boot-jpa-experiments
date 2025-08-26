@@ -17,7 +17,6 @@ import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 
-//TODO: create updatepostintegrationtest
 class SavePostIntegrationTest extends BaseIntegration {
 
   @Autowired
