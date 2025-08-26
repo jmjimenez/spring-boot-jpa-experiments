@@ -1,4 +1,6 @@
-package es.jmjg.experiments.application.user;
+package es.jmjg.experiments.application.user.dto;
+
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindUserByUsernameDto {
-  private String username;
+public class DeleteUserDto {
+  private UUID uuid;
 }

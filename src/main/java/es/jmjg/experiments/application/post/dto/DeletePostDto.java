@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.post;
+package es.jmjg.experiments.application.post.dto;
 
 import java.util.UUID;
 

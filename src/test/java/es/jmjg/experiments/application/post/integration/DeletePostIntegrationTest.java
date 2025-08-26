@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.DeletePost;
-import es.jmjg.experiments.application.post.DeletePostDto;
+import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.application.post.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;

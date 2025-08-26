@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.jmjg.experiments.application.post.DeletePost;
-import es.jmjg.experiments.application.post.DeletePostDto;
+import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;

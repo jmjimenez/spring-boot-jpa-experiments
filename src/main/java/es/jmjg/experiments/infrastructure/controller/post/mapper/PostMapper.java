@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import es.jmjg.experiments.application.post.SavePostDto;
-import es.jmjg.experiments.application.post.UpdatePostDto;
+import es.jmjg.experiments.application.post.dto.SavePostDto;
+import es.jmjg.experiments.application.post.dto.UpdatePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.SavePost;
-import es.jmjg.experiments.application.post.SavePostDto;
+import es.jmjg.experiments.application.post.dto.SavePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;

@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.user;
+package es.jmjg.experiments.application.user.dto;
 
 import java.util.UUID;
 
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteUserDto {
+public class FindUserByUuidDto {
   private UUID uuid;
 }

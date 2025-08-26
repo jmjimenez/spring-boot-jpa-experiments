@@ -2,9 +2,9 @@ package es.jmjg.experiments.shared;
 
 import java.util.UUID;
 
-import es.jmjg.experiments.application.post.DeletePostDto;
-import es.jmjg.experiments.application.post.SavePostDto;
-import es.jmjg.experiments.application.post.UpdatePostDto;
+import es.jmjg.experiments.application.post.dto.DeletePostDto;
+import es.jmjg.experiments.application.post.dto.SavePostDto;
+import es.jmjg.experiments.application.post.dto.UpdatePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 

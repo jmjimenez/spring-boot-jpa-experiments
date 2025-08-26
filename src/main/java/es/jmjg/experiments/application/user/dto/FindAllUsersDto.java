@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.user;
+package es.jmjg.experiments.application.user.dto;
 
 import org.springframework.data.domain.Pageable;
 

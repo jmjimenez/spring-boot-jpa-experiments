@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import es.jmjg.experiments.application.user.dto.DeleteUserDto;
 import es.jmjg.experiments.domain.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)

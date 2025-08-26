@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.application.post.exception.Forbidden;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.entity.Post;
