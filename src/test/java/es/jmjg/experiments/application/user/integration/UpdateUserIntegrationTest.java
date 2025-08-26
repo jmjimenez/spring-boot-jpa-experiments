@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class UpdateUserIntegrationTest extends BaseIntegration {
@@ -25,11 +27,15 @@ class UpdateUserIntegrationTest extends BaseIntegration {
   private UserRepositoryImpl userRepository;
 
   private User existingUser;
+  private JwtUserDetails testUserDetails;
 
   @BeforeEach
   void setUp() {
+    //TODO: test should delete all
     userRepository.deleteAll();
     existingUser = userRepository.save(UserFactory.createBasicUser());
+    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
   }
 
   @Test
@@ -40,7 +46,8 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         "Updated Name",
         "updated@example.com",
         "updateduser",
-        null);
+        null,
+        testUserDetails);
 
     User result = updateUser.update(updateUserDto);
 
@@ -63,7 +70,8 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         "Updated Name",
         "updated@example.com",
         "updateduser",
-        null);
+        null,
+        testUserDetails);
 
     User result = updateUser.update(updateUserDto);
 
@@ -81,7 +89,8 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         "Updated Name",
         "updated@example.com",
         "updateduser",
-        null);
+        null,
+        testUserDetails);
 
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)

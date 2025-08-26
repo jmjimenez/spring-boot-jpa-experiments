@@ -17,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,18 +32,21 @@ class FindUserByUuidTest {
 
   private User testUser;
   private UUID testUuid;
+  private JwtUserDetails testUserDetails;
 
   @BeforeEach
   void setUp() {
     testUuid = UUID.randomUUID();
     testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
+    var testUserForDetails = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUserForDetails);
   }
 
   @Test
   void findByUuid_WhenUserExists_ShouldReturnUser() {
     // Given
     when(userRepository.findByUuid(testUuid)).thenReturn(Optional.of(testUser));
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid, testUserDetails);
 
     // When
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
@@ -61,7 +66,7 @@ class FindUserByUuidTest {
     // Given
     UUID nonExistentUuid = UUID.randomUUID();
     when(userRepository.findByUuid(nonExistentUuid)).thenReturn(Optional.empty());
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(nonExistentUuid);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(nonExistentUuid, testUserDetails);
 
     // When
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
@@ -74,7 +79,7 @@ class FindUserByUuidTest {
   @Test
   void findByUuid_WhenUuidIsNull_ShouldReturnEmpty() {
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(null);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(null, testUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -87,7 +92,7 @@ class FindUserByUuidTest {
     // Given
     when(userRepository.findByUuid(testUuid))
         .thenThrow(new RuntimeException("Database error"));
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid, testUserDetails);
 
     // When & Then
     assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto))

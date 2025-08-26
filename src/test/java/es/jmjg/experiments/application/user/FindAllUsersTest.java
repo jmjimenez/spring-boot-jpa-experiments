@@ -21,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +38,7 @@ class FindAllUsersTest {
   private User testUser2;
   private User testUser3;
   private Pageable pageable;
+  private JwtUserDetails testUserDetails;
 
   @BeforeEach
   void setUp() {
@@ -43,6 +46,8 @@ class FindAllUsersTest {
     testUser2 = UserFactory.createUser("Test User 2", "test2@example.com", "testuser2");
     testUser3 = UserFactory.createUser("Test User 3", "test3@example.com", "testuser3");
     pageable = PageRequest.of(0, 10);
+    var testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
   }
 
   @Test
@@ -51,7 +56,7 @@ class FindAllUsersTest {
     List<User> expectedUsers = Arrays.asList(testUser1, testUser2, testUser3);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -79,7 +84,7 @@ class FindAllUsersTest {
     // Given
     Page<User> expectedPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -98,7 +103,7 @@ class FindAllUsersTest {
     List<User> expectedUsers = Collections.singletonList(testUser1);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -119,7 +124,7 @@ class FindAllUsersTest {
   void findAll_WhenRepositoryThrowsException_ShouldPropagateException() {
     // Given
     when(userRepository.findAll(pageable)).thenThrow(new RuntimeException("Database error"));
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
 
     // When & Then
     assertThatThrownBy(() -> findAllUsers.findAll(findAllUsersDto))
@@ -132,7 +137,7 @@ class FindAllUsersTest {
   void findAll_WhenRepositoryReturnsNull_ShouldReturnNull() {
     // Given
     when(userRepository.findAll(pageable)).thenReturn(null);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -152,7 +157,7 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable))
         .thenReturn(firstPage)
         .thenReturn(secondPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
 
     // When
     Page<User> firstResult = findAllUsers.findAll(findAllUsersDto);
@@ -172,7 +177,7 @@ class FindAllUsersTest {
     List<User> expectedUsers = Arrays.asList(specialUser1, specialUser2);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -201,7 +206,7 @@ class FindAllUsersTest {
     List<User> expectedUsers = Collections.singletonList(longNameUser);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);

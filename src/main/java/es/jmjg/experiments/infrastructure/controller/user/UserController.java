@@ -21,18 +21,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.jmjg.experiments.application.user.DeleteUser;
-import es.jmjg.experiments.application.user.dto.DeleteUserDto;
 import es.jmjg.experiments.application.user.FindAllUsers;
-import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
-import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.FindUserByUsername;
-import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.FindUserByUuid;
-import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.SaveUser;
-import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.UpdateUser;
+import es.jmjg.experiments.application.user.dto.DeleteUserDto;
+import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
+import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
+import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
+import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
+import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
@@ -101,7 +101,7 @@ public class UserController {
   Page<FindAllUsersResponseDto> findAll(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       Pageable pageable) {
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, userDetails);
     Page<User> users = findAllUsers.findAll(findAllUsersDto);
     return users.map(userMapper::toFindAllUsersResponseDto);
   }
@@ -118,7 +118,7 @@ public class UserController {
   FindUserByUuidResponseDto findByUuid(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "UUID of the user to retrieve") @PathVariable UUID uuid) {
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid, userDetails);
     User user = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
     return userMapper.toFindUserByUuidResponseDto(user);
   }
@@ -135,7 +135,7 @@ public class UserController {
   FindUserByEmailResponseDto findByEmail(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "Email address to search for") @RequestParam String email) {
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(email);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(email, userDetails);
     User user = findUserByEmail.findByEmail(findUserByEmailDto).orElseThrow(UserNotFoundException::new);
     return userMapper.toFindUserByEmailResponseDto(user);
   }
@@ -152,7 +152,7 @@ public class UserController {
   FindUserByUsernameResponseDto findByUsername(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "Username to search for") @RequestParam String username) {
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(username);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(username, userDetails);
     User user = findUserByUsername.findByUsername(findUserByUsernameDto).orElseThrow(UserNotFoundException::new);
     return userMapper.toFindUserByUsernameResponseDto(user);
   }
@@ -173,7 +173,8 @@ public class UserController {
         userDto.getName(),
         userDto.getEmail(),
         userDto.getUsername(),
-        userDto.getPassword());
+        userDto.getPassword(),
+        userDetails);
     User savedUser = saveUser.save(saveUserDto);
     SaveUserResponseDto responseDto = userMapper.toSaveUserResponseDto(savedUser);
 
@@ -199,7 +200,7 @@ public class UserController {
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
       @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid, userDetails);
     User existing = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
 
     UpdateUserDto updateUserDto = new UpdateUserDto(
@@ -208,7 +209,8 @@ public class UserController {
         userDto.getName(),
         userDto.getEmail(),
         userDto.getUsername(),
-        userDto.getPassword());
+        userDto.getPassword(),
+        userDetails);
 
     User updatedUser = updateUser.update(updateUserDto);
     return userMapper.toUpdateUserResponseDto(updatedUser);
@@ -226,7 +228,7 @@ public class UserController {
   void deleteByUuid(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @PathVariable UUID uuid) {
-    DeleteUserDto deleteUserDto = new DeleteUserDto(uuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(uuid, userDetails);
     deleteUser.deleteByUuid(deleteUserDto);
   }
 }

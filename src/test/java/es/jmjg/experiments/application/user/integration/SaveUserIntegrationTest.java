@@ -5,14 +5,17 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class SaveUserIntegrationTest extends BaseIntegration {
@@ -22,6 +25,14 @@ class SaveUserIntegrationTest extends BaseIntegration {
 
   @Autowired
   private UserRepositoryImpl userRepository;
+
+  private JwtUserDetails testUserDetails;
+
+  @BeforeEach
+  void setUp() {
+    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+  }
 
   @Test
   void save_WhenUserIsValid_ShouldSaveAndReturnUser() {
@@ -33,7 +44,8 @@ class SaveUserIntegrationTest extends BaseIntegration {
         userToSave.getName(),
         userToSave.getEmail(),
         userToSave.getUsername(),
-        userToSave.getPassword());
+        userToSave.getPassword(),
+        testUserDetails);
 
     User result = saveUser.save(saveUserDto);
 
@@ -61,7 +73,8 @@ class SaveUserIntegrationTest extends BaseIntegration {
         userToSave.getName(),
         userToSave.getEmail(),
         userToSave.getUsername(),
-        userToSave.getPassword());
+        userToSave.getPassword(),
+        testUserDetails);
 
     User result = saveUser.save(saveUserDto);
 
@@ -86,7 +99,8 @@ class SaveUserIntegrationTest extends BaseIntegration {
         userToSave.getName(),
         userToSave.getEmail(),
         userToSave.getUsername(),
-        userToSave.getPassword());
+        userToSave.getPassword(),
+        testUserDetails);
 
     User result = saveUser.save(saveUserDto);
 
@@ -111,14 +125,16 @@ class SaveUserIntegrationTest extends BaseIntegration {
         user1.getName(),
         user1.getEmail(),
         user1.getUsername(),
-        user1.getPassword());
+        user1.getPassword(),
+        testUserDetails);
 
     SaveUserDto saveUserDto2 = new SaveUserDto(
         user2.getUuid(),
         user2.getName(),
         user2.getEmail(),
         user2.getUsername(),
-        user2.getPassword());
+        user2.getPassword(),
+        testUserDetails);
 
     User result1 = saveUser.save(saveUserDto1);
     User result2 = saveUser.save(saveUserDto2);
@@ -148,7 +164,8 @@ class SaveUserIntegrationTest extends BaseIntegration {
         user2.getName(),
         user2.getEmail(),
         user2.getUsername(),
-        user2.getPassword());
+        user2.getPassword(),
+        testUserDetails);
 
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
@@ -167,7 +184,8 @@ class SaveUserIntegrationTest extends BaseIntegration {
         user2.getName(),
         user2.getEmail(),
         user2.getUsername(),
-        user2.getPassword());
+        user2.getPassword(),
+        testUserDetails);
 
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
@@ -186,7 +204,8 @@ class SaveUserIntegrationTest extends BaseIntegration {
         user2.getName(),
         user2.getEmail(),
         user2.getUsername(),
-        user2.getPassword());
+        user2.getPassword(),
+        testUserDetails);
 
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);

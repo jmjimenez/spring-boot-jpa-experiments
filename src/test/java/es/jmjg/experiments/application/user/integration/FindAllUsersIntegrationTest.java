@@ -13,13 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+//TODO: remove private method deleteAllUsers
 class FindAllUsersIntegrationTest extends BaseIntegration {
   @PersistenceContext
   private EntityManager entityManager;
@@ -31,16 +34,19 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   private UserRepositoryImpl userRepository;
 
   private Pageable pageable;
+  private JwtUserDetails testUserDetails;
 
   @BeforeEach
   void setUp() {
     pageable = PageRequest.of(0, 10);
+    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
   }
 
   @Test
   void findAll_WhenUsersExist_ShouldReturnAllUsers() {
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -73,7 +79,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.deleteAll();
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -94,7 +100,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(singleUser);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -126,7 +132,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(user2);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -151,7 +157,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(existingUser);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -173,7 +179,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.deleteById(userToDelete.getId());
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -200,7 +206,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(specialUser2);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -230,7 +236,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(longNameUser);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -258,7 +264,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(subdomainUser2);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -278,7 +284,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Test
   void findAll_WhenMultipleCalls_ShouldReturnConsistentResults() {
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> firstResult = findAllUsers.findAll(findAllUsersDto);
     Page<User> secondResult = findAllUsers.findAll(findAllUsersDto);
 
@@ -318,7 +324,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(userWithDashes);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then

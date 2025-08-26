@@ -15,6 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.jmjg.experiments.application.user.dto.DeleteUserDto;
 import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteUserByUuidTest {
@@ -26,17 +29,20 @@ class DeleteUserByUuidTest {
   private DeleteUser deleteUser;
 
   private UUID testUuid;
+  private JwtUserDetails testUserDetails;
 
   @BeforeEach
   void setUp() {
     testUuid = UUID.randomUUID();
+    var testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
   }
 
   @Test
   void deleteByUuid_WhenUserExists_ShouldDeleteUser() {
     // Given
     doNothing().when(userRepository).deleteByUuid(testUuid);
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
 
     // When
     deleteUser.deleteByUuid(deleteUserDto);
@@ -50,7 +56,7 @@ class DeleteUserByUuidTest {
     // Given
     UUID nonExistentUuid = UUID.randomUUID();
     doNothing().when(userRepository).deleteByUuid(nonExistentUuid);
-    DeleteUserDto deleteUserDto = new DeleteUserDto(nonExistentUuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(nonExistentUuid, testUserDetails);
 
     // When & Then
     assertThatCode(() -> deleteUser.deleteByUuid(deleteUserDto))
@@ -62,7 +68,7 @@ class DeleteUserByUuidTest {
   void deleteByUuid_WhenUuidIsNull_ShouldNotThrowException() {
     // Given
     doNothing().when(userRepository).deleteByUuid(null);
-    DeleteUserDto deleteUserDto = new DeleteUserDto(null);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(null, testUserDetails);
 
     // When & Then
     assertThatCode(() -> deleteUser.deleteByUuid(deleteUserDto))
@@ -74,7 +80,7 @@ class DeleteUserByUuidTest {
   void deleteByUuid_WhenRepositoryThrowsException_ShouldPropagateException() {
     // Given
     doThrow(new RuntimeException("Database error")).when(userRepository).deleteByUuid(testUuid);
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
 
     // When & Then
     assertThatThrownBy(() -> deleteUser.deleteByUuid(deleteUserDto))
@@ -88,8 +94,8 @@ class DeleteUserByUuidTest {
     // Given
     UUID secondUuid = UUID.randomUUID();
     doNothing().when(userRepository).deleteByUuid(any(UUID.class));
-    DeleteUserDto deleteUserDto1 = new DeleteUserDto(testUuid);
-    DeleteUserDto deleteUserDto2 = new DeleteUserDto(secondUuid);
+    DeleteUserDto deleteUserDto1 = new DeleteUserDto(testUuid, testUserDetails);
+    DeleteUserDto deleteUserDto2 = new DeleteUserDto(secondUuid, testUserDetails);
 
     // When
     deleteUser.deleteByUuid(deleteUserDto1);

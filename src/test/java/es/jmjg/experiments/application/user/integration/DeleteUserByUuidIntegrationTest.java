@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.jmjg.experiments.application.user.DeleteUser;
 import es.jmjg.experiments.application.user.dto.DeleteUserDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class DeleteUserByUuidIntegrationTest extends BaseIntegration {
@@ -26,11 +28,13 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
 
   private User testUser;
   private UUID testUuid;
+  private JwtUserDetails testUserDetails;
 
   @BeforeEach
   void setUp() {
     testUuid = UUID.randomUUID();
     testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
   }
 
   @Test
@@ -40,7 +44,7 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(userRepository.findByUuid(testUuid)).isPresent();
 
     // When
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
     deleteUser.deleteByUuid(deleteUserDto);
 
     // Then
@@ -55,7 +59,7 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(userRepository.findByUuid(nonExistentUuid)).isEmpty();
 
     // When & Then
-    DeleteUserDto deleteUserDto = new DeleteUserDto(nonExistentUuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(nonExistentUuid, testUserDetails);
     assertThatCode(() -> deleteUser.deleteByUuid(deleteUserDto))
         .doesNotThrowAnyException();
   }
@@ -63,7 +67,7 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void deleteByUuid_WhenUuidIsNull_ShouldNotThrowException() {
     // When & Then
-    DeleteUserDto deleteUserDto = new DeleteUserDto(null);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(null, testUserDetails);
     assertThatCode(() -> deleteUser.deleteByUuid(deleteUserDto))
         .doesNotThrowAnyException();
   }
@@ -81,7 +85,7 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(userRepository.findByUuid(secondUuid)).isPresent();
 
     // When
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
     deleteUser.deleteByUuid(deleteUserDto);
 
     // Then
@@ -97,7 +101,7 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(userRepository.findByUuid(testUuid)).isPresent();
 
     // When
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
     deleteUser.deleteByUuid(deleteUserDto);
 
     // Then
@@ -117,7 +121,7 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(userRepository.findByUuid(testUuid)).isPresent();
 
     // When
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
     deleteUser.deleteByUuid(deleteUserDto);
     deleteUser.deleteByUuid(deleteUserDto); // Second call on already deleted user
 
@@ -128,7 +132,7 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void deleteByUuid_WhenDatabaseIsEmpty_ShouldNotThrowException() {
     // When & Then
-    DeleteUserDto deleteUserDto = new DeleteUserDto(UUID.randomUUID());
+    DeleteUserDto deleteUserDto = new DeleteUserDto(UUID.randomUUID(), testUserDetails);
     assertThatCode(() -> deleteUser.deleteByUuid(deleteUserDto))
         .doesNotThrowAnyException();
   }

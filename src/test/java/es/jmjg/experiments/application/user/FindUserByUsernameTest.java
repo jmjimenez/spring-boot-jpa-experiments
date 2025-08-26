@@ -16,6 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,18 +31,21 @@ class FindUserByUsernameTest {
 
   private User testUser;
   private String testUsername;
+  private JwtUserDetails testUserDetails;
 
   @BeforeEach
   void setUp() {
     testUsername = "testuser";
     testUser = UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", testUsername);
+    var testUserForDetails = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUserForDetails);
   }
 
   @Test
   void findByUsername_WhenUserExists_ShouldReturnUser() {
     // Given
     when(userRepository.findByUsername(testUsername)).thenReturn(Optional.of(testUser));
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, testUserDetails);
 
     // When
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
@@ -59,7 +64,7 @@ class FindUserByUsernameTest {
     // Given
     String nonExistentUsername = "nonexistentuser";
     when(userRepository.findByUsername(nonExistentUsername)).thenReturn(Optional.empty());
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(nonExistentUsername);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(nonExistentUsername, testUserDetails);
 
     // When
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
@@ -73,7 +78,7 @@ class FindUserByUsernameTest {
   void findByUsername_WhenUsernameIsNull_ShouldReturnEmpty() {
     // Given
     when(userRepository.findByUsername(null)).thenReturn(Optional.empty());
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(null);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(null, testUserDetails);
 
     // When
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
@@ -87,7 +92,7 @@ class FindUserByUsernameTest {
   void findByUsername_WhenUsernameIsEmpty_ShouldReturnEmpty() {
     // Given
     when(userRepository.findByUsername("")).thenReturn(Optional.empty());
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("", testUserDetails);
 
     // When
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
@@ -102,7 +107,7 @@ class FindUserByUsernameTest {
     // Given
     when(userRepository.findByUsername(testUsername))
         .thenThrow(new RuntimeException("Database error"));
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, testUserDetails);
 
     // When & Then
     assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto))
@@ -115,7 +120,7 @@ class FindUserByUsernameTest {
   void findByUsername_WhenUsernameIsBlank_ShouldReturnEmpty() {
     // Given
     when(userRepository.findByUsername("   ")).thenReturn(Optional.empty());
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("   ");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("   ", testUserDetails);
 
     // When
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);

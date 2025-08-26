@@ -15,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,18 +30,21 @@ class FindUserByEmailTest {
 
   private User testUser;
   private String testEmail;
+  private JwtUserDetails testUserDetails;
 
   @BeforeEach
   void setUp() {
     testEmail = "test@example.com";
     testUser = UserFactory.createUser("Test User", testEmail, "testuser");
+    var testUserForDetails = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUserForDetails);
   }
 
   @Test
   void findByEmail_WhenUserExists_ShouldReturnUser() {
     // Given
     when(userRepository.findByEmail(testEmail)).thenReturn(Optional.of(testUser));
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testEmail);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testEmail, testUserDetails);
 
     // When
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
@@ -58,7 +63,7 @@ class FindUserByEmailTest {
     // Given
     String nonExistentEmail = "nonexistent@example.com";
     when(userRepository.findByEmail(nonExistentEmail)).thenReturn(Optional.empty());
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(nonExistentEmail);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(nonExistentEmail, testUserDetails);
 
     // When
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
@@ -72,7 +77,7 @@ class FindUserByEmailTest {
   void findByEmail_WhenEmailIsNull_ShouldReturnEmpty() {
     // Given
     when(userRepository.findByEmail(null)).thenReturn(Optional.empty());
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(null);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(null, testUserDetails);
 
     // When
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
@@ -87,7 +92,7 @@ class FindUserByEmailTest {
     // Given
     when(userRepository.findByEmail(testEmail))
         .thenThrow(new RuntimeException("Database error"));
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testEmail);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testEmail, testUserDetails);
 
     // When & Then
     assertThatThrownBy(() -> findUserByEmail.findByEmail(findUserByEmailDto))
@@ -101,7 +106,7 @@ class FindUserByEmailTest {
     // Given
     String emptyEmail = "";
     when(userRepository.findByEmail(emptyEmail)).thenReturn(Optional.empty());
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(emptyEmail);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(emptyEmail, testUserDetails);
 
     // When
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
@@ -116,7 +121,7 @@ class FindUserByEmailTest {
     // Given
     String blankEmail = "   ";
     when(userRepository.findByEmail(blankEmail)).thenReturn(Optional.empty());
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(blankEmail);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(blankEmail, testUserDetails);
 
     // When
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
@@ -131,7 +136,7 @@ class FindUserByEmailTest {
     // Given
     String upperCaseEmail = "TEST@EXAMPLE.COM";
     when(userRepository.findByEmail(upperCaseEmail)).thenReturn(Optional.empty());
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(upperCaseEmail);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(upperCaseEmail, testUserDetails);
 
     // When
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
@@ -147,7 +152,7 @@ class FindUserByEmailTest {
     String specialEmail = "test+tag@example.com";
     User specialUser = UserFactory.createUser("Special User", specialEmail, "specialuser");
     when(userRepository.findByEmail(specialEmail)).thenReturn(Optional.of(specialUser));
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(specialEmail);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(specialEmail, testUserDetails);
 
     // When
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);

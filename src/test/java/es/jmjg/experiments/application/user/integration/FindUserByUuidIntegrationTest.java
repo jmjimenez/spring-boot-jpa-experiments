@@ -5,14 +5,17 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class FindUserByUuidIntegrationTest extends BaseIntegration {
@@ -23,6 +26,14 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
+  private JwtUserDetails testUserDetails;
+
+  @BeforeEach
+  void setUp() {
+    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+  }
+
   @Test
   void findByUuid_WhenUserExists_ShouldReturnUser() {
     // Given
@@ -31,7 +42,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(testUser);
 
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid, testUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -46,7 +57,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UUID.randomUUID());
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UUID.randomUUID(), testUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -56,7 +67,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenUuidIsNull_ShouldReturnEmpty() {
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(null);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(null, testUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -76,8 +87,8 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     User savedThirdUser = userRepository.save(thirdUser);
 
     // When
-    FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(secondUuid);
-    FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(thirdUuid);
+    FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(secondUuid, testUserDetails);
+    FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(thirdUuid, testUserDetails);
     Optional<User> firstResult = findUserByUuid.findByUuid(findUserByUuidDto1);
     Optional<User> secondResult = findUserByUuid.findByUuid(findUserByUuidDto2);
 
@@ -103,7 +114,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     userRepository.save(savedUser);
 
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(fourthUuid);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(fourthUuid, testUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then

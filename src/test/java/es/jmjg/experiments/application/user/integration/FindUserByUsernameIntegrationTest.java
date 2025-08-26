@@ -5,14 +5,18 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.UserFactory;
 
 class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
@@ -22,6 +26,9 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
+  private JwtUserDetails testUserDetails;
+
+  //TODO: move this constants to a test data class
   // Test data from migration
   private static final UUID LEANNE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
   private static final String LEANNE_USERNAME = "leanne_graham";
@@ -34,13 +41,19 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   private static final String CLEMENTINE_USERNAME = "clementine_bauch";
   private static final String CLEMENTINE_NAME = "Clementine Bauch";
 
+  @BeforeEach
+  void setUp() {
+    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+  }
+
   @Test
   void findByUsername_WhenUserExists_ShouldReturnUser() {
     // Given - using existing test data from migration
     String testUsername = ERVIN_USERNAME;
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, testUserDetails);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -55,7 +68,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("nonexistentuser");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("nonexistentuser", testUserDetails);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -65,7 +78,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameIsNull_ShouldReturnEmpty() {
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(null);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(null, testUserDetails);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -79,8 +92,8 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String thirdUsername = CLEMENTINE_USERNAME;
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(secondUsername);
-    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(thirdUsername);
+    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(secondUsername, testUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(thirdUsername, testUserDetails);
     Optional<User> secondResult = findUserByUsername.findByUsername(findUserByUsernameDto1);
     Optional<User> thirdResult = findUserByUsername.findByUsername(findUserByUsernameDto2);
 
@@ -98,7 +111,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   void findByUsername_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given - using existing test data from migration
     String testUsername = LEANNE_USERNAME;
-    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(testUsername);
+    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(testUsername, testUserDetails);
     User existingUser = findUserByUsername.findByUsername(findUserByUsernameDto1).orElseThrow();
 
     // Update the user
@@ -107,7 +120,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     userRepository.save(existingUser);
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(testUsername);
+    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(testUsername, testUserDetails);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto2);
 
     // Then
@@ -121,7 +134,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameIsEmpty_ShouldReturnEmpty() {
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("", testUserDetails);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -131,7 +144,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameIsBlank_ShouldReturnEmpty() {
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("   ");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("   ", testUserDetails);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -144,7 +157,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String testUsername = LEANNE_USERNAME.toUpperCase();
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, testUserDetails);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -157,7 +170,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String testUsername = LEANNE_USERNAME;
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(" " + testUsername + " ");
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(" " + testUsername + " ", testUserDetails);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
