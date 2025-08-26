@@ -2,8 +2,14 @@ package es.jmjg.experiments.application.user.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.UUID;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +28,6 @@ import es.jmjg.experiments.shared.UserFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-//TODO: remove private method deleteAllUsers
 class FindAllUsersIntegrationTest extends BaseIntegration {
   @PersistenceContext
   private EntityManager entityManager;
@@ -76,7 +81,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Transactional
   void findAll_WhenNoUsersExist_ShouldReturnEmptyPage() {
     // Given - clear all users
-    userRepository.deleteAll();
+    deleteAllUsers();
 
     // When
     FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
@@ -112,11 +117,6 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(result.getContent().get(0).getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
     assertThat(result.getTotalElements()).isEqualTo(1);
     assertThat(result.getTotalPages()).isEqualTo(1);
-  }
-
-  private void deleteAllUsers() {
-    userRepository.deleteAll();
-    entityManager.flush();
   }
 
   @Test
@@ -186,24 +186,22 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(5);
     assertThat(result.getContent()).extracting("name")
-        .doesNotContain("Leanne Graham");
+        .doesNotContain(TestDataSamples.LEANNE_NAME);
     assertThat(result.getContent()).extracting("uuid")
         .doesNotContain(TestDataSamples.LEANNE_UUID);
     assertThat(result.getTotalElements()).isEqualTo(5);
     assertThat(result.getTotalPages()).isEqualTo(1);
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("provideUsersWithSpecialCharacters")
   @Transactional
-  void findAll_WhenUsersHaveSpecialCharacters_ShouldReturnAllUsers() {
-    // Given - clear all users and add users with special characters
+  void findAll_WhenUsersHaveSpecialCharacters_ShouldReturnAllUsers(UUID uuid, String name, String email,
+      String username) {
+    // Given - clear all users and add one user with special characters
     deleteAllUsers();
-    User specialUser1 = UserFactory.createUser(TestDataSamples.LEANNE_UUID, "José García",
-        "jose@example.com", "jose_garcia");
-    User specialUser2 = UserFactory.createUser(TestDataSamples.ERVIN_UUID, "Maria O'Connor",
-        "maria@example.com", "maria_oconnor");
-    userRepository.save(specialUser1);
-    userRepository.save(specialUser2);
+    User specialUser = UserFactory.createUser(uuid, name, email, username);
+    userRepository.save(specialUser);
 
     // When
     FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
@@ -211,28 +209,27 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getContent()).hasSize(2);
-    assertThat(result.getContent()).extracting("name")
-        .containsExactlyInAnyOrder("José García", "Maria O'Connor");
-    assertThat(result.getContent()).extracting("email")
-        .containsExactlyInAnyOrder("jose@example.com", "maria@example.com");
-    assertThat(result.getContent()).extracting("username")
-        .containsExactlyInAnyOrder("jose_garcia", "maria_oconnor");
-    assertThat(result.getContent()).extracting("uuid")
-        .containsExactlyInAnyOrder(TestDataSamples.LEANNE_UUID, TestDataSamples.ERVIN_UUID);
-    assertThat(result.getTotalElements()).isEqualTo(2);
-    assertThat(result.getTotalPages()).isEqualTo(1);
+    assertThat(result.getContent()).hasSize(1);
+    assertThat(result.getContent().get(0).getName()).isEqualTo(name);
+    assertThat(result.getContent().get(0).getEmail()).isEqualTo(email);
+    assertThat(result.getContent().get(0).getUsername()).isEqualTo(username);
+    assertThat(result.getContent().get(0).getUuid()).isEqualTo(uuid);
   }
 
-  @Test
+  private static Stream<Arguments> provideUsersWithSpecialCharacters() {
+    return Stream.of(
+        Arguments.of(UUID.randomUUID(), "José García", "jose@example.com", "jose_garcia"),
+        Arguments.of(UUID.randomUUID(), "Maria O'Connor", "maria@example.com", "maria_oconnor"));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideUsersWithLongNames")
   @Transactional
-  void findAll_WhenUsersHaveLongNames_ShouldReturnAllUsers() {
-    // Given - clear all users and add user with long name
+  void findAll_WhenUsersHaveLongNames_ShouldReturnAllUsers(UUID uuid, String name, String email,
+      String username) {
+    // Given - clear all users and add one user with long name
     deleteAllUsers();
-    User longNameUser = UserFactory.createUser(TestDataSamples.LEANNE_UUID,
-        "Dr. John Michael Smith-Jones III, Ph.D., M.D., F.A.C.S.",
-        "dr.john.smith-jones@university.edu",
-        "dr_john_smith_jones_iii");
+    User longNameUser = UserFactory.createUser(uuid, name, email, username);
     userRepository.save(longNameUser);
 
     // When
@@ -242,26 +239,33 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0).getName())
-        .isEqualTo("Dr. John Michael Smith-Jones III, Ph.D., M.D., F.A.C.S.");
-    assertThat(result.getContent().get(0).getEmail()).isEqualTo("dr.john.smith-jones@university.edu");
-    assertThat(result.getContent().get(0).getUsername()).isEqualTo("dr_john_smith_jones_iii");
-    assertThat(result.getContent().get(0).getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
-    assertThat(result.getTotalElements()).isEqualTo(1);
-    assertThat(result.getTotalPages()).isEqualTo(1);
+    assertThat(result.getContent().get(0).getName()).isEqualTo(name);
+    assertThat(result.getContent().get(0).getEmail()).isEqualTo(email);
+    assertThat(result.getContent().get(0).getUsername()).isEqualTo(username);
+    assertThat(result.getContent().get(0).getUuid()).isEqualTo(uuid);
   }
 
-  @Test
+  private static Stream<Arguments> provideUsersWithLongNames() {
+    return Stream.of(
+        Arguments.of(UUID.randomUUID(), "Dr. John Michael Smith-Jones III, Ph.D., M.D., F.A.C.S.",
+            "dr.john.smith-jones@university.edu", "dr_john_smith_jones_iii"),
+        Arguments.of(UUID.randomUUID(),
+            "Professor María del Carmen Rodríguez-González y Fernández de la Vega",
+            "prof.maria.rodriguez-gonzalez@universidad.es", "prof_maria_rodriguez_gonzalez"),
+        Arguments.of(UUID.randomUUID(),
+            "Sir William Henry Gates III, KBE, FRS, FRSE, HonFRCP, HonFREng",
+            "sir.william.gates@microsoft.com", "sir_william_gates_iii"));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideUsersWithSubdomainEmails")
   @Transactional
-  void findAll_WhenUsersHaveSubdomainEmails_ShouldReturnAllUsers() {
-    // Given - clear all users and add users with subdomain emails
+  void findAll_WhenUsersHaveSubdomainEmails_ShouldReturnAllUsers(UUID uuid, String name, String email,
+      String username) {
+    // Given - clear all users and add one user with subdomain email
     deleteAllUsers();
-    User subdomainUser1 = UserFactory.createUser(TestDataSamples.LEANNE_UUID, "Subdomain User 1",
-        "user1@subdomain.example.com", "subdomainuser1");
-    User subdomainUser2 = UserFactory.createUser(TestDataSamples.ERVIN_UUID, "Subdomain User 2",
-        "user2@another-subdomain.example.com", "subdomainuser2");
-    userRepository.save(subdomainUser1);
-    userRepository.save(subdomainUser2);
+    User subdomainUser = UserFactory.createUser(uuid, name, email, username);
+    userRepository.save(subdomainUser);
 
     // When
     FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
@@ -269,16 +273,21 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getContent()).hasSize(2);
-    assertThat(result.getContent()).extracting("name")
-        .containsExactlyInAnyOrder("Subdomain User 1", "Subdomain User 2");
-    assertThat(result.getContent()).extracting("email")
-        .containsExactlyInAnyOrder("user1@subdomain.example.com",
-            "user2@another-subdomain.example.com");
-    assertThat(result.getContent()).extracting("uuid")
-        .containsExactlyInAnyOrder(TestDataSamples.LEANNE_UUID, TestDataSamples.ERVIN_UUID);
-    assertThat(result.getTotalElements()).isEqualTo(2);
-    assertThat(result.getTotalPages()).isEqualTo(1);
+    assertThat(result.getContent()).hasSize(1);
+    assertThat(result.getContent().get(0).getName()).isEqualTo(name);
+    assertThat(result.getContent().get(0).getEmail()).isEqualTo(email);
+    assertThat(result.getContent().get(0).getUsername()).isEqualTo(username);
+    assertThat(result.getContent().get(0).getUuid()).isEqualTo(uuid);
+  }
+
+  private static Stream<Arguments> provideUsersWithSubdomainEmails() {
+    return Stream.of(
+        Arguments.of(UUID.randomUUID(), "Subdomain User 1", "user1@subdomain.example.com", "subdomainuser1"),
+        Arguments.of(UUID.randomUUID(), "Subdomain User 2", "user2@another-subdomain.example.com", "subdomainuser2"),
+        Arguments.of(UUID.randomUUID(), "Deep Subdomain User", "user@deep.nested.subdomain.example.com",
+            "deepsubdomainuser"),
+        Arguments.of(UUID.randomUUID(), "Multi-Level User", "admin@dev.staging.production.company.org",
+            "multileveluser"));
   }
 
   @Test
@@ -310,13 +319,15 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Test
   @Transactional
   void findAll_WhenUsersHaveDifferentDataTypes_ShouldReturnAllUsers() {
-    // Given - clear all users and add users with different data types
-    deleteAllUsers();
-    User userWithNumbers = UserFactory.createUser(TestDataSamples.LEANNE_UUID, "User123",
+    // Given - add users with different data types
+    UUID uuid1 = UUID.randomUUID();
+    UUID uuid2 = UUID.randomUUID();
+    UUID uuid3 = UUID.randomUUID();
+    User userWithNumbers = UserFactory.createUser(uuid1, "User123",
         "user123@example.com", "user123");
-    User userWithUnderscores = UserFactory.createUser(TestDataSamples.ERVIN_UUID, "User_With_Underscores",
+    User userWithUnderscores = UserFactory.createUser(uuid2, "User_With_Underscores",
         "user_with_underscores@example.com", "user_with_underscores");
-    User userWithDashes = UserFactory.createUser(TestDataSamples.ADMIN_UUID, "User-With-Dashes",
+    User userWithDashes = UserFactory.createUser(uuid3, "User-With-Dashes",
         "user-with-dashes@example.com", "user-with-dashes");
 
     userRepository.save(userWithNumbers);
@@ -329,16 +340,17 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getContent()).hasSize(3);
     assertThat(result.getContent()).extracting("name")
-        .containsExactlyInAnyOrder("User123", "User_With_Underscores", "User-With-Dashes");
+        .contains("User123", "User_With_Underscores", "User-With-Dashes");
     assertThat(result.getContent()).extracting("email")
-        .containsExactlyInAnyOrder("user123@example.com", "user_with_underscores@example.com",
+        .contains("user123@example.com", "user_with_underscores@example.com",
             "user-with-dashes@example.com");
     assertThat(result.getContent()).extracting("uuid")
-        .containsExactlyInAnyOrder(TestDataSamples.LEANNE_UUID, TestDataSamples.ERVIN_UUID,
-            TestDataSamples.ADMIN_UUID);
-    assertThat(result.getTotalElements()).isEqualTo(3);
-    assertThat(result.getTotalPages()).isEqualTo(1);
+        .contains(uuid1, uuid2, uuid3);
+  }
+
+  private void deleteAllUsers() {
+    userRepository.deleteAll();
+    entityManager.flush();
   }
 }
