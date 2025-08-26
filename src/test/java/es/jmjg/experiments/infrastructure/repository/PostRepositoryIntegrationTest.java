@@ -21,7 +21,6 @@ import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
 
-//TODO: instead of inheriting use a custom annotation like in https://www.wimdeblauwe.com/blog/2025/07/30/how-i-test-production-ready-spring-boot-applications/
 @Import({ PostRepositoryImpl.class, TagRepositoryImpl.class, UserRepositoryImpl.class })
 public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
 

@@ -18,8 +18,6 @@ import es.jmjg.experiments.infrastructure.config.TestContainersConfig;
 import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationRequestDto;
 import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationResponseDto;
 
-//TODO: add archUnit tests like in https://www.wimdeblauwe.com/blog/2025/07/30/how-i-test-production-ready-spring-boot-applications/
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)

@@ -635,6 +635,43 @@ The application includes several development tools:
 - **Docker Compose**: Local PostgreSQL database
 - **Flyway**: Automatic database migrations
 
+## 📋 TODO
+
+This section contains all pending tasks and improvements identified in the codebase:
+
+### Domain Layer
+- **User Entity** (`src/main/java/es/jmjg/experiments/domain/entity/User.java`):
+  - Implement UserId value object
+  - Implement UserUuid value object
+
+### Infrastructure Layer
+- **Post Controller** (`src/main/java/es/jmjg/experiments/infrastructure/controller/post/PostController.java`):
+  - Add comprehensive logging to the application
+
+- **Tag DTO** (`src/main/java/es/jmjg/experiments/infrastructure/controller/tag/dto/SaveTagRequestDto.java`):
+  - Replace UUID with id field for consistency
+
+### Testing
+- **Base Controller Integration Test** (`src/test/java/es/jmjg/experiments/shared/BaseControllerIntegration.java`):
+  - Add ArchUnit tests following the pattern from [Wim Deblauwe's blog](https://www.wimdeblauwe.com/blog/2025/07/30/how-i-test-production-ready-spring-boot-applications/)
+
+- **Post Repository Integration Test** (`src/test/java/es/jmjg/experiments/infrastructure/repository/PostRepositoryIntegrationTest.java`):
+  - Replace inheritance with custom annotation following the pattern from [Wim Deblauwe's blog](https://www.wimdeblauwe.com/blog/2025/07/30/how-i-test-production-ready-spring-boot-applications/)
+
+### Mappers
+- **User Mapper** (`src/main/java/es/jmjg/experiments/infrastructure/controller/user/mapper/UserMapper.java`):
+  - Review and potentially improve `toDomain(SaveUserRequestDto userRequestDto)` method
+  - Review and potentially improve `toDomain(UpdateUserRequestDto userDto)` method
+
+- **Post Mapper** (`src/main/java/es/jmjg/experiments/infrastructure/controller/post/mapper/PostMapper.java`):
+  - Review and potentially improve `toDomain(UpdatePostRequestDto postRequestDto)` method
+
+- **Tag Mapper** (`src/main/java/es/jmjg/experiments/infrastructure/controller/tag/mapper/TagMapper.java`):
+  - Review and potentially improve `toDomain(SaveTagRequestDto tagRequestDto)` method
+
+- **Tag Controller** (`src/main/java/es/jmjg/experiments/infrastructure/controller/tag/TagController.java`):
+  - Review the tag creation logic in the controller
+
 ## 🔧 Configuration
 
 Key configuration files:

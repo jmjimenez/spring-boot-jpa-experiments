@@ -22,13 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.jmjg.experiments.application.post.DeletePost;
-import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.UpdatePost;
+import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByUuidResponseDto;
@@ -39,7 +40,6 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsRespons
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -50,7 +50,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-//TODO: add logs to the application
 @RestController
 @RequestMapping("/api/posts")
 @Tag(name = "Posts", description = "Post management operations")

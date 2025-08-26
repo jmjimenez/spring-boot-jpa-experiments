@@ -27,8 +27,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-// TODO: implement UserId
-// TODO: implement UserUuid
+
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
