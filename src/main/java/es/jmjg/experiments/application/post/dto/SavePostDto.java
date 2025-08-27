@@ -1,12 +1,23 @@
 package es.jmjg.experiments.application.post.dto;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
+import jakarta.validation.constraints.NotNull;
+
 public record SavePostDto(
-    UUID uuid,
-    String title,
-    String body,
-    UUID userUuid,
-    List<String> tagNames) {
+    @NotNull UUID uuid,
+    @NotNull String title,
+    @NotNull String body,
+    @NotNull UUID userUuid,
+    @NotNull List<String> tagNames) {
+
+  public SavePostDto {
+    Objects.requireNonNull(uuid, "uuid cannot be null");
+    Objects.requireNonNull(title, "title cannot be null");
+    Objects.requireNonNull(body, "body cannot be null");
+    Objects.requireNonNull(userUuid, "userUuid cannot be null");
+    Objects.requireNonNull(tagNames, "tagNames cannot be null");
+  }
 }

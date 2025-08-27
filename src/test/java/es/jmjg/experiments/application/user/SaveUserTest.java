@@ -37,7 +37,7 @@ class SaveUserTest {
   void setUp() {
     testUuid = UUID.randomUUID();
     var testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
     saveUserDto = new SaveUserDto(
         testUser.getUuid(),
         testUser.getName(),

@@ -25,28 +25,27 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import es.jmjg.experiments.application.user.DeleteUser;
-import es.jmjg.experiments.application.user.dto.DeleteUserDto;
 import es.jmjg.experiments.application.user.FindAllUsers;
-import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.application.user.FindUserByEmail;
-import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.FindUserByUsername;
-import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.FindUserByUuid;
-import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.SaveUser;
-import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.UpdateUser;
+import es.jmjg.experiments.application.user.dto.DeleteUserDto;
+import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
+import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
+import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
+import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
+import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
-import es.jmjg.experiments.infrastructure.config.security.JwtSecurityConfig;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(UserController.class)
-@Import({ ControllerTestConfig.class, JwtSecurityConfig.class })
+@Import(ControllerTestConfig.class)
 class UserControllerTest {
 
   @Autowired
@@ -361,7 +360,7 @@ class UserControllerTest {
   @Test
   void shouldDeleteUserWhenGivenValidUuid() throws Exception {
     // Given
-    doNothing().when(deleteUser).deleteByUuid(any(DeleteUserDto.class));
+    doNothing().when(deleteUser).delete(any(DeleteUserDto.class));
 
     // When & Then
     mockMvc
@@ -369,6 +368,6 @@ class UserControllerTest {
             .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isNoContent());
 
-    verify(deleteUser, times(1)).deleteByUuid(any(DeleteUserDto.class));
+    verify(deleteUser, times(1)).delete(any(DeleteUserDto.class));
   }
 }

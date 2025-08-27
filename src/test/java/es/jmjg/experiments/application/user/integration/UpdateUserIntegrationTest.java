@@ -40,7 +40,7 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         .orElseThrow(() -> new RuntimeException("Test user not found: " + TestDataSamples.ERVIN_UUID));
 
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
   }
 
   @Test

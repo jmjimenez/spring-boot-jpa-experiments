@@ -9,16 +9,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.DeleteUser;
 import es.jmjg.experiments.application.user.dto.DeleteUserDto;
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
-class DeleteUserByUuidIntegrationTest extends BaseIntegration {
+class DeleteUserIntegrationTest extends BaseIntegration {
 
   @Autowired
   private DeleteUser deleteUser;
@@ -29,12 +32,18 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
   private User testUser;
   private UUID testUuid;
   private JwtUserDetails testUserDetails;
+  private User adminUser;
+  private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
     testUuid = UUID.randomUUID();
     testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+
+    adminUser = UserFactory.createUser(TestDataSamples.ADMIN_UUID, TestDataSamples.ADMIN_NAME,
+        TestDataSamples.ADMIN_EMAIL, TestDataSamples.ADMIN_USERNAME);
+    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
@@ -44,8 +53,8 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(userRepository.findByUuid(testUuid)).isPresent();
 
     // When
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
-    deleteUser.deleteByUuid(deleteUserDto);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, adminUserDetails);
+    deleteUser.delete(deleteUserDto);
 
     // Then
     Optional<User> deletedUser = userRepository.findByUuid(testUuid);
@@ -53,23 +62,16 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
   }
 
   @Test
-  void deleteByUuid_WhenUserDoesNotExist_ShouldNotThrowException() {
+  void deleteByUuid_WhenUserDoesNotExist_ShouldThrowUserNotFoundException() {
     // Given
     UUID nonExistentUuid = UUID.randomUUID();
     assertThat(userRepository.findByUuid(nonExistentUuid)).isEmpty();
 
     // When & Then
-    DeleteUserDto deleteUserDto = new DeleteUserDto(nonExistentUuid, testUserDetails);
-    assertThatCode(() -> deleteUser.deleteByUuid(deleteUserDto))
-        .doesNotThrowAnyException();
-  }
-
-  @Test
-  void deleteByUuid_WhenUuidIsNull_ShouldNotThrowException() {
-    // When & Then
-    DeleteUserDto deleteUserDto = new DeleteUserDto(null, testUserDetails);
-    assertThatCode(() -> deleteUser.deleteByUuid(deleteUserDto))
-        .doesNotThrowAnyException();
+    DeleteUserDto deleteUserDto = new DeleteUserDto(nonExistentUuid, adminUserDetails);
+    assertThatThrownBy(() -> deleteUser.delete(deleteUserDto))
+        .isInstanceOf(UserNotFound.class)
+        .hasMessage("User not found with uuid: " + nonExistentUuid);
   }
 
   @Test
@@ -85,8 +87,8 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(userRepository.findByUuid(secondUuid)).isPresent();
 
     // When
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
-    deleteUser.deleteByUuid(deleteUserDto);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, adminUserDetails);
+    deleteUser.delete(deleteUserDto);
 
     // Then
     assertThat(userRepository.findByUuid(testUuid)).isEmpty();
@@ -101,8 +103,8 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(userRepository.findByUuid(testUuid)).isPresent();
 
     // When
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
-    deleteUser.deleteByUuid(deleteUserDto);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, adminUserDetails);
+    deleteUser.delete(deleteUserDto);
 
     // Then
     assertThat(userRepository.findByUuid(testUuid)).isEmpty();
@@ -115,25 +117,19 @@ class DeleteUserByUuidIntegrationTest extends BaseIntegration {
   }
 
   @Test
-  void deleteByUuid_WhenCalledMultipleTimes_ShouldHandleGracefully() {
+  void deleteByUuid_WhenUserIsNotAuthorized_ShouldThrowForbidden() {
     // Given
     userRepository.save(testUser);
     assertThat(userRepository.findByUuid(testUuid)).isPresent();
 
-    // When
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
-    deleteUser.deleteByUuid(deleteUserDto);
-    deleteUser.deleteByUuid(deleteUserDto); // Second call on already deleted user
-
-    // Then
-    assertThat(userRepository.findByUuid(testUuid)).isEmpty();
-  }
-
-  @Test
-  void deleteByUuid_WhenDatabaseIsEmpty_ShouldNotThrowException() {
     // When & Then
-    DeleteUserDto deleteUserDto = new DeleteUserDto(UUID.randomUUID(), testUserDetails);
-    assertThatCode(() -> deleteUser.deleteByUuid(deleteUserDto))
-        .doesNotThrowAnyException();
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUuid, testUserDetails);
+    assertThatThrownBy(() -> deleteUser.delete(deleteUserDto))
+        .isInstanceOf(Forbidden.class)
+        .hasMessage("Only admin users can delete users");
+
+    // Verify user still exists (not deleted)
+    assertThat(userRepository.findByUuid(testUuid)).isPresent();
   }
+
 }

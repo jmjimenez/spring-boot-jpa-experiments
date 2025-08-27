@@ -39,7 +39,7 @@ class UpdateUserTest {
   void setUp() {
     testUuid = UUID.randomUUID();
     var testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
     existingUser = UserFactory.createUser(1, testUuid, "Old Name", "old@example.com", "olduser");
     updateUserDto = new UpdateUserDto(
         1,

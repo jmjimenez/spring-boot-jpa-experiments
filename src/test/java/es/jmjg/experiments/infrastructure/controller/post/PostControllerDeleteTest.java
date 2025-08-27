@@ -10,11 +10,12 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
-import es.jmjg.experiments.application.post.exception.Forbidden;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.shared.TestDataSamples;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class PostControllerDeleteTest extends BasePostControllerTest {
@@ -25,7 +26,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
   void shouldDeletePostWhenGivenValidUUIDAndValidOwner() throws Exception {
     User user = UserFactory.createUser(TestDataSamples.LEANNE_UUID, TestDataSamples.LEANNE_NAME,
         TestDataSamples.LEANNE_EMAIL, TestDataSamples.LEANNE_USERNAME);
-    JwtUserDetails userDetails = UserFactory.createUserUserDetails(user);
+    JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
     DeletePostDto deletePostDto = new DeletePostDto(TestDataSamples.POST_2_UUID, userDetails);
 
@@ -40,7 +41,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
   void shouldDeletePostWhenAuthenticatedUserIsAdminButNotOwner() throws Exception {
     User adminUser = UserFactory.createUser(TestDataSamples.ADMIN_UUID, TestDataSamples.ADMIN_NAME,
         TestDataSamples.ADMIN_EMAIL, TestDataSamples.ADMIN_USERNAME);
-    JwtUserDetails adminUserDetails = UserFactory.createUserUserDetails(adminUser);
+    JwtUserDetails adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
 
     DeletePostDto deletePostDto = new DeletePostDto(TestDataSamples.POST_2_UUID, adminUserDetails);
 
@@ -54,7 +55,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
   @Test
   void shouldReturnNotFoundWhenPostUuidDoesNotExist() throws Exception {
     User user = UserFactory.createBasicUser();
-    JwtUserDetails userDetails = UserFactory.createUserUserDetails(user);
+    JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
     DeletePostDto deletePostDto = new DeletePostDto(NON_EXISTENT_POST_UUID, userDetails);
     doThrow(new PostNotFound(NON_EXISTENT_POST_UUID)).when(deletePost).delete(deletePostDto);
@@ -69,7 +70,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
   @Test
   void shouldReturnForbiddenWhenAuthenticatedUserIsNeitherOwnerNorAdmin() throws Exception {
     User nonOwnerUser = UserFactory.createBasicUser();
-    JwtUserDetails nonOwnerUserDetails = UserFactory.createUserUserDetails(nonOwnerUser);
+    JwtUserDetails nonOwnerUserDetails = UserDetailsFactory.createJwtUserDetails(nonOwnerUser);
 
     DeletePostDto deletePostDto = new DeletePostDto(TestDataSamples.POST_2_UUID, nonOwnerUserDetails);
     doThrow(new Forbidden("You are not the owner of this post")).when(deletePost).delete(deletePostDto);

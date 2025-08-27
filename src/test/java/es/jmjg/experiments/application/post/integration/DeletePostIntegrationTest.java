@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.DeletePost;
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
-import es.jmjg.experiments.application.post.exception.Forbidden;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -33,15 +34,18 @@ import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtSecurityConfig;
 import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import es.jmjg.experiments.infrastructure.controller.tag.mapper.TagMapper;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 import es.jmjg.experiments.shared.TestDataSamples;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @TestConfiguration
+@Import(JwtSecurityConfig.class)
 public class ControllerTestConfig {
 
   @Bean
@@ -194,19 +198,19 @@ public class ControllerTestConfig {
           if (TestDataSamples.ADMIN_USERNAME.equals(username)) {
             User user = UserFactory.createUser(TestDataSamples.ADMIN_UUID, TestDataSamples.ADMIN_NAME,
                 TestDataSamples.ADMIN_EMAIL, TestDataSamples.ADMIN_USERNAME);
-            return UserFactory.createUserUserDetails(user);
+            return UserDetailsFactory.createJwtUserDetails(user);
           }
 
           // For Leanne user
           if (TestDataSamples.LEANNE_USERNAME.equals(username)) {
             User user = UserFactory.createUser(TestDataSamples.LEANNE_UUID, TestDataSamples.LEANNE_NAME,
                 TestDataSamples.LEANNE_EMAIL, TestDataSamples.LEANNE_USERNAME);
-            return UserFactory.createUserUserDetails(user);
+            return UserDetailsFactory.createJwtUserDetails(user);
           }
 
           // For all other users, return with ROLE_USER authority
           User user = UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", username);
-          return UserFactory.createUserUserDetails(user);
+          return UserDetailsFactory.createJwtUserDetails(user);
         });
 
     return mockService;

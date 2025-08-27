@@ -40,6 +40,7 @@ import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationRequestDto;
 import es.jmjg.experiments.shared.TestDataSamples;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(AuthenticationController.class)
@@ -172,19 +173,19 @@ class AuthenticationControllerTest {
             if (TestDataSamples.ADMIN_USERNAME.equals(username)) {
               User user = UserFactory.createUser(TestDataSamples.ADMIN_UUID, TestDataSamples.ADMIN_NAME,
                   TestDataSamples.ADMIN_EMAIL, TestDataSamples.ADMIN_USERNAME);
-              return UserFactory.createUserUserDetails(user);
+              return UserDetailsFactory.createJwtUserDetails(user);
             }
 
             // For Leanne user
             if (TestDataSamples.LEANNE_USERNAME.equals(username)) {
               User user = UserFactory.createUser(TestDataSamples.LEANNE_UUID, TestDataSamples.LEANNE_NAME,
                   TestDataSamples.LEANNE_EMAIL, TestDataSamples.LEANNE_USERNAME);
-              return UserFactory.createUserUserDetails(user);
+              return UserDetailsFactory.createJwtUserDetails(user);
             }
 
             // For all other users, return with ROLE_USER authority
             User user = UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", username);
-            return UserFactory.createUserUserDetails(user);
+            return UserDetailsFactory.createJwtUserDetails(user);
           });
 
       return mockService;

@@ -37,7 +37,7 @@ class FindUserByEmailTest {
     testEmail = "test@example.com";
     testUser = UserFactory.createUser("Test User", testEmail, "testuser");
     var testUserForDetails = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUserForDetails);
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUserForDetails);
   }
 
   @Test

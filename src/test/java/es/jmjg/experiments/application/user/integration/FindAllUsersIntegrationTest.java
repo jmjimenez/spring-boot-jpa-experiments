@@ -45,7 +45,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   void setUp() {
     pageable = PageRequest.of(0, 10);
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
   }
 
   @Test

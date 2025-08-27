@@ -16,6 +16,7 @@ import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
+//TODO: checks what happens if the user has posts or tags
 @Import({ UserRepositoryImpl.class, PostRepositoryImpl.class })
 public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
 

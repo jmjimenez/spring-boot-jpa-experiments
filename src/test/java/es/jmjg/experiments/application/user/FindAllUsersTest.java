@@ -47,7 +47,7 @@ class FindAllUsersTest {
     testUser3 = UserFactory.createUser("Test User 3", "test3@example.com", "testuser3");
     pageable = PageRequest.of(0, 10);
     var testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
   }
 
   @Test

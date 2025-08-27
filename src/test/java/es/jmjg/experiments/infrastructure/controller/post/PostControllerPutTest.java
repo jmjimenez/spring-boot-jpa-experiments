@@ -16,6 +16,7 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class PostControllerPutTest extends BasePostControllerTest {
@@ -24,7 +25,7 @@ class PostControllerPutTest extends BasePostControllerTest {
   void shouldUpdatePostWhenGivenValidPost() throws Exception {
     User user = UserFactory.createBasicUser();
 
-    JwtUserDetails userDetails = UserFactory.createUserUserDetails(user);
+    JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
     Post updated = PostFactory.createPost(
         user, UUID.randomUUID(), "This is my brand new post", "UPDATED BODY");
@@ -47,7 +48,7 @@ class PostControllerPutTest extends BasePostControllerTest {
   void shouldNotUpdateAndThrowNotFoundWhenGivenAnInvalidPostUUID() throws Exception {
     User user = UserFactory.createBasicUser();
 
-    JwtUserDetails userDetails = UserFactory.createUserUserDetails(user);
+    JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
     Post updated = new Post();
     updated.setId(50);

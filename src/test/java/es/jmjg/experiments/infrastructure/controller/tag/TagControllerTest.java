@@ -30,7 +30,6 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
-import es.jmjg.experiments.infrastructure.config.security.JwtSecurityConfig;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
 import es.jmjg.experiments.shared.PostFactory;
@@ -39,7 +38,7 @@ import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
 @WebMvcTest(TagController.class)
-@Import({ ControllerTestConfig.class, JwtSecurityConfig.class })
+@Import(ControllerTestConfig.class)
 class TagControllerTest {
 
   @Autowired

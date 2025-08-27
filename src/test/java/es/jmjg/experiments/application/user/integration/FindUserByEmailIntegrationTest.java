@@ -30,7 +30,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @BeforeEach
   void setUp() {
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
   }
 
   @Test

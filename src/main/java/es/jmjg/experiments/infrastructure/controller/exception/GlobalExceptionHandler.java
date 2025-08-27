@@ -16,8 +16,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 
-import es.jmjg.experiments.application.post.exception.Forbidden;
-import es.jmjg.experiments.application.post.exception.InvalidRequest;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.application.shared.exception.InvalidRequest;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.tag.exception.TagAlreadyExistsException;
 import es.jmjg.experiments.application.tag.exception.TagInUseException;

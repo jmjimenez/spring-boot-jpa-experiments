@@ -38,7 +38,7 @@ class FindUserByUsernameTest {
     testUsername = "testuser";
     testUser = UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", testUsername);
     var testUserForDetails = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUserForDetails);
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUserForDetails);
   }
 
   @Test

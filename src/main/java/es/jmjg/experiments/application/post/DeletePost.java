@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
-import es.jmjg.experiments.application.post.exception.Forbidden;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 

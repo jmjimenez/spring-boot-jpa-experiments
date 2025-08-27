@@ -3,7 +3,6 @@ package es.jmjg.experiments.shared;
 import java.util.UUID;
 
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 
 public class UserFactory {
 
@@ -55,9 +54,5 @@ public class UserFactory {
     user.setUsername(username);
     user.setPassword("encodedPassword123");
     return user;
-  }
-
-  public static JwtUserDetails createUserUserDetails(User user) {
-    return UserDetailsFactory.createUserUserDetails(user);
   }
 }

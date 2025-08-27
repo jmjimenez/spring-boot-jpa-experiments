@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.dto.UpdatePostDto;
-import es.jmjg.experiments.application.post.exception.Forbidden;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
@@ -114,7 +114,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
         updatedTitle,
         updatedBody,
         null,
-        UserDetailsFactory.createUserUserDetails(adminUser));
+        UserDetailsFactory.createJwtUserDetails(adminUser));
 
     // When
     Post result = updatePost.update(updatePostDto);
