@@ -1,113 +1,31 @@
 package es.jmjg.experiments.infrastructure.controller.user;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
-import es.jmjg.experiments.application.user.DeleteUser;
-import es.jmjg.experiments.application.user.FindAllUsers;
-import es.jmjg.experiments.application.user.FindUserByEmail;
-import es.jmjg.experiments.application.user.FindUserByUsername;
-import es.jmjg.experiments.application.user.FindUserByUuid;
-import es.jmjg.experiments.application.user.SaveUser;
-import es.jmjg.experiments.application.user.UpdateUser;
-import es.jmjg.experiments.application.user.dto.DeleteUserDto;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.ControllerTestConfig;
-import es.jmjg.experiments.shared.UserFactory;
 
-@WebMvcTest(UserController.class)
-@Import(ControllerTestConfig.class)
-class UserControllerTest {
-
-  @Autowired
-  private MockMvc mockMvc;
-
-  @Autowired
-  private SaveUser saveUser;
-
-  @Autowired
-  private UpdateUser updateUser;
-
-  @Autowired
-  private FindUserByUuid findUserByUuid;
-
-  @Autowired
-  private FindUserByEmail findUserByEmail;
-
-  @Autowired
-  private FindUserByUsername findUserByUsername;
-
-  @Autowired
-  private FindAllUsers findAllUsers;
-
-  @Autowired
-  private DeleteUser deleteUser;
-
-  private User testUser;
-  private UUID testUuid;
-  private Integer testId;
-  private Pageable pageable;
-  private List<Post> testPosts;
-  private List<Tag> testTags;
-
-  @BeforeEach
-  void setUp() {
-    testUuid = UUID.randomUUID();
-    testId = 1;
-    testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
-    testUser.setId(testId);
-
-    // Create test posts
-    testPosts = new ArrayList<>();
-    Post post1 = new Post();
-    post1.setUuid(UUID.randomUUID());
-    testPosts.add(post1);
-    Post post2 = new Post();
-    post2.setUuid(UUID.randomUUID());
-    testPosts.add(post2);
-    testUser.setPosts(testPosts);
-
-    // Create test tags
-    testTags = new ArrayList<>();
-    Tag tag1 = new Tag();
-    tag1.setName("technology");
-    testTags.add(tag1);
-    Tag tag2 = new Tag();
-    tag2.setName("java");
-    testTags.add(tag2);
-    testUser.setTags(testTags);
-
-    pageable = PageRequest.of(0, 10);
-  }
+class UserControllerTest extends BaseUserControllerTest {
 
   @Test
   void shouldFindAllUsers() throws Exception {
@@ -116,54 +34,13 @@ class UserControllerTest {
     Page<User> userPage = new PageImpl<>(users, pageable, users.size());
     when(findAllUsers.findAll(any(FindAllUsersDto.class))).thenReturn(userPage);
 
-    String expectedJson = """
-        {
-            "content":[
-                {
-                    "uuid":"%s",
-                    "name":"Test User",
-                    "email":"test@example.com",
-                    "username":"testuser",
-                    "posts":["%s","%s"],
-                    "tags":["technology","java"]
-                }
-            ],
-            "pageable":{
-                "sort":{
-                    "empty":true,
-                    "sorted":false,
-                    "unsorted":true
-                },
-                "offset":0,
-                "pageNumber":0,
-                "pageSize":10,
-                "paged":true,
-                "unpaged":false
-            },
-            "last":true,
-            "totalElements":1,
-            "totalPages":1,
-            "size":10,
-            "number":0,
-            "sort":{
-                "empty":true,
-                "sorted":false,
-                "unsorted":true
-            },
-            "first":true,
-            "numberOfElements":1,
-            "empty":false
-        }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+    String expectedJson = createFindAllUsersJsonResponse();
 
     // When & Then
-    ResultActions resultActions = mockMvc
+    mockMvc
         .perform(get("/api/users").header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
-
-    JSONAssert.assertEquals(
-        expectedJson, resultActions.andReturn().getResponse().getContentAsString(), false);
   }
 
   @Test
@@ -171,16 +48,7 @@ class UserControllerTest {
     // Given
     when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.of(testUser));
 
-    String expectedJson = """
-        {
-            "uuid":"%s",
-            "name":"Test User",
-            "email":"test@example.com",
-            "username":"testuser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
-        }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+    String expectedJson = createFindUserByUuidJsonResponse();
 
     // When & Then
     mockMvc
@@ -192,7 +60,7 @@ class UserControllerTest {
   @Test
   void shouldNotFindUserWhenGivenInvalidUuid() throws Exception {
     // Given
-    UUID invalidUuid = UUID.randomUUID();
+    java.util.UUID invalidUuid = java.util.UUID.randomUUID();
     when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.empty());
 
     // When & Then
@@ -207,16 +75,7 @@ class UserControllerTest {
     String email = "test@example.com";
     when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(Optional.of(testUser));
 
-    String expectedJson = """
-        {
-            "uuid":"%s",
-            "name":"Test User",
-            "email":"test@example.com",
-            "username":"testuser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
-        }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+    String expectedJson = createFindUserByEmailJsonResponse();
 
     // When & Then
     mockMvc
@@ -245,16 +104,7 @@ class UserControllerTest {
     String username = "testuser";
     when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenReturn(Optional.of(testUser));
 
-    String expectedJson = """
-        {
-            "uuid":"%s",
-            "name":"Test User",
-            "email":"test@example.com",
-            "username":"testuser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
-        }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+    String expectedJson = createFindUserByUsernameJsonResponse();
 
     // When & Then
     mockMvc
@@ -280,32 +130,14 @@ class UserControllerTest {
   @Test
   void shouldCreateNewUserWhenGivenValidData() throws Exception {
     // Given
-    User savedUser = UserFactory.createUser(testId, testUuid, "Test User", "test@example.com", "testuser");
+    User savedUser = es.jmjg.experiments.shared.UserFactory.createUser(testId, testUuid, "Test User",
+        "test@example.com", "testuser");
     savedUser.setPosts(testPosts);
     savedUser.setTags(testTags);
     when(saveUser.save(any(SaveUserDto.class))).thenReturn(savedUser);
 
-    String requestBody = """
-        {
-            "uuid":"%s",
-            "name":"Test User",
-            "email":"test@example.com",
-            "username":"testuser",
-            "password":"testpassword123"
-
-        }
-        """.formatted(testUuid);
-
-    String expectedResponse = """
-        {
-            "uuid":"%s",
-            "name":"Test User",
-            "email":"test@example.com",
-            "username":"testuser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
-        }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+    String requestBody = createSaveUserRequestJson();
+    String expectedResponse = createSaveUserResponseJson();
 
     // When & Then
     mockMvc
@@ -321,32 +153,15 @@ class UserControllerTest {
   @Test
   void shouldUpdateUserWhenGivenValidData() throws Exception {
     // Given
-    User updatedUser = UserFactory.createUser(testId, testUuid, "Updated User", "updated@example.com", "updateduser");
+    User updatedUser = es.jmjg.experiments.shared.UserFactory.createUser(testId, testUuid, "Updated User",
+        "updated@example.com", "updateduser");
     updatedUser.setPosts(testPosts);
     updatedUser.setTags(testTags);
     when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.of(testUser));
     when(updateUser.update(any(UpdateUserDto.class))).thenReturn(updatedUser);
 
-    String requestBody = """
-        {
-            "uuid":"%s",
-            "name":"Updated User",
-            "email":"updated@example.com",
-            "username":"updateduser",
-            "password":"updatedpassword123"
-        }
-        """.formatted(testUuid);
-
-    String expectedResponse = """
-        {
-            "uuid":"%s",
-            "name":"Updated User",
-            "email":"updated@example.com",
-            "username":"updateduser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
-        }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+    String requestBody = createUpdateUserRequestJson();
+    String expectedResponse = createUpdateUserResponseJson();
 
     // When & Then
     mockMvc
@@ -356,19 +171,5 @@ class UserControllerTest {
             .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedResponse));
-  }
-
-  @Test
-  void shouldDeleteUserWhenGivenValidUuid() throws Exception {
-    // Given
-    doNothing().when(deleteUser).delete(any(DeleteUserDto.class));
-
-    // When & Then
-    mockMvc
-        .perform(delete("/api/users/" + testUuid)
-            .header("Authorization", "Bearer " + testUser.getUsername()))
-        .andExpect(status().isNoContent());
-
-    verify(deleteUser, times(1)).delete(any(DeleteUserDto.class));
   }
 }
