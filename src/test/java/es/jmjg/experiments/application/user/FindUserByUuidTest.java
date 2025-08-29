@@ -1,7 +1,6 @@
 package es.jmjg.experiments.application.user;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -74,17 +73,6 @@ class FindUserByUuidTest {
     // Then
     assertThat(result).isEmpty();
     verify(userRepository, times(1)).findByUuid(nonExistentUuid);
-  }
-
-  @Test
-  void findByUuid_WhenUuidIsNull_ShouldReturnEmpty() {
-    // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(null, testUserDetails);
-    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
-
-    // Then
-    assertThat(result).isEmpty();
-    verify(userRepository, never()).findByUuid(any());
   }
 
   @Test

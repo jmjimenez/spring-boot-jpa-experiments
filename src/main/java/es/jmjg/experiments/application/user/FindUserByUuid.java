@@ -20,9 +20,6 @@ public class FindUserByUuid {
 
   @Transactional(readOnly = true)
   public Optional<User> findByUuid(FindUserByUuidDto findUserByUuidDto) {
-    if (findUserByUuidDto.uuid() == null) {
-      return Optional.empty();
-    }
     return userRepository.findByUuid(findUserByUuidDto.uuid());
   }
 }

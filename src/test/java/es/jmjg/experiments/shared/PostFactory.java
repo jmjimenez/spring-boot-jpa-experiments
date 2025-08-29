@@ -1,5 +1,6 @@
 package es.jmjg.experiments.shared;
 
+import java.util.List;
 import java.util.UUID;
 
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
@@ -77,7 +78,7 @@ public class PostFactory {
         title,
         body,
         user.getUuid(),
-        null);
+        List.of());
   }
 
   public static UpdatePostDto createPostUpdateDto(UUID uuid, String title, String body, User authenticatedUser) {
@@ -85,7 +86,7 @@ public class PostFactory {
         uuid,
         title,
         body,
-        null,
+        List.of(),
         UserDetailsFactory.createJwtUserDetails(authenticatedUser));
   }
 

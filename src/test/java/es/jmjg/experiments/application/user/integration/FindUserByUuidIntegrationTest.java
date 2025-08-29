@@ -65,16 +65,6 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   }
 
   @Test
-  void findByUuid_WhenUuidIsNull_ShouldReturnEmpty() {
-    // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(null, testUserDetails);
-    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
-
-    // Then
-    assertThat(result).isEmpty();
-  }
-
-  @Test
   void findByUuid_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
     // Given
     UUID secondUuid = UUID.randomUUID();

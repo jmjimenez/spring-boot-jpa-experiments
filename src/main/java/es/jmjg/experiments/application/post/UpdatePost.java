@@ -46,7 +46,7 @@ public class UpdatePost {
     existingPost.setBody(updatePostDto.body());
 
     // Process tags if provided
-    if (updatePostDto.tagNames() != null) {
+    if (!updatePostDto.tagNames().isEmpty()) {
       processPostTags.processTagsForPost(existingPost, updatePostDto.tagNames());
     }
 

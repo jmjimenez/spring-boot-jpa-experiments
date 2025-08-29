@@ -75,20 +75,6 @@ class FindUserByUsernameTest {
   }
 
   @Test
-  void findByUsername_WhenUsernameIsNull_ShouldReturnEmpty() {
-    // Given
-    when(userRepository.findByUsername(null)).thenReturn(Optional.empty());
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(null, testUserDetails);
-
-    // When
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
-
-    // Then
-    assertThat(result).isEmpty();
-    verify(userRepository, times(1)).findByUsername(null);
-  }
-
-  @Test
   void findByUsername_WhenUsernameIsEmpty_ShouldReturnEmpty() {
     // Given
     when(userRepository.findByUsername("")).thenReturn(Optional.empty());

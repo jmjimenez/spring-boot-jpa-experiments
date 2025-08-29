@@ -200,11 +200,8 @@ public class UserController {
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
       @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid, userDetails);
-    User existing = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
 
     UpdateUserDto updateUserDto = new UpdateUserDto(
-        existing.getId(),
         userDto.getUuid(),
         userDto.getName(),
         userDto.getEmail(),

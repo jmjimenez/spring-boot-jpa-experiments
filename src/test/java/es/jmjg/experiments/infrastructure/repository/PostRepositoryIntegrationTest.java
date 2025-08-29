@@ -33,7 +33,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
-  // Sample posts from Flyway migration data
+  //TODO: move these consts to TestDataSamples
   private static final String LEANNE_POST_TITLE = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
   private static final String LEANNE_POST_UUID = "550e8400-e29b-41d4-a716-446655440006";
 

@@ -42,19 +42,18 @@ class UpdateUserTest {
     testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
     existingUser = UserFactory.createUser(1, testUuid, "Old Name", "old@example.com", "olduser");
     updateUserDto = new UpdateUserDto(
-        1,
-        null,
+        testUuid,
         "New Name",
         "new@example.com",
         "newuser",
-        null,
+        "newpassword",
         testUserDetails);
   }
 
   @Test
   void update_WhenUserExists_ShouldUpdateFields() {
     // Given
-    when(userRepository.findById(1)).thenReturn(Optional.of(existingUser));
+    when(userRepository.findByUuid(testUuid)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
@@ -69,46 +68,22 @@ class UpdateUserTest {
   }
 
   @Test
-  void update_WhenUserExistsAndUuidProvided_ShouldUpdateUuid() {
-    // Given
-    UUID newUuid = UUID.randomUUID();
-    var updateUserDto = new UpdateUserDto(
-        1,
-        newUuid,
-        "New Name",
-        "new@example.com",
-        "newuser",
-        null,
-        testUserDetails);
-    when(userRepository.findById(1)).thenReturn(Optional.of(existingUser));
-    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-    // When
-    User result = updateUser.update(updateUserDto);
-
-    // Then
-    assertThat(result.getUuid()).isEqualTo(newUuid);
-    verify(userRepository, times(1)).save(existingUser);
-  }
-
-  @Test
   void update_WhenUserDoesNotExist_ShouldThrow() {
     // Given
-    var newId = 99;
+    var newId = UUID.randomUUID();
     var updateUserDto = new UpdateUserDto(
         newId,
-        null,
         "New Name",
         "new@example.com",
         "newuser",
-        null,
+        "newpassword",
         testUserDetails);
-    when(userRepository.findById(newId)).thenReturn(Optional.empty());
+    when(userRepository.findByUuid(newId)).thenReturn(Optional.empty());
 
     // When & Then
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)
-        .hasMessageContaining("User not found with id: " + newId);
+        .hasMessageContaining("User not found with uuid: " + newId);
     verify(userRepository, never()).save(any());
   }
 }

@@ -63,16 +63,6 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   }
 
   @Test
-  void findByEmail_WhenEmailIsNull_ShouldReturnEmpty() {
-    // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(null, testUserDetails);
-    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
-
-    // Then
-    assertThat(result).isEmpty();
-  }
-
-  @Test
   void findByEmail_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
     // Given
     User secondUser = UserFactory.createUser("Second User", "second@example.com", "seconduser");

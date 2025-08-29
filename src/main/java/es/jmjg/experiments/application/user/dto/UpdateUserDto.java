@@ -7,7 +7,6 @@ import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateUserDto(
-    Integer id,
     @NotNull UUID uuid,
     @NotNull String name,
     @NotNull String email,

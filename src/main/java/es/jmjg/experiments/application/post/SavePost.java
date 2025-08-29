@@ -49,7 +49,7 @@ public class SavePost {
     }
 
     // Process tags if provided
-    if (savePostDto.tagNames() != null) {
+    if (!savePostDto.tagNames().isEmpty()) {
       processPostTags.processTagsForPost(post, savePostDto.tagNames());
     }
 

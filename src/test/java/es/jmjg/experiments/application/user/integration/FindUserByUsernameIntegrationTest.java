@@ -63,16 +63,6 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   }
 
   @Test
-  void findByUsername_WhenUsernameIsNull_ShouldReturnEmpty() {
-    // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(null, testUserDetails);
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
-
-    // Then
-    assertThat(result).isEmpty();
-  }
-
-  @Test
   void findByUsername_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
     // Given - using existing test data from migration
     String secondUsername = TestDataSamples.ERVIN_USERNAME;

@@ -74,20 +74,6 @@ class FindUserByEmailTest {
   }
 
   @Test
-  void findByEmail_WhenEmailIsNull_ShouldReturnEmpty() {
-    // Given
-    when(userRepository.findByEmail(null)).thenReturn(Optional.empty());
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(null, testUserDetails);
-
-    // When
-    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
-
-    // Then
-    assertThat(result).isEmpty();
-    verify(userRepository, times(1)).findByEmail(null);
-  }
-
-  @Test
   void findByEmail_WhenRepositoryThrowsException_ShouldPropagateException() {
     // Given
     when(userRepository.findByEmail(testEmail))

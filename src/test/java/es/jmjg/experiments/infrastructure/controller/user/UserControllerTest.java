@@ -332,7 +332,8 @@ class UserControllerTest {
             "uuid":"%s",
             "name":"Updated User",
             "email":"updated@example.com",
-            "username":"updateduser"
+            "username":"updateduser",
+            "password":"updatedpassword123"
         }
         """.formatted(testUuid);
 

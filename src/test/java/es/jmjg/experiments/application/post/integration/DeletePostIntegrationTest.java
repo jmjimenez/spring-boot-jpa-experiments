@@ -92,20 +92,4 @@ class DeletePostIntegrationTest extends BaseIntegration {
         .isInstanceOf(es.jmjg.experiments.application.post.exception.PostNotFound.class)
         .hasMessage("Post not found with uuid: " + nonExistentUuid);
   }
-
-  @Test
-  void deleteByUuid_WhenUserIsNotAuthenticated_ShouldThrowNullPointerException() {
-    // Given - using existing test data from migration
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
-    assertThat(postRepository.findById(existingPost.getId())).isPresent();
-
-    final DeletePostDto deletePostDto = new DeletePostDto(existingPost.getUuid(), null);
-
-    // When & Then
-    assertThatThrownBy(() -> deletePost.delete(deletePostDto))
-        .isInstanceOf(NullPointerException.class);
-
-    // Verify post still exists
-    assertThat(postRepository.findById(existingPost.getId())).isPresent();
-  }
 }

@@ -1,7 +1,9 @@
 package es.jmjg.experiments.application.post.integration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -113,7 +115,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
         existingPost.getUuid(),
         updatedTitle,
         updatedBody,
-        null,
+        List.of(),
         UserDetailsFactory.createJwtUserDetails(adminUser));
 
     // When
