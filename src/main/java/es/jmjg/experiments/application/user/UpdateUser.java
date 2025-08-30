@@ -30,7 +30,6 @@ public class UpdateUser {
     existingUser.setName(updateUserDto.name());
     existingUser.setEmail(updateUserDto.email());
     existingUser.setUsername(updateUserDto.username());
-    existingUser.setPassword(updateUserDto.password());
     return userRepository.save(existingUser);
   }
 }

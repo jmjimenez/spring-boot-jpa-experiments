@@ -46,7 +46,6 @@ class UpdateUserTest {
         "New Name",
         "new@example.com",
         "newuser",
-        "newpassword",
         testUserDetails);
   }
 
@@ -76,7 +75,6 @@ class UpdateUserTest {
         "New Name",
         "new@example.com",
         "newuser",
-        "newpassword",
         testUserDetails);
     when(userRepository.findByUuid(newId)).thenReturn(Optional.empty());
 

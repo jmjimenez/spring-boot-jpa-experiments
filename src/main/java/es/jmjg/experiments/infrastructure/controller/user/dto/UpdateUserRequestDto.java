@@ -28,7 +28,4 @@ public class UpdateUserRequestDto {
 
   @Schema(description = "Username of the user", example = "johndoe")
   private String username;
-
-  @Schema(description = "Password of the user", example = "securePassword123")
-  private String password;
 }

@@ -11,7 +11,6 @@ public record UpdateUserDto(
     @NotNull String name,
     @NotNull String email,
     @NotNull String username,
-    @NotNull String password,
     @NotNull JwtUserDetails userDetails) {
 
   public UpdateUserDto {
@@ -19,7 +18,6 @@ public record UpdateUserDto(
     Objects.requireNonNull(name, "name cannot be null");
     Objects.requireNonNull(email, "email cannot be null");
     Objects.requireNonNull(username, "username cannot be null");
-    Objects.requireNonNull(password, "password cannot be null");
     Objects.requireNonNull(userDetails, "userDetails cannot be null");
   }
 }

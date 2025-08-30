@@ -46,7 +46,6 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         "Updated Ervin",
         "updatedervin@example.com",
         "updatedervin",
-        "updatedpassword",
         testUserDetails);
 
     User result = updateUser.update(updateUserDto);
@@ -68,7 +67,6 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         "Updated Name",
         "updated@example.com",
         "updateduser",
-        "updatedpassword",
         testUserDetails);
 
     assertThatThrownBy(() -> updateUser.update(updateUserDto))

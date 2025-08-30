@@ -206,7 +206,6 @@ public class UserController {
         userDto.getName(),
         userDto.getEmail(),
         userDto.getUsername(),
-        userDto.getPassword(),
         userDetails);
 
     User updatedUser = updateUser.update(updateUserDto);
