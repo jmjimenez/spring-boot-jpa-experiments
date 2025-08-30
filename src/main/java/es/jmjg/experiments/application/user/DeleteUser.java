@@ -1,6 +1,5 @@
 package es.jmjg.experiments.application.user;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,7 +7,6 @@ import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.DeleteUserDto;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 
 @Service
 public class DeleteUser {
@@ -21,8 +19,7 @@ public class DeleteUser {
 
   @Transactional
   public void delete(DeleteUserDto deleteUserDto) {
-    if (!deleteUserDto.userDetails().getAuthorities()
-        .contains(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_ADMIN))) {
+    if (!deleteUserDto.userDetails().isAdmin()) {
       throw new Forbidden("Only admin users can delete users");
     }
 

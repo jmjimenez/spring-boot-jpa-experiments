@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 public class JwtUserDetails extends User {
@@ -16,5 +17,9 @@ public class JwtUserDetails extends User {
       final Collection<? extends GrantedAuthority> authorities) {
     super(username, password, authorities);
     this.id = id;
+  }
+
+  public boolean isAdmin() {
+    return getAuthorities().contains(new SimpleGrantedAuthority(JwtUserDetailsService.ROLE_ADMIN));
   }
 }
