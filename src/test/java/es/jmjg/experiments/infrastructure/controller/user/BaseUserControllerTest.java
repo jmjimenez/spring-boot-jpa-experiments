@@ -60,6 +60,7 @@ abstract class BaseUserControllerTest {
   protected User testUser;
   protected UUID testUuid;
   protected Integer testId;
+  protected User adminUser;
   protected Pageable pageable;
   protected List<Post> testPosts;
   protected List<Tag> testTags;
@@ -70,6 +71,8 @@ abstract class BaseUserControllerTest {
     testId = 1;
     testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
     testUser.setId(testId);
+    adminUser = UserFactory.createUser(UUID.randomUUID(), "Admin User", "admin@example.com", "admin");
+
 
     // Create test posts
     testPosts = new ArrayList<>();
@@ -196,11 +199,9 @@ abstract class BaseUserControllerTest {
             "uuid":"%s",
             "name":"Test User",
             "email":"test@example.com",
-            "username":"testuser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
+            "username":"testuser"
         }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+        """.formatted(testUuid);
   }
 
   protected String createUpdateUserRequestJson() {

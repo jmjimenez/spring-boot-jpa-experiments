@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.domain.entity.User;
@@ -27,10 +28,13 @@ class SaveUserIntegrationTest extends BaseIntegration {
   private UserRepositoryImpl userRepository;
 
   private JwtUserDetails testUserDetails;
+  private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
+    User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
     testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
   }
 
@@ -45,7 +49,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         userToSave.getEmail(),
         userToSave.getUsername(),
         userToSave.getPassword(),
-        testUserDetails);
+        adminUserDetails);
 
     User result = saveUser.save(saveUserDto);
 
@@ -65,6 +69,23 @@ class SaveUserIntegrationTest extends BaseIntegration {
   }
 
   @Test
+  void save_WhenUserIsNotAdmin_ShouldThrowForbiddenException() {
+    User userToSave = UserFactory.createUser("Test User 01", "test01@example.com", "testuser01");
+    
+    SaveUserDto saveUserDto = new SaveUserDto(
+        userToSave.getUuid(),
+        userToSave.getName(),
+        userToSave.getEmail(),
+        userToSave.getUsername(),
+        userToSave.getPassword(),
+        testUserDetails);
+
+    assertThatThrownBy(() -> saveUser.save(saveUserDto))
+        .isInstanceOf(Forbidden.class)
+        .hasMessage("Only administrators can create users");
+  }
+
+  @Test
   void save_WhenUserHasValidData_ShouldSaveAndReturnUser() {
     User userToSave = UserFactory.createUser("Test User 02", "test02@example.com", "testuser02");
 
@@ -74,7 +95,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         userToSave.getEmail(),
         userToSave.getUsername(),
         userToSave.getPassword(),
-        testUserDetails);
+        adminUserDetails);
 
     User result = saveUser.save(saveUserDto);
 
@@ -100,7 +121,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         userToSave.getEmail(),
         userToSave.getUsername(),
         userToSave.getPassword(),
-        testUserDetails);
+        adminUserDetails);
 
     User result = saveUser.save(saveUserDto);
 
@@ -126,7 +147,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         user1.getEmail(),
         user1.getUsername(),
         user1.getPassword(),
-        testUserDetails);
+        adminUserDetails);
 
     SaveUserDto saveUserDto2 = new SaveUserDto(
         user2.getUuid(),
@@ -134,7 +155,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         user2.getEmail(),
         user2.getUsername(),
         user2.getPassword(),
-        testUserDetails);
+        adminUserDetails);
 
     User result1 = saveUser.save(saveUserDto1);
     User result2 = saveUser.save(saveUserDto2);
@@ -165,7 +186,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         user2.getEmail(),
         user2.getUsername(),
         user2.getPassword(),
-        testUserDetails);
+        adminUserDetails);
 
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
@@ -185,7 +206,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         user2.getEmail(),
         user2.getUsername(),
         user2.getPassword(),
-        testUserDetails);
+        adminUserDetails);
 
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
@@ -205,7 +226,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         user2.getEmail(),
         user2.getUsername(),
         user2.getPassword(),
-        testUserDetails);
+        adminUserDetails);
 
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
