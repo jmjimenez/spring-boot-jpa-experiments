@@ -10,14 +10,12 @@ public record UpdateUserDto(
     @NotNull UUID uuid,
     @NotNull String name,
     @NotNull String email,
-    @NotNull String username,
     @NotNull JwtUserDetails userDetails) {
 
   public UpdateUserDto {
     Objects.requireNonNull(uuid, "uuid cannot be null");
     Objects.requireNonNull(name, "name cannot be null");
     Objects.requireNonNull(email, "email cannot be null");
-    Objects.requireNonNull(username, "username cannot be null");
     Objects.requireNonNull(userDetails, "userDetails cannot be null");
   }
 }

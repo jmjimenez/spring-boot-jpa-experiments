@@ -1,8 +1,12 @@
 package es.jmjg.experiments.application.user;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +37,6 @@ class UpdateUserTest {
   private UUID testUuid;
   private JwtUserDetails testUserDetails;
   private User existingUser;
-  private UpdateUserDto updateUserDto;
 
   @BeforeEach
   void setUp() {
@@ -41,17 +44,32 @@ class UpdateUserTest {
     var testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
     testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
     existingUser = UserFactory.createUser(1, testUuid, "Old Name", "old@example.com", "olduser");
-    updateUserDto = new UpdateUserDto(
-        testUuid,
-        "New Name",
-        "new@example.com",
-        "newuser",
-        testUserDetails);
   }
 
   @Test
-  void update_WhenUserExists_ShouldUpdateFields() {
+  void update_WhenUserExistsAndIsAuthenticatedUser_ShouldUpdateFields() {
     // Given
+    when(userRepository.findByUuid(testUuid)).thenReturn(Optional.of(existingUser));
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    var updateUserDto = createUpdateUserDto(testUuid, testUserDetails);
+    User result = updateUser.update(updateUserDto);
+
+    // Then
+    assertThat(result.getName()).isEqualTo("New Name");
+    assertThat(result.getEmail()).isEqualTo("new@example.com");
+    assertThat(result.getUuid()).isEqualTo(testUuid);
+    verify(userRepository, times(1)).save(existingUser);
+  }
+
+  @Test
+  void update_WhenUserExistsAndAuthenticatedUserIsAdmin_ShouldUpdateFields() {
+    // Given
+    var adminUser = UserFactory.createUser(UUID.randomUUID(), "Admin User", "admin@example.com", "admin");
+    var adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
+    var updateUserDto = createUpdateUserDto(testUuid, adminUserDetails);
+
     when(userRepository.findByUuid(testUuid)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -61,21 +79,31 @@ class UpdateUserTest {
     // Then
     assertThat(result.getName()).isEqualTo("New Name");
     assertThat(result.getEmail()).isEqualTo("new@example.com");
-    assertThat(result.getUsername()).isEqualTo("newuser");
     assertThat(result.getUuid()).isEqualTo(testUuid);
     verify(userRepository, times(1)).save(existingUser);
+  }
+
+  @Test
+  void update_WhenUserExistsAndIsNotAuthenticatedUser_ShouldNotUpdateFields() {
+    // Given
+    var otherUser = UserFactory.createUser(UUID.randomUUID(), "Other User", "other@example.com", "otheruser");
+    var otherUserDetails = UserDetailsFactory.createJwtUserDetails(otherUser);
+    var updateUserDto = createUpdateUserDto(testUuid, otherUserDetails);
+
+    when(userRepository.findByUuid(testUuid)).thenReturn(Optional.of(existingUser));
+
+    // When & Then
+    assertThatThrownBy(() -> updateUser.update(updateUserDto))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Access denied: only admins or the user themselves can update user data");
+    verify(userRepository, never()).save(any());
   }
 
   @Test
   void update_WhenUserDoesNotExist_ShouldThrow() {
     // Given
     var newId = UUID.randomUUID();
-    var updateUserDto = new UpdateUserDto(
-        newId,
-        "New Name",
-        "new@example.com",
-        "newuser",
-        testUserDetails);
+    var updateUserDto = createUpdateUserDto(newId, testUserDetails);
     when(userRepository.findByUuid(newId)).thenReturn(Optional.empty());
 
     // When & Then
@@ -83,5 +111,13 @@ class UpdateUserTest {
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("User not found with uuid: " + newId);
     verify(userRepository, never()).save(any());
+  }
+
+  private UpdateUserDto createUpdateUserDto(UUID uuid, JwtUserDetails userDetails) {
+    return new UpdateUserDto(
+        uuid,
+        "New Name",
+        "new@example.com",
+        userDetails);
   }
 }

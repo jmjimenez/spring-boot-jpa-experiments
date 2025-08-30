@@ -94,7 +94,7 @@ abstract class BaseUserControllerTest {
     pageable = PageRequest.of(0, 10);
 
     // Reset all mocks to ensure clean state between tests
-    reset(deleteUser);
+    reset(deleteUser, updateUser);
   }
 
   protected String createFindAllUsersJsonResponse() {

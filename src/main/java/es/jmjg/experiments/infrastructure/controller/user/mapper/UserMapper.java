@@ -87,10 +87,8 @@ public class UserMapper {
       return null;
     }
     User user = new User();
-    user.setUuid(userDto.getUuid());
     user.setName(userDto.getName());
     user.setEmail(userDto.getEmail());
-    user.setUsername(userDto.getUsername());
     return user;
   }
 

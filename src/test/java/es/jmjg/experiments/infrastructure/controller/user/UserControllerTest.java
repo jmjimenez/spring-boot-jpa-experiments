@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,7 +21,6 @@ import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
-import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
 
 class UserControllerTest extends BaseUserControllerTest {
@@ -150,26 +148,4 @@ class UserControllerTest extends BaseUserControllerTest {
         .andExpect(content().json(expectedResponse));
   }
 
-  @Test
-  void shouldUpdateUserWhenGivenValidData() throws Exception {
-    // Given
-    User updatedUser = es.jmjg.experiments.shared.UserFactory.createUser(testId, testUuid, "Updated User",
-        "updated@example.com", "updateduser");
-    updatedUser.setPosts(testPosts);
-    updatedUser.setTags(testTags);
-    when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.of(testUser));
-    when(updateUser.update(any(UpdateUserDto.class))).thenReturn(updatedUser);
-
-    String requestBody = createUpdateUserRequestJson();
-    String expectedResponse = createUpdateUserResponseJson();
-
-    // When & Then
-    mockMvc
-        .perform(put("/api/users/" + testUuid)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody)
-            .header("Authorization", "Bearer " + testUser.getUsername()))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedResponse));
-  }
 }

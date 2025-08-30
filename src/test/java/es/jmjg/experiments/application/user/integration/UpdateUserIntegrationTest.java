@@ -45,7 +45,6 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         leanneUser.getUuid(),
         "Updated Ervin",
         "updatedervin@example.com",
-        "updatedervin",
         testUserDetails);
 
     User result = updateUser.update(updateUserDto);
@@ -66,7 +65,6 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         UUID.randomUUID(),
         "Updated Name",
         "updated@example.com",
-        "updateduser",
         testUserDetails);
 
     assertThatThrownBy(() -> updateUser.update(updateUserDto))

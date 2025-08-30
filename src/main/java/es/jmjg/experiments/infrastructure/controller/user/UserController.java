@@ -202,10 +202,9 @@ public class UserController {
       @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
 
     UpdateUserDto updateUserDto = new UpdateUserDto(
-        userDto.getUuid(),
+        uuid,
         userDto.getName(),
         userDto.getEmail(),
-        userDto.getUsername(),
         userDetails);
 
     User updatedUser = updateUser.update(updateUserDto);
