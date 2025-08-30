@@ -1,5 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.user;
 
+import static org.mockito.Mockito.reset;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -90,6 +92,9 @@ abstract class BaseUserControllerTest {
     testUser.setTags(testTags);
 
     pageable = PageRequest.of(0, 10);
+
+    // Reset all mocks to ensure clean state between tests
+    reset(deleteUser);
   }
 
   protected String createFindAllUsersJsonResponse() {

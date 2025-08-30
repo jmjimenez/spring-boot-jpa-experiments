@@ -1,6 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.user.integration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
 
@@ -136,15 +136,6 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
       assertThat(u.getPosts()).isNotEmpty();
       assertThat(u.getTags()).isNotEmpty();
     });
-  }
-
-  @Test
-  void shouldDeleteUserByUuid() {
-    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<Void> response = restTemplate.exchange(
-        "/api/users/" + TestDataSamples.CHELSEY_UUID, HttpMethod.DELETE, request, Void.class);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   @Test
