@@ -1,6 +1,7 @@
 package es.jmjg.experiments.application.user.integration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -9,12 +10,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -27,11 +30,15 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   private UserRepositoryImpl userRepository;
 
   private JwtUserDetails testUserDetails;
+  private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
     testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    User adminUser = UserFactory.createUser(TestDataSamples.ADMIN_NAME,
+        TestDataSamples.ADMIN_EMAIL, TestDataSamples.ADMIN_USERNAME);
+    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
@@ -42,7 +49,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(testUser);
 
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid, testUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid, adminUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -57,7 +64,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UUID.randomUUID(), testUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UUID.randomUUID(), adminUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -77,8 +84,8 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     User savedThirdUser = userRepository.save(thirdUser);
 
     // When
-    FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(secondUuid, testUserDetails);
-    FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(thirdUuid, testUserDetails);
+    FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(secondUuid, adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(thirdUuid, adminUserDetails);
     Optional<User> firstResult = findUserByUuid.findByUuid(findUserByUuidDto1);
     Optional<User> secondResult = findUserByUuid.findByUuid(findUserByUuidDto2);
 
@@ -104,7 +111,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     userRepository.save(savedUser);
 
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(fourthUuid, testUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(fourthUuid, adminUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -113,5 +120,16 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(result.get().getEmail()).isEqualTo(fourthUser.getEmail());
     assertThat(result.get().getUsername()).isEqualTo(fourthUser.getUsername());
     assertThat(result.get().getUuid()).isEqualTo(fourthUuid);
+  }
+
+  @Test
+  void findByUuid_WhenNonAdminUserTriesToAccessOtherUserData_ShouldThrowForbidden() {
+    // Given
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.LEANNE_UUID, testUserDetails);
+
+    // When & Then
+    assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto))
+        .isInstanceOf(Forbidden.class)
+        .hasMessage("Access denied: only admins or the user themselves can view user data");
   }
 }

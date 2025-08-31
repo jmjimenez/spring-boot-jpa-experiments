@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 
 class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
 
@@ -38,6 +39,20 @@ class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
     mockMvc.perform(get("/api/users/" + invalidUuid)
         .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void shouldThrowForbiddenWhenGivenNotAllowedUser() throws Exception {
+    // Given
+    java.util.UUID otherUserUuid = java.util.UUID.randomUUID();
+    when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class)))
+        .thenThrow(new Forbidden(
+            "Access denied: only admins or the user themselves can view user data"));
+
+    // When & Then
+    mockMvc.perform(get("/api/users/" + otherUserUuid)
+        .header("Authorization", "Bearer " + testUser.getUsername()))
+        .andExpect(status().isForbidden());
   }
 
 }

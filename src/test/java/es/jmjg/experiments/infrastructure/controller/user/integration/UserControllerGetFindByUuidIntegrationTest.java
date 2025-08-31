@@ -58,4 +58,41 @@ class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegrati
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
+  @Test
+  void shouldReturnUnauthorizedWhenNotAuthenticated() {
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/" + TestDataSamples.LEANNE_UUID,
+        HttpMethod.GET, null, FindAllUsersResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  @Test
+  void shouldReturnOkWhenNonAdminUserIsAllowed() {
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.LEANNE_USERNAME,
+        TestDataSamples.USER_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/" + TestDataSamples.LEANNE_UUID,
+        HttpMethod.GET, request, FindAllUsersResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    FindAllUsersResponseDto user = response.getBody();
+    assertThat(user).isNotNull().satisfies(u -> {
+      assertThat(u.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+      assertThat(u.getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
+      assertThat(u.getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
+      assertThat(u.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
+    });
+  }
+
+  @Test
+  void shouldReturnForbiddenWhenNonAdminUserIsNotAllowed() {
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ERVIN_USERNAME,
+        TestDataSamples.USER_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/" + TestDataSamples.LEANNE_UUID,
+        HttpMethod.GET, request, FindAllUsersResponseDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+  }
+
 }
