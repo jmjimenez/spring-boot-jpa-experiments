@@ -21,7 +21,7 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
-class UserControllerUpdateTest extends BaseUserControllerTest {
+class UserControllerPutTest extends BaseUserControllerTest {
 
   @Test
   void shouldUpdateUserWhenGivenValidData() throws Exception {

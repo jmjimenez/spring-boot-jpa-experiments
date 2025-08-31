@@ -1,7 +1,12 @@
 package es.jmjg.experiments.application.user;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,6 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
@@ -39,6 +45,7 @@ class FindAllUsersTest {
   private User testUser3;
   private Pageable pageable;
   private JwtUserDetails testUserDetails;
+  private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
@@ -48,6 +55,8 @@ class FindAllUsersTest {
     pageable = PageRequest.of(0, 10);
     var testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
     testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    var adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
+    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
@@ -56,7 +65,7 @@ class FindAllUsersTest {
     List<User> expectedUsers = Arrays.asList(testUser1, testUser2, testUser3);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -84,7 +93,7 @@ class FindAllUsersTest {
     // Given
     Page<User> expectedPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -103,7 +112,7 @@ class FindAllUsersTest {
     List<User> expectedUsers = Collections.singletonList(testUser1);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -124,7 +133,7 @@ class FindAllUsersTest {
   void findAll_WhenRepositoryThrowsException_ShouldPropagateException() {
     // Given
     when(userRepository.findAll(pageable)).thenThrow(new RuntimeException("Database error"));
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When & Then
     assertThatThrownBy(() -> findAllUsers.findAll(findAllUsersDto))
@@ -137,7 +146,7 @@ class FindAllUsersTest {
   void findAll_WhenRepositoryReturnsNull_ShouldReturnNull() {
     // Given
     when(userRepository.findAll(pageable)).thenReturn(null);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -157,7 +166,7 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable))
         .thenReturn(firstPage)
         .thenReturn(secondPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
     Page<User> firstResult = findAllUsers.findAll(findAllUsersDto);
@@ -177,7 +186,7 @@ class FindAllUsersTest {
     List<User> expectedUsers = Arrays.asList(specialUser1, specialUser2);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -206,7 +215,7 @@ class FindAllUsersTest {
     List<User> expectedUsers = Collections.singletonList(longNameUser);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
@@ -221,5 +230,17 @@ class FindAllUsersTest {
     assertThat(result.getTotalElements()).isEqualTo(1);
     assertThat(result.getTotalPages()).isEqualTo(1);
     verify(userRepository, times(1)).findAll(pageable);
+  }
+
+  @Test
+  void findAll_WhenAuthenticatedUserIsTestUser_ShouldThrowForbiddenException() {
+    // Given
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+
+    // When & Then
+    assertThatThrownBy(() -> findAllUsers.findAll(findAllUsersDto))
+        .isInstanceOf(Forbidden.class)
+        .hasMessage("Only admin users can view all users");
+    verify(userRepository, never()).findAll(any(Pageable.class));
   }
 }

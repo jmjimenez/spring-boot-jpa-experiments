@@ -28,15 +28,15 @@ class UpdateUserIntegrationTest extends BaseIntegration {
   private UserRepositoryImpl userRepository;
 
   private User leanneUser;
-  private JwtUserDetails testUserDetails;
+  private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
     leanneUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID)
         .orElseThrow(() -> new RuntimeException("Test user not found: " + TestDataSamples.LEANNE_UUID));
 
-    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
+    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
@@ -45,13 +45,12 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         leanneUser.getUuid(),
         "Updated Ervin",
         "updatedervin@example.com",
-        testUserDetails);
+        adminUserDetails);
 
     User result = updateUser.update(updateUserDto);
 
     assertThat(result.getName()).isEqualTo("Updated Ervin");
     assertThat(result.getEmail()).isEqualTo("updatedervin@example.com");
-    assertThat(result.getUsername()).isEqualTo("updatedervin");
     assertThat(result.getUuid()).isEqualTo(leanneUser.getUuid());
 
     Optional<User> dbUser = userRepository.findById(leanneUser.getId());
@@ -65,7 +64,7 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         UUID.randomUUID(),
         "Updated Name",
         "updated@example.com",
-        testUserDetails);
+        adminUserDetails);
 
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)

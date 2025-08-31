@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
@@ -19,6 +20,10 @@ public class FindAllUsers {
 
   @Transactional(readOnly = true)
   public Page<User> findAll(FindAllUsersDto findAllUsersDto) {
+    if (!findAllUsersDto.userDetails().isAdmin()) {
+      throw new Forbidden("Only admin users can view all users");
+    }
+
     return userRepository.findAll(findAllUsersDto.pageable());
   }
 }

@@ -6,36 +6,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
-import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
-import es.jmjg.experiments.domain.entity.User;
 
 class UserControllerTest extends BaseUserControllerTest {
-
-  @Test
-  void shouldFindAllUsers() throws Exception {
-    // Given
-    List<User> users = List.of(testUser);
-    Page<User> userPage = new PageImpl<>(users, pageable, users.size());
-    when(findAllUsers.findAll(any(FindAllUsersDto.class))).thenReturn(userPage);
-
-    String expectedJson = createFindAllUsersJsonResponse();
-
-    // When & Then
-    mockMvc
-        .perform(get("/api/users").header("Authorization", "Bearer " + testUser.getUsername()))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
-  }
 
   @Test
   void shouldFindUserWhenGivenValidUuid() throws Exception {

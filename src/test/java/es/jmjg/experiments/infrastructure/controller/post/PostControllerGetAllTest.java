@@ -1,10 +1,13 @@
 package es.jmjg.experiments.infrastructure.controller.post;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -56,6 +59,22 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
     ResultActions resultActions = mockMvc
         .perform(get("/api/posts?page=0&size=1"))
+        .andExpect(status().isOk())
+        .andExpect(content().json(jsonResponse));
+
+    verifyJsonResponse(resultActions, jsonResponse);
+  }
+
+  @Test
+  void shouldReturnEmptyListWhenNoPostsFound() throws Exception {
+    String jsonResponse = createEmptyPostsJsonResponse();
+
+    Pageable pageable = PageRequest.of(0, 20);
+    Page<Post> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+    when(findAllPosts.findAll(any(Pageable.class))).thenReturn(emptyPage);
+
+    ResultActions resultActions = mockMvc
+        .perform(get("/api/posts"))
         .andExpect(status().isOk())
         .andExpect(content().json(jsonResponse));
 

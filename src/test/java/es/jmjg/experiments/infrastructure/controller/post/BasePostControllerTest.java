@@ -125,6 +125,20 @@ abstract class BasePostControllerTest {
         .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid());
   }
 
+  protected String createEmptyPostsJsonResponse() {
+    return """
+        {
+            "content":[],
+            "pageNumber":0,
+            "pageSize":20,
+            "totalElements":0,
+            "totalPages":0,
+            "hasNext":false,
+            "hasPrevious":false
+        }
+        """;
+  }
+
   protected String createFindPostByUuidJsonResponse(Post post) {
     return """
         {

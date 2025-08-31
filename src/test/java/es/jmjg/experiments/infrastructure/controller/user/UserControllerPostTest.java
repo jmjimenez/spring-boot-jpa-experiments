@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.domain.entity.User;
 
-class UserControllerCreateTest extends BaseUserControllerTest {
+class UserControllerPostTest extends BaseUserControllerTest {
 
   @Test
   void shouldCreateNewUserWhenGivenValidData() throws Exception {

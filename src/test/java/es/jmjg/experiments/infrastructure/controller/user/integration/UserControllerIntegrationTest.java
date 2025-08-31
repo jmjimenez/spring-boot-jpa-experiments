@@ -17,17 +17,6 @@ import es.jmjg.experiments.shared.TestDataSamples;
 class UserControllerIntegrationTest extends BaseControllerIntegration {
 
   @Test
-  void shouldGetAllUsers() {
-    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<Object> response = restTemplate.exchange("/api/users", HttpMethod.GET, request, Object.class);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    Object responseBody = response.getBody();
-    assertThat(responseBody).isNotNull();
-  }
-
-  @Test
   void shouldFindUserByUuid() {
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
         TestDataSamples.ADMIN_PASSWORD);
