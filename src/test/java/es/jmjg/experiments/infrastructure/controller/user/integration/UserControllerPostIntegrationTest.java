@@ -10,8 +10,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserResponseDto;
+import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationRequestDto;
+import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
@@ -41,6 +43,20 @@ class UserControllerPostIntegrationTest extends BaseControllerIntegration {
       assertThat(u.getUuid()).isNotNull();
       // Verify the Location header contains the correct UUID
       assertThat(locationHeader).isEqualTo("/api/users/" + u.getUuid().toString());
+    });
+
+    // Test that the newly created user can authenticate
+    AuthenticationRequestDto authRequest = new AuthenticationRequestDto();
+    authRequest.setLogin("newuser");
+    authRequest.setPassword("password123");
+
+    HttpEntity<AuthenticationRequestDto> authHttpRequest = new HttpEntity<>(authRequest);
+    ResponseEntity<AuthenticationResponseDto> authResponse = restTemplate.exchange(
+        "/authenticate", HttpMethod.POST, authHttpRequest, AuthenticationResponseDto.class);
+
+    assertThat(authResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(authResponse.getBody()).isNotNull().satisfies(a -> {
+      assertThat(a.getAccessToken()).isNotNull().isNotEmpty();
     });
   }
 }
