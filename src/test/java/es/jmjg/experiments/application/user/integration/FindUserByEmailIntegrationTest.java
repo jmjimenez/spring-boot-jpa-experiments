@@ -25,12 +25,12 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
-  private JwtUserDetails testUserDetails;
+  private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
-    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
+    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
@@ -40,7 +40,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(testUser);
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail(), testUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail(), adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -55,7 +55,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @Test
   void findByEmail_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("nonexistent@example.com", testUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("nonexistent@example.com", adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -71,8 +71,8 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     User savedThirdUser = userRepository.save(thirdUser);
 
     // When
-    FindUserByEmailDto findUserByEmailDto1 = new FindUserByEmailDto(secondUser.getEmail(), testUserDetails);
-    FindUserByEmailDto findUserByEmailDto2 = new FindUserByEmailDto(thirdUser.getEmail(), testUserDetails);
+    FindUserByEmailDto findUserByEmailDto1 = new FindUserByEmailDto(secondUser.getEmail(), adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto2 = new FindUserByEmailDto(thirdUser.getEmail(), adminUserDetails);
     Optional<User> secondResult = findUserByEmail.findByEmail(findUserByEmailDto1);
     Optional<User> thirdResult = findUserByEmail.findByEmail(findUserByEmailDto2);
 
@@ -98,7 +98,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     userRepository.save(savedUser);
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("updated@example.com", testUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("updated@example.com", adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -113,7 +113,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @Test
   void findByEmail_WhenEmailIsEmpty_ShouldReturnEmpty() {
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("", testUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("", adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -123,7 +123,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @Test
   void findByEmail_WhenEmailIsBlank_ShouldReturnEmpty() {
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("   ", testUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("   ", adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -138,7 +138,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     String userEmail = savedUser.getEmail();
 
     // Verify user exists before deletion
-    FindUserByEmailDto findUserByEmailDto1 = new FindUserByEmailDto(userEmail, testUserDetails);
+    FindUserByEmailDto findUserByEmailDto1 = new FindUserByEmailDto(userEmail, adminUserDetails);
     Optional<User> resultBeforeDelete = findUserByEmail.findByEmail(findUserByEmailDto1);
     assertThat(resultBeforeDelete).isPresent();
 
@@ -146,7 +146,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     userRepository.deleteById(savedUser.getId());
 
     // When
-    FindUserByEmailDto findUserByEmailDto2 = new FindUserByEmailDto(userEmail, testUserDetails);
+    FindUserByEmailDto findUserByEmailDto2 = new FindUserByEmailDto(userEmail, adminUserDetails);
     Optional<User> resultAfterDelete = findUserByEmail.findByEmail(findUserByEmailDto2);
 
     // Then
@@ -160,7 +160,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     userRepository.save(sixthUser);
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(sixthUser.getEmail().toUpperCase(), testUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(sixthUser.getEmail().toUpperCase(), adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -174,7 +174,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(specialUser);
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail(), testUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail(), adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -193,7 +193,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     User savedUser = userRepository.save(subdomainUser);
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail(), testUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail(), adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then

@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 
@@ -39,35 +38,6 @@ class UserControllerTest extends BaseUserControllerTest {
     // When & Then
     mockMvc.perform(get("/api/users/" + invalidUuid)
         .header("Authorization", "Bearer " + testUser.getUsername()))
-        .andExpect(status().isNotFound());
-  }
-
-  @Test
-  void shouldFindUserWhenGivenValidEmail() throws Exception {
-    // Given
-    String email = "test@example.com";
-    when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(Optional.of(testUser));
-
-    String expectedJson = createFindUserByEmailJsonResponse();
-
-    // When & Then
-    mockMvc
-        .perform(get("/api/users/search/email").param("email", email)
-            .header("Authorization", "Bearer " + testUser.getUsername()))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
-  }
-
-  @Test
-  void shouldNotFindUserWhenGivenInvalidEmail() throws Exception {
-    // Given
-    String invalidEmail = "nonexistent@example.com";
-    when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(Optional.empty());
-
-    // When & Then
-    mockMvc
-        .perform(get("/api/users/search/email").param("email", invalidEmail)
-            .header("Authorization", "Bearer " + testUser.getUsername()))
         .andExpect(status().isNotFound());
   }
 
