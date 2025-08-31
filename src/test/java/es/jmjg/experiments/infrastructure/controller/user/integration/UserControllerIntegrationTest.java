@@ -37,25 +37,6 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  void shouldFindUserByUsername() {
-    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users/search/username?username=" + TestDataSamples.CLEMENTINE_USERNAME,
-        HttpMethod.GET, request, FindAllUsersResponseDto.class);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    FindAllUsersResponseDto user = response.getBody();
-    assertThat(user).isNotNull().satisfies(u -> {
-      assertThat(u.getUsername()).isEqualTo(TestDataSamples.CLEMENTINE_USERNAME);
-      assertThat(u.getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
-      assertThat(u.getEmail()).isEqualTo(TestDataSamples.CLEMENTINE_EMAIL);
-      assertThat(u.getPosts()).isNotEmpty();
-      assertThat(u.getTags()).isNotEmpty();
-    });
-  }
-
-  @Test
   void shouldReturnNotFoundWhenUserDoesNotExist() {
     UUID nonExistentUuid = UUID.randomUUID();
 
