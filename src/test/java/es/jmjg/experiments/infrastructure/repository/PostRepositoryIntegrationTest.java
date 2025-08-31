@@ -1,7 +1,9 @@
 package es.jmjg.experiments.infrastructure.repository;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 
 @Import({ PostRepositoryImpl.class, TagRepositoryImpl.class, UserRepositoryImpl.class })
 public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
@@ -32,16 +35,6 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
   private UserRepositoryImpl userRepository;
-
-  //TODO: move these consts to TestDataSamples
-  private static final String LEANNE_POST_TITLE = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
-  private static final String LEANNE_POST_UUID = "550e8400-e29b-41d4-a716-446655440006";
-
-  private static final String ERVIN_POST_TITLE = "et ea vero quia laudantium autem";
-  private static final String ERVIN_POST_UUID = "550e8400-e29b-41d4-a716-446655440016";
-
-  private static final String CLEMENTINE_POST_TITLE = "asperiores ea ipsam voluptatibus modi minima quia sint";
-  private static final String CLEMENTINE_POST_UUID = "550e8400-e29b-41d4-a716-446655440026";
 
   private User testUser;
   private Tag technologyTag;
@@ -76,9 +69,9 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
 
   @Test
   void shouldReturnPostByTitle() {
-    Post post = postRepository.findByTitle(LEANNE_POST_TITLE).orElseThrow();
-    assertEquals(LEANNE_POST_TITLE, post.getTitle(), "Post title should match the migration data");
-    assertEquals(UUID.fromString(LEANNE_POST_UUID), post.getUuid(), "Post UUID should match the migration data");
+    Post post = postRepository.findByTitle(TestDataSamples.LEANNE_POST_TITLE).orElseThrow();
+    assertEquals(TestDataSamples.LEANNE_POST_TITLE, post.getTitle(), "Post title should match the migration data");
+    assertEquals(TestDataSamples.LEANNE_POST_UUID, post.getUuid(), "Post UUID should match the migration data");
   }
 
   @Test
@@ -90,17 +83,17 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldFindMultiplePostsByTitle() {
     // Test finding posts from different users
-    Optional<Post> leannePost = postRepository.findByTitle(LEANNE_POST_TITLE);
-    Optional<Post> ervinPost = postRepository.findByTitle(ERVIN_POST_TITLE);
-    Optional<Post> clementinePost = postRepository.findByTitle(CLEMENTINE_POST_TITLE);
+    Optional<Post> leannePost = postRepository.findByTitle(TestDataSamples.LEANNE_POST_TITLE);
+    Optional<Post> ervinPost = postRepository.findByTitle(TestDataSamples.ERVIN_POST_TITLE);
+    Optional<Post> clementinePost = postRepository.findByTitle(TestDataSamples.CLEMENTINE_POST_TITLE);
 
     assertTrue(leannePost.isPresent(), "Leanne's post should be found");
     assertTrue(ervinPost.isPresent(), "Ervin's post should be found");
     assertTrue(clementinePost.isPresent(), "Clementine's post should be found");
 
-    assertEquals(UUID.fromString(LEANNE_POST_UUID), leannePost.get().getUuid());
-    assertEquals(UUID.fromString(ERVIN_POST_UUID), ervinPost.get().getUuid());
-    assertEquals(UUID.fromString(CLEMENTINE_POST_UUID), clementinePost.get().getUuid());
+    assertEquals(TestDataSamples.LEANNE_POST_UUID, leannePost.get().getUuid());
+    assertEquals(TestDataSamples.ERVIN_POST_UUID, ervinPost.get().getUuid());
+    assertEquals(TestDataSamples.CLEMENTINE_POST_UUID, clementinePost.get().getUuid());
   }
 
   @Test

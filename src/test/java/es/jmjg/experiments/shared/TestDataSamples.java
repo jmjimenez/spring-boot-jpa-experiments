@@ -63,10 +63,14 @@ public final class TestDataSamples {
   public static final UUID POST_16_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
 
   // Additional post titles and bodies from Flyway migration data
+  public static final String LEANNE_POST_TITLE = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
+  public static final UUID LEANNE_POST_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
   public static final String ERVIN_POST_TITLE = "et ea vero quia laudantium autem";
   public static final String ERVIN_POST_BODY = "delectus reiciendis molestiae occaecati non minima eveniet qui voluptatibus\\naccusamus in eum beatae sit\\nvel qui neque voluptates ut commodi qui incidunt\\nut animi commodi";
+  public static final UUID ERVIN_POST_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
   public static final String CLEMENTINE_POST_TITLE = "asperiores ea ipsam voluptatibus modi minima quia sint";
   public static final String CLEMENTINE_POST_BODY = "repellat aliquid praesentium dolorem quo\\nsed totam minus non itaque\\nnihil labore molestiae sunt dolor eveniet hic recusandae veniam\\ntempora et tenetur expedita sunt";
+  public static final UUID CLEMENTINE_POST_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440026");
 
   // Sample tag names from Flyway migration data
   public static final String TECHNOLOGY_TAG_NAME = "technology";
