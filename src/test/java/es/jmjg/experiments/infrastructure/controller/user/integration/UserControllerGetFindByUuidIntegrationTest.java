@@ -14,7 +14,7 @@ import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersRespon
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
-class UserControllerIntegrationTest extends BaseControllerIntegration {
+class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldFindUserByUuid() {
@@ -58,26 +58,4 @@ class UserControllerIntegrationTest extends BaseControllerIntegration {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
-  @Test
-  void shouldReturnNotFoundWhenUserByEmailDoesNotExist() {
-    String nonExistentEmail = "nonexistent@example.com";
-
-    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users/search/email?email=" + nonExistentEmail, HttpMethod.GET, request, FindAllUsersResponseDto.class);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-  }
-
-  @Test
-  void shouldReturnNotFoundWhenUserByUsernameDoesNotExist() {
-    String nonExistentUsername = "nonexistentuser";
-
-    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users/search/username?username=" + nonExistentUsername, HttpMethod.GET, request,
-        FindAllUsersResponseDto.class);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-  }
 }

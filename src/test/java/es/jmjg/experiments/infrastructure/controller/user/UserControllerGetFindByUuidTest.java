@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 
-class UserControllerTest extends BaseUserControllerTest {
+class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
 
   @Test
   void shouldFindUserWhenGivenValidUuid() throws Exception {

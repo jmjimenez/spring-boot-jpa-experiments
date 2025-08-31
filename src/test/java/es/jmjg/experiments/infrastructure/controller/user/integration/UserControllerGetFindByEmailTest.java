@@ -50,4 +50,15 @@ class UserControllerGetFindByEmailTest extends BaseControllerIntegration {
         HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
+
+  @Test
+  void shouldReturnNotFoundWhenUserByEmailDoesNotExist() {
+    String nonExistentEmail = "nonexistent@example.com";
+
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/search/email?email=" + nonExistentEmail, HttpMethod.GET, request, FindAllUsersResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
 }

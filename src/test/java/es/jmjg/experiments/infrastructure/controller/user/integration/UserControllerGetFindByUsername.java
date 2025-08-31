@@ -59,4 +59,16 @@ class UserControllerGetFindByUsername extends BaseControllerIntegration {
       assertThat(u.getTags()).isNotEmpty();
     });
   }
+
+  @Test
+  void shouldReturnNotFoundWhenUserByUsernameDoesNotExist() {
+    String nonExistentUsername = "nonexistentuser";
+
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+        "/api/users/search/username?username=" + nonExistentUsername, HttpMethod.GET, request,
+        FindAllUsersResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
 }
