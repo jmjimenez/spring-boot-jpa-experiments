@@ -3,8 +3,8 @@ package es.jmjg.experiments.application.post.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,6 @@ import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
-import es.jmjg.experiments.shared.UserDetailsFactory;
 
 class UpdatePostIntegrationTest extends BaseIntegration {
 
@@ -70,10 +69,10 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   void update_WithNonExistentPost_ShouldThrowPostNotFound() {
     // Given
     User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    final String nonExistentUuid = "550e8400-e29b-41d4-a716-446655440999";
+    final UUID nonExistentUuid = UUID.randomUUID();
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
-        java.util.UUID.fromString(nonExistentUuid),
+        nonExistentUuid,
         "Updated Title",
         "Updated Body",
         testUser);
@@ -81,7 +80,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     // When & Then
     assertThatThrownBy(() -> updatePost.update(updatePostDto))
         .isInstanceOf(PostNotFound.class)
-        .hasMessageContaining(nonExistentUuid);
+        .hasMessageContaining(nonExistentUuid.toString());
   }
 
   @Test
@@ -111,12 +110,11 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     final String updatedTitle = "Admin Updated Title";
     final String updatedBody = "Admin updated post body content";
 
-    UpdatePostDto updatePostDto = new UpdatePostDto(
+    UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
         existingPost.getUuid(),
         updatedTitle,
         updatedBody,
-        List.of(),
-        UserDetailsFactory.createJwtUserDetails(adminUser));
+        adminUser);
 
     // When
     Post result = updatePost.update(updatePostDto);
