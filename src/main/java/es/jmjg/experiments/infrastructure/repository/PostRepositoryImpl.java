@@ -64,6 +64,11 @@ public class PostRepositoryImpl implements es.jmjg.experiments.domain.repository
     return jpaPostRepository.findByTagId(id);
   }
 
+  @Override
+  public List<Post> findByUserId(Integer userId) {
+    return jpaPostRepository.findByUserId(userId);
+  }
+
   public Long count() {
     return jpaPostRepository.count();
   }

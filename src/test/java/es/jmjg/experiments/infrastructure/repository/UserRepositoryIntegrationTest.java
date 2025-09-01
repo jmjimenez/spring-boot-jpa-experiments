@@ -1,7 +1,8 @@
 package es.jmjg.experiments.infrastructure.repository;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -90,13 +91,23 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldDeleteUserByUuid() {
     // Given - using existing user from migration data
-    assertThat(userRepository.findByUuid(TestDataSamples.PATRICIA_UUID)).isPresent();
+    User patricia = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
+    assertThat(patricia).isNotNull();
+
+    // Assert that Patricia has posts
+    List<Post> patriciaPosts = postRepository.findByUserId(patricia.getId());
+    assertThat(patriciaPosts).isNotEmpty();
+    assertThat(patriciaPosts).hasSize(10);
 
     // When
     userRepository.deleteByUuid(TestDataSamples.PATRICIA_UUID);
 
     // Then
     assertThat(userRepository.findByUuid(TestDataSamples.PATRICIA_UUID)).isEmpty();
+
+    // Assert that posts owned by Patricia have been deleted
+    List<Post> remainingPatriciaPosts = postRepository.findByUserId(patricia.getId());
+    assertThat(remainingPatriciaPosts).isEmpty();
   }
 
   @Test

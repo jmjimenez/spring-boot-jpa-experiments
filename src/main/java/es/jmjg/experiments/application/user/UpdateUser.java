@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
 
@@ -20,21 +22,19 @@ public class UpdateUser {
 
   @Transactional
   public User update(UpdateUserDto updateUserDto) {
-    Optional<User> existing = userRepository.findById(updateUserDto.id());
-    if (existing.isPresent()) {
-      User existingUser = existing.get();
-      existingUser.setName(updateUserDto.name());
-      existingUser.setEmail(updateUserDto.email());
-      existingUser.setUsername(updateUserDto.username());
-      if (updateUserDto.password() != null) {
-        existingUser.setPassword(updateUserDto.password());
-      }
-      if (updateUserDto.uuid() != null) {
-        existingUser.setUuid(updateUserDto.uuid());
-      }
-      return userRepository.save(existingUser);
-    } else {
-      throw new RuntimeException("User not found with id: " + updateUserDto.id());
+    Optional<User> existing = userRepository.findByUuid(updateUserDto.uuid());
+    if (!existing.isPresent()) {
+      throw new UserNotFound(updateUserDto.uuid());
     }
+
+    if (!updateUserDto.userDetails().isAdmin() &&
+        !updateUserDto.userDetails().id.equals(updateUserDto.uuid())) {
+      throw new Forbidden("Access denied: only admins or the user themselves can update user data");
+    }
+
+    User existingUser = existing.get();
+    existingUser.setName(updateUserDto.name());
+    existingUser.setEmail(updateUserDto.email());
+    return userRepository.save(existingUser);
   }
 }

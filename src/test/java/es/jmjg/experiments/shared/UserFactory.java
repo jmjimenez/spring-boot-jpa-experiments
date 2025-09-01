@@ -3,12 +3,15 @@ package es.jmjg.experiments.shared;
 import java.util.UUID;
 
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 
 public class UserFactory {
 
   public static User createBasicUser() {
     return createUser(UUID.randomUUID(), "Test User", "test@example.com", "testuser");
+  }
+
+  public static User createAdminUser() {
+    return createUser(UUID.randomUUID(), "Admin User", "admin@example.com", "admin");
   }
 
   public static User createJohnDoeUser(Integer id) {
@@ -55,9 +58,5 @@ public class UserFactory {
     user.setUsername(username);
     user.setPassword("encodedPassword123");
     return user;
-  }
-
-  public static JwtUserDetails createUserUserDetails(User user) {
-    return UserDetailsFactory.createUserUserDetails(user);
   }
 }

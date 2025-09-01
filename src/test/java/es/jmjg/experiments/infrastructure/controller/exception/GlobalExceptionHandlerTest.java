@@ -11,7 +11,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
-import es.jmjg.experiments.application.post.exception.Forbidden;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 
 class GlobalExceptionHandlerTest {
 

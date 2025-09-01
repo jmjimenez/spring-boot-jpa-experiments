@@ -15,6 +15,7 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.shared.PostFactory;
+import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class PostControllerPostTest extends BasePostControllerTest {
@@ -23,7 +24,7 @@ class PostControllerPostTest extends BasePostControllerTest {
   void shouldCreateNewPostWhenGivenValidID() throws Exception {
     User user = UserFactory.createBasicUser();
 
-    JwtUserDetails userDetails = UserFactory.createUserUserDetails(user);
+    JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
     Post post = PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
     post.setId(3);

@@ -27,78 +27,46 @@ class UpdateUserIntegrationTest extends BaseIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
-  private User leanneUser;
-  private User ervinUser;
-  private JwtUserDetails testUserDetails;
+  private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
-    leanneUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID)
-        .orElseThrow(() -> new RuntimeException("Test user not found: " + TestDataSamples.LEANNE_UUID));
-
-    ervinUser = userRepository.findByUuid(TestDataSamples.ERVIN_UUID)
-        .orElseThrow(() -> new RuntimeException("Test user not found: " + TestDataSamples.ERVIN_UUID));
-
-    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createUserUserDetails(testUser);
+    User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
+    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
   void update_WhenUserExists_ShouldUpdateFields() {
+    UUID leanneUuid = TestDataSamples.LEANNE_UUID;
+
     UpdateUserDto updateUserDto = new UpdateUserDto(
-        leanneUser.getId(),
-        null,
+        leanneUuid,
         "Updated Ervin",
         "updatedervin@example.com",
-        "updatedervin",
-        null,
-        testUserDetails);
+        adminUserDetails);
 
     User result = updateUser.update(updateUserDto);
 
     assertThat(result.getName()).isEqualTo("Updated Ervin");
     assertThat(result.getEmail()).isEqualTo("updatedervin@example.com");
-    assertThat(result.getUsername()).isEqualTo("updatedervin");
-    assertThat(result.getUuid()).isEqualTo(leanneUser.getUuid());
+    assertThat(result.getUuid()).isEqualTo(leanneUuid);
 
-    Optional<User> dbUser = userRepository.findById(leanneUser.getId());
+    Optional<User> dbUser = userRepository.findByUuid(leanneUuid);
     assertThat(dbUser).isPresent();
     assertThat(dbUser.get().getName()).isEqualTo("Updated Ervin");
-  }
-
-  @Test
-  void update_WhenUserExistsAndUuidProvided_ShouldUpdateUuid() {
-    UUID newUuid = UUID.randomUUID();
-    UpdateUserDto updateUserDto = new UpdateUserDto(
-        ervinUser.getId(),
-        newUuid,
-        "Updated Name",
-        "updated@example.com",
-        "updateduser",
-        null,
-        testUserDetails);
-
-    User result = updateUser.update(updateUserDto);
-
-    assertThat(result.getUuid()).isEqualTo(newUuid);
-    Optional<User> dbUser = userRepository.findById(ervinUser.getId());
-    assertThat(dbUser).isPresent();
-    assertThat(dbUser.get().getUuid()).isEqualTo(newUuid);
+    assertThat(dbUser.get().getEmail()).isEqualTo("updatedervin@example.com");
   }
 
   @Test
   void update_WhenUserDoesNotExist_ShouldThrow() {
     UpdateUserDto updateUserDto = new UpdateUserDto(
-        9999,
-        null,
+        UUID.randomUUID(),
         "Updated Name",
         "updated@example.com",
-        "updateduser",
-        null,
-        testUserDetails);
+        adminUserDetails);
 
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)
-        .hasMessageContaining("User not found with id: 9999");
+        .hasMessageContaining("User not found with uuid: " + updateUserDto.uuid());
   }
 }

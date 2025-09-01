@@ -200,16 +200,11 @@ public class UserController {
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
       @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid, userDetails);
-    User existing = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
 
     UpdateUserDto updateUserDto = new UpdateUserDto(
-        existing.getId(),
-        userDto.getUuid(),
+        uuid,
         userDto.getName(),
         userDto.getEmail(),
-        userDto.getUsername(),
-        userDto.getPassword(),
         userDetails);
 
     User updatedUser = updateUser.update(updateUserDto);
@@ -229,6 +224,6 @@ public class UserController {
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @PathVariable UUID uuid) {
     DeleteUserDto deleteUserDto = new DeleteUserDto(uuid, userDetails);
-    deleteUser.deleteByUuid(deleteUserDto);
+    deleteUser.delete(deleteUserDto);
   }
 }

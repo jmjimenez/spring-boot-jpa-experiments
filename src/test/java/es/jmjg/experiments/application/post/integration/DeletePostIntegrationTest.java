@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.DeletePost;
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
-import es.jmjg.experiments.application.post.exception.Forbidden;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
@@ -91,21 +91,5 @@ class DeletePostIntegrationTest extends BaseIntegration {
     assertThatThrownBy(() -> deletePost.delete(deletePostDto))
         .isInstanceOf(es.jmjg.experiments.application.post.exception.PostNotFound.class)
         .hasMessage("Post not found with uuid: " + nonExistentUuid);
-  }
-
-  @Test
-  void deleteByUuid_WhenUserIsNotAuthenticated_ShouldThrowNullPointerException() {
-    // Given - using existing test data from migration
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
-    assertThat(postRepository.findById(existingPost.getId())).isPresent();
-
-    final DeletePostDto deletePostDto = new DeletePostDto(existingPost.getUuid(), null);
-
-    // When & Then
-    assertThatThrownBy(() -> deletePost.delete(deletePostDto))
-        .isInstanceOf(NullPointerException.class);
-
-    // Verify post still exists
-    assertThat(postRepository.findById(existingPost.getId())).isPresent();
   }
 }

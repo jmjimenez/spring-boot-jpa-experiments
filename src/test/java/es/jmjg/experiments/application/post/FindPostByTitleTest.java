@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +14,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.PostRepository;
+import es.jmjg.experiments.shared.PostFactory;
+import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
 class FindPostByTitleTest {
@@ -28,12 +28,11 @@ class FindPostByTitleTest {
   private FindPostByTitle findPostByTitle;
 
   private Post testPost;
-  private User testUser;
 
   @BeforeEach
   void setUp() {
-    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", "encodedPassword123", null);
-    testPost = new Post(1, UUID.randomUUID(), testUser, "Test Post", "Test Body");
+    var testUser = UserFactory.createBasicUser();
+    testPost = PostFactory.createBasicPost(testUser);
   }
 
   @Test

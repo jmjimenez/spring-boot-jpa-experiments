@@ -26,8 +26,9 @@ public interface JpaPostRepository extends JpaRepository<Post, Integer> {
   List<Post> searchByContent(@Param("query") String query, Pageable pageable);
 
   @Transactional(readOnly = true)
-  @Query(
-      value = "SELECT DISTINCT p.* FROM Post p JOIN post_tag pt ON p.id = pt.post_id WHERE pt.tag_id = :tagId",
-      nativeQuery = true)
+  @Query(value = "SELECT DISTINCT p.* FROM Post p JOIN post_tag pt ON p.id = pt.post_id WHERE pt.tag_id = :tagId", nativeQuery = true)
   List<Post> findByTagId(@Param("tagId") Integer tagId);
+
+  @Transactional(readOnly = true)
+  List<Post> findByUserId(Integer userId);
 }

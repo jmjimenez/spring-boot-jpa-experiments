@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.application.post.dto.SavePostDto;
-import es.jmjg.experiments.application.post.exception.InvalidRequest;
+import es.jmjg.experiments.application.shared.exception.InvalidRequest;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
@@ -49,7 +49,7 @@ public class SavePost {
     }
 
     // Process tags if provided
-    if (savePostDto.tagNames() != null) {
+    if (!savePostDto.tagNames().isEmpty()) {
       processPostTags.processTagsForPost(post, savePostDto.tagNames());
     }
 

@@ -1,6 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.post.mapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import es.jmjg.experiments.application.post.dto.SavePostDto;
 import es.jmjg.experiments.application.post.dto.UpdatePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagNameResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagResponseDto;
@@ -25,7 +27,6 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDt
 import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 
 @Component
 public class PostMapper {
@@ -140,7 +141,7 @@ public class PostMapper {
         postRequestDto.getTitle(),
         postRequestDto.getBody(),
         userUuid,
-        postRequestDto.getTagNames());
+        Optional.ofNullable(postRequestDto.getTagNames()).orElse(List.of()));
   }
 
   public UpdatePostDto toUpdatePostDto(UpdatePostRequestDto postRequestDto, UUID PostUuid, JwtUserDetails userDetails) {
@@ -148,7 +149,7 @@ public class PostMapper {
         PostUuid,
         postRequestDto.getTitle(),
         postRequestDto.getBody(),
-        postRequestDto.getTagNames(),
+        Optional.ofNullable(postRequestDto.getTagNames()).orElse(List.of()),
         userDetails);
   }
 

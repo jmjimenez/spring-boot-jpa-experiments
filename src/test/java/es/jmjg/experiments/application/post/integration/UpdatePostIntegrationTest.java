@@ -1,16 +1,18 @@
 package es.jmjg.experiments.application.post.integration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.dto.UpdatePostDto;
-import es.jmjg.experiments.application.post.exception.Forbidden;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
@@ -18,7 +20,6 @@ import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
-import es.jmjg.experiments.shared.UserDetailsFactory;
 
 class UpdatePostIntegrationTest extends BaseIntegration {
 
@@ -68,10 +69,10 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   void update_WithNonExistentPost_ShouldThrowPostNotFound() {
     // Given
     User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    final String nonExistentUuid = "550e8400-e29b-41d4-a716-446655440999";
+    final UUID nonExistentUuid = UUID.randomUUID();
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
-        java.util.UUID.fromString(nonExistentUuid),
+        nonExistentUuid,
         "Updated Title",
         "Updated Body",
         testUser);
@@ -79,7 +80,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     // When & Then
     assertThatThrownBy(() -> updatePost.update(updatePostDto))
         .isInstanceOf(PostNotFound.class)
-        .hasMessageContaining(nonExistentUuid);
+        .hasMessageContaining(nonExistentUuid.toString());
   }
 
   @Test
@@ -109,12 +110,11 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     final String updatedTitle = "Admin Updated Title";
     final String updatedBody = "Admin updated post body content";
 
-    UpdatePostDto updatePostDto = new UpdatePostDto(
+    UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
         existingPost.getUuid(),
         updatedTitle,
         updatedBody,
-        null,
-        UserDetailsFactory.createRegularUserJwtUserDetails(adminUser));
+        adminUser);
 
     // When
     Post result = updatePost.update(updatePostDto);

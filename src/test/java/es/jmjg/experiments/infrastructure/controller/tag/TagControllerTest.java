@@ -97,7 +97,7 @@ class TagControllerTest {
     when(findTagByUuid.findByUuid(testUuid)).thenReturn(testTag);
 
     // When & Then
-    mockMvc.perform(get("/api/tags/{uuid}", testUuid))
+    mockMvc.perform(get("/api/tags/{uuid}", testUuid).header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.uuid").value(testUuid.toString()))
         .andExpect(jsonPath("$.name").value("test-tag"))
@@ -120,7 +120,7 @@ class TagControllerTest {
     when(findTagByUuid.findByUuid(testUuid)).thenReturn(testTag);
 
     // When & Then
-    mockMvc.perform(get("/api/tags/{uuid}", testUuid))
+    mockMvc.perform(get("/api/tags/{uuid}", testUuid).header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.uuid").value(testUuid.toString()))
         .andExpect(jsonPath("$.name").value("test-tag"))
@@ -149,7 +149,8 @@ class TagControllerTest {
 
     // When & Then
     mockMvc.perform(get("/api/tags/search")
-        .param("pattern", pattern))
+        .param("pattern", pattern)
+        .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].uuid").value(testUuid.toString()))
         .andExpect(jsonPath("$[0].name").value("test-tag"))
@@ -171,7 +172,8 @@ class TagControllerTest {
     when(findUsersByTag.findByTagUuid(testUuid)).thenReturn(users);
 
     // When & Then
-    mockMvc.perform(get("/api/tags/{uuid}/users", testUuid))
+    mockMvc.perform(get("/api/tags/{uuid}/users", testUuid)
+        .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].name").value("Test User"))
         .andExpect(jsonPath("$[0].email").value("test@example.com"));
@@ -186,7 +188,8 @@ class TagControllerTest {
     when(findPostsByTag.findByTagUuid(testUuid)).thenReturn(posts);
 
     // When & Then
-    mockMvc.perform(get("/api/tags/{uuid}/posts", testUuid))
+    mockMvc.perform(get("/api/tags/{uuid}/posts", testUuid)
+        .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].title").value("Test Post"))
         .andExpect(jsonPath("$[0].body").value("Test content"));
@@ -201,7 +204,8 @@ class TagControllerTest {
 
     // When & Then
     mockMvc.perform(get("/api/tags/search/users")
-        .param("name", "test-tag"))
+        .param("name", "test-tag")
+        .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].name").value("Test User"));
   }
@@ -216,7 +220,8 @@ class TagControllerTest {
 
     // When & Then
     mockMvc.perform(get("/api/tags/search/posts")
-        .param("name", "test-tag"))
+        .param("name", "test-tag")
+        .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].title").value("Test Post"));
   }
@@ -230,7 +235,8 @@ class TagControllerTest {
     // When & Then
     mockMvc.perform(post("/api/tags")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(tagDto)))
+        .content(objectMapper.writeValueAsString(tagDto))
+        .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", "/api/tags/" + testUuid.toString()))
         .andExpect(jsonPath("$.uuid").value(testUuid.toString()))
@@ -248,7 +254,8 @@ class TagControllerTest {
     // When & Then
     mockMvc.perform(put("/api/tags/{uuid}", testUuid)
         .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(tagDto)))
+        .content(objectMapper.writeValueAsString(tagDto))
+        .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("updated-tag"));
   }
@@ -259,7 +266,8 @@ class TagControllerTest {
     doNothing().when(deleteTagByUuid).deleteByUuid(testUuid);
 
     // When & Then
-    mockMvc.perform(delete("/api/tags/{uuid}", testUuid))
+    mockMvc.perform(delete("/api/tags/{uuid}", testUuid)
+        .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isNoContent());
   }
 }

@@ -12,7 +12,7 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsRespon
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
-class PostControllerDeleteTestIntegrationTest extends BaseControllerIntegration {
+class PostControllerDeleteIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldDeletePostByUuid() {

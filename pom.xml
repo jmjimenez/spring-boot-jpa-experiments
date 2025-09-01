@@ -191,7 +191,13 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+	
+   <dependency>
+     <groupId>com.czertainly</groupId>
+     <artifactId>interfaces</artifactId>
+     <version>1.5.0</version>
+   </dependency>
+ </dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

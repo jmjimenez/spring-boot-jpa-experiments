@@ -26,4 +26,6 @@ public interface PostRepository {
   Optional<Post> findById(Integer id);
 
   List<Post> findByTagId(Integer id);
+
+  List<Post> findByUserId(Integer userId);
 }

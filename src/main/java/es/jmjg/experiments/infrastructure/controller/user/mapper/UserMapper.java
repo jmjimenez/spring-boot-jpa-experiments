@@ -61,7 +61,7 @@ public class UserMapper {
 
   public SaveUserResponseDto toSaveUserResponseDto(User savedUser) {
     return mapToResponseDto(savedUser, (uuid, name, email, username, posts, tags) -> new SaveUserResponseDto(uuid, name,
-        email, username, posts, tags));
+        email, username));
   }
 
   public UpdateUserResponseDto toUpdateUserResponseDto(User updatedUser) {
@@ -87,10 +87,8 @@ public class UserMapper {
       return null;
     }
     User user = new User();
-    user.setUuid(userDto.getUuid());
     user.setName(userDto.getName());
     user.setEmail(userDto.getEmail());
-    user.setUsername(userDto.getUsername());
     return user;
   }
 

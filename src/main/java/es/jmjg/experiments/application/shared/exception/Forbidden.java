@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.post.exception;
+package es.jmjg.experiments.application.shared.exception;
 
 /** Exception thrown when access is forbidden in the application layer. */
 public class Forbidden extends RuntimeException {
