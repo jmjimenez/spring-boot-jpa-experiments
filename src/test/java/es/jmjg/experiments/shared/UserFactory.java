@@ -10,6 +10,10 @@ public class UserFactory {
     return createUser(UUID.randomUUID(), "Test User", "test@example.com", "testuser");
   }
 
+  public static User createAdminUser() {
+    return createUser(UUID.randomUUID(), "Admin User", "admin@example.com", "admin");
+  }
+
   public static User createJohnDoeUser(Integer id) {
     return createUser(id, "John Doe", "john@example.com", "johndoe");
   }
