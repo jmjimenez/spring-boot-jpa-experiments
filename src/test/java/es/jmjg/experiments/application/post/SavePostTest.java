@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.PostRepository;
 import es.jmjg.experiments.domain.repository.UserRepository;
 import es.jmjg.experiments.shared.PostFactory;
+import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
 class SavePostTest {
@@ -37,69 +37,69 @@ class SavePostTest {
 
   @BeforeEach
   void setUp() {
-    testUser = new User(1, UUID.randomUUID(), "Test User", "test@example.com", "testuser", "encodedPassword123", null);
+    testUser = UserFactory.createBasicUser();
   }
 
   @Test
   void save_ShouldSaveAndReturnPost() {
     // Given
-    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, "New Post", "New Body");
-    Post savedPost = new Post(3, savePostDto.uuid(), testUser, "New Post", "New Body");
+    Post newPost = PostFactory.createBasicPost(testUser);
 
-    when(userRepository.findByUuid(savePostDto.userUuid())).thenReturn(Optional.of(testUser));
-    when(postRepository.save(any(Post.class))).thenReturn(savedPost);
+    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(postRepository.save(any(Post.class))).thenReturn(newPost);
 
     // When
+    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, newPost.getTitle(), newPost.getBody());
     Post result = savePost.save(savePostDto);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getId()).isEqualTo(3);
-    assertThat(result.getTitle()).isEqualTo("New Post");
-    assertThat(result.getBody()).isEqualTo("New Body");
-    verify(userRepository, times(1)).findByUuid(savePostDto.userUuid());
+    assertThat(result.getId()).isEqualTo(newPost.getId());
+    assertThat(result.getTitle()).isEqualTo(newPost.getTitle());
+    assertThat(result.getBody()).isEqualTo(newPost.getBody());
+    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
   @Test
   void save_WhenPostAlreadyHasUser_ShouldNotFetchUser() {
     // Given
-    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, "New Post", "New Body");
-    Post savedPost = new Post(3, savePostDto.uuid(), testUser, "New Post", "New Body");
+    Post newPost = PostFactory.createBasicPost(testUser);
 
-    when(userRepository.findByUuid(savePostDto.userUuid())).thenReturn(Optional.of(testUser));
-    when(postRepository.save(any(Post.class))).thenReturn(savedPost);
+    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(postRepository.save(any(Post.class))).thenReturn(newPost);
 
     // When
+    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, newPost.getTitle(), newPost.getBody());
     Post result = savePost.save(savePostDto);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getId()).isEqualTo(3);
-    verify(userRepository, times(1)).findByUuid(savePostDto.userUuid());
+    assertThat(result.getId()).isEqualTo(newPost.getId());
+    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
   @Test
   void save_WhenUserIdProvidedAndUserExists_ShouldSetUserAndSave() {
     // Given
-    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, "New Post", "New Body");
-    Post savedPost = new Post(3, savePostDto.uuid(), testUser, "New Post", "New Body");
+    Post newPost = PostFactory.createBasicPost(testUser);
 
-    when(userRepository.findByUuid(savePostDto.userUuid())).thenReturn(Optional.of(testUser));
-    when(postRepository.save(any(Post.class))).thenReturn(savedPost);
+    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(postRepository.save(any(Post.class))).thenReturn(newPost);
 
     // When
+    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, newPost.getTitle(), newPost.getBody());
     Post result = savePost.save(savePostDto);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getId()).isEqualTo(3);
-    assertThat(result.getTitle()).isEqualTo("New Post");
-    assertThat(result.getBody()).isEqualTo("New Body");
+    assertThat(result.getId()).isEqualTo(newPost.getId());
+    assertThat(result.getTitle()).isEqualTo(newPost.getTitle());
+    assertThat(result.getBody()).isEqualTo(newPost.getBody());
     assertThat(result.getUser()).isEqualTo(testUser);
 
-    verify(userRepository, times(1)).findByUuid(savePostDto.userUuid());
+    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 }
