@@ -36,23 +36,22 @@ class FindUserByUuidTest {
   private FindUserByUuid findUserByUuid;
 
   private User testUser;
-  private User adminUser;
-  private UUID testUuid;
+  private JwtUserDetails testUserDetails;
   private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
-    testUuid = UUID.randomUUID();
-    testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
-    adminUser = UserFactory.createUser(UUID.randomUUID(), "Admin User", "admin@example.com", "admin");
+    testUser = UserFactory.createBasicUser();
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    var adminUser = UserFactory.createAdminUser();
     adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
   void findByUuid_WhenUserExists_ShouldReturnUser() {
     // Given
-    when(userRepository.findByUuid(testUuid)).thenReturn(Optional.of(testUser));
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid, adminUserDetails);
+    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUser.getUuid(), adminUserDetails);
 
     // When
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
@@ -60,11 +59,11 @@ class FindUserByUuidTest {
     // Then
     assertThat(result).isPresent();
     assertThat(result.get()).isEqualTo(testUser);
-    assertThat(result.get().getName()).isEqualTo("Test User");
-    assertThat(result.get().getEmail()).isEqualTo("test@example.com");
-    assertThat(result.get().getUsername()).isEqualTo("testuser");
-    assertThat(result.get().getUuid()).isEqualTo(testUuid);
-    verify(userRepository, times(1)).findByUuid(testUuid);
+    assertThat(result.get().getName()).isEqualTo(testUser.getName());
+    assertThat(result.get().getEmail()).isEqualTo(testUser.getEmail());
+    assertThat(result.get().getUsername()).isEqualTo(testUser.getUsername());
+    assertThat(result.get().getUuid()).isEqualTo(testUser.getUuid());
+    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
   }
 
   @Test
@@ -85,24 +84,24 @@ class FindUserByUuidTest {
   @Test
   void findByUuid_WhenRepositoryThrowsException_ShouldPropagateException() {
     // Given
-    when(userRepository.findByUuid(testUuid))
+    when(userRepository.findByUuid(testUser.getUuid()))
         .thenThrow(new RuntimeException("Database error"));
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid, adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUser.getUuid(), adminUserDetails);
 
     // When & Then
     assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
-    verify(userRepository, times(1)).findByUuid(testUuid);
+    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
   }
 
   @Test
   void findByUuid_WhenUserIsNeitherAdminNorSameUuid_ShouldThrowForbiddenException() {
     // Given
     UUID differentUuid = UUID.randomUUID();
-    var regularUser = UserFactory.createUser("Regular User", "regular@example.com", "regularuser");
-    JwtUserDetails regularUserDetails = UserDetailsFactory.createJwtUserDetails(regularUser);
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(differentUuid, regularUserDetails);
+    // var regularUser = UserFactory.createUser("Regular User", "regular@example.com", "regularuser");
+    // JwtUserDetails regularUserDetails = UserDetailsFactory.createJwtUserDetails(regularUser);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(differentUuid, testUserDetails);
 
     // When & Then
     assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto))
