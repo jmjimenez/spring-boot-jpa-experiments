@@ -1,11 +1,12 @@
 package es.jmjg.experiments.application.post;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,8 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.PostRepository;
+import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,28 +33,21 @@ class FindAllPostsTest {
   @InjectMocks
   private FindAllPosts findAllPosts;
 
-  private Post testPost1;
   private Post testPost2;
   private List<Post> testPosts;
-  private User testUser;
-  private UUID testUuid1;
-  private UUID testUuid2;
-  private Pageable pageable;
 
   @BeforeEach
   void setUp() {
-    testUser = UserFactory.createBasicUser();
-    testUuid1 = UUID.randomUUID();
-    testUuid2 = UUID.randomUUID();
-    testPost1 = new Post(1, testUuid1, testUser, "Test Post 1", "Test Body 1");
-    testPost2 = new Post(2, testUuid2, testUser, "Test Post 2", "Test Body 2");
+    var postOwner = UserFactory.createBasicUser();
+    var testPost1 = PostFactory.createBasicPost(postOwner);
+    testPost2 = PostFactory.createBasicPost(postOwner);
     testPosts = Arrays.asList(testPost1, testPost2);
-    pageable = PageRequest.of(0, 10);
   }
 
   @Test
   void findAll_ShouldReturnAllPosts() {
     // Given
+    Pageable pageable = PageRequest.of(0, 10);
     Page<Post> expectedPage = new PageImpl<>(testPosts, pageable, testPosts.size());
     when(postRepository.findAll(pageable)).thenReturn(expectedPage);
 
@@ -63,7 +57,7 @@ class FindAllPostsTest {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(2);
-    assertThat(result.getContent()).containsExactly(testPost1, testPost2);
+    assertThat(result.getContent()).containsExactlyElementsOf(testPosts);
     assertThat(result.getTotalElements()).isEqualTo(2);
     assertThat(result.getTotalPages()).isEqualTo(1);
     verify(postRepository, times(1)).findAll(pageable);
@@ -72,6 +66,7 @@ class FindAllPostsTest {
   @Test
   void findAll_WhenNoPosts_ShouldReturnEmptyPage() {
     // Given
+    Pageable pageable = PageRequest.of(0, 10);
     Page<Post> expectedPage = new PageImpl<>(List.of(), pageable, 0);
     when(postRepository.findAll(pageable)).thenReturn(expectedPage);
 

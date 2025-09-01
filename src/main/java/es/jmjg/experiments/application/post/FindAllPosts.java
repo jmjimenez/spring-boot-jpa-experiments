@@ -17,6 +17,7 @@ public class FindAllPosts {
     this.postRepository = postRepository;
   }
 
+  //TODO: parameter should be a dto
   @Transactional(readOnly = true)
   public Page<Post> findAll(Pageable pageable) {
     return postRepository.findAll(pageable);
