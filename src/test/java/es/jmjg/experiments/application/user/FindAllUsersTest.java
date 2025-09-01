@@ -40,19 +40,19 @@ class FindAllUsersTest {
   @InjectMocks
   private FindAllUsers findAllUsers;
 
-  private User testUser1;
-  private User testUser2;
-  private User testUser3;
-  private Pageable pageable;
+  private User foundUser1;
+  private User foundUser2;
+  private User foundUser3;
+
   private JwtUserDetails testUserDetails;
   private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
-    testUser1 = UserFactory.createUser("Test User 1", "test1@example.com", "testuser1");
-    testUser2 = UserFactory.createUser("Test User 2", "test2@example.com", "testuser2");
-    testUser3 = UserFactory.createUser("Test User 3", "test3@example.com", "testuser3");
-    pageable = PageRequest.of(0, 10);
+    foundUser1 = UserFactory.createUser("Test User 1", "test1@example.com", "testuser1");
+    foundUser2 = UserFactory.createUser("Test User 2", "test2@example.com", "testuser2");
+    foundUser3 = UserFactory.createUser("Test User 3", "test3@example.com", "testuser3");
+
     var testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
     testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
     var adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
@@ -62,18 +62,19 @@ class FindAllUsersTest {
   @Test
   void findAll_WhenUsersExist_ShouldReturnAllUsers() {
     // Given
-    List<User> expectedUsers = Arrays.asList(testUser1, testUser2, testUser3);
+    List<User> expectedUsers = Arrays.asList(foundUser1, foundUser2, foundUser3);
+    var pageable = PageRequest.of(0, 10);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(3);
-    assertThat(result.getContent()).containsExactlyInAnyOrder(testUser1, testUser2, testUser3);
+    assertThat(result.getContent()).containsExactlyInAnyOrder(foundUser1, foundUser2, foundUser3);
     assertThat(result.getContent().get(0).getName()).isEqualTo("Test User 1");
     assertThat(result.getContent().get(0).getEmail()).isEqualTo("test1@example.com");
     assertThat(result.getContent().get(0).getUsername()).isEqualTo("testuser1");
@@ -91,11 +92,12 @@ class FindAllUsersTest {
   @Test
   void findAll_WhenNoUsersExist_ShouldReturnEmptyPage() {
     // Given
+    var pageable = PageRequest.of(0, 10);
     Page<User> expectedPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -109,18 +111,19 @@ class FindAllUsersTest {
   @Test
   void findAll_WhenSingleUserExists_ShouldReturnSingleUser() {
     // Given
-    List<User> expectedUsers = Collections.singletonList(testUser1);
+    var pageable = PageRequest.of(0, 10);
+    List<User> expectedUsers = Collections.singletonList(foundUser1);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0)).isEqualTo(testUser1);
+    assertThat(result.getContent().get(0)).isEqualTo(foundUser1);
     assertThat(result.getContent().get(0).getName()).isEqualTo("Test User 1");
     assertThat(result.getContent().get(0).getEmail()).isEqualTo("test1@example.com");
     assertThat(result.getContent().get(0).getUsername()).isEqualTo("testuser1");
@@ -132,10 +135,11 @@ class FindAllUsersTest {
   @Test
   void findAll_WhenRepositoryThrowsException_ShouldPropagateException() {
     // Given
+    var pageable = PageRequest.of(0, 10);
     when(userRepository.findAll(pageable)).thenThrow(new RuntimeException("Database error"));
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When & Then
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
     assertThatThrownBy(() -> findAllUsers.findAll(findAllUsersDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
@@ -145,10 +149,11 @@ class FindAllUsersTest {
   @Test
   void findAll_WhenRepositoryReturnsNull_ShouldReturnNull() {
     // Given
+    var pageable = PageRequest.of(0, 10);
     when(userRepository.findAll(pageable)).thenReturn(null);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -159,16 +164,17 @@ class FindAllUsersTest {
   @Test
   void findAll_WhenMultipleCalls_ShouldCallRepositoryEachTime() {
     // Given
-    List<User> firstCallUsers = Arrays.asList(testUser1, testUser2);
-    List<User> secondCallUsers = Arrays.asList(testUser1, testUser2, testUser3);
+    var pageable = PageRequest.of(0, 10);
+    List<User> firstCallUsers = Arrays.asList(foundUser1, foundUser2);
+    List<User> secondCallUsers = Arrays.asList(foundUser1, foundUser2, foundUser3);
     Page<User> firstPage = new PageImpl<>(firstCallUsers, pageable, firstCallUsers.size());
     Page<User> secondPage = new PageImpl<>(secondCallUsers, pageable, secondCallUsers.size());
     when(userRepository.findAll(pageable))
         .thenReturn(firstPage)
         .thenReturn(secondPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
     Page<User> firstResult = findAllUsers.findAll(findAllUsersDto);
     Page<User> secondResult = findAllUsers.findAll(findAllUsersDto);
 
@@ -181,14 +187,15 @@ class FindAllUsersTest {
   @Test
   void findAll_WhenUsersHaveSpecialCharacters_ShouldReturnAllUsers() {
     // Given
+    var pageable = PageRequest.of(0, 10);
     User specialUser1 = UserFactory.createUser("José García", "jose@example.com", "jose_garcia");
     User specialUser2 = UserFactory.createUser("Maria O'Connor", "maria@example.com", "maria_oconnor");
     List<User> expectedUsers = Arrays.asList(specialUser1, specialUser2);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -208,6 +215,7 @@ class FindAllUsersTest {
   @Test
   void findAll_WhenUsersHaveLongNames_ShouldReturnAllUsers() {
     // Given
+    var pageable = PageRequest.of(0, 10);
     User longNameUser = UserFactory.createUser(
         "Dr. John Michael Smith-Jones III, Ph.D., M.D., F.A.C.S.",
         "dr.john.smith-jones@university.edu",
@@ -215,9 +223,9 @@ class FindAllUsersTest {
     List<User> expectedUsers = Collections.singletonList(longNameUser);
     Page<User> expectedPage = new PageImpl<>(expectedUsers, pageable, expectedUsers.size());
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
 
     // When
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -235,9 +243,9 @@ class FindAllUsersTest {
   @Test
   void findAll_WhenAuthenticatedUserIsTestUser_ShouldThrowForbiddenException() {
     // Given
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
-
+    var pageable = PageRequest.of(0, 10);
     // When & Then
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
     assertThatThrownBy(() -> findAllUsers.findAll(findAllUsersDto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("Only admin users can view all users");
