@@ -19,16 +19,19 @@ public final class TestDataSamples {
   public static final UUID NOT_USED_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440072");
 
   // Sample users from Flyway migration data
+  public static final int LEANNE_ID = 1;
   public static final UUID LEANNE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
   public static final String LEANNE_NAME = "Leanne Graham";
   public static final String LEANNE_EMAIL = "leanne.graham@example.com";
   public static final String LEANNE_USERNAME = "leanne_graham";
 
+  public static final int ERVIN_ID = 2;
   public static final UUID ERVIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
   public static final String ERVIN_NAME = "Ervin Howell";
   public static final String ERVIN_EMAIL = "ervin.howell@example.com";
   public static final String ERVIN_USERNAME = "ervin_howell";
 
+  public static final int CLEMENTINE_ID = 3;
   public static final UUID CLEMENTINE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
   public static final String CLEMENTINE_NAME = "Clementine Bauch";
   public static final String CLEMENTINE_EMAIL = "clementine.bauch@example.com";

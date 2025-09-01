@@ -34,31 +34,25 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
 
   @BeforeEach
   void setUp() {
-    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
+    User testUser = UserFactory.createBasicUser();
     testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
-    User adminUser = UserFactory.createUser(TestDataSamples.ADMIN_NAME,
-        TestDataSamples.ADMIN_EMAIL, TestDataSamples.ADMIN_USERNAME);
+    User adminUser = UserFactory.createAdminUser();
     adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
   void findByUuid_WhenUserExists_ShouldReturnUser() {
-    // Given
-    UUID testUuid = UUID.randomUUID();
-    User testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
-    User savedUser = userRepository.save(testUser);
-
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUuid, adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.LEANNE_UUID, adminUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo("Test User");
-    assertThat(result.get().getEmail()).isEqualTo("test@example.com");
-    assertThat(result.get().getUsername()).isEqualTo("testuser");
-    assertThat(result.get().getUuid()).isEqualTo(testUuid);
-    assertThat(result.get().getId()).isEqualTo(savedUser.getId());
+    assertThat(result.get().getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
+    assertThat(result.get().getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
+    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
+    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+    assertThat(result.get().getId()).isEqualTo(TestDataSamples.LEANNE_ID);
   }
 
   @Test
@@ -73,53 +67,42 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
 
   @Test
   void findByUuid_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
-    // Given
-    UUID secondUuid = UUID.randomUUID();
-    User secondUser = UserFactory.createUser(secondUuid, "Second User", "second@example.com", "seconduser");
-
-    UUID thirdUuid = UUID.randomUUID();
-    User thirdUser = UserFactory.createUser(thirdUuid, "Third User", "third@example.com", "thirduser");
-
-    User savedSecondUser = userRepository.save(secondUser);
-    User savedThirdUser = userRepository.save(thirdUser);
-
     // When
-    FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(secondUuid, adminUserDetails);
-    FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(thirdUuid, adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(TestDataSamples.ERVIN_UUID, adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(TestDataSamples.CLEMENTINE_UUID, adminUserDetails);
     Optional<User> firstResult = findUserByUuid.findByUuid(findUserByUuidDto1);
     Optional<User> secondResult = findUserByUuid.findByUuid(findUserByUuidDto2);
 
     // Then
     assertThat(firstResult).isPresent();
-    assertThat(firstResult.get().getName()).isEqualTo(secondUser.getName());
-    assertThat(firstResult.get().getId()).isEqualTo(savedSecondUser.getId());
+    assertThat(firstResult.get().getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
+    assertThat(firstResult.get().getId()).isEqualTo(TestDataSamples.ERVIN_ID);
 
     assertThat(secondResult).isPresent();
-    assertThat(secondResult.get().getName()).isEqualTo(thirdUser.getName());
-    assertThat(secondResult.get().getId()).isEqualTo(savedThirdUser.getId());
+    assertThat(secondResult.get().getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
+    assertThat(secondResult.get().getId()).isEqualTo(TestDataSamples.CLEMENTINE_ID);
   }
 
   @Test
   void findByUuid_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
-    // Given
-    UUID fourthUuid = UUID.randomUUID();
-    User fourthUser = UserFactory.createUser(fourthUuid, "Fourth User", "fourth@example.com", "fourthuser");
-    User savedUser = userRepository.save(fourthUser);
+    // Given - User is already created by Flyway migration
+    User existingUser = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
 
-    savedUser.setName("Updated Test User");
-    savedUser.setEmail("updated@example.com");
-    userRepository.save(savedUser);
+    // Update the user
+    existingUser.setName("Updated Patricia User");
+    existingUser.setEmail("updated.patricia@example.com");
+    userRepository.save(existingUser);
 
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(fourthUuid, adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.PATRICIA_UUID, adminUserDetails);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo(fourthUser.getName());
-    assertThat(result.get().getEmail()).isEqualTo(fourthUser.getEmail());
-    assertThat(result.get().getUsername()).isEqualTo(fourthUser.getUsername());
-    assertThat(result.get().getUuid()).isEqualTo(fourthUuid);
+    assertThat(result.get().getName()).isEqualTo("Updated Patricia User");
+    assertThat(result.get().getEmail()).isEqualTo("updated.patricia@example.com");
+    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.PATRICIA_USERNAME);
+    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.PATRICIA_UUID);
   }
 
   @Test
