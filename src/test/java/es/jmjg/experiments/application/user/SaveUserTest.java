@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +16,7 @@ import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -33,58 +32,55 @@ class SaveUserTest {
   @InjectMocks
   private SaveUser saveUser;
 
-  private UUID testUuid;
-  private SaveUserDto saveUserByAdminDto;
-  private SaveUserDto saveUserByUserDto;
+  private User testUser;
+  private JwtUserDetails testUserDetails;
+  private JwtUserDetails adminUserDetails;
 
   @BeforeEach
   void setUp() {
-    testUuid = UUID.randomUUID();
-    var testUser = UserFactory.createUser(testUuid, "Test User", "test@example.com", "testuser");
-    var testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
-    saveUserByUserDto = new SaveUserDto(
-        testUser.getUuid(),
-        testUser.getName(),
-        testUser.getEmail(),
-        testUser.getUsername(),
-        testUser.getPassword(),
-        testUserDetails);
+    testUser = UserFactory.createBasicUser();
+    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
     
-    var adminUser = UserFactory.createUser(UUID.randomUUID(), "Admin User", "admin@example.com", "admin");
-    var adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
-    saveUserByAdminDto = new SaveUserDto(
-        adminUser.getUuid(),
-        adminUser.getName(),
-        adminUser.getEmail(),
-        adminUser.getUsername(),
-        adminUser.getPassword(),
-        adminUserDetails);
+    var adminUser = UserFactory.createAdminUser();
+    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
   void save_WhenAuthenticatedUserIsAdmin_ShouldSaveAndReturnUser() {
     // Given
-    User savedUser = UserFactory.createUser(1, testUuid, "Test User",
-        "test@example.com", "testuser");
-    when(userRepository.save(any(User.class))).thenReturn(savedUser);
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
 
     // When
-    User result = saveUser.save(saveUserByAdminDto);
+    var saveUserDto = new SaveUserDto(
+        testUser.getUuid(),
+        testUser.getName(),
+        testUser.getEmail(),
+        testUser.getUsername(),
+        testUser.getPassword(),
+        adminUserDetails);
+    User result = saveUser.save(saveUserDto);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getId()).isEqualTo(1);
-    assertThat(result.getName()).isEqualTo("Test User");
-    assertThat(result.getEmail()).isEqualTo("test@example.com");
-    assertThat(result.getUsername()).isEqualTo("testuser");
-    assertThat(result.getUuid()).isEqualTo(testUuid);
+    assertThat(result.getId()).isEqualTo(testUser.getId());
+    assertThat(result.getName()).isEqualTo(testUser.getName());
+    assertThat(result.getEmail()).isEqualTo(testUser.getEmail());
+    assertThat(result.getUsername()).isEqualTo(testUser.getUsername());
+    assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
     verify(userRepository, times(1)).save(any(User.class));
   }
 
   @Test
   void save_WhenAuthenticatedUserIsNotAdmin_ShouldThrowForbiddenException() {
     // When & Then
-    assertThatThrownBy(() -> saveUser.save(saveUserByUserDto))
+    var saveUserDto = new SaveUserDto(
+        testUser.getUuid(),
+        testUser.getName(),
+        testUser.getEmail(),
+        testUser.getUsername(),
+        testUser.getPassword(),
+        testUserDetails);
+    assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("Only administrators can create users");
   }
@@ -92,33 +88,22 @@ class SaveUserTest {
   @Test
   void save_WhenUserHasValidData_ShouldSaveAndReturnUser() {
     // Given
-    User savedUser = UserFactory.createUser(1, testUuid, "Test User",
-        "test@example.com", "testuser");
-    when(userRepository.save(any(User.class))).thenReturn(savedUser);
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
 
     // When
-    User result = saveUser.save(saveUserByAdminDto);
+    var saveUserDto = new SaveUserDto(
+        testUser.getUuid(),
+        testUser.getName(),
+        testUser.getEmail(),
+        testUser.getUsername(),
+        testUser.getPassword(),
+        adminUserDetails);
+    User result = saveUser.save(saveUserDto);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getId()).isEqualTo(1);
-    assertThat(result.getUuid()).isEqualTo(testUuid);
-    verify(userRepository, times(1)).save(any(User.class));
-  }
-
-  @Test
-  void save_WhenUserHasNoId_ShouldSaveAndReturnUserWithGeneratedId() {
-    // Given
-    User savedUser = UserFactory.createUser(1, testUuid, "Test User",
-        "test@example.com", "testuser");
-    when(userRepository.save(any(User.class))).thenReturn(savedUser);
-
-    // When
-    User result = saveUser.save(saveUserByAdminDto);
-
-    // Then
-    assertThat(result).isNotNull();
-    assertThat(result.getId()).isEqualTo(1);
+    assertThat(result.getId()).isEqualTo(testUser.getId());
+    assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
     verify(userRepository, times(1)).save(any(User.class));
   }
 
@@ -129,7 +114,14 @@ class SaveUserTest {
         .thenThrow(new RuntimeException("Database error"));
 
     // When & Then
-    assertThatThrownBy(() -> saveUser.save(saveUserByAdminDto))
+    var saveUserDto = new SaveUserDto(
+        testUser.getUuid(),
+        testUser.getName(),
+        testUser.getEmail(),
+        testUser.getUsername(),
+        testUser.getPassword(),
+        adminUserDetails);
+    assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
     verify(userRepository, times(1)).save(any(User.class));
