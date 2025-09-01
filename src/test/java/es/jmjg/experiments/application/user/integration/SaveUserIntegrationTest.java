@@ -1,6 +1,7 @@
 package es.jmjg.experiments.application.user.integration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -8,6 +9,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.SaveUser;
@@ -16,6 +18,7 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -40,16 +43,10 @@ class SaveUserIntegrationTest extends BaseIntegration {
 
   @Test
   void save_WhenUserIsValid_ShouldSaveAndReturnUser() {
-    User userToSave = UserFactory.createUser("Test User 01", "test01@example.com", "testuser01");
+    User userToSave = UserFactory.createUser("User 02", "user02@example.com", "user02");
     UUID originalUuid = userToSave.getUuid();
 
-    SaveUserDto saveUserDto = new SaveUserDto(
-        userToSave.getUuid(),
-        userToSave.getName(),
-        userToSave.getEmail(),
-        userToSave.getUsername(),
-        userToSave.getPassword(),
-        adminUserDetails);
+    SaveUserDto saveUserDto = generateSaveUserDto(userToSave, adminUserDetails);
 
     User result = saveUser.save(saveUserDto);
 
@@ -70,15 +67,9 @@ class SaveUserIntegrationTest extends BaseIntegration {
 
   @Test
   void save_WhenUserIsNotAdmin_ShouldThrowForbiddenException() {
-    User userToSave = UserFactory.createUser("Test User 01", "test01@example.com", "testuser01");
-    
-    SaveUserDto saveUserDto = new SaveUserDto(
-        userToSave.getUuid(),
-        userToSave.getName(),
-        userToSave.getEmail(),
-        userToSave.getUsername(),
-        userToSave.getPassword(),
-        testUserDetails);
+    User userToSave = UserFactory.createBasicUser();
+
+    SaveUserDto saveUserDto = generateSaveUserDto(userToSave, testUserDetails);
 
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(Forbidden.class)
@@ -87,15 +78,9 @@ class SaveUserIntegrationTest extends BaseIntegration {
 
   @Test
   void save_WhenUserHasValidData_ShouldSaveAndReturnUser() {
-    User userToSave = UserFactory.createUser("Test User 02", "test02@example.com", "testuser02");
+    User userToSave = UserFactory.createUser("User 03", "user03@example.com", "user03");
 
-    SaveUserDto saveUserDto = new SaveUserDto(
-        userToSave.getUuid(),
-        userToSave.getName(),
-        userToSave.getEmail(),
-        userToSave.getUsername(),
-        userToSave.getPassword(),
-        adminUserDetails);
+    SaveUserDto saveUserDto = generateSaveUserDto(userToSave, adminUserDetails);
 
     User result = saveUser.save(saveUserDto);
 
@@ -112,50 +97,12 @@ class SaveUserIntegrationTest extends BaseIntegration {
   }
 
   @Test
-  void save_WhenUserHasNoId_ShouldSaveAndReturnUserWithGeneratedId() {
-    User userToSave = UserFactory.createUser("Test User 03", "test03@example.com", "testuser03");
-
-    SaveUserDto saveUserDto = new SaveUserDto(
-        userToSave.getUuid(),
-        userToSave.getName(),
-        userToSave.getEmail(),
-        userToSave.getUsername(),
-        userToSave.getPassword(),
-        adminUserDetails);
-
-    User result = saveUser.save(saveUserDto);
-
-    assertThat(result).isNotNull();
-    assertThat(result.getId()).isNotNull();
-    assertThat(result.getName()).isEqualTo(userToSave.getName());
-    assertThat(result.getEmail()).isEqualTo(userToSave.getEmail());
-    assertThat(result.getUsername()).isEqualTo(userToSave.getUsername());
-
-    Optional<User> dbUser = userRepository.findById(result.getId());
-    assertThat(dbUser).isPresent();
-    assertThat(dbUser.get().getName()).isEqualTo(userToSave.getName());
-  }
-
-  @Test
   void save_WhenMultipleUsers_ShouldSaveAllUsersWithDifferentIds() {
     User user1 = UserFactory.createUser("User 04", "user04@example.com", "user04");
     User user2 = UserFactory.createUser("User 05", "user05@example.com", "user05");
 
-    SaveUserDto saveUserDto1 = new SaveUserDto(
-        user1.getUuid(),
-        user1.getName(),
-        user1.getEmail(),
-        user1.getUsername(),
-        user1.getPassword(),
-        adminUserDetails);
-
-    SaveUserDto saveUserDto2 = new SaveUserDto(
-        user2.getUuid(),
-        user2.getName(),
-        user2.getEmail(),
-        user2.getUsername(),
-        user2.getPassword(),
-        adminUserDetails);
+    SaveUserDto saveUserDto1 = generateSaveUserDto(user1, adminUserDetails);
+    SaveUserDto saveUserDto2 = generateSaveUserDto(user2, adminUserDetails);
 
     User result1 = saveUser.save(saveUserDto1);
     User result2 = saveUser.save(saveUserDto2);
@@ -174,61 +121,57 @@ class SaveUserIntegrationTest extends BaseIntegration {
 
   @Test
   void save_WhenUserWithExistingUuid_ShouldThrowException() {
-    User user1 = UserFactory.createUser("User 06", "user06@example.com", "user06");
-    User user2 = UserFactory.createUser("User 07", "user07@example.com", "user07");
+    // Given - Try to create a user with an existing UUID from TestDataSamples
+    User userWithExistingUuid = UserFactory.createUser(
+        TestDataSamples.LEANNE_UUID,
+        "Duplicate User",
+        "duplicate@example.com",
+        "duplicate_user");
 
-    User existingUser = userRepository.save(user1);
-    user2.setUuid(existingUser.getUuid());
+    SaveUserDto saveUserDto = generateSaveUserDto(userWithExistingUuid, adminUserDetails);
 
-    SaveUserDto saveUserDto = new SaveUserDto(
-        user2.getUuid(),
-        user2.getName(),
-        user2.getEmail(),
-        user2.getUsername(),
-        user2.getPassword(),
-        adminUserDetails);
-
+    // When & Then
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
   }
 
   @Test
   void save_WhenUserWithExistingEmail_ShouldThrowException() {
-    User user1 = UserFactory.createUser("User 08", "user08@example.com", "user08");
-    User user2 = UserFactory.createUser("User 09", "user09@example.com", "user09");
+    // Given - Try to create a user with an existing email from TestDataSamples
+    User userWithExistingEmail = UserFactory.createUser(
+        "Duplicate User",
+        TestDataSamples.LEANNE_EMAIL,
+        "duplicate_user");
 
-    userRepository.save(user1);
-    user2.setEmail(user1.getEmail());
+    SaveUserDto saveUserDto = generateSaveUserDto(userWithExistingEmail, adminUserDetails);
 
-    SaveUserDto saveUserDto = new SaveUserDto(
-        user2.getUuid(),
-        user2.getName(),
-        user2.getEmail(),
-        user2.getUsername(),
-        user2.getPassword(),
-        adminUserDetails);
-
+    // When & Then
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
-        .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+        .isInstanceOf(DataIntegrityViolationException.class);
   }
 
   @Test
   void save_WhenUserWithExistingUsername_ShouldThrowException() {
-    User user1 = UserFactory.createUser("User 10", "user10@example.com", "user10");
-    User user2 = UserFactory.createUser("User 11", "user11@example.com", "user11");
+    // Given - Try to create a user with an existing username from TestDataSamples
+    User userWithExistingUsername = UserFactory.createUser(
+        "Duplicate User",
+        "duplicate@example.com",
+        TestDataSamples.LEANNE_USERNAME);
 
-    userRepository.save(user1);
-    user2.setUsername(user1.getUsername());
+    SaveUserDto saveUserDto = generateSaveUserDto(userWithExistingUsername, adminUserDetails);
 
-    SaveUserDto saveUserDto = new SaveUserDto(
-        user2.getUuid(),
-        user2.getName(),
-        user2.getEmail(),
-        user2.getUsername(),
-        user2.getPassword(),
-        adminUserDetails);
-
+    // When & Then
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
-        .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+        .isInstanceOf(DataIntegrityViolationException.class);
+  }
+
+  private SaveUserDto generateSaveUserDto(User user, JwtUserDetails userDetails) {
+    return new SaveUserDto(
+        user.getUuid(),
+        user.getName(),
+        user.getEmail(),
+        user.getUsername(),
+        user.getPassword(),
+        userDetails);
   }
 }
