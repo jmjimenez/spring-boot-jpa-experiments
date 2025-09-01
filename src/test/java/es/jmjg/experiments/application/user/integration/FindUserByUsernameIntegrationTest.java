@@ -29,7 +29,6 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
   private JwtUserDetails testUserDetails;
   private JwtUserDetails adminUserDetails;
-  private JwtUserDetails leanneUserDetails;
 
   @BeforeEach
   void setUp() {
@@ -37,9 +36,6 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
     User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
     adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
-    User leanneUser = UserFactory.createUser(TestDataSamples.LEANNE_NAME,
-        TestDataSamples.LEANNE_EMAIL, TestDataSamples.LEANNE_USERNAME);
-    leanneUserDetails = UserDetailsFactory.createJwtUserDetails(leanneUser);
   }
 
   @Test
@@ -165,6 +161,8 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenAuthenticatedUserRequestsOwnData_ShouldReturnUser() {
     // Given - testUser requesting their own data
+    User leanneUser = userRepository.findByUsername(TestDataSamples.LEANNE_USERNAME).orElseThrow();
+    JwtUserDetails leanneUserDetails = UserDetailsFactory.createJwtUserDetails(leanneUser);
     String leanneUsername = leanneUserDetails.getUsername();
 
     // When
