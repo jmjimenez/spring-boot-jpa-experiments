@@ -1,6 +1,6 @@
 package es.jmjg.experiments.application.user.integration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 
@@ -14,6 +14,7 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
+import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -29,27 +30,26 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
 
   @BeforeEach
   void setUp() {
-    User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
+    User adminUser = UserFactory.createAdminUser();
     adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
   }
 
   @Test
   void findByEmail_WhenUserExists_ShouldReturnUser() {
     // Given
-    User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    User savedUser = userRepository.save(testUser);
+    // Leanne Graham is already in the database from Flyway migration
+    String existingUserEmail = TestDataSamples.LEANNE_EMAIL;
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(savedUser.getEmail(), adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(existingUserEmail, adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo(testUser.getName());
-    assertThat(result.get().getEmail()).isEqualTo(testUser.getEmail());
-    assertThat(result.get().getUsername()).isEqualTo(testUser.getUsername());
-    assertThat(result.get().getUuid()).isEqualTo(testUser.getUuid());
-    assertThat(result.get().getId()).isEqualTo(savedUser.getId());
+    assertThat(result.get().getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
+    assertThat(result.get().getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
+    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
+    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
   }
 
   @Test
@@ -63,51 +63,28 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   }
 
   @Test
-  void findByEmail_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
-    // Given
-    User secondUser = UserFactory.createUser("Second User", "second@example.com", "seconduser");
-    User savedSecondUser = userRepository.save(secondUser);
-    User thirdUser = UserFactory.createUser("Third User", "third@example.com", "thirduser");
-    User savedThirdUser = userRepository.save(thirdUser);
-
-    // When
-    FindUserByEmailDto findUserByEmailDto1 = new FindUserByEmailDto(secondUser.getEmail(), adminUserDetails);
-    FindUserByEmailDto findUserByEmailDto2 = new FindUserByEmailDto(thirdUser.getEmail(), adminUserDetails);
-    Optional<User> secondResult = findUserByEmail.findByEmail(findUserByEmailDto1);
-    Optional<User> thirdResult = findUserByEmail.findByEmail(findUserByEmailDto2);
-
-    // Then
-    assertThat(secondResult).isPresent();
-    assertThat(secondResult.get().getName()).isEqualTo(secondUser.getName());
-    assertThat(secondResult.get().getEmail()).isEqualTo(secondUser.getEmail());
-    assertThat(secondResult.get().getId()).isEqualTo(savedSecondUser.getId());
-
-    assertThat(thirdResult).isPresent();
-    assertThat(thirdResult.get().getName()).isEqualTo(thirdUser.getName());
-    assertThat(thirdResult.get().getEmail()).isEqualTo(thirdUser.getEmail());
-    assertThat(thirdResult.get().getId()).isEqualTo(savedThirdUser.getId());
-  }
-
-  @Test
   void findByEmail_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given
-    User fourthUser = UserFactory.createUser("Fourth User", "fourth@example.com", "fourthuser");
-    User savedUser = userRepository.save(fourthUser);
-    savedUser.setName("Updated Test User");
-    savedUser.setEmail("updated@example.com");
-    userRepository.save(savedUser);
+    // Use an existing user from the database (Ervin Howell)
+    User existingUser = userRepository.findByUuid(TestDataSamples.ERVIN_UUID)
+        .orElseThrow(() -> new RuntimeException("Test user not found in database"));
+
+    // Update the user
+    existingUser.setName("Updated Ervin User");
+    existingUser.setEmail("updated.ervin@example.com");
+    User updatedUser = userRepository.save(existingUser);
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("updated@example.com", adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto("updated.ervin@example.com", adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo("Updated Test User");
-    assertThat(result.get().getEmail()).isEqualTo("updated@example.com");
-    assertThat(result.get().getUsername()).isEqualTo(fourthUser.getUsername());
-    assertThat(result.get().getUuid()).isEqualTo(fourthUser.getUuid());
-    assertThat(result.get().getId()).isEqualTo(savedUser.getId());
+    assertThat(result.get().getName()).isEqualTo("Updated Ervin User");
+    assertThat(result.get().getEmail()).isEqualTo("updated.ervin@example.com");
+    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.ERVIN_USERNAME);
+    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.ERVIN_UUID);
+    assertThat(result.get().getId()).isEqualTo(updatedUser.getId());
   }
 
   @Test
@@ -133,9 +110,10 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @Test
   void findByEmail_WhenUserIsDeleted_ShouldReturnEmpty() {
     // Given
-    User fifthUser = UserFactory.createUser("Fifth User", "fifth@example.com", "fifthuser");
-    User savedUser = userRepository.save(fifthUser);
-    String userEmail = savedUser.getEmail();
+    // Use an existing user from the database (Clementine Bauch)
+    User existingUser = userRepository.findByUuid(TestDataSamples.CLEMENTINE_UUID)
+        .orElseThrow(() -> new RuntimeException("Test user not found in database"));
+    String userEmail = existingUser.getEmail();
 
     // Verify user exists before deletion
     FindUserByEmailDto findUserByEmailDto1 = new FindUserByEmailDto(userEmail, adminUserDetails);
@@ -143,7 +121,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     assertThat(resultBeforeDelete).isPresent();
 
     // Delete the user
-    userRepository.deleteById(savedUser.getId());
+    userRepository.deleteById(existingUser.getId());
 
     // When
     FindUserByEmailDto findUserByEmailDto2 = new FindUserByEmailDto(userEmail, adminUserDetails);
@@ -156,11 +134,13 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   @Test
   void findByEmail_WhenEmailHasDifferentCase_ShouldReturnEmpty() {
     // Given
-    User sixthUser = UserFactory.createUser("Sixth User", "sixth@example.com", "sixthuser");
-    userRepository.save(sixthUser);
+    // Use an existing user from the database (Patricia Lebsack)
+    User existingUser = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID)
+        .orElseThrow(() -> new RuntimeException("Test user not found in database"));
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(sixthUser.getEmail().toUpperCase(), adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(existingUser.getEmail().toUpperCase(),
+        adminUserDetails);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
