@@ -223,7 +223,7 @@ public class UserController {
   void deleteByUuid(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @PathVariable UUID uuid) {
-    DeleteUserDto deleteUserDto = new DeleteUserDto(uuid, userDetails);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
     deleteUser.delete(deleteUserDto);
   }
 }

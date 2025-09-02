@@ -19,7 +19,7 @@ public class DeleteUser {
 
   @Transactional
   public void delete(DeleteUserDto deleteUserDto) {
-    if (!deleteUserDto.userDetails().isAdmin()) {
+    if (!deleteUserDto.authenticatedUser().isAdmin()) {
       throw new Forbidden("Only admin users can delete users");
     }
 
