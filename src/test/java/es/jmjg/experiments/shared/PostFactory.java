@@ -8,7 +8,6 @@ import es.jmjg.experiments.application.post.dto.SavePostDto;
 import es.jmjg.experiments.application.post.dto.UpdatePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-
 public class PostFactory {
 
   public static Post createBasicPost(User user) {
@@ -77,7 +76,7 @@ public class PostFactory {
         UUID.randomUUID(),
         title,
         body,
-        user.getUuid(),
+        UserDetailsFactory.createAuthenticatedUserDto(user),
         List.of());
   }
 

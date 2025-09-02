@@ -15,6 +15,7 @@ import es.jmjg.experiments.application.post.dto.SavePostDto;
 import es.jmjg.experiments.application.post.dto.UpdatePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagNameResponseDto;
@@ -135,12 +136,12 @@ public class PostMapper {
     return createPostFromDto(postRequestDto, this::createPostFromUpdateDto);
   }
 
-  public SavePostDto toSavePostDto(SavePostRequestDto postRequestDto, UUID userUuid) {
+  public SavePostDto toSavePostDto(SavePostRequestDto postRequestDto, AuthenticatedUserDto authenticatedUser) {
     return new SavePostDto(
         postRequestDto.getUuid(),
         postRequestDto.getTitle(),
         postRequestDto.getBody(),
-        userUuid,
+        authenticatedUser,
         Optional.ofNullable(postRequestDto.getTagNames()).orElse(List.of()));
   }
 

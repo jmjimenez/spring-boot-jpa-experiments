@@ -144,8 +144,7 @@ public class PostController {
       @Parameter(description = "Post data to create", required = true) @RequestBody @Valid SavePostRequestDto postDto,
       @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    UUID userUuid = userDetails.id;
-    var savePostDto = postMapper.toSavePostDto(postDto, userUuid);
+    var savePostDto = postMapper.toSavePostDto(postDto, userMapper.toAuthenticatedUserDto(userDetails));
     Post savedPost = savePost.save(savePostDto);
     SavePostResponseDto responseDto = postMapper.toSavePostResponseDto(savedPost);
 

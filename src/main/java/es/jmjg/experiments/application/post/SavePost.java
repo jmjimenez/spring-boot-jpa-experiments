@@ -36,16 +36,16 @@ public class SavePost {
     post.setBody(savePostDto.body());
 
     // Validate that a user is required for creating a post
-    if (savePostDto.userUuid() == null) {
+    if (savePostDto.authenticatedUser() == null) {
       throw new InvalidRequest("Post must have a user");
     }
 
     // Set up the user relationship
-    Optional<User> user = userRepository.findByUuid(savePostDto.userUuid());
+    Optional<User> user = userRepository.findByUuid(savePostDto.authenticatedUser().id());
     if (user.isPresent()) {
       post.setUser(user.get());
     } else {
-      throw new UserNotFound(savePostDto.userUuid());
+      throw new UserNotFound(savePostDto.authenticatedUser().id());
     }
 
     // Process tags if provided
