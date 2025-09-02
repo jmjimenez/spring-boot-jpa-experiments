@@ -22,7 +22,7 @@ public class SaveUser {
 
   @Transactional
   public User save(SaveUserDto saveUserDto) {
-    if (!saveUserDto.userDetails().isAdmin()) {
+    if (!saveUserDto.authenticatedUser().isAdmin()) {
       throw new Forbidden("Only administrators can create users");
     }
 

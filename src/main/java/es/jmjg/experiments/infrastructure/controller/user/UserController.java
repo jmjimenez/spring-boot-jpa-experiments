@@ -174,7 +174,7 @@ public class UserController {
         userDto.getEmail(),
         userDto.getUsername(),
         userDto.getPassword(),
-        userDetails);
+        userMapper.toAuthenticatedUserDto(userDetails));
     User savedUser = saveUser.save(saveUserDto);
     SaveUserResponseDto responseDto = userMapper.toSaveUserResponseDto(savedUser);
 

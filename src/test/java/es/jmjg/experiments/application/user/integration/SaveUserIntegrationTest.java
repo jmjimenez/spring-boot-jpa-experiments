@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
-import java.util.UUID;
+import java.util.UUID;  
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
@@ -30,15 +30,15 @@ class SaveUserIntegrationTest extends BaseIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
-  private JwtUserDetails testUserDetails;
-  private JwtUserDetails adminUserDetails;
+  private AuthenticatedUserDto authenticatedTestUser;
+  private AuthenticatedUserDto authenticatedAdminUser;
 
   @BeforeEach
   void setUp() {
     User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
   }
 
   @Test
@@ -46,7 +46,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
     User userToSave = UserFactory.createUser("User 02", "user02@example.com", "user02");
     UUID originalUuid = userToSave.getUuid();
 
-    SaveUserDto saveUserDto = generateSaveUserDto(userToSave, adminUserDetails);
+    SaveUserDto saveUserDto = generateSaveUserDto(userToSave, authenticatedAdminUser);
 
     User result = saveUser.save(saveUserDto);
 
@@ -69,7 +69,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
   void save_WhenUserIsNotAdmin_ShouldThrowForbiddenException() {
     User userToSave = UserFactory.createBasicUser();
 
-    SaveUserDto saveUserDto = generateSaveUserDto(userToSave, testUserDetails);
+    SaveUserDto saveUserDto = generateSaveUserDto(userToSave, authenticatedTestUser);
 
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(Forbidden.class)
@@ -80,7 +80,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
   void save_WhenUserHasValidData_ShouldSaveAndReturnUser() {
     User userToSave = UserFactory.createUser("User 03", "user03@example.com", "user03");
 
-    SaveUserDto saveUserDto = generateSaveUserDto(userToSave, adminUserDetails);
+    SaveUserDto saveUserDto = generateSaveUserDto(userToSave, authenticatedAdminUser);
 
     User result = saveUser.save(saveUserDto);
 
@@ -101,8 +101,8 @@ class SaveUserIntegrationTest extends BaseIntegration {
     User user1 = UserFactory.createUser("User 04", "user04@example.com", "user04");
     User user2 = UserFactory.createUser("User 05", "user05@example.com", "user05");
 
-    SaveUserDto saveUserDto1 = generateSaveUserDto(user1, adminUserDetails);
-    SaveUserDto saveUserDto2 = generateSaveUserDto(user2, adminUserDetails);
+    SaveUserDto saveUserDto1 = generateSaveUserDto(user1, authenticatedAdminUser);
+    SaveUserDto saveUserDto2 = generateSaveUserDto(user2, authenticatedAdminUser);
 
     User result1 = saveUser.save(saveUserDto1);
     User result2 = saveUser.save(saveUserDto2);
@@ -128,7 +128,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         "duplicate@example.com",
         "duplicate_user");
 
-    SaveUserDto saveUserDto = generateSaveUserDto(userWithExistingUuid, adminUserDetails);
+    SaveUserDto saveUserDto = generateSaveUserDto(userWithExistingUuid, authenticatedAdminUser);
 
     // When & Then
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
@@ -143,7 +143,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
         TestDataSamples.LEANNE_EMAIL,
         "duplicate_user");
 
-    SaveUserDto saveUserDto = generateSaveUserDto(userWithExistingEmail, adminUserDetails);
+    SaveUserDto saveUserDto = generateSaveUserDto(userWithExistingEmail, authenticatedAdminUser);
 
     // When & Then
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
@@ -158,20 +158,20 @@ class SaveUserIntegrationTest extends BaseIntegration {
         "duplicate@example.com",
         TestDataSamples.LEANNE_USERNAME);
 
-    SaveUserDto saveUserDto = generateSaveUserDto(userWithExistingUsername, adminUserDetails);
+    SaveUserDto saveUserDto = generateSaveUserDto(userWithExistingUsername, authenticatedAdminUser);
 
     // When & Then
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(DataIntegrityViolationException.class);
   }
 
-  private SaveUserDto generateSaveUserDto(User user, JwtUserDetails userDetails) {
+  private SaveUserDto generateSaveUserDto(User user, AuthenticatedUserDto authenticatedUser) {
     return new SaveUserDto(
         user.getUuid(),
         user.getName(),
         user.getEmail(),
         user.getUsername(),
         user.getPassword(),
-        userDetails);
+        authenticatedUser);
   }
 }

@@ -16,7 +16,7 @@ import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -33,16 +33,16 @@ class SaveUserTest {
   private SaveUser saveUser;
 
   private User testUser;
-  private JwtUserDetails testUserDetails;
-  private JwtUserDetails adminUserDetails;
+  private AuthenticatedUserDto authenticatedTestUser;
+  private AuthenticatedUserDto authenticatedAdminUser;
 
   @BeforeEach
   void setUp() {
     testUser = UserFactory.createBasicUser();
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
-    
+    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
+
     var adminUser = UserFactory.createAdminUser();
-    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
+    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test
@@ -57,7 +57,7 @@ class SaveUserTest {
         testUser.getEmail(),
         testUser.getUsername(),
         testUser.getPassword(),
-        adminUserDetails);
+        authenticatedAdminUser);
     User result = saveUser.save(saveUserDto);
 
     // Then
@@ -79,7 +79,7 @@ class SaveUserTest {
         testUser.getEmail(),
         testUser.getUsername(),
         testUser.getPassword(),
-        testUserDetails);
+        authenticatedTestUser);
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("Only administrators can create users");
@@ -97,7 +97,7 @@ class SaveUserTest {
         testUser.getEmail(),
         testUser.getUsername(),
         testUser.getPassword(),
-        adminUserDetails);
+        authenticatedAdminUser);
     User result = saveUser.save(saveUserDto);
 
     // Then
@@ -120,7 +120,7 @@ class SaveUserTest {
         testUser.getEmail(),
         testUser.getUsername(),
         testUser.getPassword(),
-        adminUserDetails);
+        authenticatedAdminUser);
     assertThatThrownBy(() -> saveUser.save(saveUserDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
