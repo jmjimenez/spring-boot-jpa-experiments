@@ -17,11 +17,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -35,15 +35,15 @@ class FindUserByEmailTest {
   private FindUserByEmail findUserByEmail;
 
   private User testUser;
-  private JwtUserDetails testUserDetails;
-  private JwtUserDetails adminUserDetails;
+  private AuthenticatedUserDto authenticatedTestUser;
+  private AuthenticatedUserDto authenticatedAdminUser;
 
   @BeforeEach
   void setUp() {
     testUser = UserFactory.createBasicUser();
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
     var adminUser = UserFactory.createAdminUser();
-    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
+    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test
@@ -52,7 +52,7 @@ class FindUserByEmailTest {
     when(userRepository.findByEmail(testUser.getEmail())).thenReturn(Optional.of(testUser));
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testUser.getEmail(), adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testUser.getEmail(), authenticatedAdminUser);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -71,7 +71,7 @@ class FindUserByEmailTest {
     when(userRepository.findByEmail(nonExistentEmail)).thenReturn(Optional.empty());
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(nonExistentEmail, adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(nonExistentEmail, authenticatedAdminUser);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -86,7 +86,7 @@ class FindUserByEmailTest {
         .thenThrow(new RuntimeException("Database error"));
 
     // When & Then
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testUser.getEmail(), adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testUser.getEmail(), authenticatedAdminUser);
     assertThatThrownBy(() -> findUserByEmail.findByEmail(findUserByEmailDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
@@ -101,7 +101,7 @@ class FindUserByEmailTest {
     when(userRepository.findByEmail(emptyEmail)).thenReturn(Optional.empty());
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(emptyEmail, adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(emptyEmail, authenticatedAdminUser);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -116,7 +116,7 @@ class FindUserByEmailTest {
     when(userRepository.findByEmail(blankEmail)).thenReturn(Optional.empty());
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(blankEmail, adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(blankEmail, authenticatedAdminUser);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -131,7 +131,7 @@ class FindUserByEmailTest {
     when(userRepository.findByEmail(upperCaseEmail)).thenReturn(Optional.empty());
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(upperCaseEmail, adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(upperCaseEmail, authenticatedAdminUser);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
@@ -142,7 +142,7 @@ class FindUserByEmailTest {
   @Test
   void findByEmail_WhenAuthenticatedUserIsNotAdmin_ShouldThrowForbidden() {
     // When & Then
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testUser.getEmail(), testUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testUser.getEmail(), authenticatedTestUser);
     assertThatThrownBy(() -> findUserByEmail.findByEmail(findUserByEmailDto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("Only admin users can search users by email");
@@ -157,7 +157,7 @@ class FindUserByEmailTest {
     when(userRepository.findByEmail(specialEmail)).thenReturn(Optional.of(specialUser));
 
     // When
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(specialEmail, adminUserDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(specialEmail, authenticatedAdminUser);
     Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then

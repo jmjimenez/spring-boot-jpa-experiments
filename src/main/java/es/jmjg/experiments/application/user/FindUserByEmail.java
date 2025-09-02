@@ -21,7 +21,7 @@ public class FindUserByEmail {
 
   @Transactional(readOnly = true)
   public Optional<User> findByEmail(FindUserByEmailDto findUserByEmailDto) {
-    if (!findUserByEmailDto.userDetails().isAdmin()) {
+    if (!findUserByEmailDto.authenticatedUser().isAdmin()) {
       throw new Forbidden("Only admin users can search users by email");
     }
 

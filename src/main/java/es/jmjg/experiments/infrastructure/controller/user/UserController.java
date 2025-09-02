@@ -135,7 +135,7 @@ public class UserController {
   FindUserByEmailResponseDto findByEmail(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "Email address to search for") @RequestParam String email) {
-    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(email, userDetails);
+    FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(email, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByEmail.findByEmail(findUserByEmailDto).orElseThrow(UserNotFoundException::new);
     return userMapper.toFindUserByEmailResponseDto(user);
   }
