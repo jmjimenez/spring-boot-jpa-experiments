@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -36,12 +36,12 @@ class UpdateUserTest {
 
   private User existingUser;
   private User testUser;
-  private JwtUserDetails testUserDetails;
+  private AuthenticatedUserDto authenticatedTestUser;
 
   @BeforeEach
   void setUp() {
     testUser = UserFactory.createBasicUser();
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
     existingUser = UserFactory.createUser(1, testUser.getUuid(), "Old Name", "old@example.com", "olduser");
   }
 
@@ -52,7 +52,7 @@ class UpdateUserTest {
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var updateUserDto = createUpdateUserDto(testUser.getUuid(), testUserDetails, "New Name", "new@example.com");
+    var updateUserDto = createUpdateUserDto(testUser.getUuid(), authenticatedTestUser, "New Name", "new@example.com");
     User result = updateUser.update(updateUserDto);
 
     // Then
@@ -66,8 +66,8 @@ class UpdateUserTest {
   void update_WhenUserExistsAndAuthenticatedUserIsAdmin_ShouldUpdateFields() {
     // Given
     var adminUser = UserFactory.createAdminUser();
-    var adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
-    var updateUserDto = createUpdateUserDto(testUser.getUuid(), adminUserDetails, "New Name", "new@example.com");
+    var authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    var updateUserDto = createUpdateUserDto(testUser.getUuid(), authenticatedAdminUser, "New Name", "new@example.com");
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(existingUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -86,8 +86,8 @@ class UpdateUserTest {
   void update_WhenUserExistsAndIsNotAuthenticatedUser_ShouldNotUpdateFields() {
     // Given
     var otherUser = UserFactory.createBasicUser();
-    var otherUserDetails = UserDetailsFactory.createJwtUserDetails(otherUser);
-    var updateUserDto = createUpdateUserDto(testUser.getUuid(), otherUserDetails, "New Name", "new@example.com");
+    var authenticatedOtherUser = UserDetailsFactory.createAuthenticatedUserDto(otherUser);
+    var updateUserDto = createUpdateUserDto(testUser.getUuid(), authenticatedOtherUser, "New Name", "new@example.com");
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(existingUser));
 
@@ -102,7 +102,7 @@ class UpdateUserTest {
   void update_WhenUserDoesNotExist_ShouldThrow() {
     // Given
     var newId = UUID.randomUUID();
-    var updateUserDto = createUpdateUserDto(newId, testUserDetails, "New Name", "new@example.com");
+    var updateUserDto = createUpdateUserDto(newId, authenticatedTestUser, "New Name", "new@example.com");
     when(userRepository.findByUuid(newId)).thenReturn(Optional.empty());
 
     // When & Then
@@ -112,11 +112,11 @@ class UpdateUserTest {
     verify(userRepository, never()).save(any());
   }
 
-  private UpdateUserDto createUpdateUserDto(UUID uuid, JwtUserDetails userDetails, String name, String email) {
+  private UpdateUserDto createUpdateUserDto(UUID uuid, AuthenticatedUserDto authenticatedUser, String name, String email) {
     return new UpdateUserDto(
         uuid,
         name,
         email,
-        userDetails);
+        authenticatedUser);
   }
 }

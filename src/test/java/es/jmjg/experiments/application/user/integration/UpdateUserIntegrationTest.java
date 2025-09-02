@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
@@ -27,12 +27,12 @@ class UpdateUserIntegrationTest extends BaseIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
-  private JwtUserDetails adminUserDetails;
+  private AuthenticatedUserDto authenticatedAdminUser;
 
   @BeforeEach
   void setUp() {
     User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
-    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
+    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test
@@ -43,7 +43,7 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         leanneUuid,
         "Updated Ervin",
         "updatedervin@example.com",
-        adminUserDetails);
+        authenticatedAdminUser);
 
     User result = updateUser.update(updateUserDto);
 
@@ -63,7 +63,7 @@ class UpdateUserIntegrationTest extends BaseIntegration {
         UUID.randomUUID(),
         "Updated Name",
         "updated@example.com",
-        adminUserDetails);
+        authenticatedAdminUser);
 
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)

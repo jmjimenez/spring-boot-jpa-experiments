@@ -205,7 +205,7 @@ public class UserController {
         uuid,
         userDto.getName(),
         userDto.getEmail(),
-        userDetails);
+        userMapper.toAuthenticatedUserDto(userDetails));
 
     User updatedUser = updateUser.update(updateUserDto);
     return userMapper.toUpdateUserResponseDto(updatedUser);

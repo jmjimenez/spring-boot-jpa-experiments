@@ -27,8 +27,8 @@ public class UpdateUser {
       throw new UserNotFound(updateUserDto.uuid());
     }
 
-    if (!updateUserDto.userDetails().isAdmin() &&
-        !updateUserDto.userDetails().id.equals(updateUserDto.uuid())) {
+    if (!updateUserDto.authenticatedUser().isAdmin() &&
+        !updateUserDto.authenticatedUser().id().equals(updateUserDto.uuid())) {
       throw new Forbidden("Access denied: only admins or the user themselves can update user data");
     }
 
