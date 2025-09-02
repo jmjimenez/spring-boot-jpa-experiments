@@ -23,8 +23,8 @@ public class FindUserByUsername {
   public Optional<User> findByUsername(FindUserByUsernameDto findUserByUsernameDto) {
     // Check if user is admin or if the authenticated user is requesting their own
     // data
-    if (!findUserByUsernameDto.userDetails().isAdmin() &&
-        !findUserByUsernameDto.userDetails().getUsername().equals(findUserByUsernameDto.username())) {
+    if (!findUserByUsernameDto.authenticatedUser().isAdmin() &&
+        !findUserByUsernameDto.authenticatedUser().username().equals(findUserByUsernameDto.username())) {
       throw new Forbidden("Access denied: only admins or the user themselves can view user data");
     }
 

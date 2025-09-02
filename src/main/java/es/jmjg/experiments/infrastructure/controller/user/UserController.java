@@ -152,7 +152,7 @@ public class UserController {
   FindUserByUsernameResponseDto findByUsername(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "Username to search for") @RequestParam String username) {
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(username, userDetails);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(username, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByUsername.findByUsername(findUserByUsernameDto).orElseThrow(UserNotFoundException::new);
     return userMapper.toFindUserByUsernameResponseDto(user);
   }

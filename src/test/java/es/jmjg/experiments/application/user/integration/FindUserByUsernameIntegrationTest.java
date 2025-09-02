@@ -9,10 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
@@ -27,15 +27,15 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
-  private JwtUserDetails testUserDetails;
-  private JwtUserDetails adminUserDetails;
+  private AuthenticatedUserDto authenticatedTestUser;
+  private AuthenticatedUserDto authenticatedAdminUser;
 
   @BeforeEach
   void setUp() {
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
     User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
-    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
+    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test
@@ -44,7 +44,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String testUsername = TestDataSamples.ERVIN_USERNAME;
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, adminUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, authenticatedAdminUser);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -59,7 +59,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("nonexistentuser", adminUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("nonexistentuser", authenticatedAdminUser);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -73,8 +73,8 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String thirdUsername = TestDataSamples.CLEMENTINE_USERNAME;
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(secondUsername, adminUserDetails);
-    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(thirdUsername, adminUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(secondUsername, authenticatedAdminUser);
+    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(thirdUsername, authenticatedAdminUser);
     Optional<User> secondResult = findUserByUsername.findByUsername(findUserByUsernameDto1);
     Optional<User> thirdResult = findUserByUsername.findByUsername(findUserByUsernameDto2);
 
@@ -92,7 +92,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   void findByUsername_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given - using existing test data from migration
     String testUsername = TestDataSamples.LEANNE_USERNAME;
-    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(testUsername, adminUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(testUsername, authenticatedAdminUser);
     User existingUser = findUserByUsername.findByUsername(findUserByUsernameDto1).orElseThrow();
 
     // Update the user
@@ -101,7 +101,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     userRepository.save(existingUser);
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(testUsername, adminUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(testUsername, authenticatedAdminUser);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto2);
 
     // Then
@@ -115,7 +115,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameIsEmpty_ShouldReturnEmpty() {
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("", adminUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("", authenticatedAdminUser);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -125,7 +125,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @Test
   void findByUsername_WhenUsernameIsBlank_ShouldReturnEmpty() {
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("   ", adminUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("   ", authenticatedAdminUser);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -138,7 +138,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String testUsername = TestDataSamples.LEANNE_USERNAME.toUpperCase();
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, adminUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, authenticatedAdminUser);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -151,7 +151,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String testUsername = TestDataSamples.LEANNE_USERNAME;
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(" " + testUsername + " ", adminUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(" " + testUsername + " ", authenticatedAdminUser);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -162,11 +162,11 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   void findByUsername_WhenAuthenticatedUserRequestsOwnData_ShouldReturnUser() {
     // Given - testUser requesting their own data
     User leanneUser = userRepository.findByUsername(TestDataSamples.LEANNE_USERNAME).orElseThrow();
-    JwtUserDetails leanneUserDetails = UserDetailsFactory.createJwtUserDetails(leanneUser);
-    String leanneUsername = leanneUserDetails.getUsername();
+    AuthenticatedUserDto authenticatedUserLeanne = UserDetailsFactory.createAuthenticatedUserDto(leanneUser);
+    String leanneUsername = authenticatedUserLeanne.username();
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(leanneUsername, leanneUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(leanneUsername, authenticatedUserLeanne);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -180,7 +180,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     String otherUsername = TestDataSamples.LEANNE_USERNAME;
 
     // When & Then
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(otherUsername, testUserDetails);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(otherUsername, authenticatedTestUser);
     assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto))
         .isInstanceOf(es.jmjg.experiments.application.shared.exception.Forbidden.class)
         .hasMessage("Access denied: only admins or the user themselves can view user data");
