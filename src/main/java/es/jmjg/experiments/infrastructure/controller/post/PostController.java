@@ -173,7 +173,7 @@ public class PostController {
       @Parameter(description = "Updated post data", required = true) @RequestBody @Valid UpdatePostRequestDto postDto,
       @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    var updatePostDto = postMapper.toUpdatePostDto(postDto, uuid, userDetails);
+    var updatePostDto = postMapper.toUpdatePostDto(postDto, uuid, userMapper.toAuthenticatedUserDto(userDetails));
     Post updatedPost = updatePost.update(updatePostDto);
     return postMapper.toUpdatePostResponseDto(updatedPost);
   }

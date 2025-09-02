@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdatePostDto(
@@ -12,13 +12,13 @@ public record UpdatePostDto(
     @NotNull String title,
     @NotNull String body,
     @NotNull List<String> tagNames,
-    @NotNull JwtUserDetails userDetails) {
+    @NotNull AuthenticatedUserDto authenticatedUser) {
 
   public UpdatePostDto {
     Objects.requireNonNull(uuid, "uuid cannot be null");
     Objects.requireNonNull(title, "title cannot be null");
     Objects.requireNonNull(body, "body cannot be null");
     Objects.requireNonNull(tagNames, "tagNames cannot be null");
-    Objects.requireNonNull(userDetails, "userDetails cannot be null");
+    Objects.requireNonNull(authenticatedUser, "authenticatedUser cannot be null");
   }
 }

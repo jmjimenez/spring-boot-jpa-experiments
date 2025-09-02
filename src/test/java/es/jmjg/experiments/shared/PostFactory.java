@@ -86,7 +86,7 @@ public class PostFactory {
         title,
         body,
         List.of(),
-        UserDetailsFactory.createJwtUserDetails(authenticatedUser));
+        UserDetailsFactory.createAuthenticatedUserDto(authenticatedUser));
   }
 
   public static DeletePostDto createDeletePostDto(UUID uuid, User authenticatedUser) {
