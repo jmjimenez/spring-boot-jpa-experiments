@@ -20,7 +20,7 @@ public class FindAllUsers {
 
   @Transactional(readOnly = true)
   public Page<User> findAll(FindAllUsersDto findAllUsersDto) {
-    if (!findAllUsersDto.userDetails().isAdmin()) {
+    if (!findAllUsersDto.authenticatedUser().isAdmin()) {
       throw new Forbidden("Only admin users can view all users");
     }
 

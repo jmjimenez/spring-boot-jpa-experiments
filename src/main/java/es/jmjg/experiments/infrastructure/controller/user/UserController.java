@@ -101,7 +101,7 @@ public class UserController {
   Page<FindAllUsersResponseDto> findAll(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       Pageable pageable) {
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, userDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, userMapper.toAuthenticatedUserDto(userDetails));
     Page<User> users = findAllUsers.findAll(findAllUsersDto);
     return users.map(userMapper::toFindAllUsersResponseDto);
   }

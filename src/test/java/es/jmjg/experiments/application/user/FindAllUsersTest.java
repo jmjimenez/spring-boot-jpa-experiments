@@ -24,10 +24,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -44,8 +44,8 @@ class FindAllUsersTest {
   private User foundUser2;
   private User foundUser3;
 
-  private JwtUserDetails testUserDetails;
-  private JwtUserDetails adminUserDetails;
+  private AuthenticatedUserDto authenticatedTestUser;
+  private AuthenticatedUserDto authenticatedAdminUser;
 
   @BeforeEach
   void setUp() {
@@ -54,9 +54,9 @@ class FindAllUsersTest {
     foundUser3 = UserFactory.createUser("Test User 3", "test3@example.com", "testuser3");
 
     var testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
     var adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
-    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
+    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test
@@ -68,7 +68,7 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -97,7 +97,7 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -117,7 +117,7 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -139,7 +139,7 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable)).thenThrow(new RuntimeException("Database error"));
 
     // When & Then
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     assertThatThrownBy(() -> findAllUsers.findAll(findAllUsersDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
@@ -153,7 +153,7 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable)).thenReturn(null);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -174,7 +174,7 @@ class FindAllUsersTest {
         .thenReturn(secondPage);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> firstResult = findAllUsers.findAll(findAllUsersDto);
     Page<User> secondResult = findAllUsers.findAll(findAllUsersDto);
 
@@ -195,7 +195,7 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -225,7 +225,7 @@ class FindAllUsersTest {
     when(userRepository.findAll(pageable)).thenReturn(expectedPage);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -245,7 +245,7 @@ class FindAllUsersTest {
     // Given
     var pageable = PageRequest.of(0, 10);
     // When & Then
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedTestUser);
     assertThatThrownBy(() -> findAllUsers.findAll(findAllUsersDto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("Only admin users can view all users");

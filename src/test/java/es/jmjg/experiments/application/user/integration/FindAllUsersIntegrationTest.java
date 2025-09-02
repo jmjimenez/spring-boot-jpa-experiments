@@ -17,11 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
@@ -41,22 +41,22 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   private UserRepositoryImpl userRepository;
 
   private Pageable pageable;
-  private JwtUserDetails testUserDetails;
-  private JwtUserDetails adminUserDetails;
+  private AuthenticatedUserDto authenticatedTestUser;
+  private AuthenticatedUserDto authenticatedAdminUser;
 
   @BeforeEach
   void setUp() {
     pageable = PageRequest.of(0, 10);
     User testUser = UserFactory.createBasicUser();
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
     var adminUser = UserFactory.createAdminUser();
-    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
+    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test
   void findAll_WhenUsersExist_ShouldReturnAllUsers() {
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -89,7 +89,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     deleteAllUsers();
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -110,7 +110,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(singleUser);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -137,7 +137,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(user2);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -162,7 +162,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(existingUser);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -184,7 +184,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.deleteById(userToDelete.getId());
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -209,7 +209,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(specialUser);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -238,7 +238,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(longNameUser);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -273,7 +273,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(subdomainUser);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -298,7 +298,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Test
   void findAll_WhenMultipleCalls_ShouldReturnConsistentResults() {
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> firstResult = findAllUsers.findAll(findAllUsersDto);
     Page<User> secondResult = findAllUsers.findAll(findAllUsersDto);
 
@@ -340,7 +340,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     userRepository.save(userWithDashes);
 
     // When
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, adminUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedAdminUser);
     Page<User> result = findAllUsers.findAll(findAllUsersDto);
 
     // Then
@@ -357,7 +357,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Test
   void findAll_WhenAuthenticatedUserIsTest_ShouldThrowForbiddenException() {
     // Given
-    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, testUserDetails);
+    FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, authenticatedTestUser);
 
     // When & Then
     assertThatThrownBy(() -> findAllUsers.findAll(findAllUsersDto))
