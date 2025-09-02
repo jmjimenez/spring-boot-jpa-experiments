@@ -1,19 +1,26 @@
 package es.jmjg.experiments.infrastructure.controller.post;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import es.jmjg.experiments.application.post.FindPosts;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.PostFactory;
 
 class PostControllerGetSearchTest extends BasePostControllerTest {
+
+  @Autowired
+  private FindPosts findPosts;
 
   @Test
   void shouldSearchPostsWhenGivenValidQuery() throws Exception {
@@ -36,7 +43,7 @@ class PostControllerGetSearchTest extends BasePostControllerTest {
 
     when(findPosts.find("Spring", 10)).thenReturn(searchResults);
 
-    String expectedJson = createSearchPostsJsonResponse(searchResults);
+    String expectedJson = JsonSamples.createSearchPostsJsonResponse(searchResults);
 
     mockMvc
         .perform(get("/api/posts/search?q=Spring&limit=10"))

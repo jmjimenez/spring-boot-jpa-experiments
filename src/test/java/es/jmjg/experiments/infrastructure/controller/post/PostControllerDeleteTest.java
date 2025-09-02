@@ -12,7 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import es.jmjg.experiments.application.post.DeletePost;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.User;
@@ -21,6 +23,8 @@ import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class PostControllerDeleteTest extends BasePostControllerTest {
+  @Autowired
+  private DeletePost deletePost;
 
   private static final UUID NON_EXISTENT_POST_UUID = UUID.randomUUID();
 

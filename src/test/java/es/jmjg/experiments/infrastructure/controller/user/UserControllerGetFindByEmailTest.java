@@ -11,9 +11,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import es.jmjg.experiments.application.user.dto.FindUserByEmailDto;
+import es.jmjg.experiments.shared.JsonSamples;
 
 class UserControllerGetFindByEmailTest extends BaseUserControllerTest {
-
 
   @Test
   void shouldFindUserWhenGivenValidEmail() throws Exception {
@@ -21,7 +21,7 @@ class UserControllerGetFindByEmailTest extends BaseUserControllerTest {
     String email = "test@example.com";
     when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(Optional.of(testUser));
 
-    String expectedJson = createFindUserByEmailJsonResponse();
+    String expectedJson = JsonSamples.createFindUserByEmailJsonResponse(testPosts, testUuid);
 
     // When & Then
     mockMvc

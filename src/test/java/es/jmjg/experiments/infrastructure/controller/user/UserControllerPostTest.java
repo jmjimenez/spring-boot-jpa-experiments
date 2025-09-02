@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.shared.JsonSamples;
 
 class UserControllerPostTest extends BaseUserControllerTest {
 
@@ -24,8 +25,8 @@ class UserControllerPostTest extends BaseUserControllerTest {
     savedUser.setTags(testTags);
     when(saveUser.save(any(SaveUserDto.class))).thenReturn(savedUser);
 
-    String requestBody = createSaveUserRequestJson();
-    String expectedResponse = createSaveUserResponseJson();
+    String requestBody = JsonSamples.createSaveUserRequestJson(testUuid);
+    String expectedResponse = JsonSamples.createSaveUserResponseJson(testUuid);
 
     // When & Then
     mockMvc

@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.shared.JsonSamples;
 
 class UserControllerGetFindAllTest extends BaseUserControllerTest {
 
@@ -24,7 +25,7 @@ class UserControllerGetFindAllTest extends BaseUserControllerTest {
     Page<User> userPage = new PageImpl<>(users, pageable, users.size());
     when(findAllUsers.findAll(any(FindAllUsersDto.class))).thenReturn(userPage);
 
-    String expectedJson = createFindAllUsersJsonResponse();
+    String expectedJson = JsonSamples.createFindAllUsersJsonResponse(testPosts, testUuid);
 
     // When & Then
     mockMvc

@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
+import es.jmjg.experiments.shared.JsonSamples;
 
 class UserControllerGetFindByUsername extends BaseUserControllerTest {
 
@@ -20,7 +21,7 @@ class UserControllerGetFindByUsername extends BaseUserControllerTest {
     String username = "testuser";
     when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenReturn(Optional.of(testUser));
 
-    String expectedJson = createFindUserByUsernameJsonResponse();
+    String expectedJson = JsonSamples.createFindUserByUsernameJsonResponse(testPosts, testUuid);
 
     // When & Then
     mockMvc

@@ -18,6 +18,7 @@ import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -32,8 +33,8 @@ class UserControllerPutTest extends BaseUserControllerTest {
     updatedUser.setTags(testTags);
     when(updateUser.update(any(UpdateUserDto.class))).thenReturn(updatedUser);
 
-    String requestBody = createUpdateUserRequestJson();
-    String expectedResponse = createUpdateUserResponseJson();
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
+    String expectedResponse = JsonSamples.createUpdateUserResponseJson(testPosts, testUuid);
 
     // When & Then
     mockMvc
@@ -56,8 +57,8 @@ class UserControllerPutTest extends BaseUserControllerTest {
     updatedUser.setTags(testTags);
     when(updateUser.update(any(UpdateUserDto.class))).thenReturn(updatedUser);
 
-    String requestBody = createUpdateUserRequestJson();
-    String expectedResponse = createUpdateUserResponseJson();
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
+    String expectedResponse = JsonSamples.createUpdateUserResponseJson(testPosts, testUuid);
 
     // When & Then - Admin user (admin) updating another user (testUuid)
     mockMvc
@@ -76,7 +77,7 @@ class UserControllerPutTest extends BaseUserControllerTest {
     // Given
     doThrow(new UserNotFound(testUuid)).when(updateUser).update(any(UpdateUserDto.class));
 
-    String requestBody = createUpdateUserRequestJson();
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
 
     // When & Then
     mockMvc
@@ -98,7 +99,7 @@ class UserControllerPutTest extends BaseUserControllerTest {
     doThrow(new Forbidden("Access denied: only admins or the user themselves can update user data")).when(updateUser)
         .update(any(UpdateUserDto.class));
 
-    String requestBody = createUpdateUserRequestJson();
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
 
     // When & Then
     mockMvc
@@ -118,7 +119,7 @@ class UserControllerPutTest extends BaseUserControllerTest {
   @Test
   void shouldReturnUnauthorizedWhenUserIsNotAuthenticated() throws Exception {
     // Given
-    String requestBody = createUpdateUserRequestJson();
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
 
     // When & Then
     mockMvc

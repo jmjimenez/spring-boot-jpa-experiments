@@ -10,8 +10,9 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
+import es.jmjg.experiments.shared.JsonSamples;
 
 class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
 
@@ -20,7 +21,7 @@ class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
     // Given
     when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.of(testUser));
 
-    String expectedJson = createFindUserByUuidJsonResponse();
+    String expectedJson = JsonSamples.createFindUserByUuidJsonResponse(testPosts, testUuid);
 
     // When & Then
     mockMvc

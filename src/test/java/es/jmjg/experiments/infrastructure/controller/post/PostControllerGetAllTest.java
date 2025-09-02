@@ -11,19 +11,49 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
+import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.shared.JsonSamples;
+import es.jmjg.experiments.shared.UserFactory;
+import es.jmjg.experiments.shared.PostFactory;
+import es.jmjg.experiments.domain.entity.User;
+import java.util.UUID;
 
 class PostControllerGetAllTest extends BasePostControllerTest {
 
+  @Autowired
+  private FindAllPosts findAllPosts;
+
+  protected List<Post> posts;
+  protected Page<Post> postsPage;
+  protected User testUser;
+
+  @BeforeEach
+  void setUp() {
+    testUser = UserFactory.createJohnDoeUser(1);
+
+    Post post1 = PostFactory.createPost(testUser, UUID.randomUUID(), "Hello, World!", "This is my first post.");
+    post1.setId(1);
+
+    Post post2 = PostFactory.createPost(testUser, UUID.randomUUID(), "Second Post", "This is my second post.");
+    post2.setId(2);
+
+    posts = List.of(post1, post2);
+    Pageable pageable = PageRequest.of(0, 20);
+    postsPage = new PageImpl<>(posts, pageable, posts.size());
+  }
+
   @Test
   void shouldFindAllPostsUsingWhen() throws Exception {
-    String jsonResponse = createFindAllPostsJsonResponse();
+    String jsonResponse = JsonSamples.createFindAllPostsJsonResponse(posts);
 
     when(findAllPosts.findAll(any(Pageable.class))).thenReturn(postsPage);
 
@@ -37,7 +67,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
   @Test
   void shouldFindAllPostsUsingDoReturn() throws Exception {
-    String jsonResponse = createFindAllPostsJsonResponse();
+    String jsonResponse = JsonSamples.createFindAllPostsJsonResponse(posts);
 
     doReturn(postsPage).when(findAllPosts).findAll(any(Pageable.class));
 
@@ -51,7 +81,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
   @Test
   void shouldFindAllPostsWithPagination() throws Exception {
-    String jsonResponse = createFindAllPostsWithPaginationJsonResponse();
+    String jsonResponse = JsonSamples.createFindAllPostsWithPaginationJsonResponse(posts);
 
     Pageable pageable = PageRequest.of(0, 1);
     Page<Post> singlePostPage = new PageImpl<>(List.of(posts.get(0)), pageable, 2);
@@ -67,7 +97,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
   @Test
   void shouldReturnEmptyListWhenNoPostsFound() throws Exception {
-    String jsonResponse = createEmptyPostsJsonResponse();
+    String jsonResponse = JsonSamples.createEmptyPostsJsonResponse();
 
     Pageable pageable = PageRequest.of(0, 20);
     Page<Post> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);

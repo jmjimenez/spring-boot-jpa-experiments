@@ -1,25 +1,32 @@
 package es.jmjg.experiments.infrastructure.controller.post;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class PostControllerPutTest extends BasePostControllerTest {
+
+  @Autowired
+  private UpdatePost updatePost;
 
   @Test
   void shouldUpdatePostWhenGivenValidPost() throws Exception {
@@ -33,7 +40,7 @@ class PostControllerPutTest extends BasePostControllerTest {
 
     when(updatePost.update(any())).thenReturn(updated);
 
-    String requestBody = createUpdatePostRequestJson(updated);
+    String requestBody = JsonSamples.createUpdatePostRequestJson(updated);
 
     mockMvc
         .perform(put("/api/posts/" + TestDataSamples.POST_2_UUID)
@@ -60,7 +67,7 @@ class PostControllerPutTest extends BasePostControllerTest {
     UUID nonExistentUuid = UUID.randomUUID();
     when(updatePost.update(any()))
         .thenThrow(new PostNotFound("Post not found with uuid: " + nonExistentUuid));
-    String json = createUpdatePostRequestJson(updated);
+    String json = JsonSamples.createUpdatePostRequestJson(updated);
 
     mockMvc
         .perform(put("/api/posts/" + nonExistentUuid)
