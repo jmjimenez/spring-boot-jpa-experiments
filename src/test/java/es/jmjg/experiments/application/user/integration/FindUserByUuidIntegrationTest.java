@@ -14,7 +14,7 @@ import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
@@ -29,21 +29,21 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
-  private JwtUserDetails testUserDetails;
-  private JwtUserDetails adminUserDetails;
+  private AuthenticatedUserDto authenticatedTestUser;
+  private AuthenticatedUserDto authenticatedAdminUser;
 
   @BeforeEach
   void setUp() {
     User testUser = UserFactory.createBasicUser();
-    testUserDetails = UserDetailsFactory.createJwtUserDetails(testUser);
+    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
     User adminUser = UserFactory.createAdminUser();
-    adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
+    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test
   void findByUuid_WhenUserExists_ShouldReturnUser() {
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.LEANNE_UUID, adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.LEANNE_UUID, authenticatedAdminUser);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -58,7 +58,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UUID.randomUUID(), adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UUID.randomUUID(), authenticatedAdminUser);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -68,8 +68,8 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenMultipleUsersExist_ShouldReturnCorrectUser() {
     // When
-    FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(TestDataSamples.ERVIN_UUID, adminUserDetails);
-    FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(TestDataSamples.CLEMENTINE_UUID, adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(TestDataSamples.ERVIN_UUID, authenticatedAdminUser);
+    FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(TestDataSamples.CLEMENTINE_UUID, authenticatedAdminUser);
     Optional<User> firstResult = findUserByUuid.findByUuid(findUserByUuidDto1);
     Optional<User> secondResult = findUserByUuid.findByUuid(findUserByUuidDto2);
 
@@ -94,7 +94,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     userRepository.save(existingUser);
 
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.PATRICIA_UUID, adminUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.PATRICIA_UUID, authenticatedAdminUser);
     Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
@@ -108,7 +108,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenNonAdminUserTriesToAccessOtherUserData_ShouldThrowForbidden() {
     // Given
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.LEANNE_UUID, testUserDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.LEANNE_UUID, authenticatedTestUser);
 
     // When & Then
     assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto))

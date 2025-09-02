@@ -23,8 +23,8 @@ public class FindUserByUuid {
   public Optional<User> findByUuid(FindUserByUuidDto findUserByUuidDto) {
     // Check if user is admin or if the authenticated user is requesting their own
     // data
-    if (!findUserByUuidDto.userDetails().isAdmin() &&
-        !findUserByUuidDto.userDetails().id.equals(findUserByUuidDto.uuid())) {
+    if (!findUserByUuidDto.authenticatedUser().isAdmin() &&
+        !findUserByUuidDto.authenticatedUser().id().equals(findUserByUuidDto.uuid())) {
       throw new Forbidden("Access denied: only admins or the user themselves can view user data");
     }
 

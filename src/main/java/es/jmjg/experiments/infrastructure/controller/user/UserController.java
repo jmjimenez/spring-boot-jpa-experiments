@@ -118,7 +118,7 @@ public class UserController {
   FindUserByUuidResponseDto findByUuid(
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "UUID of the user to retrieve") @PathVariable UUID uuid) {
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid, userDetails);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
     return userMapper.toFindUserByUuidResponseDto(user);
   }
