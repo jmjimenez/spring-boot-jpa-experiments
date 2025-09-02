@@ -93,6 +93,6 @@ public class PostFactory {
   public static DeletePostDto createDeletePostDto(UUID uuid, User authenticatedUser) {
     return new DeletePostDto(
         uuid,
-        UserDetailsFactory.createJwtUserDetails(authenticatedUser));
+        UserDetailsFactory.createAuthenticatedUserDto(authenticatedUser));
   }
 }

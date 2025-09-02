@@ -1,19 +1,21 @@
 package es.jmjg.experiments.infrastructure.controller.post;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
@@ -24,62 +26,59 @@ class PostControllerDeleteTest extends BasePostControllerTest {
 
   @Test
   void shouldDeletePostWhenGivenValidUUIDAndValidOwner() throws Exception {
-    User user = UserFactory.createUser(TestDataSamples.LEANNE_UUID, TestDataSamples.LEANNE_NAME,
-        TestDataSamples.LEANNE_EMAIL, TestDataSamples.LEANNE_USERNAME);
-    JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
-
-    DeletePostDto deletePostDto = new DeletePostDto(TestDataSamples.POST_2_UUID, userDetails);
-
     mockMvc.perform(delete("/api/posts/" + TestDataSamples.POST_2_UUID)
         .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isNoContent());
 
-    verify(deletePost, times(1)).delete(deletePostDto);
+    verify(deletePost, times(1))
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(TestDataSamples.POST_2_UUID) &&
+            deletePostDto.authenticatedUser().id().equals(TestDataSamples.LEANNE_UUID) &&
+            deletePostDto.authenticatedUser().username().equals(TestDataSamples.LEANNE_USERNAME)));
   }
 
   @Test
   void shouldDeletePostWhenAuthenticatedUserIsAdminButNotOwner() throws Exception {
-    User adminUser = UserFactory.createUser(TestDataSamples.ADMIN_UUID, TestDataSamples.ADMIN_NAME,
-        TestDataSamples.ADMIN_EMAIL, TestDataSamples.ADMIN_USERNAME);
-    JwtUserDetails adminUserDetails = UserDetailsFactory.createJwtUserDetails(adminUser);
-
-    DeletePostDto deletePostDto = new DeletePostDto(TestDataSamples.POST_2_UUID, adminUserDetails);
-
     mockMvc.perform(delete("/api/posts/" + TestDataSamples.POST_2_UUID)
         .header("Authorization", "Bearer " + TestDataSamples.ADMIN_USERNAME))
         .andExpect(status().isNoContent());
 
-    verify(deletePost, times(1)).delete(deletePostDto);
+    verify(deletePost, times(1))
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(TestDataSamples.POST_2_UUID) &&
+            deletePostDto.authenticatedUser().id().equals(TestDataSamples.ADMIN_UUID) &&
+            deletePostDto.authenticatedUser().username().equals(TestDataSamples.ADMIN_USERNAME)));
   }
 
   @Test
   void shouldReturnNotFoundWhenPostUuidDoesNotExist() throws Exception {
     User user = UserFactory.createBasicUser();
-    JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
-    DeletePostDto deletePostDto = new DeletePostDto(NON_EXISTENT_POST_UUID, userDetails);
-    doThrow(new PostNotFound(NON_EXISTENT_POST_UUID)).when(deletePost).delete(deletePostDto);
+    doThrow(new PostNotFound(NON_EXISTENT_POST_UUID)).when(deletePost)
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(NON_EXISTENT_POST_UUID)));
 
     mockMvc.perform(delete("/api/posts/" + NON_EXISTENT_POST_UUID)
         .header("Authorization", "Bearer " + user.getUsername()))
         .andExpect(status().isNotFound());
 
-    verify(deletePost, times(1)).delete(deletePostDto);
+    verify(deletePost, times(1)).delete(argThat(deletePostDto -> deletePostDto.uuid().equals(NON_EXISTENT_POST_UUID) &&
+        deletePostDto.authenticatedUser().username().equals(user.getUsername())));
   }
 
   @Test
   void shouldReturnForbiddenWhenAuthenticatedUserIsNeitherOwnerNorAdmin() throws Exception {
     User nonOwnerUser = UserFactory.createBasicUser();
-    JwtUserDetails nonOwnerUserDetails = UserDetailsFactory.createJwtUserDetails(nonOwnerUser);
+    var authenticatedUser = UserDetailsFactory.createAuthenticatedUserDto(nonOwnerUser);
 
-    DeletePostDto deletePostDto = new DeletePostDto(TestDataSamples.POST_2_UUID, nonOwnerUserDetails);
-    doThrow(new Forbidden("You are not the owner of this post")).when(deletePost).delete(deletePostDto);
+    doThrow(new Forbidden("You are not the owner of this post")).when(deletePost)
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(TestDataSamples.POST_2_UUID) &&
+            deletePostDto.authenticatedUser().username().equals(authenticatedUser.username())));
 
     mockMvc.perform(delete("/api/posts/" + TestDataSamples.POST_2_UUID)
         .header("Authorization", "Bearer " + nonOwnerUser.getUsername()))
         .andExpect(status().isForbidden());
 
-    verify(deletePost, times(1)).delete(deletePostDto);
+    verify(deletePost, times(1))
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(TestDataSamples.POST_2_UUID) &&
+            deletePostDto.authenticatedUser().username().equals(authenticatedUser.username())));
   }
 
   @Test

@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByEmailResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByUsernameResponseDto;
@@ -17,6 +19,7 @@ import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserResponseDto;
+import jakarta.validation.constraints.NotNull;
 
 @Component
 public class UserMapper {
@@ -120,5 +123,10 @@ public class UserMapper {
       return List.of();
     }
     return users.stream().map(mapper).collect(Collectors.toList());
+  }
+
+  public @NotNull AuthenticatedUserDto toAuthenticatedUserDto(JwtUserDetails userDetails) {
+    return new AuthenticatedUserDto(userDetails.id, userDetails.getUsername(), userDetails.getPassword(),
+        userDetails.getAuthorities());
   }
 }

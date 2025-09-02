@@ -31,6 +31,7 @@ import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
+import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
@@ -57,6 +58,7 @@ import jakarta.validation.Valid;
 public class PostController {
 
   private final PostMapper postMapper;
+  private final UserMapper userMapper;
   private final FindPosts findPosts;
   private final UpdatePost updatePost;
   private final SavePost savePost;
@@ -66,6 +68,7 @@ public class PostController {
 
   public PostController(
       PostMapper postMapper,
+      UserMapper userMapper,
       FindPosts findPosts,
       UpdatePost updatePost,
       SavePost savePost,
@@ -73,6 +76,7 @@ public class PostController {
       FindAllPosts findAllPosts,
       DeletePost deletePost) {
     this.postMapper = postMapper;
+    this.userMapper = userMapper;
     this.findPosts = findPosts;
     this.updatePost = updatePost;
     this.savePost = savePost;
@@ -189,7 +193,7 @@ public class PostController {
   void delete(@Parameter(description = "UUID of the post to delete") @PathVariable UUID uuid,
       @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    var deletePostDto = new DeletePostDto(uuid, userDetails);
+    var deletePostDto = new DeletePostDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
     deletePost.delete(deletePostDto);
   }
 }

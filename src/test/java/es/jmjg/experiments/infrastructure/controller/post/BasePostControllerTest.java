@@ -58,6 +58,7 @@ abstract class BasePostControllerTest {
 
   @BeforeEach
   void setUp() {
+    //TODO: remove this
     testUser = UserFactory.createJohnDoeUser(1);
 
     Post post1 = PostFactory.createPost(testUser, UUID.randomUUID(), "Hello, World!", "This is my first post.");
