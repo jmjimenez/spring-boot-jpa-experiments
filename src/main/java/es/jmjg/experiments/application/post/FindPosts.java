@@ -25,10 +25,8 @@ public class FindPosts {
       return List.of();
     }
 
-    // Create a Pageable object to limit results
     Pageable pageable = PageRequest.of(0, limit);
 
-    // Search in both title and body fields
     return postRepository.searchByContent(query.trim(), pageable);
   }
 }

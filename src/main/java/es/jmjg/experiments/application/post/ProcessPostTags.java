@@ -10,6 +10,7 @@ import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.repository.TagRepository;
 
+//TODO: test this service
 @Service
 public class ProcessPostTags {
 
@@ -36,10 +37,8 @@ public class ProcessPostTags {
       Optional<Tag> existingTag = tagRepository.findByName(trimmedTagName);
 
       if (existingTag.isPresent()) {
-        // Tag already exists, add it to the post
         processedTags.add(existingTag.get());
       } else {
-        // Tag doesn't exist, create a new one
         Tag newTag = new Tag();
         newTag.setUuid(UUID.randomUUID());
         newTag.setName(trimmedTagName);
@@ -49,7 +48,6 @@ public class ProcessPostTags {
       }
     }
 
-    // Set the processed tags to the post
     post.setTags(processedTags);
   }
 }

@@ -30,8 +30,8 @@ public class SwaggerConfig {
                 .contact(
                     new Contact()
                         .name("Jose JMG")
-                        .email("contact@example.com")
-                        .url("https://github.com/yourusername/spring-boot-jpa-experiments"))
+                        .email("jmjimenezg@gmail.com")
+                        .url("https://github.com/jmjimenez/spring-boot-jpa-experiments"))
                 .license(
                     new License().name("MIT License").url("https://opensource.org/licenses/MIT")))
         .servers(

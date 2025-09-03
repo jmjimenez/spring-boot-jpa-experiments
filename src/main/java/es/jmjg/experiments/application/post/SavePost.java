@@ -29,18 +29,15 @@ public class SavePost {
 
   @Transactional
   public Post save(SavePostDto savePostDto) {
-    // Create a new Post object from the DTO
     Post post = new Post();
     post.setUuid(savePostDto.uuid());
     post.setTitle(savePostDto.title());
     post.setBody(savePostDto.body());
 
-    // Validate that a user is required for creating a post
     if (savePostDto.authenticatedUser() == null) {
       throw new InvalidRequest("Post must have a user");
     }
 
-    // Set up the user relationship
     Optional<User> user = userRepository.findByUuid(savePostDto.authenticatedUser().id());
     if (user.isPresent()) {
       post.setUser(user.get());
@@ -48,7 +45,6 @@ public class SavePost {
       throw new UserNotFound(savePostDto.authenticatedUser().id());
     }
 
-    // Process tags if provided
     if (!savePostDto.tagNames().isEmpty()) {
       processPostTags.processTagsForPost(post, savePostDto.tagNames());
     }

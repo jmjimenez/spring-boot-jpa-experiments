@@ -56,6 +56,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+//TODO: what happens if any unexpected exception is thrown?
+//TODO: log performance metrics
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Users", description = "User management operations")

@@ -41,7 +41,7 @@ public class UpdatePost {
     existingPost.setTitle(updatePostDto.title());
     existingPost.setBody(updatePostDto.body());
 
-    // Process tags if provided
+    //TODO: it is not the same tags are empty than tags are missing
     if (!updatePostDto.tagNames().isEmpty()) {
       processPostTags.processTagsForPost(existingPost, updatePostDto.tagNames());
     }
