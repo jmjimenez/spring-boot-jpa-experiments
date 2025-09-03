@@ -16,7 +16,7 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
-import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class FindUserByUsernameIntegrationTest extends BaseIntegration {
@@ -33,9 +33,9 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   @BeforeEach
   void setUp() {
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
+    authenticatedTestUser = AuthenticatedUserFactory.createAuthenticatedUserDto(testUser);
     User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
-    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test
@@ -162,7 +162,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
   void findByUsername_WhenAuthenticatedUserRequestsOwnData_ShouldReturnUser() {
     // Given - testUser requesting their own data
     User leanneUser = userRepository.findByUsername(TestDataSamples.LEANNE_USERNAME).orElseThrow();
-    AuthenticatedUserDto authenticatedUserLeanne = UserDetailsFactory.createAuthenticatedUserDto(leanneUser);
+    AuthenticatedUserDto authenticatedUserLeanne = AuthenticatedUserFactory.createAuthenticatedUserDto(leanneUser);
     String leanneUsername = authenticatedUserLeanne.username();
 
     // When

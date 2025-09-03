@@ -23,12 +23,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,9 +54,9 @@ class FindAllUsersTest {
     foundUser3 = UserFactory.createUser("Test User 3", "test3@example.com", "testuser3");
 
     var testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
+    authenticatedTestUser = AuthenticatedUserFactory.createAuthenticatedUserDto(testUser);
     var adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
-    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test

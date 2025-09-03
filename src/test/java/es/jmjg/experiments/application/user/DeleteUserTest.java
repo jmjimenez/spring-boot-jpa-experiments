@@ -1,8 +1,13 @@
 package es.jmjg.experiments.application.user;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -19,7 +24,7 @@ import es.jmjg.experiments.application.user.dto.DeleteUserDto;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,8 +44,8 @@ class DeleteUserTest {
   void setUp() {
     testUser = UserFactory.createBasicUser();
     var adminUser = UserFactory.createAdminUser();
-    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
-    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    authenticatedTestUser = AuthenticatedUserFactory.createAuthenticatedUserDto(testUser);
+    authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test

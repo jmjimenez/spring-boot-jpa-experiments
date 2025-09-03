@@ -19,7 +19,7 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
-import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class DeleteUserIntegrationTest extends BaseIntegration {
@@ -36,10 +36,10 @@ class DeleteUserIntegrationTest extends BaseIntegration {
   @BeforeEach
   void setUp() {
     var testUser = UserFactory.createBasicUser();
-    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
+    authenticatedTestUser = AuthenticatedUserFactory.createAuthenticatedUserDto(testUser);
 
     var adminUser = UserFactory.createAdminUser();
-    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test

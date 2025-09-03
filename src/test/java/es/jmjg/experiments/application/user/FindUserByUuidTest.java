@@ -18,12 +18,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
-import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,9 +42,9 @@ class FindUserByUuidTest {
   @BeforeEach
   void setUp() {
     testUser = UserFactory.createBasicUser();
-    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
+    authenticatedTestUser = AuthenticatedUserFactory.createAuthenticatedUserDto(testUser);
     var adminUser = UserFactory.createAdminUser();
-    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test

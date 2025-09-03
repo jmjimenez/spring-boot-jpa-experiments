@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 
-public class UserDetailsFactory {
+public class AuthenticatedUserFactory {
 
-  public static JwtUserDetails createJwtUserDetails(User user) {
-    return new JwtUserDetails(
+  public static AuthenticatedUserDto createAuthenticatedUserDto(User user) {
+    return new AuthenticatedUserDto(
         user.getUuid(),
         user.getUsername(),
         user.getPassword(),

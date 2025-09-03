@@ -19,7 +19,7 @@ import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
-import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class SaveUserIntegrationTest extends BaseIntegration {
@@ -37,8 +37,8 @@ class SaveUserIntegrationTest extends BaseIntegration {
   void setUp() {
     User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
     User testUser = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
-    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
+    authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
+    authenticatedTestUser = AuthenticatedUserFactory.createAuthenticatedUserDto(testUser);
   }
 
   @Test

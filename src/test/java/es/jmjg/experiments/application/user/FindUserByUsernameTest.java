@@ -17,12 +17,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
-import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,16 +41,17 @@ class FindUserByUsernameTest {
   @BeforeEach
   void setUp() {
     testUser = UserFactory.createBasicUser();
-    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
+    authenticatedTestUser = AuthenticatedUserFactory.createAuthenticatedUserDto(testUser);
     var adminUser = UserFactory.createAdminUser();
-    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test
   void findByUsername_WhenUserExists_ShouldReturnUser() {
     // Given
     when(userRepository.findByUsername(testUser.getUsername())).thenReturn(Optional.of(testUser));
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUser.getUsername(), authenticatedAdminUser);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUser.getUsername(),
+        authenticatedAdminUser);
 
     // When
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
@@ -71,7 +72,8 @@ class FindUserByUsernameTest {
     when(userRepository.findByUsername(nonExistentUsername)).thenReturn(Optional.empty());
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(nonExistentUsername, authenticatedAdminUser);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(nonExistentUsername,
+        authenticatedAdminUser);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
@@ -101,7 +103,8 @@ class FindUserByUsernameTest {
         .thenThrow(new RuntimeException("Database error"));
 
     // When & Then
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUser.getUsername(), authenticatedAdminUser);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUser.getUsername(),
+        authenticatedAdminUser);
     assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
@@ -128,7 +131,8 @@ class FindUserByUsernameTest {
     when(userRepository.findByUsername(testUser.getUsername())).thenReturn(Optional.of(testUser));
 
     // When
-    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUser.getUsername(), authenticatedTestUser);
+    FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUser.getUsername(),
+        authenticatedTestUser);
     Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then

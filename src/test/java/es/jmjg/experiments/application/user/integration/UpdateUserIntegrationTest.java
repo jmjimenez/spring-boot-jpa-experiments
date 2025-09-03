@@ -16,7 +16,7 @@ import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
-import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class UpdateUserIntegrationTest extends BaseIntegration {
@@ -32,7 +32,7 @@ class UpdateUserIntegrationTest extends BaseIntegration {
   @BeforeEach
   void setUp() {
     User adminUser = UserFactory.createUser("Admin User", "admin@example.com", "admin");
-    authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
   }
 
   @Test

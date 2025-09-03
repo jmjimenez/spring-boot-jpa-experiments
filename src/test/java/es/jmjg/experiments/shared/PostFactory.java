@@ -8,6 +8,7 @@ import es.jmjg.experiments.application.post.dto.SavePostDto;
 import es.jmjg.experiments.application.post.dto.UpdatePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
+
 public class PostFactory {
 
   public static Post createBasicPost(User user) {
@@ -76,7 +77,7 @@ public class PostFactory {
         UUID.randomUUID(),
         title,
         body,
-        UserDetailsFactory.createAuthenticatedUserDto(user),
+        AuthenticatedUserFactory.createAuthenticatedUserDto(user),
         List.of());
   }
 
@@ -86,12 +87,12 @@ public class PostFactory {
         title,
         body,
         List.of(),
-        UserDetailsFactory.createAuthenticatedUserDto(authenticatedUser));
+        AuthenticatedUserFactory.createAuthenticatedUserDto(authenticatedUser));
   }
 
   public static DeletePostDto createDeletePostDto(UUID uuid, User authenticatedUser) {
     return new DeletePostDto(
         uuid,
-        UserDetailsFactory.createAuthenticatedUserDto(authenticatedUser));
+        AuthenticatedUserFactory.createAuthenticatedUserDto(authenticatedUser));
   }
 }

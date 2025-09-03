@@ -18,11 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.UserRepository;
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
-import es.jmjg.experiments.shared.UserDetailsFactory;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +41,7 @@ class UpdateUserTest {
   @BeforeEach
   void setUp() {
     testUser = UserFactory.createBasicUser();
-    authenticatedTestUser = UserDetailsFactory.createAuthenticatedUserDto(testUser);
+    authenticatedTestUser = AuthenticatedUserFactory.createAuthenticatedUserDto(testUser);
     existingUser = UserFactory.createUser(1, testUser.getUuid(), "Old Name", "old@example.com", "olduser");
   }
 
@@ -66,7 +66,7 @@ class UpdateUserTest {
   void update_WhenUserExistsAndAuthenticatedUserIsAdmin_ShouldUpdateFields() {
     // Given
     var adminUser = UserFactory.createAdminUser();
-    var authenticatedAdminUser = UserDetailsFactory.createAuthenticatedUserDto(adminUser);
+    var authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
     var updateUserDto = createUpdateUserDto(testUser.getUuid(), authenticatedAdminUser, "New Name", "new@example.com");
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(existingUser));
@@ -86,7 +86,7 @@ class UpdateUserTest {
   void update_WhenUserExistsAndIsNotAuthenticatedUser_ShouldNotUpdateFields() {
     // Given
     var otherUser = UserFactory.createBasicUser();
-    var authenticatedOtherUser = UserDetailsFactory.createAuthenticatedUserDto(otherUser);
+    var authenticatedOtherUser = AuthenticatedUserFactory.createAuthenticatedUserDto(otherUser);
     var updateUserDto = createUpdateUserDto(testUser.getUuid(), authenticatedOtherUser, "New Name", "new@example.com");
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(existingUser));
@@ -112,7 +112,8 @@ class UpdateUserTest {
     verify(userRepository, never()).save(any());
   }
 
-  private UpdateUserDto createUpdateUserDto(UUID uuid, AuthenticatedUserDto authenticatedUser, String name, String email) {
+  private UpdateUserDto createUpdateUserDto(UUID uuid, AuthenticatedUserDto authenticatedUser, String name,
+      String email) {
     return new UpdateUserDto(
         uuid,
         name,

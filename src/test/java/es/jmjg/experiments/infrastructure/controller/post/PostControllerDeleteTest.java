@@ -18,8 +18,8 @@ import es.jmjg.experiments.application.post.DeletePost;
 import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
-import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
 class PostControllerDeleteTest extends BasePostControllerTest {
@@ -70,7 +70,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
   @Test
   void shouldReturnForbiddenWhenAuthenticatedUserIsNeitherOwnerNorAdmin() throws Exception {
     User nonOwnerUser = UserFactory.createBasicUser();
-    var authenticatedUser = UserDetailsFactory.createAuthenticatedUserDto(nonOwnerUser);
+    var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(nonOwnerUser);
 
     doThrow(new Forbidden("You are not the owner of this post")).when(deletePost)
         .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(TestDataSamples.POST_2_UUID) &&
