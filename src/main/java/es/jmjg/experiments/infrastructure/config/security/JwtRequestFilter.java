@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,11 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtRequestFilter extends OncePerRequestFilter {
   private final UserDetailsService userDetailsService;
   private final JwtTokenService jwtTokenService;
+  private final SecurityContextHolderStrategy securityContextHolderStrategy;
 
   public JwtRequestFilter(
-      final UserDetailsService userDetailsService, final JwtTokenService jwtTokenService) {
+      final UserDetailsService userDetailsService,
+      final JwtTokenService jwtTokenService,
+      final SecurityContextHolderStrategy securityContextHolderStrategy) {
     this.userDetailsService = userDetailsService;
     this.jwtTokenService = jwtTokenService;
+    this.securityContextHolderStrategy = securityContextHolderStrategy;
   }
 
   @Override
@@ -53,7 +57,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     final DecodedJWT jwt = jwtTokenService.validateToken(token);
     if (jwt == null || jwt.getSubject() == null) {
       // validation failed or token expired
-      log.debug("Token validation failed or token expired");
+      log.warn("Token validation failed or token expired");
       chain.doFilter(request, response);
       return;
     }
@@ -65,7 +69,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
       userDetails = userDetailsService.loadUserByUsername(jwt.getSubject());
     } catch (final UsernameNotFoundException userNotFoundEx) {
       // user not found
-      log.debug("User not found: {}", jwt.getSubject());
+      log.warn("User not found: {}", jwt.getSubject());
       chain.doFilter(request, response);
       return;
     }
@@ -76,7 +80,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         new WebAuthenticationDetailsSource().buildDetails(request));
 
     // set user details on spring security context
-    SecurityContextHolder.getContext().setAuthentication(authentication);
+    this.securityContextHolderStrategy.getContext().setAuthentication(authentication);
     log.debug("Authentication set for user: {}", userDetails.getUsername());
 
     // continue with authenticated user

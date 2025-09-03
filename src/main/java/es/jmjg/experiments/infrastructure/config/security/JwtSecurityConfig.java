@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,9 +33,16 @@ public class JwtSecurityConfig {
   }
 
   @Bean
+  public SecurityContextHolderStrategy securityContextHolderStrategy() {
+    return SecurityContextHolder.getContextHolderStrategy();
+  }
+
+  @Bean
   public JwtRequestFilter jwtRequestFilter(
-      final JwtUserDetailsService jwtUserDetailsService, final JwtTokenService jwtTokenService) {
-    return new JwtRequestFilter(jwtUserDetailsService, jwtTokenService);
+      final JwtUserDetailsService jwtUserDetailsService,
+      final JwtTokenService jwtTokenService,
+      final SecurityContextHolderStrategy securityContextHolderStrategy) {
+    return new JwtRequestFilter(jwtUserDetailsService, jwtTokenService, securityContextHolderStrategy);
   }
 
   @Bean
