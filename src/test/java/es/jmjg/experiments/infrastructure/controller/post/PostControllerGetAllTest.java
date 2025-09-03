@@ -38,7 +38,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
   @BeforeEach
   void setUp() {
-    testUser = UserFactory.createJohnDoeUser(1);
+    testUser = UserFactory.createBasicUser();
 
     Post post1 = PostFactory.createPost(testUser, UUID.randomUUID(), "Hello, World!", "This is my first post.");
     post1.setId(1);
