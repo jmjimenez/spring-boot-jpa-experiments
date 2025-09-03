@@ -23,11 +23,7 @@ public class DeleteUser {
       throw new Forbidden("Only admin users can delete users");
     }
 
-    var user = userRepository.findByUuid(deleteUserDto.uuid());
-
-    if (user.isEmpty()) {
-      throw new UserNotFound(deleteUserDto.uuid());
-    }
+    userRepository.findByUuid(deleteUserDto.uuid()).orElseThrow(() -> new UserNotFound(deleteUserDto.uuid()));
 
     userRepository.deleteByUuid(deleteUserDto.uuid());
   }
