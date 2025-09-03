@@ -1,6 +1,5 @@
 package es.jmjg.experiments.application.post;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.repository.PostRepository;
+import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
 
 @Service
 public class FindPostByUuid {
@@ -19,11 +19,11 @@ public class FindPostByUuid {
   }
 
   @Transactional(readOnly = true)
-  public Optional<Post> findByUuid(UUID uuid) {
+  public Post findByUuid(UUID uuid) {
     if (uuid == null) {
-      return Optional.empty();
+      throw new IllegalArgumentException("UUID cannot be null");
     }
 
-    return postRepository.findByUuid(uuid);
+    return postRepository.findByUuid(uuid).orElseThrow(PostNotFoundException::new);
   }
 }

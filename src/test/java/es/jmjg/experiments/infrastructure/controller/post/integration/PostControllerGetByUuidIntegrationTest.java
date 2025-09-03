@@ -1,6 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.integration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -69,5 +69,18 @@ class PostControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
         request,
         FindPostByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void shouldReturnBadRequestWhenUuidIsMalformed() {
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
+
+    ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
+        "/api/posts/invalid-uuid-format",
+        HttpMethod.GET,
+        request,
+        FindPostByUuidResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
   }
 }

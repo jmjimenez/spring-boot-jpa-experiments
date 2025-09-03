@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
 import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
@@ -31,7 +31,7 @@ class PostControllerGetByUuidTest extends BasePostControllerTest {
     Post post = PostFactory.createPost(user, uuid, "Test Title", "Test Body");
     post.setId(1);
 
-    when(findPostByUuid.findByUuid(uuid)).thenReturn(Optional.of(post));
+    when(findPostByUuid.findByUuid(uuid)).thenReturn(post);
     String json = JsonSamples.createFindPostByUuidJsonResponse(post);
 
     mockMvc
@@ -41,9 +41,9 @@ class PostControllerGetByUuidTest extends BasePostControllerTest {
   }
 
   @Test
-  void shouldNotFindPostWhenGivenInvalidUuid() throws Exception {
+  void shouldThrowPostNotFoundExceptionWhenGivenInvalidUuid() throws Exception {
     UUID uuid = UUID.randomUUID();
-    when(findPostByUuid.findByUuid(uuid)).thenReturn(Optional.empty());
+    when(findPostByUuid.findByUuid(uuid)).thenThrow(new PostNotFoundException("Post not found"));
 
     mockMvc.perform(get("/api/posts/" + uuid)).andExpect(status().isNotFound());
   }

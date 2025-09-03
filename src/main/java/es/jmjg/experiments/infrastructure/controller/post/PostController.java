@@ -30,7 +30,6 @@ import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
-import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByUuidResponseDto;
@@ -95,6 +94,7 @@ public class PostController {
   PagedResponseDto<FindAllPostsResponseDto> findAll(
       @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
       @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
+
     Pageable pageable = PageRequest.of(page, size);
     var postsPage = findAllPosts.findAll(pageable);
 
@@ -112,7 +112,7 @@ public class PostController {
   FindPostByUuidResponseDto findByUuid(
       @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID uuid) {
 
-    Post post = findPostByUuid.findByUuid(uuid).orElseThrow(PostNotFoundException::new);
+    Post post = findPostByUuid.findByUuid(uuid);
     return postMapper.toFindByUuidResponseDto(post);
   }
 
