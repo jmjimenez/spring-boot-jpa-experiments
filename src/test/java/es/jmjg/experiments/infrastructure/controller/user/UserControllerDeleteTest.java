@@ -1,6 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.user;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -10,13 +11,34 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.application.user.DeleteUser;
 import es.jmjg.experiments.application.user.dto.DeleteUserDto;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
+import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.shared.UserFactory;
 
 class UserControllerDeleteTest extends BaseUserControllerTest {
+
+  @Autowired
+  private DeleteUser deleteUser;
+
+  private User testUser;
+  private UUID testUuid;
+
+  @BeforeEach
+  void setUp() {
+    testUser = UserFactory.createBasicUser();
+    testUuid = testUser.getUuid();
+
+    reset(deleteUser);
+  }
 
   @Test
   void shouldDeleteUserWhenGivenValidUuid() throws Exception {

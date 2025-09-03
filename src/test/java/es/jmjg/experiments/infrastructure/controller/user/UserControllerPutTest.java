@@ -2,6 +2,7 @@ package es.jmjg.experiments.infrastructure.controller.user;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -11,37 +12,51 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.application.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.JsonSamples;
-import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
 class UserControllerPutTest extends BaseUserControllerTest {
 
+  @Autowired
+  private UpdateUser updateUser;
+
+  private User testUser;
+  private User adminUser;
+
+  @BeforeEach
+  void setUp() {
+    testUser = UserFactory.generateBasicUserWithPostsAndTags();
+    adminUser = UserFactory.createAdminUser();
+
+    reset(updateUser);
+  }
+
   @Test
   void shouldUpdateUserWhenGivenValidData() throws Exception {
     // Given
-    User updatedUser = UserFactory.createUser(testId, testUuid, "Updated User",
-        "updated@example.com", "updateduser");
-    updatedUser.setPosts(testPosts);
-    updatedUser.setTags(testTags);
-    when(updateUser.update(any(UpdateUserDto.class))).thenReturn(updatedUser);
-
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
-    String expectedResponse = JsonSamples.createUpdateUserResponseJson(testPosts, testUuid);
+    testUser.setEmail("updated@example.com");
+    testUser.setName("Updated User");
+    testUser.setUsername("updateduser");
+    when(updateUser.update(any(UpdateUserDto.class))).thenReturn(testUser);
 
     // When & Then
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String expectedResponse = JsonSamples.createUpdateUserResponseJson(testUser.getPosts(), testUser.getUuid());
     mockMvc
-        .perform(put("/api/users/" + testUuid)
+        .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody)
-            .header("Authorization", "Bearer " + testUser.getUsername()))
+            .header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedResponse));
 
@@ -50,22 +65,20 @@ class UserControllerPutTest extends BaseUserControllerTest {
 
   @Test
   void shouldUpdateUserWhenAdminUserUpdatesAnyUser() throws Exception {
+    testUser.setEmail("updated@example.com");
+    testUser.setName("Updated User");
+    testUser.setUsername("updateduser");
     // Given
-    User updatedUser = UserFactory.createUser(testId, testUuid, "Updated User",
-        "updated@example.com", "updateduser");
-    updatedUser.setPosts(testPosts);
-    updatedUser.setTags(testTags);
-    when(updateUser.update(any(UpdateUserDto.class))).thenReturn(updatedUser);
-
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
-    String expectedResponse = JsonSamples.createUpdateUserResponseJson(testPosts, testUuid);
+    when(updateUser.update(any(UpdateUserDto.class))).thenReturn(testUser);
 
     // When & Then - Admin user (admin) updating another user (testUuid)
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String expectedResponse = JsonSamples.createUpdateUserResponseJson(testUser.getPosts(), testUser.getUuid());
     mockMvc
-        .perform(put("/api/users/" + testUuid)
+        .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody)
-            .header("Authorization", "Bearer " + TestDataSamples.ADMIN_USERNAME))
+            .header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedResponse));
 
@@ -75,20 +88,19 @@ class UserControllerPutTest extends BaseUserControllerTest {
   @Test
   void shouldReturnNotFoundWhenUserDoesNotExist() throws Exception {
     // Given
-    doThrow(new UserNotFound(testUuid)).when(updateUser).update(any(UpdateUserDto.class));
-
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
+    doThrow(new UserNotFound(testUser.getUuid())).when(updateUser).update(any(UpdateUserDto.class));
 
     // When & Then
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
     mockMvc
-        .perform(put("/api/users/" + testUuid)
+        .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody)
-            .header("Authorization", "Bearer " + testUser.getUsername()))
+            .header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status").value(404))
         .andExpect(jsonPath("$.error").value("Not Found"))
-        .andExpect(jsonPath("$.message").value("User not found with uuid: " + testUuid));
+        .andExpect(jsonPath("$.message").value("User not found with uuid: " + testUser.getUuid()));
 
     verify(updateUser, times(1)).update(any(UpdateUserDto.class));
   }
@@ -99,11 +111,10 @@ class UserControllerPutTest extends BaseUserControllerTest {
     doThrow(new Forbidden("Access denied: only admins or the user themselves can update user data")).when(updateUser)
         .update(any(UpdateUserDto.class));
 
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
-
     // When & Then
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
     mockMvc
-        .perform(put("/api/users/" + testUuid)
+        .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody)
             .header("Authorization", "Bearer " + testUser.getUsername()))
@@ -119,11 +130,11 @@ class UserControllerPutTest extends BaseUserControllerTest {
   @Test
   void shouldReturnUnauthorizedWhenUserIsNotAuthenticated() throws Exception {
     // Given
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUuid);
+    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
 
     // When & Then
     mockMvc
-        .perform(put("/api/users/" + testUuid)
+        .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
         .andExpect(status().isUnauthorized());

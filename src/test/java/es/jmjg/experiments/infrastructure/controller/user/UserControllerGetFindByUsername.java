@@ -8,12 +8,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.JsonSamples;
+import es.jmjg.experiments.shared.UserFactory;
 
 class UserControllerGetFindByUsername extends BaseUserControllerTest {
+
+  @Autowired
+  private FindUserByUsername findUserByUsername;
+
+  private User testUser;
+  private User adminUser;
+
+  @BeforeEach
+  void setUp() {
+    testUser = UserFactory.generateBasicUserWithPostsAndTags();
+    adminUser = UserFactory.createAdminUser();
+  }
 
   @Test
   void shouldFindUserWhenGivenValidUsername() throws Exception {
@@ -21,12 +38,12 @@ class UserControllerGetFindByUsername extends BaseUserControllerTest {
     String username = "testuser";
     when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenReturn(Optional.of(testUser));
 
-    String expectedJson = JsonSamples.createFindUserByUsernameJsonResponse(testPosts, testUuid);
+    String expectedJson = JsonSamples.createFindUserByUsernameJsonResponse(testUser.getPosts(), testUser.getUuid());
 
     // When & Then
     mockMvc
         .perform(get("/api/users/search/username").param("username", username)
-            .header("Authorization", "Bearer " + testUser.getUsername()))
+            .header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
@@ -40,7 +57,7 @@ class UserControllerGetFindByUsername extends BaseUserControllerTest {
     // When & Then
     mockMvc
         .perform(get("/api/users/search/username").param("username", invalidUsername)
-            .header("Authorization", "Bearer " + testUser.getUsername()))
+            .header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isNotFound());
   }
 

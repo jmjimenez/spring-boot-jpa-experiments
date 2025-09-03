@@ -1,7 +1,11 @@
 package es.jmjg.experiments.shared;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
 
 public class UserFactory {
@@ -58,5 +62,29 @@ public class UserFactory {
     user.setUsername(username);
     user.setPassword("encodedPassword123");
     return user;
+  }
+
+  public static User generateBasicUserWithPostsAndTags() {
+    User testUser = createBasicUser();
+
+    List<Post> testPosts = new ArrayList<>();
+    Post post1 = new Post();
+    post1.setUuid(UUID.randomUUID());
+    testPosts.add(post1);
+    Post post2 = new Post();
+    post2.setUuid(UUID.randomUUID());
+    testPosts.add(post2);
+    testUser.setPosts(testPosts);
+
+    List<Tag> testTags = new ArrayList<>();
+    Tag tag1 = new Tag();
+    tag1.setName("technology");
+    testTags.add(tag1);
+    Tag tag2 = new Tag();
+    tag2.setName("java");
+    testTags.add(tag2);
+    testUser.setTags(testTags);
+
+    return testUser;
   }
 }

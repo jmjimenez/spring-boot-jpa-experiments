@@ -8,24 +8,43 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.JsonSamples;
+import es.jmjg.experiments.shared.UserFactory;
 
 class UserControllerGetFindAllTest extends BaseUserControllerTest {
 
-  @Test
+  @Autowired
+  private FindAllUsers findAllUsers;
+
+  private User testUser;
+  private User adminUser;
+  private Pageable pageable;
+
+  @BeforeEach
+  void setUp() {
+    testUser = UserFactory.generateBasicUserWithPostsAndTags();
+    adminUser = UserFactory.createAdminUser();
+    pageable = PageRequest.of(0, 10);
+  }
+
   void shouldFindAllUsers() throws Exception {
     // Given
     List<User> users = List.of(testUser);
     Page<User> userPage = new PageImpl<>(users, pageable, users.size());
     when(findAllUsers.findAll(any(FindAllUsersDto.class))).thenReturn(userPage);
 
-    String expectedJson = JsonSamples.createFindAllUsersJsonResponse(testPosts, testUuid);
+    String expectedJson = JsonSamples.createFindAllUsersJsonResponse(testUser.getPosts(), testUser.getUuid());
 
     // When & Then
     mockMvc

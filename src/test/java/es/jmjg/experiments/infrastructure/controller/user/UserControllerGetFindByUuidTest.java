@@ -8,24 +8,41 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
+import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.JsonSamples;
+import es.jmjg.experiments.shared.UserFactory;
 
 class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
+
+  @Autowired
+  private FindUserByUuid findUserByUuid;
+
+  private User testUser;
+  private User adminUser;
+
+  @BeforeEach
+  void setUp() {
+    testUser = UserFactory.generateBasicUserWithPostsAndTags();
+    adminUser = UserFactory.createAdminUser();
+  }
 
   @Test
   void shouldFindUserWhenGivenValidUuid() throws Exception {
     // Given
     when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.of(testUser));
 
-    String expectedJson = JsonSamples.createFindUserByUuidJsonResponse(testPosts, testUuid);
+    String expectedJson = JsonSamples.createFindUserByUuidJsonResponse(testUser.getPosts(), testUser.getUuid());
 
     // When & Then
     mockMvc
-        .perform(get("/api/users/" + testUuid).header("Authorization", "Bearer " + testUser.getUsername()))
+        .perform(get("/api/users/" + testUser.getUuid()).header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
@@ -38,7 +55,7 @@ class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
 
     // When & Then
     mockMvc.perform(get("/api/users/" + invalidUuid)
-        .header("Authorization", "Bearer " + testUser.getUsername()))
+        .header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isNotFound());
   }
 
@@ -52,7 +69,7 @@ class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
 
     // When & Then
     mockMvc.perform(get("/api/users/" + otherUserUuid)
-        .header("Authorization", "Bearer " + testUser.getUsername()))
+        .header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isForbidden());
   }
 
