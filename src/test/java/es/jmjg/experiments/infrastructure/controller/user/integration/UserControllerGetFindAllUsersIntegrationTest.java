@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
@@ -17,10 +18,10 @@ class UserControllerGetFindAllUsersIntegrationTest extends BaseControllerIntegra
   void shouldGetAllUsers() {
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
         TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<Object> response = restTemplate.exchange("/api/users", HttpMethod.GET, request, Object.class);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange("/api/users", HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    Object responseBody = response.getBody();
+    FindAllUsersResponseDto responseBody = response.getBody();
     assertThat(responseBody).isNotNull();
   }
 
@@ -28,13 +29,13 @@ class UserControllerGetFindAllUsersIntegrationTest extends BaseControllerIntegra
   void shouldReturnForbiddenWhenUserIsRegularUser() {
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.LEANNE_USERNAME,
         TestDataSamples.USER_PASSWORD);
-    ResponseEntity<Object> response = restTemplate.exchange("/api/users", HttpMethod.GET, request, Object.class);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange("/api/users", HttpMethod.GET, request, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
   @Test
   void shouldReturnUnauthorizedWhenUserIsNotAuthenticated() {
-    ResponseEntity<Object> response = restTemplate.exchange("/api/users", HttpMethod.GET, null, Object.class);
+    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange("/api/users", HttpMethod.GET, null, FindAllUsersResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 }

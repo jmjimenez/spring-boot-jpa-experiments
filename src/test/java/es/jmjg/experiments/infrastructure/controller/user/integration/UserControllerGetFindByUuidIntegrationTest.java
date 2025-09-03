@@ -10,7 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByUuidResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
@@ -20,12 +20,12 @@ class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegrati
   void shouldFindUserByUuid() {
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
         TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+    ResponseEntity<FindUserByUuidResponseDto> response = restTemplate.exchange(
         "/api/users/" + TestDataSamples.LEANNE_UUID,
-        HttpMethod.GET, request, FindAllUsersResponseDto.class);
+        HttpMethod.GET, request, FindUserByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    FindAllUsersResponseDto user = response.getBody();
+    FindUserByUuidResponseDto user = response.getBody();
     assertThat(user).isNotNull().satisfies(u -> {
       assertThat(u.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
       assertThat(u.getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
@@ -42,8 +42,8 @@ class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegrati
 
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
         TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users/" + nonExistentUuid, HttpMethod.GET, request, FindAllUsersResponseDto.class);
+    ResponseEntity<FindUserByUuidResponseDto> response = restTemplate.exchange(
+        "/api/users/" + nonExistentUuid, HttpMethod.GET, request, FindUserByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
@@ -53,16 +53,16 @@ class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegrati
 
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
         TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
-        "/api/users/" + nonExistentUuid, HttpMethod.GET, request, FindAllUsersResponseDto.class);
+    ResponseEntity<FindUserByUuidResponseDto> response = restTemplate.exchange(
+        "/api/users/" + nonExistentUuid, HttpMethod.GET, request, FindUserByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
   void shouldReturnUnauthorizedWhenNotAuthenticated() {
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+    ResponseEntity<FindUserByUuidResponseDto> response = restTemplate.exchange(
         "/api/users/" + TestDataSamples.LEANNE_UUID,
-        HttpMethod.GET, null, FindAllUsersResponseDto.class);
+        HttpMethod.GET, null, FindUserByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
@@ -70,12 +70,12 @@ class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegrati
   void shouldReturnOkWhenNonAdminUserIsAllowed() {
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.LEANNE_USERNAME,
         TestDataSamples.USER_PASSWORD);
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+    ResponseEntity<FindUserByUuidResponseDto> response = restTemplate.exchange(
         "/api/users/" + TestDataSamples.LEANNE_UUID,
-        HttpMethod.GET, request, FindAllUsersResponseDto.class);
+        HttpMethod.GET, request, FindUserByUuidResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    FindAllUsersResponseDto user = response.getBody();
+    FindUserByUuidResponseDto user = response.getBody();
     assertThat(user).isNotNull().satisfies(u -> {
       assertThat(u.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
       assertThat(u.getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
@@ -88,9 +88,9 @@ class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegrati
   void shouldReturnForbiddenWhenNonAdminUserIsNotAllowed() {
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ERVIN_USERNAME,
         TestDataSamples.USER_PASSWORD);
-    ResponseEntity<FindAllUsersResponseDto> response = restTemplate.exchange(
+    ResponseEntity<FindUserByUuidResponseDto> response = restTemplate.exchange(
         "/api/users/" + TestDataSamples.LEANNE_UUID,
-        HttpMethod.GET, request, FindAllUsersResponseDto.class);
+        HttpMethod.GET, request, FindUserByUuidResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
