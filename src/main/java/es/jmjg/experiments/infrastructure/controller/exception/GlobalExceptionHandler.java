@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.shared.exception.InvalidRequest;
-import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.tag.exception.TagAlreadyExistsException;
 import es.jmjg.experiments.application.tag.exception.TagInUseException;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
@@ -253,6 +254,20 @@ public class GlobalExceptionHandler {
         .build();
 
     return ResponseEntity.status(status).body(errorResponse);
+  }
+
+  @ExceptionHandler(NoResourceFoundException.class)
+  public ResponseEntity<ApiErrorResponse> handleNoResourceFoundException(
+      NoResourceFoundException ex, WebRequest request) {
+    log.warn("No resource found: {}", ex.getMessage());
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.BAD_REQUEST.value())
+        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+        .message("Resource not found: " + ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
   @ExceptionHandler(Exception.class)
