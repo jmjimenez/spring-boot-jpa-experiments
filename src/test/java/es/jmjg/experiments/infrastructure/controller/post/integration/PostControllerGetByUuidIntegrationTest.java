@@ -72,6 +72,19 @@ class PostControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
+  void shouldReturnBadRequestWhenUuidIsNotProvided() {
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+        TestDataSamples.ADMIN_PASSWORD);
+
+    ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
+        "/api/posts/",
+        HttpMethod.GET,
+        request,
+        FindPostByUuidResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+  }
+
+  @Test
   void shouldReturnBadRequestWhenUuidIsMalformed() {
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
         TestDataSamples.ADMIN_PASSWORD);
