@@ -24,6 +24,7 @@ public final class TestDataSamples {
   public static final String LEANNE_NAME = "Leanne Graham";
   public static final String LEANNE_EMAIL = "leanne.graham@example.com";
   public static final String LEANNE_USERNAME = "leanne_graham";
+  public static final String LEANNE_PASSWORD = "testpass";
 
   public static final int ERVIN_ID = 2;
   public static final UUID ERVIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
