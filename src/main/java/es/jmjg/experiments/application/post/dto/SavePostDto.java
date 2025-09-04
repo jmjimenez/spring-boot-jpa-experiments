@@ -12,13 +12,12 @@ public record SavePostDto(
     @NotNull String title,
     @NotNull String body,
     @NotNull AuthenticatedUserDto authenticatedUser,
-    @NotNull List<String> tagNames) {
+    List<String> tagNames) {
 
   public SavePostDto {
     Objects.requireNonNull(uuid, "uuid cannot be null");
     Objects.requireNonNull(title, "title cannot be null");
     Objects.requireNonNull(body, "body cannot be null");
     Objects.requireNonNull(authenticatedUser, "authenticatedUser cannot be null");
-    Objects.requireNonNull(tagNames, "tagNames cannot be null");
   }
 }

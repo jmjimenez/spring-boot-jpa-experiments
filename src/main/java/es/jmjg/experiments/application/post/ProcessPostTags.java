@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import es.jmjg.experiments.domain.entity.Post;
@@ -21,8 +23,8 @@ public class ProcessPostTags {
   }
 
   @Transactional
-  public void processTagsForPost(Post post, List<String> tagNames) {
-    if (tagNames == null || tagNames.isEmpty()) {
+  public void processTagsForPost(Post post, @NotNull List<String> tagNames) {
+    if (tagNames == null) {
       return;
     }
 

@@ -2,6 +2,7 @@ package es.jmjg.experiments.application.post.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
+import org.springframework.transaction.annotation.Transactional;
 
 class SavePostIntegrationTest extends BaseIntegration {
 
@@ -29,6 +31,7 @@ class SavePostIntegrationTest extends BaseIntegration {
   private UserRepositoryImpl userRepository;
 
   @Test
+  @Transactional
   void save_ShouldSaveAndReturnPost() {
     // Given
     User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
@@ -44,12 +47,41 @@ class SavePostIntegrationTest extends BaseIntegration {
     assertThat(result.getTitle()).isEqualTo(TestDataSamples.NEW_POST_TITLE);
     assertThat(result.getBody()).isEqualTo(TestDataSamples.NEW_POST_BODY);
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
-    assertThat(result.getTags()).isNotNull(); // Tags field should be present
+    assertThat(result.getTags()).isEmpty(); // Tags field should be present
 
     // Verify it was actually saved to the database
     Optional<Post> savedPost = postRepository.findById(result.getId());
     assertThat(savedPost).isPresent();
     assertThat(savedPost.get().getTitle()).isEqualTo(TestDataSamples.NEW_POST_TITLE);
-    assertThat(savedPost.get().getTags()).isNotNull(); // Tags field should be present
+    assertThat(savedPost.get().getTags()).isEmpty(); // Tags field should be present
+  }
+
+  @Test
+  @Transactional
+  void save_ShouldSavePostWithTags() {
+    // Given
+    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    var tagNames = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING);
+    SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, TestDataSamples.NEW_POST_TITLE,
+        TestDataSamples.NEW_POST_BODY, tagNames);
+
+    // When
+    Post result = savePost.save(savePostDto);
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isNotNull();
+    assertThat(result.getTitle()).isEqualTo(TestDataSamples.NEW_POST_TITLE);
+    assertThat(result.getBody()).isEqualTo(TestDataSamples.NEW_POST_BODY);
+    assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(result.getTags()).hasSize(2);
+    assertThat(result.getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING);
+
+    // Verify it was actually saved to the database
+    Optional<Post> savedPost = postRepository.findById(result.getId());
+    assertThat(savedPost).isPresent();
+    assertThat(savedPost.get().getTitle()).isEqualTo(TestDataSamples.NEW_POST_TITLE);
+    assertThat(savedPost.get().getTags()).hasSize(2);
+    assertThat(savedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING);
   }
 }

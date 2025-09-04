@@ -19,7 +19,6 @@ import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.domain.repository.PostRepository;
-import es.jmjg.experiments.domain.repository.UserRepository;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -30,7 +29,7 @@ class UpdatePostTest {
   private PostRepository postRepository;
 
   @Mock
-  private UserRepository userRepository;
+  private ProcessPostTags processPostTags;
 
   @InjectMocks
   private UpdatePost updatePost;
@@ -54,10 +53,8 @@ class UpdatePostTest {
     when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
-            invocation -> {
-              Post savedPost = invocation.getArgument(0);
-              return savedPost;
-            });
+            invocation -> invocation.<Post>getArgument(0));
+    doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
     var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUser);
@@ -79,10 +76,8 @@ class UpdatePostTest {
     when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
-            invocation -> {
-              Post savedPost = invocation.getArgument(0);
-              return savedPost;
-            });
+            invocation -> invocation.<Post>getArgument(0));
+    doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
     var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUserAdmin);
@@ -136,10 +131,8 @@ class UpdatePostTest {
     when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
-            invocation -> {
-              Post savedPost = invocation.getArgument(0);
-              return savedPost;
-            });
+            invocation -> invocation.<Post>getArgument(0));
+    doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
     var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUser);
@@ -162,10 +155,8 @@ class UpdatePostTest {
     when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
-            invocation -> {
-              Post savedPost = invocation.getArgument(0);
-              return savedPost;
-            });
+            invocation -> invocation.<Post>getArgument(0));
+    doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
     var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUser);
@@ -179,7 +170,6 @@ class UpdatePostTest {
     assertThat(result.getTags()).isNotNull(); // Tags field should be present
 
     verify(postRepository, times(1)).findByUuid(testPost.getUuid());
-    verify(userRepository, never()).findById(any());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
@@ -189,10 +179,8 @@ class UpdatePostTest {
     when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
-            invocation -> {
-              Post savedPost = invocation.getArgument(0);
-              return savedPost;
-            });
+            invocation -> invocation.<Post>getArgument(0));
+    doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
     var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUser);

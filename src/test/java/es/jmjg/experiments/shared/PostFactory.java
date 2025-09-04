@@ -38,40 +38,6 @@ public class PostFactory {
     return post;
   }
 
-  public static Post createPostWithoutUser(String title, String body) {
-    Post post = new Post();
-    post.setUuid(UUID.randomUUID());
-    post.setTitle(title);
-    post.setBody(body);
-    return post;
-  }
-
-  public static Post createSpringBootPost(User user) {
-    return createPost(
-        user, UUID.randomUUID(), "Spring Boot Tutorial", "Learn how to build applications with Spring Boot framework");
-  }
-
-  public static Post createJpaPost(User user) {
-    return createPost(
-        user, UUID.randomUUID(), "JPA Best Practices", "Understanding JPA and database integration with Spring Boot");
-  }
-
-  public static Post createJavaProgrammingPost(User user) {
-    return createPost(
-        user,
-        UUID.randomUUID(),
-        "Java Programming Guide",
-        "Complete guide to Java programming language and best practices");
-  }
-
-  public static Post createAdvancedJavaPost(User user) {
-    return createPost(
-        user,
-        UUID.randomUUID(),
-        "Advanced Java Features",
-        "Exploring advanced features in Java 21 and modern development");
-  }
-
   public static SavePostDto createSavePostDto(User user, String title, String body) {
     return new SavePostDto(
         UUID.randomUUID(),
@@ -81,12 +47,30 @@ public class PostFactory {
         List.of());
   }
 
+  public static SavePostDto createSavePostDto(User user, String title, String body, List<String> tagNames) {
+    return new SavePostDto(
+        UUID.randomUUID(),
+        title,
+        body,
+        AuthenticatedUserFactory.createAuthenticatedUserDto(user),
+        tagNames);
+  }
+
   public static UpdatePostDto createPostUpdateDto(UUID uuid, String title, String body, User authenticatedUser) {
     return new UpdatePostDto(
         uuid,
         title,
         body,
         List.of(),
+        AuthenticatedUserFactory.createAuthenticatedUserDto(authenticatedUser));
+  }
+
+  public static UpdatePostDto createPostUpdateDto(UUID uuid, String title, String body, List<String> tagNames, User authenticatedUser) {
+    return new UpdatePostDto(
+        uuid,
+        title,
+        body,
+        tagNames,
         AuthenticatedUserFactory.createAuthenticatedUserDto(authenticatedUser));
   }
 

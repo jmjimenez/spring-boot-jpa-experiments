@@ -3,6 +3,7 @@ package es.jmjg.experiments.application.post.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
+import org.springframework.transaction.annotation.Transactional;
 
 class UpdatePostIntegrationTest extends BaseIntegration {
 
@@ -33,6 +35,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   private UserRepositoryImpl userRepository;
 
   @Test
+  @Transactional
   void update_ShouldUpdateAndReturnPost() {
     // Given
     User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
@@ -57,12 +60,14 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     assertThat(result.getTitle()).isEqualTo(updatedTitle);
     assertThat(result.getBody()).isEqualTo(updatedBody);
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(result.getTags()).isEmpty();
 
     // Verify it was actually updated in the database
     Optional<Post> updatedPost = postRepository.findById(result.getId());
     assertThat(updatedPost).isPresent();
     assertThat(updatedPost.get().getTitle()).isEqualTo(updatedTitle);
     assertThat(updatedPost.get().getBody()).isEqualTo(updatedBody);
+    assertThat(updatedPost.get().getTags()).isEmpty();
   }
 
   @Test
@@ -129,5 +134,45 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     assertThat(updatedPost).isPresent();
     assertThat(updatedPost.get().getTitle()).isEqualTo(updatedTitle);
     assertThat(updatedPost.get().getBody()).isEqualTo(updatedBody);
+  }
+
+  @Test
+  @Transactional
+  void update_ShouldUpdatePostWithTags() {
+    // Given
+    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+
+    final String updatedTitle = "Updated Post Title With Tags";
+    final String updatedBody = "Updated post body with tags";
+    var tagNames = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING);
+
+    UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
+        existingPost.getUuid(),
+        updatedTitle,
+        updatedBody,
+        tagNames,
+        testUser);
+
+    // When
+    Post result = updatePost.update(updatePostDto);
+
+    // Then
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(existingPost.getId());
+    assertThat(result.getUuid()).isEqualTo(existingPost.getUuid());
+    assertThat(result.getTitle()).isEqualTo(updatedTitle);
+    assertThat(result.getBody()).isEqualTo(updatedBody);
+    assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(result.getTags()).hasSize(2);
+    assertThat(result.getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING);
+
+    // Verify it was actually updated in the database
+    Optional<Post> updatedPost = postRepository.findById(result.getId());
+    assertThat(updatedPost).isPresent();
+    assertThat(updatedPost.get().getTitle()).isEqualTo(updatedTitle);
+    assertThat(updatedPost.get().getBody()).isEqualTo(updatedBody);
+    assertThat(updatedPost.get().getTags()).hasSize(2);
+    assertThat(updatedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING);
   }
 }

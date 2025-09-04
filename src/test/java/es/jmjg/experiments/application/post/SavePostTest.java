@@ -30,6 +30,9 @@ class SavePostTest {
   @Mock
   private UserRepository userRepository;
 
+  @Mock
+  private ProcessPostTags processPostTags;
+
   @InjectMocks
   private SavePost savePost;
 
@@ -47,6 +50,7 @@ class SavePostTest {
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(newPost);
+    doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
     SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, newPost.getTitle(), newPost.getBody());
@@ -68,6 +72,7 @@ class SavePostTest {
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(newPost);
+    doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
     SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, newPost.getTitle(), newPost.getBody());
@@ -87,6 +92,7 @@ class SavePostTest {
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(newPost);
+    doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
     SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, newPost.getTitle(), newPost.getBody());

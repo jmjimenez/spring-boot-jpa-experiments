@@ -45,7 +45,7 @@ public class SavePost {
       throw new UserNotFound(savePostDto.authenticatedUser().id());
     }
 
-    if (!savePostDto.tagNames().isEmpty()) {
+    if (savePostDto.tagNames() != null) {
       processPostTags.processTagsForPost(post, savePostDto.tagNames());
     }
 

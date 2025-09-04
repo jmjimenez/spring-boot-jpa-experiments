@@ -10,7 +10,6 @@ import es.jmjg.experiments.application.post.exception.PostNotFound;
 import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.repository.PostRepository;
-import es.jmjg.experiments.domain.repository.UserRepository;
 
 @Service
 public class UpdatePost {
@@ -18,8 +17,7 @@ public class UpdatePost {
   private final PostRepository postRepository;
   private final ProcessPostTags processPostTags;
 
-  public UpdatePost(PostRepository postRepository, UserRepository userRepository,
-      ProcessPostTags processPostTags) {
+  public UpdatePost(PostRepository postRepository, ProcessPostTags processPostTags) {
     this.postRepository = postRepository;
     this.processPostTags = processPostTags;
   }
@@ -41,8 +39,7 @@ public class UpdatePost {
     existingPost.setTitle(updatePostDto.title());
     existingPost.setBody(updatePostDto.body());
 
-    //TODO: it is not the same tags are empty than tags are missing
-    if (!updatePostDto.tagNames().isEmpty()) {
+    if (updatePostDto.tagNames() != null) {
       processPostTags.processTagsForPost(existingPost, updatePostDto.tagNames());
     }
 

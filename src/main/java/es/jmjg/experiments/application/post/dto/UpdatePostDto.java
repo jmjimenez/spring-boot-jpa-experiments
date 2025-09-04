@@ -11,14 +11,13 @@ public record UpdatePostDto(
     @NotNull UUID uuid,
     @NotNull String title,
     @NotNull String body,
-    @NotNull List<String> tagNames,
+    List<String> tagNames,
     @NotNull AuthenticatedUserDto authenticatedUser) {
 
   public UpdatePostDto {
     Objects.requireNonNull(uuid, "uuid cannot be null");
     Objects.requireNonNull(title, "title cannot be null");
     Objects.requireNonNull(body, "body cannot be null");
-    Objects.requireNonNull(tagNames, "tagNames cannot be null");
     Objects.requireNonNull(authenticatedUser, "authenticatedUser cannot be null");
   }
 }

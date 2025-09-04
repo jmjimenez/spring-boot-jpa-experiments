@@ -43,7 +43,6 @@ public final class TestDataSamples {
   public static final String ADMIN_USERNAME = "admin";
   public static final String ADMIN_PASSWORD = "testpass";
   public static final String ADMIN_EMAIL = "admin@example.com";
-  public static final String ADMIN_PASSWORD_HASH = "$2a$10$nJepjv6WEk5NlbiaU2ka3uR/5N7/wqtrw6/1acgPw7Rvr4qxoidR.";
   public static final String USER_PASSWORD = "testpass";
 
   public static final UUID PATRICIA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440004");
@@ -63,7 +62,6 @@ public final class TestDataSamples {
   public static final UUID POST_2_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440007");
   public static final String POST_2_TITLE = "qui est esse";
   public static final UUID POST_3_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440008");
-  public static final String POST_3_TITLE = "ea molestias quasi exercitationem repellat qui ipsa sit aut";
   public static final UUID POST_16_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
 
   // Additional post titles and bodies from Flyway migration data
@@ -94,4 +92,8 @@ public final class TestDataSamples {
   // Test post data for new posts (not from migration data)
   public static final String NEW_POST_TITLE = "Test Post 1";
   public static final String NEW_POST_BODY = "Test Body 1";
+
+  // Tag name constants for tests
+  public static final String TAG_JAVA = "java";
+  public static final String TAG_SPRING = "spring";
 }
