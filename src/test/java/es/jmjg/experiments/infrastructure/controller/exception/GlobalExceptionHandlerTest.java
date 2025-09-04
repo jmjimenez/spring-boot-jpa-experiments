@@ -27,27 +27,6 @@ class GlobalExceptionHandlerTest {
   }
 
   @Test
-  void handlePostNotFoundException_ShouldReturn404() {
-    // Given
-    PostNotFoundException exception = new PostNotFoundException("Post with id 1 not found");
-
-    // When
-    ResponseEntity<ApiErrorResponse> response = exceptionHandler.handlePostNotFoundException(exception, webRequest);
-
-    // Then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    assertThat(response.getBody())
-        .isNotNull()
-        .satisfies(
-            body -> {
-              assertThat(body.getStatus()).isEqualTo(404);
-              assertThat(body.getError()).isEqualTo("Not Found");
-              assertThat(body.getMessage()).isEqualTo("Post with id 1 not found");
-              assertThat(body.getPath()).isEqualTo("uri=/api/posts/1");
-            });
-  }
-
-  @Test
   void handleAllExceptions_ShouldReturn500() {
     // Given
     RuntimeException exception = new RuntimeException("Database connection failed");
@@ -65,26 +44,6 @@ class GlobalExceptionHandlerTest {
               assertThat(body.getError()).isEqualTo("Internal Server Error");
               assertThat(body.getMessage()).isEqualTo("An unexpected error occurred");
               assertThat(body.getPath()).isEqualTo("uri=/api/posts/1");
-            });
-  }
-
-  @Test
-  void handlePostNotFoundException_WithDefaultMessage_ShouldReturn404() {
-    // Given
-    PostNotFoundException exception = new PostNotFoundException();
-
-    // When
-    ResponseEntity<ApiErrorResponse> response = exceptionHandler.handlePostNotFoundException(exception, webRequest);
-
-    // Then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    assertThat(response.getBody())
-        .isNotNull()
-        .satisfies(
-            body -> {
-              assertThat(body.getStatus()).isEqualTo(404);
-              assertThat(body.getError()).isEqualTo("Not Found");
-              assertThat(body.getMessage()).isEqualTo("Post not found");
             });
   }
 

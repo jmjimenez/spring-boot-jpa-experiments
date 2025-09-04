@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.UUID;
 
+import es.jmjg.experiments.application.post.exception.PostNotFound;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
@@ -46,10 +46,13 @@ class FindPostByUuidIntegrationTest extends BaseIntegration {
 
   @Test
   void findByUuid_WhenPostDoesNotExist_ShouldThrowPostNotFoundException() {
+    // Given
+    UUID nonExistentUuid = UUID.randomUUID();
+
     // When
-    assertThatThrownBy(() -> findPostByUuid.findByUuid(UUID.randomUUID()))
-        .isInstanceOf(PostNotFoundException.class)
-        .hasMessage("Post not found");
+    assertThatThrownBy(() -> findPostByUuid.findByUuid(nonExistentUuid))
+        .isInstanceOf(PostNotFound.class)
+        .hasMessage("Post with UUID " + nonExistentUuid + " not found");
   }
 
   @Test

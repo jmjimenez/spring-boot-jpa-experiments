@@ -30,23 +30,6 @@ public class GlobalExceptionHandler {
 
   private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-  @ExceptionHandler(PostNotFoundException.class)
-  public ResponseEntity<ApiErrorResponse> handlePostNotFoundException(
-      PostNotFoundException ex, WebRequest request) {
-
-    log.warn("Post not found: {}", ex.getMessage());
-
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.NOT_FOUND.value())
-        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
-
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-  }
-
   @ExceptionHandler(PostNotFound.class)
   public ResponseEntity<ApiErrorResponse> handlePostNotFound(PostNotFound ex, WebRequest request) {
 
@@ -67,40 +50,6 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiErrorResponse> handleUserNotFound(UserNotFound ex, WebRequest request) {
 
     log.warn("User not found: {}", ex.getMessage());
-
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.NOT_FOUND.value())
-        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
-
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-  }
-
-  @ExceptionHandler(UserNotFoundException.class)
-  public ResponseEntity<ApiErrorResponse> handleUserNotFoundException(
-      UserNotFoundException ex, WebRequest request) {
-
-    log.warn("User not found: {}", ex.getMessage());
-
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.NOT_FOUND.value())
-        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
-
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-  }
-
-  @ExceptionHandler(TagNotFoundException.class)
-  public ResponseEntity<ApiErrorResponse> handleTagNotFoundException(
-      TagNotFoundException ex, WebRequest request) {
-
-    log.warn("Tag not found: {}", ex.getMessage());
 
     ApiErrorResponse errorResponse = ApiErrorResponse.builder()
         .timestamp(LocalDateTime.now())

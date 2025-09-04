@@ -21,13 +21,12 @@ class PostControllerPutTestIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldUpdatePostWhenPostExists() {
     final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
-    final String newTagName = "update-test-tag";
     final String updatedTitle = "Updated Title";
     final String updatedBody = "Updated Body";
 
     UpdatePostRequestDto postDto = new UpdatePostRequestDto(
         updatedTitle, updatedBody,
-        List.of(existingTagName, newTagName));
+        List.of(existingTagName));
 
     final String accessToken = createAccessToken(TestDataSamples.ADMIN_USERNAME, TestDataSamples.ADMIN_PASSWORD);
     HttpEntity<UpdatePostRequestDto> request = createAuthenticatedRequestWithAccessToken(accessToken, postDto);
@@ -44,9 +43,9 @@ class PostControllerPutTestIntegrationTest extends BaseControllerIntegration {
               assertThat(p.getTitle()).isEqualTo(updatedTitle);
               assertThat(p.getBody()).isEqualTo(updatedBody);
               assertThat(p.getTags()).isNotNull();
-              assertThat(p.getTags()).hasSize(2);
+              assertThat(p.getTags()).hasSize(1);
               assertThat(p.getTags()).extracting("name")
-                  .containsExactlyInAnyOrder(existingTagName, newTagName);
+                  .containsExactlyInAnyOrder(existingTagName);
             });
 
     HttpEntity<String> getRequest = createAuthenticatedRequestWithAccessToken(accessToken);
@@ -63,9 +62,9 @@ class PostControllerPutTestIntegrationTest extends BaseControllerIntegration {
       assertThat(p.getTitle()).isEqualTo(updatedTitle);
       assertThat(p.getBody()).isEqualTo(updatedBody);
       assertThat(p.getTags()).isNotNull();
-      assertThat(p.getTags()).hasSize(2);
+      assertThat(p.getTags()).hasSize(1);
       assertThat(p.getTags()).extracting("name")
-          .containsExactlyInAnyOrder(existingTagName, newTagName);
+          .containsExactlyInAnyOrder(existingTagName);
     });
   }
 

@@ -9,10 +9,6 @@ public class UserNotFound extends RuntimeException {
     super(message);
   }
 
-  public UserNotFound(Integer id) {
-    super("User not found with id: " + id);
-  }
-
   public UserNotFound(UUID uuid) {
     super("User not found with uuid: " + uuid);
   }

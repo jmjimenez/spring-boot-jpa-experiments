@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import java.util.Optional;
 import java.util.UUID;
 
+import es.jmjg.experiments.application.post.exception.PostNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.repository.PostRepository;
-import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -57,7 +57,7 @@ class FindPostByUuidTest {
 
     // When
     assertThatThrownBy(() -> findPostByUuid.findByUuid(nonExistentUuid))
-        .isInstanceOf(PostNotFoundException.class)
+        .isInstanceOf(PostNotFound.class)
         .hasMessage("Post not found");
 
     // Then

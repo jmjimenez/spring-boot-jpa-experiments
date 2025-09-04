@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,14 +54,13 @@ class FindUserByEmailTest {
 
     // When
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(testUser.getEmail(), authenticatedAdminUser);
-    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
+    User result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
-    assertThat(result).isPresent();
-    assertThat(result.get()).isEqualTo(testUser);
-    assertThat(result.get().getName()).isEqualTo("Test User");
-    assertThat(result.get().getEmail()).isEqualTo(testUser.getEmail());
-    assertThat(result.get().getUsername()).isEqualTo("testuser");
+    assertThat(result).isEqualTo(testUser);
+    assertThat(result.getName()).isEqualTo("Test User");
+    assertThat(result.getEmail()).isEqualTo(testUser.getEmail());
+    assertThat(result.getUsername()).isEqualTo("testuser");
     verify(userRepository, times(1)).findByEmail(testUser.getEmail());
   }
 
@@ -72,10 +72,9 @@ class FindUserByEmailTest {
 
     // When
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(nonExistentEmail, authenticatedAdminUser);
-    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
+    assertThatThrownBy(() -> findUserByEmail.findByEmail(findUserByEmailDto)).isInstanceOf(UserNotFound.class);
 
     // Then
-    assertThat(result).isEmpty();
     verify(userRepository, times(1)).findByEmail(nonExistentEmail);
   }
 
@@ -102,10 +101,9 @@ class FindUserByEmailTest {
 
     // When
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(emptyEmail, authenticatedAdminUser);
-    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
+    assertThatThrownBy(() -> findUserByEmail.findByEmail(findUserByEmailDto)).isInstanceOf(UserNotFound.class);
 
     // Then
-    assertThat(result).isEmpty();
     verify(userRepository, times(1)).findByEmail(emptyEmail);
   }
 
@@ -117,10 +115,9 @@ class FindUserByEmailTest {
 
     // When
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(blankEmail, authenticatedAdminUser);
-    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
+    assertThatThrownBy(() -> findUserByEmail.findByEmail(findUserByEmailDto)).isInstanceOf(UserNotFound.class);
 
     // Then
-    assertThat(result).isEmpty();
     verify(userRepository, times(1)).findByEmail(blankEmail);
   }
 
@@ -132,10 +129,9 @@ class FindUserByEmailTest {
 
     // When
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(upperCaseEmail, authenticatedAdminUser);
-    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
+    assertThatThrownBy(() -> findUserByEmail.findByEmail(findUserByEmailDto)).isInstanceOf(UserNotFound.class);
 
     // Then
-    assertThat(result).isEmpty();
     verify(userRepository, times(1)).findByEmail(upperCaseEmail);
   }
 
@@ -158,12 +154,11 @@ class FindUserByEmailTest {
 
     // When
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(specialEmail, authenticatedAdminUser);
-    Optional<User> result = findUserByEmail.findByEmail(findUserByEmailDto);
+    User result = findUserByEmail.findByEmail(findUserByEmailDto);
 
     // Then
-    assertThat(result).isPresent();
-    assertThat(result.get()).isEqualTo(specialUser);
-    assertThat(result.get().getEmail()).isEqualTo(specialEmail);
+    assertThat(result).isEqualTo(specialUser);
+    assertThat(result.getEmail()).isEqualTo(specialEmail);
     verify(userRepository, times(1)).findByEmail(specialEmail);
   }
 }

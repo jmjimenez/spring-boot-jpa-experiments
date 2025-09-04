@@ -7,13 +7,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
+import es.jmjg.experiments.application.post.exception.PostNotFound;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.infrastructure.controller.exception.PostNotFoundException;
 import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
@@ -43,7 +43,7 @@ class PostControllerGetByUuidTest extends BasePostControllerTest {
   @Test
   void shouldThrowPostNotFoundExceptionWhenGivenInvalidUuid() throws Exception {
     UUID uuid = UUID.randomUUID();
-    when(findPostByUuid.findByUuid(uuid)).thenThrow(new PostNotFoundException("Post not found"));
+    when(findPostByUuid.findByUuid(uuid)).thenThrow(new PostNotFound("Post not found"));
 
     mockMvc.perform(get("/api/posts/" + uuid)).andExpect(status().isNotFound());
   }

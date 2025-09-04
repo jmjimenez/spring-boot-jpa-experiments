@@ -1,7 +1,6 @@
 package es.jmjg.experiments.application.user;
 
-import java.util.Optional;
-
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +19,12 @@ public class FindUserByUuid {
   }
 
   @Transactional(readOnly = true)
-  public Optional<User> findByUuid(FindUserByUuidDto findUserByUuidDto) {
-    // Check if user is admin or if the authenticated user is requesting their own
-    // data
+  public User findByUuid(FindUserByUuidDto findUserByUuidDto) {
     if (!findUserByUuidDto.authenticatedUser().isAdmin() &&
         !findUserByUuidDto.authenticatedUser().id().equals(findUserByUuidDto.uuid())) {
       throw new Forbidden("Access denied: only admins or the user themselves can view user data");
     }
 
-    return userRepository.findByUuid(findUserByUuidDto.uuid());
+    return userRepository.findByUuid(findUserByUuidDto.uuid()).orElseThrow(() -> new UserNotFound("user with uuid " + findUserByUuidDto.uuid() + " not found"));
   }
 }

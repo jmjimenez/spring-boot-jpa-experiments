@@ -1,13 +1,13 @@
 package es.jmjg.experiments.infrastructure.controller.user;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
-
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ class UserControllerGetFindByEmailTest extends BaseUserControllerTest {
   void shouldFindUserWhenGivenValidEmail() throws Exception {
     // Given
     String email = "test@example.com";
-    when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(Optional.of(testUser));
+    when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(testUser);
 
     String expectedJson = JsonSamples.createFindUserByEmailJsonResponse(testUser.getPosts(), testUser.getUuid());
 
@@ -52,7 +52,7 @@ class UserControllerGetFindByEmailTest extends BaseUserControllerTest {
   void shouldNotFindUserWhenGivenInvalidEmail() throws Exception {
     // Given
     String invalidEmail = "nonexistent@example.com";
-    when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(Optional.empty());
+    assertThatThrownBy(() -> findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).isInstanceOf(UserNotFound.class);
 
     // When & Then
     mockMvc

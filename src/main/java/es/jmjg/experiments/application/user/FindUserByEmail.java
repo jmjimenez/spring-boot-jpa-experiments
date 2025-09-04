@@ -1,7 +1,6 @@
 package es.jmjg.experiments.application.user;
 
-import java.util.Optional;
-
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +19,11 @@ public class FindUserByEmail {
   }
 
   @Transactional(readOnly = true)
-  public Optional<User> findByEmail(FindUserByEmailDto findUserByEmailDto) {
+  public User findByEmail(FindUserByEmailDto findUserByEmailDto) {
     if (!findUserByEmailDto.authenticatedUser().isAdmin()) {
       throw new Forbidden("Only admin users can search users by email");
     }
 
-    return userRepository.findByEmail(findUserByEmailDto.email());
+    return userRepository.findByEmail(findUserByEmailDto.email()).orElseThrow(() -> new UserNotFound("User with email " + findUserByEmailDto.email() + " not found"));
   }
 }

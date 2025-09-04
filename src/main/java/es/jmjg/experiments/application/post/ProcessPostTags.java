@@ -3,8 +3,8 @@ package es.jmjg.experiments.application.post;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,12 +41,7 @@ public class ProcessPostTags {
       if (existingTag.isPresent()) {
         processedTags.add(existingTag.get());
       } else {
-        Tag newTag = new Tag();
-        newTag.setUuid(UUID.randomUUID());
-        newTag.setName(trimmedTagName);
-
-        Tag savedTag = tagRepository.save(newTag);
-        processedTags.add(savedTag);
+        throw new TagNotFound("Tag not found: " + trimmedTagName);
       }
     }
 

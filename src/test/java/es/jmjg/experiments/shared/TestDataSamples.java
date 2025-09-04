@@ -95,5 +95,5 @@ public final class TestDataSamples {
 
   // Tag name constants for tests
   public static final String TAG_JAVA = "java";
-  public static final String TAG_SPRING = "spring";
+  public static final String TAG_SPRING_BOOT = "spring-boot";
 }

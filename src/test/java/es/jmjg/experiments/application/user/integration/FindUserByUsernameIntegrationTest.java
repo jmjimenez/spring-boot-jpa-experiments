@@ -3,8 +3,7 @@ package es.jmjg.experiments.application.user.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Optional;
-
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,25 +44,21 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, authenticatedAdminUser);
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
+    User result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
-    assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
-    assertThat(result.get().getEmail()).isEqualTo(TestDataSamples.ERVIN_EMAIL);
-    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.ERVIN_USERNAME);
-    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.ERVIN_UUID);
-    assertThat(result.get().getId()).isEqualTo(2); // Second user from migration
+    assertThat(result.getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
+    assertThat(result.getEmail()).isEqualTo(TestDataSamples.ERVIN_EMAIL);
+    assertThat(result.getUsername()).isEqualTo(TestDataSamples.ERVIN_USERNAME);
+    assertThat(result.getUuid()).isEqualTo(TestDataSamples.ERVIN_UUID);
+    assertThat(result.getId()).isEqualTo(2); // Second user from migration
   }
 
   @Test
   void findByUsername_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("nonexistentuser", authenticatedAdminUser);
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
-
-    // Then
-    assertThat(result).isEmpty();
+    assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto)).isInstanceOf(UserNotFound.class);
   }
 
   @Test
@@ -75,17 +70,15 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     // When
     FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(secondUsername, authenticatedAdminUser);
     FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(thirdUsername, authenticatedAdminUser);
-    Optional<User> secondResult = findUserByUsername.findByUsername(findUserByUsernameDto1);
-    Optional<User> thirdResult = findUserByUsername.findByUsername(findUserByUsernameDto2);
+    User secondResult = findUserByUsername.findByUsername(findUserByUsernameDto1);
+    User thirdResult = findUserByUsername.findByUsername(findUserByUsernameDto2);
 
     // Then
-    assertThat(secondResult).isPresent();
-    assertThat(secondResult.get().getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
-    assertThat(secondResult.get().getId()).isEqualTo(2); // Second user from migration
+    assertThat(secondResult.getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
+    assertThat(secondResult.getId()).isEqualTo(2); // Second user from migration
 
-    assertThat(thirdResult).isPresent();
-    assertThat(thirdResult.get().getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
-    assertThat(thirdResult.get().getId()).isEqualTo(3); // Third user from migration
+    assertThat(thirdResult.getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
+    assertThat(thirdResult.getId()).isEqualTo(3); // Third user from migration
   }
 
   @Test
@@ -93,7 +86,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     // Given - using existing test data from migration
     String testUsername = TestDataSamples.LEANNE_USERNAME;
     FindUserByUsernameDto findUserByUsernameDto1 = new FindUserByUsernameDto(testUsername, authenticatedAdminUser);
-    User existingUser = findUserByUsername.findByUsername(findUserByUsernameDto1).orElseThrow();
+    User existingUser = findUserByUsername.findByUsername(findUserByUsernameDto1);
 
     // Update the user
     existingUser.setName("Updated Test User");
@@ -102,34 +95,27 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
     // When
     FindUserByUsernameDto findUserByUsernameDto2 = new FindUserByUsernameDto(testUsername, authenticatedAdminUser);
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto2);
+    User result = findUserByUsername.findByUsername(findUserByUsernameDto2);
 
     // Then
-    assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo("Updated Test User");
-    assertThat(result.get().getEmail()).isEqualTo("updated@example.com");
-    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
-    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+    assertThat(result.getName()).isEqualTo("Updated Test User");
+    assertThat(result.getEmail()).isEqualTo("updated@example.com");
+    assertThat(result.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
+    assertThat(result.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
   }
 
   @Test
   void findByUsername_WhenUsernameIsEmpty_ShouldReturnEmpty() {
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("", authenticatedAdminUser);
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
-
-    // Then
-    assertThat(result).isEmpty();
+    assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto)).isInstanceOf(UserNotFound.class);
   }
 
   @Test
   void findByUsername_WhenUsernameIsBlank_ShouldReturnEmpty() {
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto("   ", authenticatedAdminUser);
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
-
-    // Then
-    assertThat(result).isEmpty();
+    assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto)).isInstanceOf(UserNotFound.class);
   }
 
   @Test
@@ -139,10 +125,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(testUsername, authenticatedAdminUser);
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
-
-    // Then
-    assertThat(result).isEmpty();
+    assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto)).isInstanceOf(UserNotFound.class);
   }
 
   @Test
@@ -152,10 +135,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(" " + testUsername + " ", authenticatedAdminUser);
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
-
-    // Then
-    assertThat(result).isEmpty();
+    assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto)).isInstanceOf(UserNotFound.class);
   }
 
   @Test
@@ -167,11 +147,10 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
 
     // When
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(leanneUsername, authenticatedUserLeanne);
-    Optional<User> result = findUserByUsername.findByUsername(findUserByUsernameDto);
+    User result = findUserByUsername.findByUsername(findUserByUsernameDto);
 
     // Then
-    assertThat(result).isPresent();
-    assertThat(result.get().getUsername()).isEqualTo(leanneUsername);
+    assertThat(result.getUsername()).isEqualTo(leanneUsername);
   }
 
   @Test

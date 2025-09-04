@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import java.util.UUID;
 
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,15 +55,14 @@ class FindUserByUuidTest {
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUser.getUuid(), authenticatedAdminUser);
 
     // When
-    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
+    User result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
-    assertThat(result).isPresent();
-    assertThat(result.get()).isEqualTo(testUser);
-    assertThat(result.get().getName()).isEqualTo(testUser.getName());
-    assertThat(result.get().getEmail()).isEqualTo(testUser.getEmail());
-    assertThat(result.get().getUsername()).isEqualTo(testUser.getUsername());
-    assertThat(result.get().getUuid()).isEqualTo(testUser.getUuid());
+    assertThat(result).isEqualTo(testUser);
+    assertThat(result.getName()).isEqualTo(testUser.getName());
+    assertThat(result.getEmail()).isEqualTo(testUser.getEmail());
+    assertThat(result.getUsername()).isEqualTo(testUser.getUsername());
+    assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
     verify(userRepository, times(1)).findByUuid(testUser.getUuid());
   }
 
@@ -74,10 +74,9 @@ class FindUserByUuidTest {
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(nonExistentUuid, authenticatedAdminUser);
 
     // When
-    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
+    assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto)).isInstanceOf(UserNotFound.class);
 
     // Then
-    assertThat(result).isEmpty();
     verify(userRepository, times(1)).findByUuid(nonExistentUuid);
   }
 

@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
+import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,7 +36,6 @@ class PostControllerPostTest extends BasePostControllerTest {
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
     Post post = PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
-    post.setId(3);
 
     when(savePost.save(any(SavePostDto.class))).thenReturn(post);
 
@@ -50,5 +50,25 @@ class PostControllerPostTest extends BasePostControllerTest {
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", "/api/posts/" + post.getUuid().toString()))
         .andExpect(content().json(expectedResponse));
+  }
+
+  @Test
+  void shouldReturnBadRequestWhenTagIsNotFound() throws Exception {
+    User user = UserFactory.createBasicUser();
+
+    JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
+
+    Post post = PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
+
+    when(savePost.save(any(SavePostDto.class))).thenThrow(new TagNotFound("Tag not found"));
+
+    String requestBody = JsonSamples.createCreatePostRequestJson(post);
+
+    mockMvc
+      .perform(post("/api/posts")
+        .contentType("application/json")
+        .content(requestBody)
+        .with(user(userDetails)))
+      .andExpect(status().isNotFound());
   }
 }

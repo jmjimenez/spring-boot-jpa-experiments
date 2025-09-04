@@ -3,9 +3,9 @@ package es.jmjg.experiments.application.user.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Optional;
 import java.util.UUID;
 
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,25 +44,21 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   void findByUuid_WhenUserExists_ShouldReturnUser() {
     // When
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.LEANNE_UUID, authenticatedAdminUser);
-    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
+    User result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
-    assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
-    assertThat(result.get().getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
-    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
-    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
-    assertThat(result.get().getId()).isEqualTo(TestDataSamples.LEANNE_ID);
+    assertThat(result.getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
+    assertThat(result.getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
+    assertThat(result.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
+    assertThat(result.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+    assertThat(result.getId()).isEqualTo(TestDataSamples.LEANNE_ID);
   }
 
   @Test
   void findByUuid_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UUID.randomUUID(), authenticatedAdminUser);
-    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
-
-    // Then
-    assertThat(result).isEmpty();
+    assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto)).isInstanceOf(UserNotFound.class);
   }
 
   @Test
@@ -70,17 +66,15 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     // When
     FindUserByUuidDto findUserByUuidDto1 = new FindUserByUuidDto(TestDataSamples.ERVIN_UUID, authenticatedAdminUser);
     FindUserByUuidDto findUserByUuidDto2 = new FindUserByUuidDto(TestDataSamples.CLEMENTINE_UUID, authenticatedAdminUser);
-    Optional<User> firstResult = findUserByUuid.findByUuid(findUserByUuidDto1);
-    Optional<User> secondResult = findUserByUuid.findByUuid(findUserByUuidDto2);
+    User firstResult = findUserByUuid.findByUuid(findUserByUuidDto1);
+    User secondResult = findUserByUuid.findByUuid(findUserByUuidDto2);
 
     // Then
-    assertThat(firstResult).isPresent();
-    assertThat(firstResult.get().getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
-    assertThat(firstResult.get().getId()).isEqualTo(TestDataSamples.ERVIN_ID);
+    assertThat(firstResult.getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
+    assertThat(firstResult.getId()).isEqualTo(TestDataSamples.ERVIN_ID);
 
-    assertThat(secondResult).isPresent();
-    assertThat(secondResult.get().getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
-    assertThat(secondResult.get().getId()).isEqualTo(TestDataSamples.CLEMENTINE_ID);
+    assertThat(secondResult.getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
+    assertThat(secondResult.getId()).isEqualTo(TestDataSamples.CLEMENTINE_ID);
   }
 
   @Test
@@ -95,14 +89,13 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
 
     // When
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(TestDataSamples.PATRICIA_UUID, authenticatedAdminUser);
-    Optional<User> result = findUserByUuid.findByUuid(findUserByUuidDto);
+    User result = findUserByUuid.findByUuid(findUserByUuidDto);
 
     // Then
-    assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo("Updated Patricia User");
-    assertThat(result.get().getEmail()).isEqualTo("updated.patricia@example.com");
-    assertThat(result.get().getUsername()).isEqualTo(TestDataSamples.PATRICIA_USERNAME);
-    assertThat(result.get().getUuid()).isEqualTo(TestDataSamples.PATRICIA_UUID);
+    assertThat(result.getName()).isEqualTo("Updated Patricia User");
+    assertThat(result.getEmail()).isEqualTo("updated.patricia@example.com");
+    assertThat(result.getUsername()).isEqualTo(TestDataSamples.PATRICIA_USERNAME);
+    assertThat(result.getUuid()).isEqualTo(TestDataSamples.PATRICIA_UUID);
   }
 
   @Test

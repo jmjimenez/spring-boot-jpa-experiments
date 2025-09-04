@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -145,7 +146,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
 
     final String updatedTitle = "Updated Post Title With Tags";
     final String updatedBody = "Updated post body with tags";
-    var tagNames = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING);
+    var tagNames = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING_BOOT);
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
         existingPost.getUuid(),
@@ -165,7 +166,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     assertThat(result.getBody()).isEqualTo(updatedBody);
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
     assertThat(result.getTags()).hasSize(2);
-    assertThat(result.getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING);
+    assertThat(result.getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING_BOOT);
 
     // Verify it was actually updated in the database
     Optional<Post> updatedPost = postRepository.findById(result.getId());
@@ -173,6 +174,31 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     assertThat(updatedPost.get().getTitle()).isEqualTo(updatedTitle);
     assertThat(updatedPost.get().getBody()).isEqualTo(updatedBody);
     assertThat(updatedPost.get().getTags()).hasSize(2);
-    assertThat(updatedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING);
+    assertThat(updatedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING_BOOT);
+  }
+
+  @Test
+  @Transactional
+  void update_WithNotFoundTag_ShouldThrowTagNotFound() {
+    // Given
+    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+
+    final String updatedTitle = "Updated Post Title With Tags";
+    final String updatedBody = "Updated post body with tags";
+    final String notFoundTag = "NonExistentTag";
+    var tagNames = List.of(TestDataSamples.TAG_JAVA, notFoundTag);
+
+    UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
+      existingPost.getUuid(),
+      updatedTitle,
+      updatedBody,
+      tagNames,
+      testUser);
+
+    // When
+    assertThatThrownBy(() -> updatePost.update(updatePostDto))
+      .isInstanceOf(TagNotFound.class)
+      .hasMessage("Tag not found: " + notFoundTag);
   }
 }

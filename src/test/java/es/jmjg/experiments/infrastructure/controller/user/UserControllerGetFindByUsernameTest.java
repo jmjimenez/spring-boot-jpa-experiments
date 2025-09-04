@@ -6,8 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
-
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
-class UserControllerGetFindByUsername extends BaseUserControllerTest {
+class UserControllerGetFindByUsernameTest extends BaseUserControllerTest {
 
   @Autowired
   private FindUserByUsername findUserByUsername;
@@ -36,7 +35,7 @@ class UserControllerGetFindByUsername extends BaseUserControllerTest {
   void shouldFindUserWhenGivenValidUsername() throws Exception {
     // Given
     String username = "testuser";
-    when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenReturn(Optional.of(testUser));
+    when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenReturn(testUser);
 
     String expectedJson = JsonSamples.createFindUserByUsernameJsonResponse(testUser.getPosts(), testUser.getUuid());
 
@@ -52,7 +51,7 @@ class UserControllerGetFindByUsername extends BaseUserControllerTest {
   void shouldNotFindUserWhenGivenInvalidUsername() throws Exception {
     // Given
     String invalidUsername = "nonexistentuser";
-    when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenReturn(Optional.empty());
+    when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenThrow(new UserNotFound("User with username " + invalidUsername + " not found"));
 
     // When & Then
     mockMvc

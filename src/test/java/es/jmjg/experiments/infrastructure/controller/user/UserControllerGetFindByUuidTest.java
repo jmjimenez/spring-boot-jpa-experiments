@@ -6,8 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
-
+import es.jmjg.experiments.application.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
   @Test
   void shouldFindUserWhenGivenValidUuid() throws Exception {
     // Given
-    when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.of(testUser));
+    when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(testUser);
 
     String expectedJson = JsonSamples.createFindUserByUuidJsonResponse(testUser.getPosts(), testUser.getUuid());
 
@@ -51,7 +50,7 @@ class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
   void shouldNotFindUserWhenGivenInvalidUuid() throws Exception {
     // Given
     java.util.UUID invalidUuid = java.util.UUID.randomUUID();
-    when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(Optional.empty());
+    when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenThrow(new UserNotFound("user not found"));
 
     // When & Then
     mockMvc.perform(get("/api/users/" + invalidUuid)

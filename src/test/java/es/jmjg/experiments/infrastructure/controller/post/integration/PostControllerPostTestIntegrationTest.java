@@ -21,12 +21,11 @@ class PostControllerPostTestIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldCreateNewPostWhenPostIsValid() {
     final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
-    final String newTagName = "integration-test-tag";
     final String postTitle = "101 Title";
     final String postBody = "101 Body";
 
     SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(),
-        postTitle, postBody, List.of(existingTagName, newTagName));
+        postTitle, postBody, List.of(existingTagName));
 
     final String accessToken = createAccessToken(TestDataSamples.LEANNE_USERNAME, TestDataSamples.USER_PASSWORD);
     HttpEntity<SavePostRequestDto> request = createAuthenticatedRequestWithAccessToken(accessToken, postDto);
@@ -51,9 +50,9 @@ class PostControllerPostTestIntegrationTest extends BaseControllerIntegration {
               assertThat(body.getTitle()).isEqualTo(postTitle);
               assertThat(body.getBody()).isEqualTo(postBody);
               assertThat(body.getTags()).isNotNull();
-              assertThat(body.getTags()).hasSize(2);
+              assertThat(body.getTags()).hasSize(1);
               assertThat(body.getTags()).extracting("name")
-                  .containsExactlyInAnyOrder(existingTagName, newTagName);
+                  .containsExactlyInAnyOrder(existingTagName);
               // Verify the Location header contains the correct UUID
               assertThat(locationHeader).isEqualTo("/api/posts/" + body.getUuid().toString());
             });
@@ -72,9 +71,9 @@ class PostControllerPostTestIntegrationTest extends BaseControllerIntegration {
       FindPostByUuidResponseDto foundPost = foundPostResponse.getBody();
       assertThat(foundPost).isNotNull().satisfies(fp -> {
         assertThat(fp.getTags()).isNotNull();
-        assertThat(fp.getTags()).hasSize(2);
+        assertThat(fp.getTags()).hasSize(1);
         assertThat(fp.getTags()).extracting("name")
-            .containsExactlyInAnyOrder(existingTagName, newTagName);
+            .containsExactlyInAnyOrder(existingTagName);
       });
     });
   }
@@ -107,5 +106,25 @@ class PostControllerPostTestIntegrationTest extends BaseControllerIntegration {
         SavePostResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+  }
+
+  @Test
+  void shouldNotCreateNewPostWhenTagNotFound() {
+    final String notExistingTagName = "NotExistingTag";
+    final String postTitle = "101 Title";
+    final String postBody = "101 Body";
+
+    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(),
+      postTitle, postBody, List.of(notExistingTagName));
+
+    final String accessToken = createAccessToken(TestDataSamples.LEANNE_USERNAME, TestDataSamples.USER_PASSWORD);
+    HttpEntity<SavePostRequestDto> request = createAuthenticatedRequestWithAccessToken(accessToken, postDto);
+
+    final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
+      "/api/posts",
+      HttpMethod.POST,
+      request,
+      SavePostResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 }

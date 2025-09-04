@@ -36,7 +36,6 @@ import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
-import es.jmjg.experiments.infrastructure.controller.exception.UserNotFoundException;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByEmailResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByUsernameResponseDto;
@@ -121,7 +120,7 @@ public class UserController {
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "UUID of the user to retrieve") @PathVariable UUID uuid) {
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
-    User user = findUserByUuid.findByUuid(findUserByUuidDto).orElseThrow(UserNotFoundException::new);
+    User user = findUserByUuid.findByUuid(findUserByUuidDto);
     return userMapper.toFindUserByUuidResponseDto(user);
   }
 
@@ -138,7 +137,7 @@ public class UserController {
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "Email address to search for") @RequestParam String email) {
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(email, userMapper.toAuthenticatedUserDto(userDetails));
-    User user = findUserByEmail.findByEmail(findUserByEmailDto).orElseThrow(UserNotFoundException::new);
+    User user = findUserByEmail.findByEmail(findUserByEmailDto);
     return userMapper.toFindUserByEmailResponseDto(user);
   }
 
@@ -155,7 +154,7 @@ public class UserController {
       @AuthenticationPrincipal JwtUserDetails userDetails,
       @Parameter(description = "Username to search for") @RequestParam String username) {
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(username, userMapper.toAuthenticatedUserDto(userDetails));
-    User user = findUserByUsername.findByUsername(findUserByUsernameDto).orElseThrow(UserNotFoundException::new);
+    User user = findUserByUsername.findByUsername(findUserByUsernameDto);
     return userMapper.toFindUserByUsernameResponseDto(user);
   }
 
