@@ -16,7 +16,7 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDt
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
-class PostControllerPostTestIntegrationTest extends BaseControllerIntegration {
+class PostControllerPostIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldCreateNewPostWhenPostIsValid() {

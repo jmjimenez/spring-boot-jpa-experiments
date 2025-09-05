@@ -58,7 +58,7 @@ class FindPostByUuidTest {
     // When
     assertThatThrownBy(() -> findPostByUuid.findByUuid(nonExistentUuid))
         .isInstanceOf(PostNotFound.class)
-        .hasMessage("Post not found");
+        .hasMessage("Post with UUID " + nonExistentUuid + " not found");
 
     // Then
     verify(postRepository, times(1)).findByUuid(nonExistentUuid);

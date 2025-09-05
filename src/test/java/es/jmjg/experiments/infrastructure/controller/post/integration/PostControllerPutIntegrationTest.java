@@ -16,7 +16,7 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponse
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
-class PostControllerPutTestIntegrationTest extends BaseControllerIntegration {
+class PostControllerPutIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldUpdatePostWhenPostExists() {

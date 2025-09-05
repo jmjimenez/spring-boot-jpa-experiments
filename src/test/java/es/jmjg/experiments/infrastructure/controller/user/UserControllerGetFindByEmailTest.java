@@ -1,6 +1,5 @@
 package es.jmjg.experiments.infrastructure.controller.user;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,7 +51,7 @@ class UserControllerGetFindByEmailTest extends BaseUserControllerTest {
   void shouldNotFindUserWhenGivenInvalidEmail() throws Exception {
     // Given
     String invalidEmail = "nonexistent@example.com";
-    assertThatThrownBy(() -> findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).isInstanceOf(UserNotFound.class);
+    when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenThrow(UserNotFound.class);
 
     // When & Then
     mockMvc

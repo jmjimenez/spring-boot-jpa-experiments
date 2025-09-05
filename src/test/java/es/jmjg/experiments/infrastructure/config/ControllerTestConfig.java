@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.config;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.application.post.UpdatePostTags;
 import java.util.UUID;
 
 import org.springframework.boot.test.context.TestConfiguration;
@@ -64,6 +65,12 @@ public class ControllerTestConfig {
   @Primary
   public UpdatePost updatePost() {
     return mock(UpdatePost.class);
+  }
+
+  @Bean
+  @Primary
+  public UpdatePostTags updatePostTags() {
+    return mock(UpdatePostTags.class);
   }
 
   @Bean

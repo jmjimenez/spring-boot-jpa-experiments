@@ -75,7 +75,7 @@ public final class JsonSamples {
             "hasPrevious":false
         }
         """
-        .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid());
+        .formatted(posts.getFirst().getUuid(), posts.getFirst().getUser().getUuid());
   }
 
   /**
@@ -348,5 +348,16 @@ public final class JsonSamples {
             "tags":["technology","java"]
         }
         """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+  }
+
+  /**
+   * Serializes UpdatePostTagsRequestDto to JSON for patch tags requests.
+   */
+  public static String createUpdatePostTagsRequestJson(es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostTagsRequestDto dto) {
+    try {
+      return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(dto);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to serialize UpdatePostTagsRequestDto", e);
+    }
   }
 }

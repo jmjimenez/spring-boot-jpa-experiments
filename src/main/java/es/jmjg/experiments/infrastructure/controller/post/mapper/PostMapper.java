@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.mapper;
 
+import es.jmjg.experiments.infrastructure.controller.post.dto.TagDto;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import es.jmjg.experiments.application.post.dto.SavePostDto;
 import es.jmjg.experiments.application.post.dto.UpdatePostDto;
+import es.jmjg.experiments.application.post.dto.UpdatePostTagsDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
@@ -27,6 +29,8 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDt
 import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostTagsRequestDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostTagsResponseDto;
 
 @Component
 public class PostMapper {
@@ -71,14 +75,6 @@ public class PostMapper {
         page.hasPrevious());
   }
 
-  // Generic method for domain conversion
-  private Post createPostFromDto(Object dto, Function<Object, Post> converter) {
-    if (dto == null) {
-      return null;
-    }
-    return converter.apply(dto);
-  }
-
   // Response DTO creation methods using the generic approach
   public UpdatePostResponseDto toUpdatePostResponseDto(Post post) {
     return createResponseDto(post, this::createUpdatePostResponseDto);
@@ -108,11 +104,6 @@ public class PostMapper {
     return createResponseDto(post, this::createSearchPostsResponseDto);
   }
 
-  // List conversion methods using the generic approach
-  public List<FindAllPostsResponseDto> toFindAllPostsResponseDto(List<Post> posts) {
-    return convertList(posts, this::toFindAllPostsResponseDto);
-  }
-
   public List<FindPostByTagResponseDto> toFindPostsByTagResponseDto(List<Post> posts) {
     return convertList(posts, this::toFindPostsByTagResponseDto);
   }
@@ -128,11 +119,6 @@ public class PostMapper {
   // Paged response method using the generic approach
   public PagedResponseDto<FindAllPostsResponseDto> toPagedResponseDto(Page<Post> page) {
     return createPagedResponse(page, this::toFindAllPostsResponseDto);
-  }
-
-  // Domain conversion methods using the generic approach
-  public Post toDomain(UpdatePostRequestDto postRequestDto) {
-    return createPostFromDto(postRequestDto, this::createPostFromUpdateDto);
   }
 
   public SavePostDto toSavePostDto(SavePostRequestDto postRequestDto, AuthenticatedUserDto authenticatedUser) {
@@ -153,17 +139,27 @@ public class PostMapper {
         authenticatedUser);
   }
 
+  public UpdatePostTagsDto toUpdatePostTagsDto(UpdatePostTagsRequestDto postDto, UUID postUuid, AuthenticatedUserDto user) {
+      return new UpdatePostTagsDto(postUuid, postDto.getTagNames(), user);
+  }
+
+  public UpdatePostTagsResponseDto toUpdatePostTagsResponseDto(Post post) {
+        List<TagDto> tags = post.getTags() != null
+            ? post.getTags().stream()
+                .map(tag -> new TagDto(tag.getUuid(), tag.getName()))
+                .collect(java.util.stream.Collectors.toList())
+            : List.of();
+
+    return new UpdatePostTagsResponseDto(post.getUuid(), post.getTitle(), tags);
+  }
+
   // Private helper methods for creating specific response DTOs
   private UpdatePostResponseDto createUpdatePostResponseDto(Post post) {
     logger.debug("Creating UpdatePostResponseDto for post UUID: {}", post.getUuid());
     try {
-      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
       UUID userUuid = post.getUser().getUuid();
-      logger.debug("Successfully accessed user UUID: {}", userUuid);
 
-      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
       List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
-      logger.debug("Successfully accessed tags, count: {}", tags.size());
 
       return new UpdatePostResponseDto(
           post.getUuid(),
@@ -181,13 +177,9 @@ public class PostMapper {
   private SavePostResponseDto createSavePostResponseDto(Post post) {
     logger.debug("Creating SavePostResponseDto for post UUID: {}", post.getUuid());
     try {
-      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
       UUID userUuid = post.getUser().getUuid();
-      logger.debug("Successfully accessed user UUID: {}", userUuid);
 
-      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
       List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
-      logger.debug("Successfully accessed tags, count: {}", tags.size());
 
       return new SavePostResponseDto(
           post.getUuid(),
@@ -203,15 +195,10 @@ public class PostMapper {
   }
 
   private FindPostByUuidResponseDto createFindPostByUuidResponseDto(Post post) {
-    logger.debug("Creating FindPostByUuidResponseDto for post UUID: {}", post.getUuid());
     try {
-      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
       UUID userUuid = post.getUser().getUuid();
-      logger.debug("Successfully accessed user UUID: {}", userUuid);
 
-      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
       List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
-      logger.debug("Successfully accessed tags, count: {}", tags.size());
 
       return new FindPostByUuidResponseDto(
           post.getUuid(),
@@ -229,13 +216,9 @@ public class PostMapper {
   private FindAllPostsResponseDto createFindAllPostsResponseDto(Post post) {
     logger.debug("Creating FindAllPostsResponseDto for post UUID: {}", post.getUuid());
     try {
-      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
       UUID userUuid = post.getUser().getUuid();
-      logger.debug("Successfully accessed user UUID: {}", userUuid);
 
-      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
       List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
-      logger.debug("Successfully accessed tags, count: {}", tags.size());
 
       return new FindAllPostsResponseDto(
           post.getUuid(),
@@ -253,13 +236,9 @@ public class PostMapper {
   private FindPostByTagResponseDto createFindPostByTagResponseDto(Post post) {
     logger.debug("Creating FindPostByTagResponseDto for post UUID: {}", post.getUuid());
     try {
-      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
       UUID userUuid = post.getUser().getUuid();
-      logger.debug("Successfully accessed user UUID: {}", userUuid);
 
-      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
       List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
-      logger.debug("Successfully accessed tags, count: {}", tags.size());
 
       return new FindPostByTagResponseDto(
           post.getUuid(),
@@ -277,13 +256,9 @@ public class PostMapper {
   private FindPostByTagNameResponseDto createFindPostByTagNameResponseDto(Post post) {
     logger.debug("Creating FindPostByTagNameResponseDto for post UUID: {}", post.getUuid());
     try {
-      logger.debug("Accessing post.getUser().getUuid() - potential LazyInitializationException point");
       UUID userUuid = post.getUser().getUuid();
-      logger.debug("Successfully accessed user UUID: {}", userUuid);
 
-      logger.debug("Accessing post.getTags() - potential LazyInitializationException point");
       List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
-      logger.debug("Successfully accessed tags, count: {}", tags.size());
 
       return new FindPostByTagNameResponseDto(
           post.getUuid(),
@@ -320,16 +295,6 @@ public class PostMapper {
           post.getUuid(), e.getMessage(), e);
       throw e;
     }
-  }
-
-  // Private helper methods for domain conversion
-  private Post createPostFromUpdateDto(Object dto) {
-    UpdatePostRequestDto postRequestDto = (UpdatePostRequestDto) dto;
-    Post post = new Post();
-    post.setTitle(postRequestDto.getTitle());
-    post.setBody(postRequestDto.getBody());
-    // Note: tagUuids will be handled in the service layer
-    return post;
   }
 
   private List<PostTagResponseDto> convertTagsToPostTagResponseDto(List<Tag> tags) {

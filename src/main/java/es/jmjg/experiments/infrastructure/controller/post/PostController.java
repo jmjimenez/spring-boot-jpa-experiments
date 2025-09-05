@@ -3,42 +3,21 @@ package es.jmjg.experiments.infrastructure.controller.post;
 import java.util.List;
 import java.util.UUID;
 
+import es.jmjg.experiments.application.post.*;
+import es.jmjg.experiments.infrastructure.controller.post.dto.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import es.jmjg.experiments.application.post.DeletePost;
-import es.jmjg.experiments.application.post.FindAllPosts;
-import es.jmjg.experiments.application.post.FindPostByUuid;
-import es.jmjg.experiments.application.post.FindPosts;
-import es.jmjg.experiments.application.post.SavePost;
-import es.jmjg.experiments.application.post.UpdatePost;
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
-import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByUuidResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostRequestDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.SearchPostsResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostRequestDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -64,6 +43,7 @@ public class PostController {
   private final FindPostByUuid findPostByUuid;
   private final FindAllPosts findAllPosts;
   private final DeletePost deletePost;
+  private final UpdatePostTags updatePostTags;
 
   public PostController(
       PostMapper postMapper,
@@ -73,7 +53,8 @@ public class PostController {
       SavePost savePost,
       FindPostByUuid findPostByUuid,
       FindAllPosts findAllPosts,
-      DeletePost deletePost) {
+      DeletePost deletePost,
+      UpdatePostTags updatePostTags) {
     this.postMapper = postMapper;
     this.userMapper = userMapper;
     this.findPosts = findPosts;
@@ -82,11 +63,12 @@ public class PostController {
     this.findPostByUuid = findPostByUuid;
     this.findAllPosts = findAllPosts;
     this.deletePost = deletePost;
+    this.updatePostTags = updatePostTags;
   }
 
   @GetMapping("")
   @Transactional(readOnly = true)
-  @Operation(summary = "Get all posts", description = "Retrieves a paginated list of all posts", security = {})
+  @Operation(summary = "Get all posts", description = "Retrieves a paginated list of all posts")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagedResponseDto.class))),
       @ApiResponse(responseCode = "500", description = "Internal server error")
@@ -103,7 +85,7 @@ public class PostController {
 
   @GetMapping("/{uuid}")
   @Transactional(readOnly = true)
-  @Operation(summary = "Get post by UUID", description = "Retrieves a specific post by its UUID", security = {})
+  @Operation(summary = "Get post by UUID", description = "Retrieves a specific post by its UUID")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved post", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostByUuidResponseDto.class))),
       @ApiResponse(responseCode = "404", description = "Post not found"),
@@ -118,7 +100,7 @@ public class PostController {
 
   @GetMapping("/search")
   @Transactional(readOnly = true)
-  @Operation(summary = "Search posts by content", description = "Finds posts containing specified words", security = {})
+  @Operation(summary = "Search posts by content", description = "Finds posts containing specified words")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SearchPostsResponseDto.class))),
       @ApiResponse(responseCode = "500", description = "Internal server error")
@@ -176,6 +158,27 @@ public class PostController {
     var updatePostDto = postMapper.toUpdatePostDto(postDto, uuid, userMapper.toAuthenticatedUserDto(userDetails));
     Post updatedPost = updatePost.update(updatePostDto);
     return postMapper.toUpdatePostResponseDto(updatedPost);
+  }
+
+  @PatchMapping("/{uuid}/tags")
+  @Transactional
+  @Operation(summary = "Update tags of post", description = "Updates tags linked to existing post")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Post updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdatePostTagsResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to update this post"),
+    @ApiResponse(responseCode = "404", description = "Post or tag not found"),
+    @ApiResponse(responseCode = "400", description = "Invalid input data"),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  UpdatePostTagsResponseDto updateTags(
+    @Parameter(description = "UUID of the post to update") @PathVariable UUID uuid,
+    @Parameter(description = "Updated tags lis", required = true) @RequestBody @Valid UpdatePostTagsRequestDto postDto,
+    @AuthenticationPrincipal JwtUserDetails userDetails) {
+
+    var updatePostTagsDto = postMapper.toUpdatePostTagsDto(postDto, uuid, userMapper.toAuthenticatedUserDto(userDetails));
+    Post updatedPost = updatePostTags.update(updatePostTagsDto);
+    return postMapper.toUpdatePostTagsResponseDto(updatedPost);
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
