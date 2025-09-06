@@ -40,7 +40,7 @@ class TagControllerPostTest extends BaseTagControllerTest {
   void shouldSaveTag() throws Exception {
     // Given
     SaveTagRequestDto tagDto = new SaveTagRequestDto(testUuid, "new-tag");
-    when(saveTag.save(any(Tag.class))).thenReturn(testTag);
+    when(saveTag.save(any())).thenReturn(testTag);
 
     // When & Then
     mockMvc.perform(post("/api/tags")

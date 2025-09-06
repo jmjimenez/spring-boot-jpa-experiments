@@ -2,6 +2,8 @@ package es.jmjg.experiments.application.tag.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.shared.TestDataSamples;
+import es.jmjg.experiments.shared.UserFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,10 +25,11 @@ class SaveTagIntegrationTest extends BaseIntegration {
   @Test
   void save_ShouldSaveAndReturnTag() {
     // Given
+    var adminUser = UserFactory.createAdminUser();
     Tag tag = TagFactory.createTag("basic-save-test");
 
     // When
-    Tag savedTag = saveTag.save(tag);
+    Tag savedTag = saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), adminUser));
 
     // Then
     assertThat(savedTag).isNotNull();
@@ -44,10 +47,11 @@ class SaveTagIntegrationTest extends BaseIntegration {
   @Test
   void save_WithCustomTag_ShouldSaveAndReturnTag() {
     // Given
+    var adminUser = UserFactory.createAdminUser();
     Tag tag = TagFactory.createTag("custom-tag");
 
     // When
-    Tag savedTag = saveTag.save(tag);
+    Tag savedTag = saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), adminUser));
 
     // Then
     assertThat(savedTag).isNotNull();
@@ -64,28 +68,23 @@ class SaveTagIntegrationTest extends BaseIntegration {
   @Test
   void save_WhenDuplicateUuid_ShouldThrowTagAlreadyExistsException() {
     // Given
-    Tag tag1 = TagFactory.createTag("duplicate-uuid-test-1");
-    Tag savedTag1 = tagRepository.save(tag1);
-
-    Tag tag2 = TagFactory.createTag("different-name");
-    tag2.setUuid(savedTag1.getUuid()); // Use the same UUID
+    Tag tag = TagFactory.createTag("different-name");
+    tag.setUuid(TestDataSamples.TECHNOLOGY_UUID); // Use the same UUID
 
     // When & Then
-    assertThatThrownBy(() -> saveTag.save(tag2))
+    assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), UserFactory.createAdminUser())))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with uuid '" + savedTag1.getUuid() + "' already exists");
+        .hasMessage("Tag with uuid '" + tag.getUuid() + "' already exists");
   }
 
   @Test
   void save_WhenDuplicateName_ShouldThrowTagAlreadyExistsException() {
     // Given - using existing sample data from migration test
-    final String technologyTagName = "technology";
-    final String technologyTagUuid = "550e8400-e29b-41d4-a716-446655440056";
-    Tag tag2 = TagFactory.createTag(technologyTagName);
+    Tag tag = TagFactory.createTag(TestDataSamples.TECHNOLOGY_TAG_NAME);
 
     // When & Then
-    assertThatThrownBy(() -> saveTag.save(tag2))
+    assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), UserFactory.createAdminUser())))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with name '" + technologyTagName + "' already exists with uuid '" + technologyTagUuid + "'");
+        .hasMessage("Tag with name '" + tag.getName() + "' already exists with uuid '" + TestDataSamples.TECHNOLOGY_UUID + "'");
   }
 }

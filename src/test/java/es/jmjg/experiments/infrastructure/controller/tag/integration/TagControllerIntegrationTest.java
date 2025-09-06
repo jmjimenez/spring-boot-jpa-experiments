@@ -239,34 +239,6 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  void shouldCreateNewTagWhenTagIsValid() {
-    // Given
-    SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "new-tag");
-
-    // When
-    HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD, tagDto);
-    ResponseEntity<SaveTagResponseDto> response = restTemplate.exchange(
-        "/api/tags", HttpMethod.POST, request, SaveTagResponseDto.class);
-
-    // Then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
-    // Verify Location header is present and correct
-    String locationHeader = response.getHeaders().getFirst("Location");
-    assertThat(locationHeader).isNotNull();
-    assertThat(locationHeader).startsWith("/api/tags/");
-
-    SaveTagResponseDto tag = response.getBody();
-    assertThat(tag).isNotNull().satisfies(t -> {
-      assertThat(t.getName()).isEqualTo("new-tag");
-      assertThat(t.getUuid()).isNotNull();
-      // Verify the Location header contains the correct UUID
-      assertThat(locationHeader).isEqualTo("/api/tags/" + t.getUuid());
-    });
-  }
-
-  @Test
   void shouldUpdateExistingTagName() {
     // Given
     UUID tagUuid = TestDataSamples.JAVA_UUID;

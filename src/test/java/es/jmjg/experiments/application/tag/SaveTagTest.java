@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.shared.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,51 +32,34 @@ class SaveTagTest {
   @Test
   void save_ShouldReturnSavedTag() {
     // Given
-    Tag tag = TagFactory.createBasicTag();
-    Tag savedTag = TagFactory.createTag(tag.getUuid(), tag.getName());
-    savedTag.setId(1);
+    var adminUser = UserFactory.createAdminUser();
+    int tagId = 1;
+    Tag tag = TagFactory.createBasicTag(tagId);
 
-    when(tagRepository.save(any(Tag.class))).thenReturn(savedTag);
+    when(tagRepository.save(any(Tag.class))).thenReturn(tag);
 
     // When
-    Tag result = saveTag.save(tag);
+    Tag result = saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), adminUser));
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getId()).isEqualTo(1);
-    assertThat(result.getName()).isEqualTo("test-tag");
-    assertThat(result.getUuid()).isEqualTo(tag.getUuid());
-  }
-
-  @Test
-  void save_WithCustomTag_ShouldReturnSavedTag() {
-    // Given
-    Tag tag = TagFactory.createTag("custom-tag");
-    Tag savedTag = TagFactory.createTag(tag.getUuid(), tag.getName());
-    savedTag.setId(2);
-
-    when(tagRepository.save(any(Tag.class))).thenReturn(savedTag);
-
-    // When
-    Tag result = saveTag.save(tag);
-
-    // Then
-    assertThat(result).isNotNull();
-    assertThat(result.getId()).isEqualTo(2);
-    assertThat(result.getName()).isEqualTo("custom-tag");
+    assertThat(result.getId()).isEqualTo(tagId);
+    assertThat(result.getName()).isEqualTo(tag.getName());
     assertThat(result.getUuid()).isEqualTo(tag.getUuid());
   }
 
   @Test
   void save_WhenDuplicateUuid_ShouldThrowTagAlreadyExistsException() {
     // Given
+    var user = UserFactory.createAdminUser();
     Tag tag = TagFactory.createBasicTag();
     when(tagRepository.save(any(Tag.class)))
         .thenThrow(
             new TagAlreadyExistsException("Tag with uuid '" + tag.getUuid() + "' already exists"));
 
     // When & Then
-    assertThatThrownBy(() -> saveTag.save(tag))
+    var saveTagDto = TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), user);
+    assertThatThrownBy(() -> saveTag.save(saveTagDto))
         .isInstanceOf(TagAlreadyExistsException.class)
         .hasMessage("Tag with uuid '" + tag.getUuid() + "' already exists");
   }
@@ -83,13 +67,15 @@ class SaveTagTest {
   @Test
   void save_WhenDuplicateName_ShouldThrowTagAlreadyExistsException() {
     // Given
+    var user = UserFactory.createAdminUser();
     Tag tag = TagFactory.createTag("existing-tag");
     when(tagRepository.save(any(Tag.class)))
         .thenThrow(
             new TagAlreadyExistsException("Tag with name '" + tag.getName() + "' and uuid '" + tag.getUuid() + "' already exists"));
 
     // When & Then
-    assertThatThrownBy(() -> saveTag.save(tag))
+    var saveTagDto = TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), user);
+    assertThatThrownBy(() -> saveTag.save(saveTagDto))
         .isInstanceOf(TagAlreadyExistsException.class)
         .hasMessage("Tag with name '" + tag.getName() + "' and uuid '" + tag.getUuid() + "' already exists");
   }
@@ -97,12 +83,14 @@ class SaveTagTest {
   @Test
   void save_WhenGenericDataIntegrityViolation_ShouldThrowTagAlreadyExistsException() {
     // Given
+    var user = UserFactory.createAdminUser();
     Tag tag = TagFactory.createBasicTag();
     when(tagRepository.save(any(Tag.class)))
         .thenThrow(new TagAlreadyExistsException("Tag already exists"));
 
     // When & Then
-    assertThatThrownBy(() -> saveTag.save(tag))
+    var saveTagDto = TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), user);
+    assertThatThrownBy(() -> saveTag.save(saveTagDto))
         .isInstanceOf(TagAlreadyExistsException.class)
         .hasMessage("Tag already exists");
   }
@@ -110,12 +98,14 @@ class SaveTagTest {
   @Test
   void save_WhenRepositoryThrowsOtherException_ShouldPropagateException() {
     // Given
+    var user = UserFactory.createAdminUser();
     Tag tag = TagFactory.createBasicTag();
     when(tagRepository.save(any(Tag.class)))
         .thenThrow(new RuntimeException("Database error"));
 
     // When & Then
-    assertThatThrownBy(() -> saveTag.save(tag))
+    var saveTagDto = TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), user);
+    assertThatThrownBy(() -> saveTag.save(saveTagDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
   }

@@ -180,12 +180,15 @@ public class TagController {
   @Operation(summary = "Create a new tag", description = "Creates a new tag with the provided data")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Tag created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveTagResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete tags"),
     @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
-  ResponseEntity<SaveTagResponseDto> save(@RequestBody @Valid SaveTagRequestDto tagDto) {
+  ResponseEntity<SaveTagResponseDto> save(@RequestBody @Valid SaveTagRequestDto tagDto,
+    @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    Tag tag = tagMapper.toDomain(tagDto);
-    Tag savedTag = saveTag.save(tag);
+    var saveTagDto = tagMapper.toSaveTagDto(tagDto, userMapper.toAuthenticatedUserDto(userDetails));
+    Tag savedTag = saveTag.save(saveTagDto);
     SaveTagResponseDto responseDto = tagMapper.toSaveTagResponseDto(savedTag);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/tags/{uuid}")

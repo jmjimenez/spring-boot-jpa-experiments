@@ -1,5 +1,6 @@
 package es.jmjg.experiments.application.tag;
 
+import es.jmjg.experiments.application.tag.dto.SaveTagDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,13 +18,16 @@ public class SaveTag {
   }
 
   @Transactional
-  public Tag save(Tag tag) {
-    tagRepository.findByUuid(tag.getUuid()).ifPresent(t -> {
-      throw new TagAlreadyExistsException(tag.getUuid());
+  public Tag save(SaveTagDto dto) {
+    tagRepository.findByUuid(dto.uuid()).ifPresent(t -> {
+      throw new TagAlreadyExistsException(dto.uuid());
     });
-    tagRepository.findByName(tag.getName()).ifPresent(t -> {
-      throw new TagAlreadyExistsException(tag.getName(), t.getUuid());
+    tagRepository.findByName(dto.tagName()).ifPresent(t -> {
+      throw new TagAlreadyExistsException(dto.tagName(), t.getUuid());
     });
+    Tag tag = new Tag();
+    tag.setUuid(dto.uuid());
+    tag.setName(dto.tagName());
     return tagRepository.save(tag);
   }
 }

@@ -2,6 +2,9 @@ package es.jmjg.experiments.infrastructure.controller.tag.mapper;
 
 import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.tag.dto.DeleteTagDto;
+import es.jmjg.experiments.application.tag.dto.SaveTagDto;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,16 +33,6 @@ public class TagMapper {
       UpdateTagResponseDto::new);
   }
 
-  public Tag toDomain(SaveTagRequestDto tagRequestDto) {
-    if (tagRequestDto == null) {
-      return null;
-    }
-    Tag tag = new Tag();
-    tag.setUuid(tagRequestDto.getUuid());
-    tag.setName(tagRequestDto.getName());
-    return tag;
-  }
-
   public FindTagByPatternResponseDto toFindByPatternResponseDto(Tag tag, List<Post> posts, List<User> users) {
     return mapToResponseDto(tag, posts, users,
       FindTagByPatternResponseDto::new);
@@ -52,6 +45,14 @@ public class TagMapper {
 
   public DeleteTagDto toDeleteTagDto(UUID uuid, AuthenticatedUserDto authenticatedUser) {
     return new DeleteTagDto(uuid, authenticatedUser);
+  }
+
+  public SaveTagDto toSaveTagDto(@Valid SaveTagRequestDto dto, @NotNull AuthenticatedUserDto authenticatedUser) {
+    return new SaveTagDto(
+      dto.getUuid(),
+      dto.getName(),
+      authenticatedUser
+    );
   }
 
   @FunctionalInterface
