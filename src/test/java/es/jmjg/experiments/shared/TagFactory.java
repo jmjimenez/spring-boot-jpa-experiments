@@ -2,6 +2,7 @@ package es.jmjg.experiments.shared;
 
 import es.jmjg.experiments.application.tag.dto.DeleteTagDto;
 import es.jmjg.experiments.application.tag.dto.SaveTagDto;
+import es.jmjg.experiments.application.tag.dto.UpdateTagDto;
 import es.jmjg.experiments.domain.entity.User;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -58,6 +59,14 @@ public class TagFactory {
   public static SaveTagDto createSaveTagDto(@NotNull UUID tagUuid, @NotEmpty String tagName,
     User user) {
     return new SaveTagDto(
+      tagUuid,
+      tagName,
+      AuthenticatedUserFactory.createAuthenticatedUserDto(user)
+    );
+  }
+
+  public static UpdateTagDto createUpdateTagDto(UUID tagUuid, String tagName, User user) {
+    return new UpdateTagDto(
       tagUuid,
       tagName,
       AuthenticatedUserFactory.createAuthenticatedUserDto(user)

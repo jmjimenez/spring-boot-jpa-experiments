@@ -1,0 +1,21 @@
+package es.jmjg.experiments.application.tag.dto;
+
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
+import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
+import java.util.UUID;
+
+public record UpdateTagDto(
+  @NotNull
+  UUID uuid,
+  @NotNull
+  String tagName,
+  @NotNull
+  AuthenticatedUserDto authenticatedUser) {
+
+  public UpdateTagDto {
+    Objects.requireNonNull(uuid, "uuid cannot be null");
+    Objects.requireNonNull(uuid, "tag name cannot be null");
+    Objects.requireNonNull(authenticatedUser, "authenticatedUserDto cannot be null");
+  }
+}

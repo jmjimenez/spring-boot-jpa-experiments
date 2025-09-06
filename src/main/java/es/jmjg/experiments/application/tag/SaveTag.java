@@ -1,5 +1,6 @@
 package es.jmjg.experiments.application.tag;
 
+import es.jmjg.experiments.application.shared.exception.Forbidden;
 import es.jmjg.experiments.application.tag.dto.SaveTagDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,11 @@ public class SaveTag {
     tagRepository.findByName(dto.tagName()).ifPresent(t -> {
       throw new TagAlreadyExistsException(dto.tagName(), t.getUuid());
     });
+
+    if (!dto.authenticatedUser().isAdmin()) {
+      throw new Forbidden("Only admins can create tags");
+    }
+
     Tag tag = new Tag();
     tag.setUuid(dto.uuid());
     tag.setName(dto.tagName());

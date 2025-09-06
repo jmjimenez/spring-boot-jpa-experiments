@@ -26,7 +26,7 @@ import es.jmjg.experiments.application.tag.FindTagByPattern;
 import es.jmjg.experiments.application.tag.FindTagByUuid;
 import es.jmjg.experiments.application.tag.FindUsersByTag;
 import es.jmjg.experiments.application.tag.SaveTag;
-import es.jmjg.experiments.application.tag.UpdateTagName;
+import es.jmjg.experiments.application.tag.UpdateTag;
 import es.jmjg.experiments.application.user.DeleteUser;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.FindUserByEmail;
@@ -151,8 +151,8 @@ public class ControllerTestConfig {
 
   @Bean
   @Primary
-  public UpdateTagName updateTagName() {
-    return mock(UpdateTagName.class);
+  public UpdateTag updateTag() {
+    return mock(UpdateTag.class);
   }
 
   @Bean

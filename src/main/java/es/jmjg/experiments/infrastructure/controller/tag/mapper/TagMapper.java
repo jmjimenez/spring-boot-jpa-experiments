@@ -3,8 +3,8 @@ package es.jmjg.experiments.infrastructure.controller.tag.mapper;
 import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.tag.dto.DeleteTagDto;
 import es.jmjg.experiments.application.tag.dto.SaveTagDto;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import es.jmjg.experiments.application.tag.dto.UpdateTagDto;
+import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -47,11 +47,19 @@ public class TagMapper {
     return new DeleteTagDto(uuid, authenticatedUser);
   }
 
-  public SaveTagDto toSaveTagDto(@Valid SaveTagRequestDto dto, @NotNull AuthenticatedUserDto authenticatedUser) {
+  public SaveTagDto toSaveTagDto(SaveTagRequestDto dto, AuthenticatedUserDto authenticatedUser) {
     return new SaveTagDto(
       dto.getUuid(),
       dto.getName(),
       authenticatedUser
+    );
+  }
+
+  public UpdateTagDto toUpdateTagDto(UUID tagUuid, UpdateTagRequestDto dto, AuthenticatedUserDto userDto) {
+    return new UpdateTagDto(
+      tagUuid,
+      dto.getName(),
+      userDto
     );
   }
 

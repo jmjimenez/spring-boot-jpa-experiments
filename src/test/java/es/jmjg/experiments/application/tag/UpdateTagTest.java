@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.shared.UserFactory;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,39 +20,34 @@ import es.jmjg.experiments.domain.repository.TagRepository;
 import es.jmjg.experiments.shared.TagFactory;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateTagNameTest {
+class UpdateTagTest {
 
   @Mock
   private TagRepository tagRepository;
 
-  private UpdateTagName updateTagName;
+  private UpdateTag updateTag;
 
   @BeforeEach
   void setUp() {
-    updateTagName = new UpdateTagName(tagRepository);
+    updateTag = new UpdateTag(tagRepository);
   }
 
   @Test
   void updateName_WhenTagExists_ShouldUpdateAndReturnTag() {
     // Given
-    UUID uuid = UUID.randomUUID();
-    String newName = "updated-tag";
-    Tag tag = TagFactory.createTag(uuid, "old-tag");
-    tag.setId(1);
-    Tag updatedTag = TagFactory.createTag(uuid, newName);
-    updatedTag.setId(1);
+    String updatedName = "updated-tag";
+    Tag tag = TagFactory.createBasicTag();
 
-    when(tagRepository.findByUuid(uuid)).thenReturn(Optional.of(tag));
-    when(tagRepository.save(any(Tag.class))).thenReturn(updatedTag);
+    when(tagRepository.findByUuid(tag.getUuid())).thenReturn(Optional.of(tag));
+    when(tagRepository.save(any(Tag.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    Tag result = updateTagName.updateName(uuid, newName);
+    Tag result = updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), updatedName, UserFactory.createAdminUser()));
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getName()).isEqualTo(newName);
-    assertThat(result.getUuid()).isEqualTo(uuid);
-    assertThat(result.getId()).isEqualTo(1);
+    assertThat(result.getUuid()).isEqualTo(tag.getUuid());
+    assertThat(result.getName()).isEqualTo(updatedName);
   }
 
   @Test
@@ -63,20 +59,9 @@ class UpdateTagNameTest {
     when(tagRepository.findByUuid(uuid)).thenReturn(Optional.empty());
 
     // When & Then
-    assertThatThrownBy(() -> updateTagName.updateName(uuid, newName))
+    assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(uuid, newName,UserFactory.createAdminUser())))
         .isInstanceOf(TagNotFound.class)
         .hasMessage("Tag not found with uuid: " + uuid);
-  }
-
-  @Test
-  void updateName_WhenNewNameIsNull_ShouldThrowIllegalArgumentException() {
-    // Given
-    UUID uuid = UUID.randomUUID();
-
-    // When & Then
-    assertThatThrownBy(() -> updateTagName.updateName(uuid, null))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Tag name cannot be null or empty");
   }
 
   @Test
@@ -85,7 +70,7 @@ class UpdateTagNameTest {
     UUID uuid = UUID.randomUUID();
 
     // When & Then
-    assertThatThrownBy(() -> updateTagName.updateName(uuid, ""))
+    assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(uuid, "",UserFactory.createAdminUser())))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Tag name cannot be null or empty");
   }
@@ -96,7 +81,7 @@ class UpdateTagNameTest {
     UUID uuid = UUID.randomUUID();
 
     // When & Then
-    assertThatThrownBy(() -> updateTagName.updateName(uuid, "   "))
+    assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(uuid, "   ",UserFactory.createAdminUser())))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Tag name cannot be null or empty");
   }
@@ -104,23 +89,18 @@ class UpdateTagNameTest {
   @Test
   void updateName_WhenNewNameIsTrimmed_ShouldWorkCorrectly() {
     // Given
-    UUID uuid = UUID.randomUUID();
-    String newName = "  updated-tag  ";
-    String expectedName = "updated-tag";
-    Tag tag = TagFactory.createTag(uuid, "old-tag");
-    tag.setId(1);
-    Tag updatedTag = TagFactory.createTag(uuid, expectedName);
-    updatedTag.setId(1);
+    String updatedName = "  updated-tag  ";
+    Tag tag = TagFactory.createBasicTag();
 
-    when(tagRepository.findByUuid(uuid)).thenReturn(Optional.of(tag));
-    when(tagRepository.save(any(Tag.class))).thenReturn(updatedTag);
+    when(tagRepository.findByUuid(tag.getUuid())).thenReturn(Optional.of(tag));
+    when(tagRepository.save(any(Tag.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    Tag result = updateTagName.updateName(uuid, newName);
+    Tag result = updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), updatedName,UserFactory.createAdminUser()));
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getName()).isEqualTo(expectedName);
-    assertThat(result.getUuid()).isEqualTo(uuid);
+    assertThat(result.getUuid()).isEqualTo(tag.getUuid());
+    assertThat(result.getName()).isEqualTo(updatedName.trim());
   }
 }

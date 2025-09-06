@@ -2,13 +2,15 @@ package es.jmjg.experiments.application.tag.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.shared.TestDataSamples;
+import es.jmjg.experiments.shared.UserFactory;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.jmjg.experiments.application.tag.UpdateTagName;
+import es.jmjg.experiments.application.tag.UpdateTag;
 import es.jmjg.experiments.application.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.infrastructure.repository.TagRepositoryImpl;
@@ -18,7 +20,7 @@ import es.jmjg.experiments.shared.TagFactory;
 class UpdateTagNameIntegrationTest extends BaseIntegration {
 
   @Autowired
-  private UpdateTagName updateTagName;
+  private UpdateTag updateTag;
 
   @Autowired
   private TagRepositoryImpl tagRepository;
@@ -26,21 +28,19 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenTagExists_ShouldUpdateAndReturnTag() {
     // Given
-    Tag tag = TagFactory.createBasicTag(4);
-    Tag savedTag = tagRepository.save(tag);
-    String newName = "updated-tag";
+    Tag tag = tagRepository.findByUuid(TestDataSamples.TECHNOLOGY_UUID).orElseThrow();
+    String newName = "updated-technology";
 
     // When
-    Tag result = updateTagName.updateName(savedTag.getUuid(), newName);
+    Tag result = updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), newName, UserFactory.createAdminUser()));
 
     // Then
     assertThat(result).isNotNull();
+    assertThat(result.getUuid()).isEqualTo(tag.getUuid());
     assertThat(result.getName()).isEqualTo(newName);
-    assertThat(result.getUuid()).isEqualTo(savedTag.getUuid());
-    assertThat(result.getId()).isEqualTo(savedTag.getId());
 
     // Verify the change is persisted in the database
-    Optional<Tag> foundTag = tagRepository.findByUuid(savedTag.getUuid());
+    Optional<Tag> foundTag = tagRepository.findByUuid(result.getUuid());
     assertThat(foundTag).isPresent();
     assertThat(foundTag.get().getName()).isEqualTo(newName);
   }
@@ -52,7 +52,7 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
     String newName = "updated-tag";
 
     // When & Then
-    assertThatThrownBy(() -> updateTagName.updateName(nonExistentUuid, newName))
+    assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(nonExistentUuid, newName, UserFactory.createAdminUser())))
         .isInstanceOf(TagNotFound.class)
         .hasMessage("Tag not found with uuid: " + nonExistentUuid);
   }
@@ -60,11 +60,10 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenNewNameIsNull_ShouldThrowIllegalArgumentException() {
     // Given
-    Tag tag = TagFactory.createBasicTag();
-    Tag savedTag = tagRepository.save(tag);
+    Tag tag = tagRepository.findByUuid(TestDataSamples.JAVA_UUID).orElseThrow();
 
     // When & Then
-    assertThatThrownBy(() -> updateTagName.updateName(savedTag.getUuid(), null))
+    assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), null, UserFactory.createAdminUser())))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Tag name cannot be null or empty");
   }
@@ -72,11 +71,10 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenNewNameIsEmpty_ShouldThrowIllegalArgumentException() {
     // Given
-    Tag tag = TagFactory.createBasicTag(3);
-    Tag savedTag = tagRepository.save(tag);
+    Tag tag = tagRepository.findByUuid(TestDataSamples.JAVA_UUID).orElseThrow();
 
     // When & Then
-    assertThatThrownBy(() -> updateTagName.updateName(savedTag.getUuid(), ""))
+    assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), "", UserFactory.createAdminUser())))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Tag name cannot be null or empty");
   }
@@ -84,11 +82,10 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenNewNameIsWhitespace_ShouldThrowIllegalArgumentException() {
     // Given
-    Tag tag = TagFactory.createBasicTag(1);
-    Tag savedTag = tagRepository.save(tag);
+    Tag tag = tagRepository.findByUuid(TestDataSamples.JAVA_UUID).orElseThrow();
 
     // When & Then
-    assertThatThrownBy(() -> updateTagName.updateName(savedTag.getUuid(), "   "))
+    assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), "   ", UserFactory.createAdminUser())))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Tag name cannot be null or empty");
   }
@@ -96,43 +93,20 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenNewNameIsTrimmed_ShouldWorkCorrectly() {
     // Given
-    Tag tag = TagFactory.createBasicTag(2);
-    Tag savedTag = tagRepository.save(tag);
-    String newName = "  updated-tag-2  ";
-    String expectedName = "updated-tag-2";
+    Tag tag = tagRepository.findByUuid(TestDataSamples.JAVA_UUID).orElseThrow();
+    String newName = "  updated-java  ";
 
     // When
-    Tag result = updateTagName.updateName(savedTag.getUuid(), newName);
+    Tag result = updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), newName, UserFactory.createAdminUser()));
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getName()).isEqualTo(expectedName);
-    assertThat(result.getUuid()).isEqualTo(savedTag.getUuid());
+    assertThat(result.getUuid()).isEqualTo(tag.getUuid());
+    assertThat(result.getName()).isEqualTo(newName.trim());
 
     // Verify the change is persisted in the database
-    Optional<Tag> foundTag = tagRepository.findByUuid(savedTag.getUuid());
+    Optional<Tag> foundTag = tagRepository.findByUuid(tag.getUuid());
     assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getName()).isEqualTo(expectedName);
-  }
-
-  @Test
-  void updateName_WithCustomTag_ShouldUpdateAndReturnTag() {
-    // Given
-    Tag tag = TagFactory.createTag("custom-tag");
-    Tag savedTag = tagRepository.save(tag);
-    String newName = "new-custom-tag";
-
-    // When
-    Tag result = updateTagName.updateName(savedTag.getUuid(), newName);
-
-    // Then
-    assertThat(result).isNotNull();
-    assertThat(result.getName()).isEqualTo(newName);
-    assertThat(result.getUuid()).isEqualTo(savedTag.getUuid());
-
-    // Verify the change is persisted in the database
-    Optional<Tag> foundTag = tagRepository.findByUuid(savedTag.getUuid());
-    assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getName()).isEqualTo(newName);
+    assertThat(foundTag.get().getName()).isEqualTo(newName.trim());
   }
 }

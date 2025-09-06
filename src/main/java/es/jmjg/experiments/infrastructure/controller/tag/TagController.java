@@ -26,7 +26,7 @@ import es.jmjg.experiments.application.tag.FindTagByPattern;
 import es.jmjg.experiments.application.tag.FindTagByUuid;
 import es.jmjg.experiments.application.tag.FindUsersByTag;
 import es.jmjg.experiments.application.tag.SaveTag;
-import es.jmjg.experiments.application.tag.UpdateTagName;
+import es.jmjg.experiments.application.tag.UpdateTag;
 import es.jmjg.experiments.domain.entity.Post;
 import es.jmjg.experiments.domain.entity.Tag;
 import es.jmjg.experiments.domain.entity.User;
@@ -61,7 +61,7 @@ public class TagController {
   private final UserMapper userMapper;
   private final PostMapper postMapper;
   private final SaveTag saveTag;
-  private final UpdateTagName updateTagName;
+  private final UpdateTag updateTag;
   private final DeleteTag deleteTag;
   private final FindTagByPattern findTagByPattern;
   private final FindUsersByTag findUsersByTag;
@@ -73,7 +73,7 @@ public class TagController {
     UserMapper userMapper,
     PostMapper postMapper,
     SaveTag saveTag,
-    UpdateTagName updateTagName,
+    UpdateTag updateTag,
     DeleteTag deleteTag,
     FindTagByPattern findTagByPattern,
     FindUsersByTag findUsersByTag,
@@ -83,7 +83,7 @@ public class TagController {
     this.userMapper = userMapper;
     this.postMapper = postMapper;
     this.saveTag = saveTag;
-    this.updateTagName = updateTagName;
+    this.updateTag = updateTag;
     this.deleteTag = deleteTag;
     this.findTagByPattern = findTagByPattern;
     this.findUsersByTag = findUsersByTag;
@@ -204,11 +204,14 @@ public class TagController {
   @Operation(summary = "Update a tag name", description = "Updates an existing tag name")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Tag updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateTagResponseDto.class))),
-    @ApiResponse(responseCode = "404", description = "Tag not found"),
-    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "400", description = "Invalid input data"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete tags"),
+    @ApiResponse(responseCode = "404", description = "Tag not found")
   })
-  UpdateTagResponseDto updateName(@PathVariable UUID uuid, @RequestBody @Valid UpdateTagRequestDto tagDto) {
-    Tag updatedTag = updateTagName.updateName(uuid, tagDto.getName());
+  UpdateTagResponseDto updateName(@PathVariable UUID uuid, @RequestBody @Valid UpdateTagRequestDto tagDto, @AuthenticationPrincipal JwtUserDetails userDetails) {
+    var updateTagDto = tagMapper.toUpdateTagDto(uuid, tagDto, userMapper.toAuthenticatedUserDto(userDetails));
+    Tag updatedTag = updateTag.update(updateTagDto);
     return tagMapper.toUpdateTagResponseDto(updatedTag);
   }
 
