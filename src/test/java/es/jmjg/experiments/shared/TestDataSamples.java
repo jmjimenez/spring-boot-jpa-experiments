@@ -13,10 +13,16 @@ public final class TestDataSamples {
   }
 
   // Sample tags from Flyway migration data
+  //TODO: rename to TAG_XXXX_UUID
   public static final UUID TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
   public static final UUID JAVA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
   public static final UUID DEVELOPER_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440071");
   public static final UUID NOT_USED_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440072");
+
+  // Tag name constants for tests
+  public static final String TAG_JAVA = "java";
+  public static final String TAG_SPRING_BOOT = "spring-boot";
+  public static final String TAG_DEVELOPER = "developer";
 
   // Sample users from Flyway migration data
   public static final int LEANNE_ID = 1;
@@ -92,8 +98,4 @@ public final class TestDataSamples {
   // Test post data for new posts (not from migration data)
   public static final String NEW_POST_TITLE = "Test Post 1";
   public static final String NEW_POST_BODY = "Test Body 1";
-
-  // Tag name constants for tests
-  public static final String TAG_JAVA = "java";
-  public static final String TAG_SPRING_BOOT = "spring-boot";
 }

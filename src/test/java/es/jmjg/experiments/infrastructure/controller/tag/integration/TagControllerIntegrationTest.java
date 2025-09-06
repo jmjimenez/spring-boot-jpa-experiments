@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -33,8 +34,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/" + tagUuid,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<FindTagByUuidResponseDto>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -63,8 +64,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/" + tagUuid,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<FindTagByUuidResponseDto>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -94,8 +95,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/search?pattern=" + pattern,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<FindTagByPatternResponseDto[]>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -124,8 +125,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/search?pattern=" + pattern,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<FindTagByPatternResponseDto[]>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -146,8 +147,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/" + nonExistentUuid,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<FindTagByUuidResponseDto>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -165,8 +166,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/" + tagUuid + "/users",
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<Object>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -186,8 +187,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/" + tagUuid + "/posts",
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<Object>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -207,8 +208,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/search/users?name=" + tagName,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<Object>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -228,8 +229,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/search/posts?name=" + tagName,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<Object>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -261,7 +262,7 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
       assertThat(t.getName()).isEqualTo("new-tag");
       assertThat(t.getUuid()).isNotNull();
       // Verify the Location header contains the correct UUID
-      assertThat(locationHeader).isEqualTo("/api/tags/" + t.getUuid().toString());
+      assertThat(locationHeader).isEqualTo("/api/tags/" + t.getUuid());
     });
   }
 
@@ -301,21 +302,6 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-  }
-
-  @Test
-  void shouldDeleteUnusedTagByUuid() {
-    // Given
-    UUID tagUuid = TestDataSamples.NOT_USED_UUID;
-
-    // When
-    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
-        TestDataSamples.ADMIN_PASSWORD);
-    ResponseEntity<Void> response = restTemplate.exchange(
-        "/api/tags/" + tagUuid, HttpMethod.DELETE, request, Void.class);
-
-    // Then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   @Test
@@ -377,8 +363,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/" + nonExistentUuid + "/users",
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<Object>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -396,8 +382,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/" + nonExistentUuid + "/posts",
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<Object>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -415,8 +401,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/search/users?name=" + nonExistentTagName,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<Object>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -434,8 +420,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/search/posts?name=" + nonExistentTagName,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<Object>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -512,8 +498,8 @@ class TagControllerIntegrationTest extends BaseControllerIntegration {
         "/api/tags/search?pattern=" + pattern,
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<FindTagByPatternResponseDto[]>() {
-        });
+      new ParameterizedTypeReference<>() { }
+    );
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

@@ -20,7 +20,7 @@ import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.application.post.FindPosts;
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.UpdatePost;
-import es.jmjg.experiments.application.tag.DeleteTagByUuid;
+import es.jmjg.experiments.application.tag.DeleteTag;
 import es.jmjg.experiments.application.tag.FindPostsByTag;
 import es.jmjg.experiments.application.tag.FindTagByPattern;
 import es.jmjg.experiments.application.tag.FindTagByUuid;
@@ -157,8 +157,8 @@ public class ControllerTestConfig {
 
   @Bean
   @Primary
-  public DeleteTagByUuid deleteTagByUuid() {
-    return mock(DeleteTagByUuid.class);
+  public DeleteTag deleteTagByUuid() {
+    return mock(DeleteTag.class);
   }
 
   @Bean

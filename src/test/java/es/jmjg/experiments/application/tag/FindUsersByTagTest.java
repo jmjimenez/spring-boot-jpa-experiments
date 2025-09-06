@@ -41,18 +41,16 @@ class FindUsersByTagTest {
   @Test
   void findByTagUuid_WhenTagExists_ShouldReturnUsers() {
     // Given
-    UUID tagUuid = UUID.randomUUID();
-    Tag tag = TagFactory.createJavaTag();
-    tag.setId(1);
+    Tag tag = TagFactory.createBasicTag();
     User user1 = UserFactory.createBasicUser();
     User user2 = UserFactory.createUser("Another User", "another@example.com", "another_user");
     List<User> expectedUsers = Arrays.asList(user1, user2);
 
-    when(tagRepository.findByUuid(tagUuid)).thenReturn(Optional.of(tag));
-    when(userRepository.findByTagId(1)).thenReturn(expectedUsers);
+    when(tagRepository.findByUuid(tag.getUuid())).thenReturn(Optional.of(tag));
+    when(userRepository.findByTagId(tag.getId())).thenReturn(expectedUsers);
 
     // When
-    List<User> result = findUsersByTag.findByTagUuid(tagUuid);
+    List<User> result = findUsersByTag.findByTagUuid(tag.getUuid());
 
     // Then
     assertThat(result).isNotNull();
@@ -75,17 +73,15 @@ class FindUsersByTagTest {
   @Test
   void findByTagName_WhenTagExists_ShouldReturnUsers() {
     // Given
-    String tagName = "java";
-    Tag tag = TagFactory.createJavaTag();
-    tag.setId(1);
+    Tag tag = TagFactory.createBasicTag();
     User user1 = UserFactory.createBasicUser();
     List<User> expectedUsers = List.of(user1);
 
-    when(tagRepository.findByName(tagName)).thenReturn(Optional.of(tag));
-    when(userRepository.findByTagId(1)).thenReturn(expectedUsers);
+    when(tagRepository.findByName(tag.getName())).thenReturn(Optional.of(tag));
+    when(userRepository.findByTagId(tag.getId())).thenReturn(expectedUsers);
 
     // When
-    List<User> result = findUsersByTag.findByTagName(tagName);
+    List<User> result = findUsersByTag.findByTagName(tag.getName());
 
     // Then
     assertThat(result).isNotNull();
@@ -138,18 +134,16 @@ class FindUsersByTagTest {
   @Test
   void findByTagName_WhenTagNameIsTrimmed_ShouldWorkCorrectly() {
     // Given
-    String tagName = "  java  ";
-    String expectedTagName = "java";
-    Tag tag = TagFactory.createJavaTag();
-    tag.setId(1);
+    int tagId = 1;
+    Tag tag = TagFactory.createBasicTag(tagId);
     User user1 = UserFactory.createBasicUser();
     List<User> expectedUsers = List.of(user1);
 
-    when(tagRepository.findByName(expectedTagName)).thenReturn(Optional.of(tag));
-    when(userRepository.findByTagId(1)).thenReturn(expectedUsers);
+    when(tagRepository.findByName(tag.getName())).thenReturn(Optional.of(tag));
+    when(userRepository.findByTagId(tag.getId())).thenReturn(expectedUsers);
 
     // When
-    List<User> result = findUsersByTag.findByTagName(tagName);
+    List<User> result = findUsersByTag.findByTagName(tag.getName());
 
     // Then
     assertThat(result).isNotNull();

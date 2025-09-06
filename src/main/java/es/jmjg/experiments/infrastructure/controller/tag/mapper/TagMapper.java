@@ -1,5 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.tag.mapper;
 
+import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.application.tag.dto.DeleteTagDto;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -20,22 +22,12 @@ public class TagMapper {
 
   public SaveTagResponseDto toSaveTagResponseDto(Tag tag) {
     return mapToResponseDto(tag, List.of(), List.of(),
-        (uuid, name, posts, users) -> new SaveTagResponseDto(uuid, name, posts, users));
-  }
-
-  public SaveTagResponseDto toSaveResponseDtoWithRelations(Tag tag, List<Post> posts, List<User> users) {
-    return mapToResponseDto(tag, posts, users,
-        (uuid, name, postsUuids, userUuids) -> new SaveTagResponseDto(uuid, name, postsUuids, userUuids));
+      SaveTagResponseDto::new);
   }
 
   public UpdateTagResponseDto toUpdateTagResponseDto(Tag updatedTag) {
     return mapToResponseDto(updatedTag, List.of(), List.of(),
-        (uuid, name, posts, users) -> new UpdateTagResponseDto(uuid, name, posts, users));
-  }
-
-  public UpdateTagResponseDto toUpdateResponseDtoWithRelations(Tag tag, List<Post> posts, List<User> users) {
-    return mapToResponseDto(tag, posts, users,
-        (uuid, name, postsUuids, userUuids) -> new UpdateTagResponseDto(uuid, name, postsUuids, userUuids));
+      UpdateTagResponseDto::new);
   }
 
   public Tag toDomain(SaveTagRequestDto tagRequestDto) {
@@ -50,12 +42,16 @@ public class TagMapper {
 
   public FindTagByPatternResponseDto toFindByPatternResponseDto(Tag tag, List<Post> posts, List<User> users) {
     return mapToResponseDto(tag, posts, users,
-        (uuid, name, postsUuids, userUuids) -> new FindTagByPatternResponseDto(uuid, name, postsUuids, userUuids));
+      FindTagByPatternResponseDto::new);
   }
 
   public FindTagByUuidResponseDto toFindByUuidResponseDto(Tag tag, List<Post> posts, List<User> users) {
     return mapToResponseDto(tag, posts, users,
-        (uuid, name, postsUuids, userUuids) -> new FindTagByUuidResponseDto(uuid, name, postsUuids, userUuids));
+      FindTagByUuidResponseDto::new);
+  }
+
+  public DeleteTagDto toDeleteTagDto(UUID uuid, AuthenticatedUserDto authenticatedUser) {
+    return new DeleteTagDto(uuid, authenticatedUser);
   }
 
   @FunctionalInterface

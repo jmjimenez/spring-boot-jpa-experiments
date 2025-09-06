@@ -43,19 +43,18 @@ class FindPostsByTagTest {
   @Test
   void findByTagUuid_WhenTagExists_ShouldReturnPosts() {
     // Given
-    UUID tagUuid = UUID.randomUUID();
-    Tag tag = TagFactory.createJavaTag();
+    Tag tag = TagFactory.createBasicTag();
     tag.setId(1);
     User user = UserFactory.createBasicUser();
     Post post1 = PostFactory.createBasicPost(user);
     Post post2 = PostFactory.createPost(user, "Another Post", "Another Body");
     List<Post> expectedPosts = Arrays.asList(post1, post2);
 
-    when(tagRepository.findByUuid(tagUuid)).thenReturn(Optional.of(tag));
+    when(tagRepository.findByUuid(tag.getUuid())).thenReturn(Optional.of(tag));
     when(postRepository.findByTagId(1)).thenReturn(expectedPosts);
 
     // When
-    List<Post> result = findPostsByTag.findByTagUuid(tagUuid);
+    List<Post> result = findPostsByTag.findByTagUuid(tag.getUuid());
 
     // Then
     assertThat(result).isNotNull();
@@ -78,22 +77,21 @@ class FindPostsByTagTest {
   @Test
   void findByTagName_WhenTagExists_ShouldReturnPosts() {
     // Given
-    String tagName = "java";
-    Tag tag = TagFactory.createJavaTag();
-    tag.setId(1);
+    int tagId = 1;
+    Tag tag = TagFactory.createBasicTag(tagId);
     User user = UserFactory.createBasicUser();
     Post post1 = PostFactory.createBasicPost(user);
     List<Post> expectedPosts = List.of(post1);
 
-    when(tagRepository.findByName(tagName)).thenReturn(Optional.of(tag));
-    when(postRepository.findByTagId(1)).thenReturn(expectedPosts);
+    when(tagRepository.findByName(tag.getName())).thenReturn(Optional.of(tag));
+    when(postRepository.findByTagId(tagId)).thenReturn(expectedPosts);
 
     // When
-    List<Post> result = findPostsByTag.findByTagName(tagName);
+    List<Post> result = findPostsByTag.findByTagName(tag.getName());
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result).hasSize(1);
+    assertThat(result).hasSize(tagId);
     assertThat(result).contains(post1);
   }
 
@@ -144,14 +142,13 @@ class FindPostsByTagTest {
     // Given
     String tagName = "  java  ";
     String expectedTagName = "java";
-    Tag tag = TagFactory.createJavaTag();
-    tag.setId(1);
+    Tag tag = TagFactory.createTag(expectedTagName);
     User user = UserFactory.createBasicUser();
     Post post1 = PostFactory.createBasicPost(user);
     List<Post> expectedPosts = List.of(post1);
 
     when(tagRepository.findByName(expectedTagName)).thenReturn(Optional.of(tag));
-    when(postRepository.findByTagId(1)).thenReturn(expectedPosts);
+    when(postRepository.findByTagId(tag.getId())).thenReturn(expectedPosts);
 
     // When
     List<Post> result = findPostsByTag.findByTagName(tagName);

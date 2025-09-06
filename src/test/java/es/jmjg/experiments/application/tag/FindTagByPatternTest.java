@@ -35,8 +35,8 @@ class FindTagByPatternTest {
   void findByPattern_WhenPatternMatches_ShouldReturnMatchingTags() {
     // Given
     String pattern = "java";
-    Tag javaTag = TagFactory.createJavaTag();
-    Tag springBootTag = TagFactory.createSpringBootTag();
+    Tag javaTag = TagFactory.createTag("java");
+    Tag springBootTag = TagFactory.createTag("java-springBoot");
     List<Tag> expectedTags = Arrays.asList(javaTag, springBootTag);
 
     when(tagRepository.findByNameContainingPattern(pattern)).thenReturn(expectedTags);
@@ -98,7 +98,7 @@ class FindTagByPatternTest {
   void findByPattern_WhenPatternIsTrimmed_ShouldWorkCorrectly() {
     // Given
     String pattern = "  java  ";
-    Tag javaTag = TagFactory.createJavaTag();
+    Tag javaTag = TagFactory.createTag("java");
     List<Tag> expectedTags = List.of(javaTag);
 
     when(tagRepository.findByNameContainingPattern("java")).thenReturn(expectedTags);
