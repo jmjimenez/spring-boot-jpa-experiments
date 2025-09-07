@@ -69,8 +69,11 @@ class UserControllerPutIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnUnauthorizedWhenUserIsNotAuthenticated() {
+    UpdateUserRequestDto updateDto = new UpdateUserRequestDto("Updated User", "updated@example.com");
+    HttpEntity<UpdateUserRequestDto> request = createUnauthenticatedRequest(updateDto);
+
     ResponseEntity<Void> response = restTemplate.exchange(
-        "/api/users/" + TestDataSamples.PATRICIA_UUID, HttpMethod.PUT, null, Void.class);
+        "/api/users/" + TestDataSamples.PATRICIA_UUID, HttpMethod.PUT, request, Void.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 }

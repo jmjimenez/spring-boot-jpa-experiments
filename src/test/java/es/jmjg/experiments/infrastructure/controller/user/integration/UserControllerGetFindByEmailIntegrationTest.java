@@ -12,7 +12,7 @@ import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByEmailRes
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
-class UserControllerGetFindByEmailTest extends BaseControllerIntegration {
+class UserControllerGetFindByEmailIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldFindUserByEmail() {

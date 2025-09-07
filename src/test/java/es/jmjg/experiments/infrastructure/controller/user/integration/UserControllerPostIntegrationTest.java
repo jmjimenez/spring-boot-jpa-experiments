@@ -21,6 +21,7 @@ class UserControllerPostIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldCreateNewUserWhenUserIsValid() {
+    // when
     SaveUserRequestDto userDto = new SaveUserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser",
         "password123");
 
@@ -30,7 +31,7 @@ class UserControllerPostIntegrationTest extends BaseControllerIntegration {
         "/api/users", HttpMethod.POST, request, SaveUserResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-    // Verify Location header is present and correct
+    // then
     String locationHeader = response.getHeaders().getFirst("Location");
     assertThat(locationHeader).isNotNull();
     assertThat(locationHeader).startsWith("/api/users/");
@@ -42,7 +43,7 @@ class UserControllerPostIntegrationTest extends BaseControllerIntegration {
       assertThat(u.getUsername()).isEqualTo("newuser");
       assertThat(u.getUuid()).isNotNull();
       // Verify the Location header contains the correct UUID
-      assertThat(locationHeader).isEqualTo("/api/users/" + u.getUuid().toString());
+      assertThat(locationHeader).isEqualTo("/api/users/" + u.getUuid());
     });
 
     // Test that the newly created user can authenticate
@@ -55,8 +56,19 @@ class UserControllerPostIntegrationTest extends BaseControllerIntegration {
         "/authenticate", HttpMethod.POST, authHttpRequest, AuthenticationResponseDto.class);
 
     assertThat(authResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(authResponse.getBody()).isNotNull().satisfies(a -> {
-      assertThat(a.getAccessToken()).isNotNull().isNotEmpty();
-    });
+    assertThat(authResponse.getBody()).isNotNull().satisfies(a -> assertThat(a.getAccessToken()).isNotNull().isNotEmpty());
+  }
+
+  @Test
+  void shouldReturnUnauthorizedWhenNotAuthenticated() {
+    // when
+    SaveUserRequestDto userDto = new SaveUserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser",
+      "password123");
+
+    HttpEntity<SaveUserRequestDto> request = createUnauthenticatedRequest(userDto);
+
+    ResponseEntity<SaveUserResponseDto> response = restTemplate.exchange(
+      "/api/users", HttpMethod.POST, request, SaveUserResponseDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 }
