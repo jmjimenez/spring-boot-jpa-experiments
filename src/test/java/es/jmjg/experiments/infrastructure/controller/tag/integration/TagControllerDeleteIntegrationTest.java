@@ -26,4 +26,49 @@ class TagControllerDeleteIntegrationTest extends BaseControllerIntegration {
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
+
+  @Test
+  void shouldReturnErrorWhenDeletingTagUsedByUser() {
+    // Given
+    UUID tagUuid = TestDataSamples.DEVELOPER_UUID;
+
+    // When
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+      TestDataSamples.ADMIN_PASSWORD);
+    ResponseEntity<Void> response = restTemplate.exchange(
+      "/api/tags/" + tagUuid, HttpMethod.DELETE, request, Void.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenDeletingNonExistentTag() {
+    // Given
+    UUID nonExistentUuid = UUID.randomUUID();
+
+    // When
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+      TestDataSamples.ADMIN_PASSWORD);
+    ResponseEntity<Void> response = restTemplate.exchange(
+      "/api/tags/" + nonExistentUuid, HttpMethod.DELETE, request, Void.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void shouldReturnErrorWhenDeletingTagUsedByPost() {
+    // Given
+    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
+
+    // When
+    HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+      TestDataSamples.ADMIN_PASSWORD);
+    ResponseEntity<Void> response = restTemplate.exchange(
+      "/api/tags/" + tagUuid, HttpMethod.DELETE, request, Void.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
 }

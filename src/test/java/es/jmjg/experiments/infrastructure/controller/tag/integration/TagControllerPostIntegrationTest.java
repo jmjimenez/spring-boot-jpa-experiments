@@ -41,4 +41,62 @@ class TagControllerPostIntegrationTest extends BaseControllerIntegration {
       assertThat(locationHeader).isEqualTo("/api/tags/" + t.getUuid());
     });
   }
+
+  @Test
+  void shouldReturnConflictWhenCreatingTagWithDuplicateName() {
+    // Given
+    SaveTagRequestDto tagDto1 = new SaveTagRequestDto(UUID.randomUUID(), "duplicate-tag");
+    SaveTagRequestDto tagDto2 = new SaveTagRequestDto(UUID.randomUUID(), "duplicate-tag");
+
+    // Create first tag
+    HttpEntity<SaveTagRequestDto> request1 = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+      TestDataSamples.ADMIN_PASSWORD, tagDto1);
+    restTemplate.exchange("/api/tags", HttpMethod.POST, request1, SaveTagResponseDto.class);
+
+    // When - Try to create second tag with same name
+    HttpEntity<SaveTagRequestDto> request2 = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+      TestDataSamples.ADMIN_PASSWORD, tagDto2);
+    ResponseEntity<Object> response = restTemplate.exchange(
+      "/api/tags", HttpMethod.POST, request2, Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
+
+  @Test
+  void shouldReturnConflictWhenCreatingTagWithExistingNameFromMigration() {
+    // Given - Try to create a tag with a name that exists in migration data
+    SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "technology");
+
+    // When
+    HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+      TestDataSamples.ADMIN_PASSWORD, tagDto);
+    ResponseEntity<Object> response = restTemplate.exchange(
+      "/api/tags", HttpMethod.POST, request, Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
+
+  @Test
+  void shouldReturnConflictWhenCreatingTagWithDuplicateUuid() {
+    // Given
+    UUID duplicateUuid = UUID.randomUUID();
+    SaveTagRequestDto tagDto1 = new SaveTagRequestDto(duplicateUuid, "first-tag");
+    SaveTagRequestDto tagDto2 = new SaveTagRequestDto(duplicateUuid, "second-tag");
+
+    // Create first tag
+    HttpEntity<SaveTagRequestDto> request1 = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+      TestDataSamples.ADMIN_PASSWORD, tagDto1);
+    restTemplate.exchange("/api/tags", HttpMethod.POST, request1, SaveTagResponseDto.class);
+
+    // When - Try to create second tag with same UUID
+    HttpEntity<SaveTagRequestDto> request2 = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
+      TestDataSamples.ADMIN_PASSWORD, tagDto2);
+    ResponseEntity<Object> response = restTemplate.exchange(
+      "/api/tags", HttpMethod.POST, request2, Object.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
 }
