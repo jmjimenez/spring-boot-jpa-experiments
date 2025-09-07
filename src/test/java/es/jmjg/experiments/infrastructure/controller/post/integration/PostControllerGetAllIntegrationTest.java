@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.controller.post.integration;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,8 @@ class PostControllerGetAllIntegrationTest extends BaseControllerIntegration {
         "/api/posts",
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<FindAllPostsResponseDto>>() {
-        });
+      new ParameterizedTypeReference<>() {
+      });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PagedResponseDto<FindAllPostsResponseDto> pagedResponse = response.getBody();
@@ -40,13 +41,13 @@ class PostControllerGetAllIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  void unauthenticatedUserShouldNotReturnAllPosts() {
+  void unauthenticatedUserShouldReturnAllPosts() {
     ResponseEntity<PagedResponseDto<FindAllPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts",
         HttpMethod.GET,
         null,
-        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<FindAllPostsResponseDto>>() {
-        });
+      new ParameterizedTypeReference<>() {
+      });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PagedResponseDto<FindAllPostsResponseDto> pagedResponse = response.getBody();
@@ -69,8 +70,8 @@ class PostControllerGetAllIntegrationTest extends BaseControllerIntegration {
         "/api/posts?page=0&size=5",
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<FindAllPostsResponseDto>>() {
-        });
+      new ParameterizedTypeReference<>() {
+      });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PagedResponseDto<FindAllPostsResponseDto> pagedResponse = response.getBody();
@@ -90,8 +91,8 @@ class PostControllerGetAllIntegrationTest extends BaseControllerIntegration {
         "/api/posts",
         HttpMethod.GET,
         null,
-        new org.springframework.core.ParameterizedTypeReference<PagedResponseDto<FindAllPostsResponseDto>>() {
-        });
+      new ParameterizedTypeReference<>() {
+      });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     PagedResponseDto<FindAllPostsResponseDto> pagedResponse = response.getBody();

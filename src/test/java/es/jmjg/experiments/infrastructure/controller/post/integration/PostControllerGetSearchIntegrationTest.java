@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,8 @@ class PostControllerGetSearchIntegrationTest extends BaseControllerIntegration {
         "/api/posts/search?q=" + TestDataSamples.SEARCH_TERM_SUNT + "&limit=20",
         HttpMethod.GET,
         request,
-        new org.springframework.core.ParameterizedTypeReference<List<SearchPostsResponseDto>>() {
-        });
+      new ParameterizedTypeReference<>() {
+      });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     List<SearchPostsResponseDto> posts = response.getBody();
@@ -41,13 +42,13 @@ class PostControllerGetSearchIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  void unauthenticatedUserShouldNotSearchPosts() {
+  void unauthenticatedUserShouldSearchPosts() {
     ResponseEntity<List<SearchPostsResponseDto>> response = restTemplate.exchange(
         "/api/posts/search?q=" + TestDataSamples.SEARCH_TERM_SUNT + "&limit=20",
         HttpMethod.GET,
         null,
-        new org.springframework.core.ParameterizedTypeReference<List<SearchPostsResponseDto>>() {
-        });
+      new ParameterizedTypeReference<>() {
+      });
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     List<SearchPostsResponseDto> posts = response.getBody();

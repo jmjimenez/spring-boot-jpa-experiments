@@ -38,7 +38,7 @@ class PostControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   }
 
   @Test
-  void unauthenticatedUserShouldNotReturnPostByUuid() {
+  void unauthenticatedUserShouldReturnPostByUuid() {
     ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
         "/api/posts/" + TestDataSamples.POST_2_UUID,
         HttpMethod.GET,

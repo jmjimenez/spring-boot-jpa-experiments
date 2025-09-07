@@ -80,12 +80,13 @@ class PostControllerPostIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldNotCreateNewPostWhenUserIsNotAuthenticated() {
-    new SavePostRequestDto(java.util.UUID.randomUUID(), "", "", null);
+    var postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), "", "", null);
+    HttpEntity<SavePostRequestDto> request = createUnauthenticatedRequest(postDto);
 
     final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
         "/api/posts",
         HttpMethod.POST,
-        null,
+        request,
         SavePostResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);

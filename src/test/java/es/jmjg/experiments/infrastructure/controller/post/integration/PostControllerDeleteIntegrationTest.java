@@ -16,20 +16,19 @@ class PostControllerDeleteIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldDeletePostByUuid() {
-    final String accessToken = createAccessToken(TestDataSamples.ADMIN_USERNAME, TestDataSamples.ADMIN_PASSWORD);
-    HttpEntity<String> request = createAuthenticatedRequestWithAccessToken(accessToken);
-
-    // Given: Post with UUID POST_3_UUID exists
+    // Given
     final String postUuid = TestDataSamples.POST_3_UUID.toString();
 
-    // When: Delete the post by UUID
+    // When
+    final String accessToken = createAccessToken(TestDataSamples.ADMIN_USERNAME, TestDataSamples.ADMIN_PASSWORD);
+    HttpEntity<String> request = createAuthenticatedRequestWithAccessToken(accessToken);
     ResponseEntity<Void> deleteResponse = restTemplate.exchange(
         "/api/posts/" + postUuid,
         HttpMethod.DELETE,
         request,
         Void.class);
 
-    // Then: Should return 204 No Content
+    // Then
     assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
     // And: Retrieving the post by UUID should return 404
@@ -41,5 +40,20 @@ class PostControllerDeleteIntegrationTest extends BaseControllerIntegration {
         getRequest,
         FindAllPostsResponseDto.class);
     assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+  @Test
+  void shouldNotDeletePostByUuid_WhenUserIsNotAuthorized() {
+    // Given
+    final String postUuid = TestDataSamples.POST_3_UUID.toString();
+
+    // When
+    ResponseEntity<Void> deleteResponse = restTemplate.exchange(
+      "/api/posts/" + postUuid,
+      HttpMethod.DELETE,
+      null,
+      Void.class);
+
+    // Then
+    assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 }

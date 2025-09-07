@@ -52,12 +52,15 @@ public abstract class BaseControllerIntegration extends TestContainersConfig {
   }
 
   protected HttpEntity<String> createAuthenticatedRequestWithAccessToken(final String accessToken) {
-    HttpEntity<String> request = new HttpEntity<>(generateHeadersWithAccessToken(accessToken));
-    return request;
+    return new HttpEntity<>(generateHeadersWithAccessToken(accessToken));
   }
 
   protected <T> HttpEntity<T> createAuthenticatedRequestWithAccessToken(final String accessToken, final T dto) {
     return new HttpEntity<>(dto, generateHeadersWithAccessToken(accessToken));
+  }
+
+  protected <T> HttpEntity<T> createUnauthenticatedRequest(final T dto) {
+    return new HttpEntity<>(dto);
   }
 
   @SuppressWarnings("null")

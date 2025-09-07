@@ -75,12 +75,13 @@ class PostControllerPutIntegrationTest extends BaseControllerIntegration {
     final String updatedTitle = "Updated Title";
     final String updatedBody = "Updated Body";
 
-    new UpdatePostRequestDto(
+    var postDto = new UpdatePostRequestDto(
         updatedTitle, updatedBody,
         List.of(existingTagName, newTagName));
+    HttpEntity<UpdatePostRequestDto> request = createUnauthenticatedRequest(postDto);
 
     ResponseEntity<UpdatePostResponseDto> response = restTemplate.exchange(
-        "/api/posts/" + TestDataSamples.POST_1_UUID, HttpMethod.PUT, null, UpdatePostResponseDto.class);
+        "/api/posts/" + TestDataSamples.POST_1_UUID, HttpMethod.PUT, request, UpdatePostResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
