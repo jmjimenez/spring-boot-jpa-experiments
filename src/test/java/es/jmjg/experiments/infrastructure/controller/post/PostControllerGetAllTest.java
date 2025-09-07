@@ -20,11 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
 import es.jmjg.experiments.application.post.FindAllPosts;
-import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.UserFactory;
 import es.jmjg.experiments.shared.PostFactory;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import java.util.UUID;
 
 class PostControllerGetAllTest extends BasePostControllerTest {
@@ -84,7 +84,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
     String jsonResponse = JsonSamples.createFindAllPostsWithPaginationJsonResponse(posts);
 
     Pageable pageable = PageRequest.of(0, 1);
-    Page<Post> singlePostPage = new PageImpl<>(List.of(posts.get(0)), pageable, 2);
+    Page<Post> singlePostPage = new PageImpl<>(List.of(posts.getFirst()), pageable, 2);
     when(findAllPosts.findAll(any(Pageable.class))).thenReturn(singlePostPage);
 
     ResultActions resultActions = mockMvc

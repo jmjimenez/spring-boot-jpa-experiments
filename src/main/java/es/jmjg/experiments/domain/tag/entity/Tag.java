@@ -1,5 +1,7 @@
-package es.jmjg.experiments.domain.entity;
+package es.jmjg.experiments.domain.tag.entity;
 
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

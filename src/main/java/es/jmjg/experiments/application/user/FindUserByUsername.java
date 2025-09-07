@@ -1,13 +1,13 @@
 package es.jmjg.experiments.application.user;
 
-import es.jmjg.experiments.application.user.exception.UserNotFound;
+import es.jmjg.experiments.domain.user.exception.UserNotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
-import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.domain.user.repository.UserRepository;
 
 @Service
 public class FindUserByUsername {

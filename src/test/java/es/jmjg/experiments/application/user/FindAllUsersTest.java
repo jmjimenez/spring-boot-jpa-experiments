@@ -23,11 +23,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
-import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
-import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.domain.user.repository.UserRepository;
 import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -75,7 +75,7 @@ class FindAllUsersTest {
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(3);
     assertThat(result.getContent()).containsExactlyInAnyOrder(foundUser1, foundUser2, foundUser3);
-    assertThat(result.getContent().get(0).getName()).isEqualTo("Test User 1");
+    assertThat(result.getContent().getFirst().getName()).isEqualTo("Test User 1");
     assertThat(result.getContent().get(0).getEmail()).isEqualTo("test1@example.com");
     assertThat(result.getContent().get(0).getUsername()).isEqualTo("testuser1");
     assertThat(result.getContent().get(1).getName()).isEqualTo("Test User 2");
@@ -123,10 +123,10 @@ class FindAllUsersTest {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0)).isEqualTo(foundUser1);
-    assertThat(result.getContent().get(0).getName()).isEqualTo("Test User 1");
-    assertThat(result.getContent().get(0).getEmail()).isEqualTo("test1@example.com");
-    assertThat(result.getContent().get(0).getUsername()).isEqualTo("testuser1");
+    assertThat(result.getContent().getFirst()).isEqualTo(foundUser1);
+    assertThat(result.getContent().getFirst().getName()).isEqualTo("Test User 1");
+    assertThat(result.getContent().getFirst().getEmail()).isEqualTo("test1@example.com");
+    assertThat(result.getContent().getFirst().getUsername()).isEqualTo("testuser1");
     assertThat(result.getTotalElements()).isEqualTo(1);
     assertThat(result.getTotalPages()).isEqualTo(1);
     verify(userRepository, times(1)).findAll(pageable);
@@ -201,7 +201,7 @@ class FindAllUsersTest {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(2);
-    assertThat(result.getContent().get(0).getName()).isEqualTo("José García");
+    assertThat(result.getContent().getFirst().getName()).isEqualTo("José García");
     assertThat(result.getContent().get(0).getEmail()).isEqualTo("jose@example.com");
     assertThat(result.getContent().get(0).getUsername()).isEqualTo("jose_garcia");
     assertThat(result.getContent().get(1).getName()).isEqualTo("Maria O'Connor");
@@ -231,10 +231,10 @@ class FindAllUsersTest {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0).getName())
+    assertThat(result.getContent().getFirst().getName())
         .isEqualTo("Dr. John Michael Smith-Jones III, Ph.D., M.D., F.A.C.S.");
-    assertThat(result.getContent().get(0).getEmail()).isEqualTo("dr.john.smith-jones@university.edu");
-    assertThat(result.getContent().get(0).getUsername()).isEqualTo("dr_john_smith_jones_iii");
+    assertThat(result.getContent().getFirst().getEmail()).isEqualTo("dr.john.smith-jones@university.edu");
+    assertThat(result.getContent().getFirst().getUsername()).isEqualTo("dr_john_smith_jones_iii");
     assertThat(result.getTotalElements()).isEqualTo(1);
     assertThat(result.getTotalPages()).isEqualTo(1);
     verify(userRepository, times(1)).findAll(pageable);

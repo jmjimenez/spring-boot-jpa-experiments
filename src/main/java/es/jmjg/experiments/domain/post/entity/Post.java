@@ -1,10 +1,13 @@
-package es.jmjg.experiments.domain.entity;
+package es.jmjg.experiments.domain.post.entity;
 
+import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,7 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,12 +26,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "Post")
 @NoArgsConstructor
 @Getter
 @Setter
-
-public class User {
+public class Post {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
@@ -37,35 +39,28 @@ public class User {
   @Column(name = "uuid", unique = true, nullable = false)
   private UUID uuid;
 
-  @NotEmpty
-  private String name;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  @JsonIgnore
+  private User user;
 
   @NotEmpty
-  @Column(unique = true)
-  private String email;
-
-  @Column(unique = true)
-  private String username;
+  @Column(name = "title", unique = true, nullable = false)
+  private String title;
 
   @NotEmpty
-  @Column(nullable = false)
-  private String password;
-
-  @OneToMany(mappedBy = "user", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-  private List<Post> posts = new ArrayList<>();
+  private String body;
 
   @ManyToMany(fetch = FetchType.LAZY)
-  @JoinTable(name = "user_tag", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private List<Tag> tags = new ArrayList<>();
 
   // Constructor with UUID
-  public User(Integer id, UUID uuid, String name, String email, String username, String password, List<Post> posts) {
+  public Post(Integer id, UUID uuid, User user, String title, String body) {
     this.id = id;
     this.uuid = uuid;
-    this.name = name;
-    this.email = email;
-    this.username = username;
-    this.password = password;
-    this.posts = posts != null ? posts : new ArrayList<>();
+    this.user = user;
+    this.title = title;
+    this.body = body;
   }
 }

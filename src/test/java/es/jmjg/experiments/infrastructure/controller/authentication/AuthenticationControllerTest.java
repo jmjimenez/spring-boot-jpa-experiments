@@ -26,6 +26,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,7 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
@@ -233,8 +234,8 @@ class AuthenticationControllerTest {
     @Primary
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
       return http
-          .cors(cors -> cors.disable())
-          .csrf(csrf -> csrf.disable())
+          .cors(AbstractHttpConfigurer::disable)
+          .csrf(AbstractHttpConfigurer::disable)
           .authorizeHttpRequests(
               authorize -> authorize
                   .requestMatchers("/", "/authenticate", "/api-docs/**", "/swagger-ui/**")

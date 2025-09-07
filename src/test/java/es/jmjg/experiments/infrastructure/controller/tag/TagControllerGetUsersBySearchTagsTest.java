@@ -6,8 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import es.jmjg.experiments.application.tag.FindUsersByTag;
-import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;

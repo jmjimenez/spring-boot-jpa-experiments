@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.user.entity.User;
 
 public class UserFactory {
 

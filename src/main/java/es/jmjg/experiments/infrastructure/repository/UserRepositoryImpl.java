@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.repository;
 
+import es.jmjg.experiments.domain.user.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,12 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.jpa.JpaUserRepository;
 
 @Repository
 @Transactional(readOnly = true)
-public class UserRepositoryImpl implements es.jmjg.experiments.domain.repository.UserRepository {
+public class UserRepositoryImpl implements UserRepository {
 
   private final JpaUserRepository jpaUserRepository;
 
@@ -62,10 +63,6 @@ public class UserRepositoryImpl implements es.jmjg.experiments.domain.repository
   @Override
   public List<User> findByTagId(Integer id) {
     return jpaUserRepository.findByTagId(id);
-  }
-
-  public Long count() {
-    return jpaUserRepository.count();
   }
 
   @Transactional

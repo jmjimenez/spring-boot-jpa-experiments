@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.repository.PostRepository;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.post.repository.PostRepository;
 
 @Service
 public class FindPostByTitle {

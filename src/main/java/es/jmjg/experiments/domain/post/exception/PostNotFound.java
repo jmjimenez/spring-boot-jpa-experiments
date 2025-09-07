@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.post.exception;
+package es.jmjg.experiments.domain.post.exception;
 
 import java.util.UUID;
 

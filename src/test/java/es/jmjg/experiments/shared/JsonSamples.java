@@ -3,7 +3,7 @@ package es.jmjg.experiments.shared;
 import java.util.List;
 import java.util.UUID;
 
-import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.post.entity.Post;
 
 /**
  * Utility class for creating JSON samples used in tests.

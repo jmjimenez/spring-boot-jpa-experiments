@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import es.jmjg.experiments.application.tag.DeleteTag;
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 import java.util.UUID;

@@ -3,12 +3,12 @@ package es.jmjg.experiments.shared;
 import es.jmjg.experiments.application.tag.dto.DeleteTagDto;
 import es.jmjg.experiments.application.tag.dto.SaveTagDto;
 import es.jmjg.experiments.application.tag.dto.UpdateTagDto;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 
 public class TagFactory {
 

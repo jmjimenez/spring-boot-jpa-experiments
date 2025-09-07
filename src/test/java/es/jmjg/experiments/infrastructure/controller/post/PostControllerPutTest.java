@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.UpdatePost;
-import es.jmjg.experiments.application.post.exception.PostNotFound;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.post.exception.PostNotFound;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.PostFactory;

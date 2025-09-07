@@ -1,6 +1,6 @@
 package es.jmjg.experiments.application.tag.dto;
 
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;

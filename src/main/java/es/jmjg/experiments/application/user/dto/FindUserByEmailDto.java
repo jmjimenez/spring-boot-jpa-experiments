@@ -2,7 +2,6 @@ package es.jmjg.experiments.application.user.dto;
 
 import java.util.Objects;
 
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import jakarta.validation.constraints.NotNull;
 
 public record FindUserByEmailDto(

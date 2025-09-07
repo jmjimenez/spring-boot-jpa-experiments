@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.tag.FindTagByPattern;
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.shared.BaseIntegration;
 
 class FindTagByPatternIntegrationTest extends BaseIntegration {
@@ -25,7 +25,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("java");
+    assertThat(result.getFirst().getName()).isEqualTo("java");
   }
 
   @Test
@@ -49,7 +49,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("java");
+    assertThat(result.getFirst().getName()).isEqualTo("java");
   }
 
   @Test
@@ -102,7 +102,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("java");
+    assertThat(result.getFirst().getName()).isEqualTo("java");
   }
 
   @Test
@@ -114,7 +114,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("spring-boot");
+    assertThat(result.getFirst().getName()).isEqualTo("spring-boot");
   }
 
   @Test
@@ -126,7 +126,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("technology");
+    assertThat(result.getFirst().getName()).isEqualTo("technology");
   }
 
   @Test
@@ -138,7 +138,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("programming");
+    assertThat(result.getFirst().getName()).isEqualTo("programming");
   }
 
   @Test
@@ -150,7 +150,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("database");
+    assertThat(result.getFirst().getName()).isEqualTo("database");
   }
 
   @Test
@@ -162,7 +162,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("web-development");
+    assertThat(result.getFirst().getName()).isEqualTo("web-development");
   }
 
   @Test
@@ -174,7 +174,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("tutorial");
+    assertThat(result.getFirst().getName()).isEqualTo("tutorial");
   }
 
   @Test
@@ -186,7 +186,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("best-practices");
+    assertThat(result.getFirst().getName()).isEqualTo("best-practices");
   }
 
   @Test
@@ -198,7 +198,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("architecture");
+    assertThat(result.getFirst().getName()).isEqualTo("architecture");
   }
 
   @Test
@@ -210,7 +210,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("microservices");
+    assertThat(result.getFirst().getName()).isEqualTo("microservices");
   }
 
   @Test
@@ -222,7 +222,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("testing");
+    assertThat(result.getFirst().getName()).isEqualTo("testing");
   }
 
   @Test
@@ -234,7 +234,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("devops");
+    assertThat(result.getFirst().getName()).isEqualTo("devops");
   }
 
   @Test
@@ -246,7 +246,7 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("api");
+    assertThat(result.getFirst().getName()).isEqualTo("api");
   }
 
   @Test
@@ -258,6 +258,6 @@ class FindTagByPatternIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getName()).isEqualTo("security");
+    assertThat(result.getFirst().getName()).isEqualTo("security");
   }
 }

@@ -1,4 +1,4 @@
-package es.jmjg.experiments.domain.repository;
+package es.jmjg.experiments.domain.user.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 
 public interface UserRepository {
   void deleteByUuid(UUID uuid);

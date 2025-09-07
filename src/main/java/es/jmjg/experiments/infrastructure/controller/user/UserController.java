@@ -34,7 +34,7 @@ import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindAllUsersResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.FindUserByEmailResponseDto;

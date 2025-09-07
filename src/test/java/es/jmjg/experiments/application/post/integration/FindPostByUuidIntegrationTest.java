@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.UUID;
 
-import es.jmjg.experiments.application.post.exception.PostNotFound;
+import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.FindPostByUuid;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;

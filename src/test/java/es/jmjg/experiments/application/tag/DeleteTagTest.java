@@ -13,9 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import es.jmjg.experiments.application.tag.exception.TagInUseException;
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.repository.TagRepository;
+import es.jmjg.experiments.domain.tag.exception.TagInUseException;
+import es.jmjg.experiments.domain.tag.exception.TagNotFound;
+import es.jmjg.experiments.domain.tag.repository.TagRepository;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteTagTest {

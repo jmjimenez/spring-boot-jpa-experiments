@@ -18,9 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 
@@ -225,13 +225,13 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(savedPost.getBody()).isEqualTo("Learn Spring Boot");
     assertThat(savedPost.getUser().getId()).isEqualTo(testUser.getId());
     assertThat(savedPost.getTags()).hasSize(1);
-    assertThat(savedPost.getTags().get(0).getName()).isEqualTo("spring-boot-test");
+    assertThat(savedPost.getTags().getFirst().getName()).isEqualTo("spring-boot-test");
 
     // Verify it was actually saved to the database with tag
     Optional<Post> retrievedPost = postRepository.findById(savedPost.getId());
     assertThat(retrievedPost).isPresent();
     assertThat(retrievedPost.get().getTags()).hasSize(1);
-    assertThat(retrievedPost.get().getTags().get(0).getName()).isEqualTo("spring-boot-test");
+    assertThat(retrievedPost.get().getTags().getFirst().getName()).isEqualTo("spring-boot-test");
   }
 
   @Test

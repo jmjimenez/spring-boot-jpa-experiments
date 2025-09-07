@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.UserFactory;
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
-import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import es.jmjg.experiments.infrastructure.controller.user.mapper.UserMapper;
 import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;

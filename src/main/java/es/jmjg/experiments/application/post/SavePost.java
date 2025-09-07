@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.application.post.dto.SavePostDto;
-import es.jmjg.experiments.application.shared.exception.InvalidRequest;
-import es.jmjg.experiments.application.user.exception.UserNotFound;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.domain.repository.PostRepository;
-import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.domain.shared.exception.InvalidRequest;
+import es.jmjg.experiments.domain.user.exception.UserNotFound;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.domain.post.repository.PostRepository;
+import es.jmjg.experiments.domain.user.repository.UserRepository;
 
 @Service
 public class SavePost {

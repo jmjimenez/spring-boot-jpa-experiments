@@ -10,7 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import es.jmjg.experiments.application.post.FindAllPosts;
-import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.shared.BaseIntegration;
 
 class FindAllPostsIntegrationTest extends BaseIntegration {

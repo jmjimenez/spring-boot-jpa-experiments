@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.jmjg.experiments.application.tag.SaveTag;
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.TestDataSamples;

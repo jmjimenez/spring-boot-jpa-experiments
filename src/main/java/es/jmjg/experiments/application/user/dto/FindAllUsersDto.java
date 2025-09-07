@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import org.springframework.data.domain.Pageable;
 
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
 import jakarta.validation.constraints.NotNull;
 
 public record FindAllUsersDto(

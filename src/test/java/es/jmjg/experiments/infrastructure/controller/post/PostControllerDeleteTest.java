@@ -15,9 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.DeletePost;
-import es.jmjg.experiments.application.post.exception.PostNotFound;
-import es.jmjg.experiments.application.shared.exception.Forbidden;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.post.exception.PostNotFound;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;

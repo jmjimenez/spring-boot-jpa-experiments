@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
+import es.jmjg.experiments.domain.tag.exception.TagNotFound;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.SavePost;
 import es.jmjg.experiments.application.post.dto.SavePostDto;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;

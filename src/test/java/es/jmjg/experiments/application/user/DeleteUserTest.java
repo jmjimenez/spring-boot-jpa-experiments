@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,11 +20,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.user.dto.DeleteUserDto;
-import es.jmjg.experiments.application.user.exception.UserNotFound;
-import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.domain.user.exception.UserNotFound;
+import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.domain.user.repository.UserRepository;
 import es.jmjg.experiments.shared.AuthenticatedUserFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -72,7 +73,7 @@ class DeleteUserTest {
     DeleteUserDto deleteUserDto = new DeleteUserDto(nonExistentUuid, authenticatedAdminUser);
     assertThatThrownBy(() -> deleteUser.delete(deleteUserDto))
         .isInstanceOf(UserNotFound.class)
-        .hasMessage("User not found with uuid: " + nonExistentUuid.toString());
+        .hasMessage("User not found with uuid: " + nonExistentUuid);
     verify(userRepository, never()).deleteByUuid(nonExistentUuid);
   }
 
@@ -115,7 +116,7 @@ class DeleteUserTest {
     // When & Then
     DeleteUserDto deleteUserDto = new DeleteUserDto(testUser.getUuid(), authenticatedTestUser);
     assertThatThrownBy(() -> deleteUser.delete(deleteUserDto))
-        .isInstanceOf(es.jmjg.experiments.application.shared.exception.Forbidden.class)
+        .isInstanceOf(Forbidden.class)
         .hasMessage("Only admin users can delete users");
 
     verify(userRepository, never()).deleteByUuid(any(UUID.class));

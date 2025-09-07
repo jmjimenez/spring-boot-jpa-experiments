@@ -17,13 +17,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import es.jmjg.experiments.application.post.exception.PostNotFound;
-import es.jmjg.experiments.application.shared.exception.Forbidden;
-import es.jmjg.experiments.application.shared.exception.InvalidRequest;
-import es.jmjg.experiments.application.tag.exception.TagAlreadyExistsException;
-import es.jmjg.experiments.application.tag.exception.TagInUseException;
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.application.user.exception.UserNotFound;
+import es.jmjg.experiments.domain.post.exception.PostNotFound;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.shared.exception.InvalidRequest;
+import es.jmjg.experiments.domain.tag.exception.TagAlreadyExistsException;
+import es.jmjg.experiments.domain.tag.exception.TagInUseException;
+import es.jmjg.experiments.domain.tag.exception.TagNotFound;
+import es.jmjg.experiments.domain.user.exception.UserNotFound;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.tag.SaveTag;
-import es.jmjg.experiments.application.tag.exception.TagAlreadyExistsException;
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.exception.TagAlreadyExistsException;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.infrastructure.repository.TagRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TagFactory;

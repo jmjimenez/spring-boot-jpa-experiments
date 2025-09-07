@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
 
 @Import(TagRepositoryImpl.class)

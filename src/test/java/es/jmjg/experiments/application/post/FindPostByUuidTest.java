@@ -6,7 +6,7 @@ import static org.mockito.Mockito.*;
 import java.util.Optional;
 import java.util.UUID;
 
-import es.jmjg.experiments.application.post.exception.PostNotFound;
+import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.repository.PostRepository;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.post.repository.PostRepository;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 

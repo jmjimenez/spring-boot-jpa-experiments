@@ -6,10 +6,10 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.domain.repository.TagRepository;
-import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.domain.tag.exception.TagNotFound;
+import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.domain.tag.repository.TagRepository;
+import es.jmjg.experiments.domain.user.repository.UserRepository;
 
 @Service
 public class FindUsersByTag {

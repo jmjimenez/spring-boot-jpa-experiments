@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.repository;
 
+import es.jmjg.experiments.domain.tag.repository.TagRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -7,12 +8,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.infrastructure.repository.jpa.JpaTagRepository;
 
 @Repository
 @Transactional(readOnly = true)
-public class TagRepositoryImpl implements es.jmjg.experiments.domain.repository.TagRepository {
+public class TagRepositoryImpl implements TagRepository {
 
   private final JpaTagRepository jpaTagRepository;
 
@@ -29,16 +30,6 @@ public class TagRepositoryImpl implements es.jmjg.experiments.domain.repository.
   @Transactional
   public void deleteByUuid(UUID uuid) {
     jpaTagRepository.deleteByUuid(uuid);
-  }
-
-  @Override
-  public boolean isTagUsedInPosts(Integer id) {
-    return jpaTagRepository.isTagUsedInPosts(id);
-  }
-
-  @Override
-  public boolean isTagUsedInUsers(Integer id) {
-    return jpaTagRepository.isTagUsedInUsers(id);
   }
 
   @Override

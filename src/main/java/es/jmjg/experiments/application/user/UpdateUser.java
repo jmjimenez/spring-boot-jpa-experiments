@@ -5,11 +5,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
-import es.jmjg.experiments.application.user.exception.UserNotFound;
-import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.domain.repository.UserRepository;
+import es.jmjg.experiments.domain.user.exception.UserNotFound;
+import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.domain.user.repository.UserRepository;
 
 @Service
 public class UpdateUser {
@@ -23,7 +23,7 @@ public class UpdateUser {
   @Transactional
   public User update(UpdateUserDto updateUserDto) {
     Optional<User> existing = userRepository.findByUuid(updateUserDto.uuid());
-    if (!existing.isPresent()) {
+    if (existing.isEmpty()) {
       throw new UserNotFound(updateUserDto.uuid());
     }
 

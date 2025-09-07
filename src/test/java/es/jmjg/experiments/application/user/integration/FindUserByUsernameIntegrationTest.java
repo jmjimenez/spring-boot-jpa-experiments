@@ -3,15 +3,16 @@ package es.jmjg.experiments.application.user.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import es.jmjg.experiments.application.user.exception.UserNotFound;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.dto.FindUserByUsernameDto;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
@@ -161,7 +162,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     // When & Then
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(otherUsername, authenticatedTestUser);
     assertThatThrownBy(() -> findUserByUsername.findByUsername(findUserByUsernameDto))
-        .isInstanceOf(es.jmjg.experiments.application.shared.exception.Forbidden.class)
+        .isInstanceOf(Forbidden.class)
         .hasMessage("Access denied: only admins or the user themselves can view user data");
   }
 }

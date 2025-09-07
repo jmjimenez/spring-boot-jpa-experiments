@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.shared.dto;
+package es.jmjg.experiments.application.user.dto;
 
 import java.util.Collection;
 import java.util.Objects;

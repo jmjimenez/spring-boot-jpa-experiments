@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.tag.exception;
+package es.jmjg.experiments.domain.tag.exception;
 
 //TODO: move all application exceptions to domain
 public class TagInUseException extends RuntimeException {

@@ -1,11 +1,11 @@
 package es.jmjg.experiments.application.post;
 
 import es.jmjg.experiments.application.post.dto.UpdatePostTagsDto;
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
-import es.jmjg.experiments.application.post.exception.PostNotFound;
-import es.jmjg.experiments.application.shared.exception.Forbidden;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.repository.PostRepository;
+import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.domain.post.exception.PostNotFound;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.post.repository.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

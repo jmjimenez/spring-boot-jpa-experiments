@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 
 public class AuthenticatedUserFactory {

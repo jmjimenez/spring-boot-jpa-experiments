@@ -2,7 +2,7 @@ package es.jmjg.experiments.application.tag.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.TestDataSamples;
 import java.util.Optional;
@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.tag.DeleteTag;
-import es.jmjg.experiments.application.tag.exception.TagInUseException;
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.exception.TagInUseException;
+import es.jmjg.experiments.domain.tag.exception.TagNotFound;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.infrastructure.repository.TagRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TagFactory;

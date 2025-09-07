@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 
@@ -34,7 +33,7 @@ import es.jmjg.experiments.application.user.FindUserByUsername;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.SaveUser;
 import es.jmjg.experiments.application.user.UpdateUser;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtSecurityConfig;
 import es.jmjg.experiments.infrastructure.config.security.JwtTokenService;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
@@ -97,8 +96,8 @@ public class ControllerTestConfig {
   }
 
   @Bean
-  public UserMapper userMapper(PasswordEncoder passwordEncoder) {
-    return new UserMapper(passwordEncoder);
+  public UserMapper userMapper() {
+    return new UserMapper();
   }
 
   @Bean

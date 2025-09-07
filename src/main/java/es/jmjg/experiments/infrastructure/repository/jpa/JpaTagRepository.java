@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.repository.jpa;
 
+import es.jmjg.experiments.domain.tag.exception.TagInUseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,9 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.domain.exception.TagInUseException;
+import es.jmjg.experiments.domain.tag.exception.TagNotFound;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 
 public interface JpaTagRepository extends JpaRepository<Tag, Integer> {
 

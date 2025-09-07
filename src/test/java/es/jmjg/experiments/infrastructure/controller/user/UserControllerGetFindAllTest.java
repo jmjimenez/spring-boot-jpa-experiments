@@ -18,7 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -38,6 +38,7 @@ class UserControllerGetFindAllTest extends BaseUserControllerTest {
     pageable = PageRequest.of(0, 10);
   }
 
+  @Test
   void shouldFindAllUsers() throws Exception {
     // Given
     List<User> users = List.of(testUser);

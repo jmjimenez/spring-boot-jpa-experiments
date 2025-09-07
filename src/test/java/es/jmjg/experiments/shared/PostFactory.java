@@ -6,8 +6,8 @@ import java.util.UUID;
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.application.post.dto.SavePostDto;
 import es.jmjg.experiments.application.post.dto.UpdatePostDto;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.user.entity.User;
 
 public class PostFactory {
 

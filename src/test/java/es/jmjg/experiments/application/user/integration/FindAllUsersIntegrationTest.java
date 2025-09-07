@@ -17,11 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
-import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.FindAllUsers;
 import es.jmjg.experiments.application.user.dto.FindAllUsersDto;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
@@ -116,10 +116,10 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0).getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
-    assertThat(result.getContent().get(0).getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
-    assertThat(result.getContent().get(0).getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
-    assertThat(result.getContent().get(0).getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+    assertThat(result.getContent().getFirst().getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
+    assertThat(result.getContent().getFirst().getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
+    assertThat(result.getContent().getFirst().getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
+    assertThat(result.getContent().getFirst().getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
     assertThat(result.getTotalElements()).isEqualTo(1);
     assertThat(result.getTotalPages()).isEqualTo(1);
   }
@@ -143,7 +143,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(2);
-    assertThat(result.getContent()).extracting("name").allMatch(name -> TestDataSamples.LEANNE_NAME.equals(name));
+    assertThat(result.getContent()).extracting("name").allMatch(TestDataSamples.LEANNE_NAME::equals);
     assertThat(result.getContent()).extracting("email")
         .containsExactlyInAnyOrder(TestDataSamples.LEANNE_EMAIL, TestDataSamples.ERVIN_EMAIL);
     assertThat(result.getContent()).extracting("uuid")
@@ -215,10 +215,10 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0).getName()).isEqualTo(name);
-    assertThat(result.getContent().get(0).getEmail()).isEqualTo(email);
-    assertThat(result.getContent().get(0).getUsername()).isEqualTo(username);
-    assertThat(result.getContent().get(0).getUuid()).isEqualTo(uuid);
+    assertThat(result.getContent().getFirst().getName()).isEqualTo(name);
+    assertThat(result.getContent().getFirst().getEmail()).isEqualTo(email);
+    assertThat(result.getContent().getFirst().getUsername()).isEqualTo(username);
+    assertThat(result.getContent().getFirst().getUuid()).isEqualTo(uuid);
   }
 
   private static Stream<Arguments> provideUsersWithSpecialCharacters() {
@@ -244,10 +244,10 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0).getName()).isEqualTo(name);
-    assertThat(result.getContent().get(0).getEmail()).isEqualTo(email);
-    assertThat(result.getContent().get(0).getUsername()).isEqualTo(username);
-    assertThat(result.getContent().get(0).getUuid()).isEqualTo(uuid);
+    assertThat(result.getContent().getFirst().getName()).isEqualTo(name);
+    assertThat(result.getContent().getFirst().getEmail()).isEqualTo(email);
+    assertThat(result.getContent().getFirst().getUsername()).isEqualTo(username);
+    assertThat(result.getContent().getFirst().getUuid()).isEqualTo(uuid);
   }
 
   private static Stream<Arguments> provideUsersWithLongNames() {
@@ -279,10 +279,10 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0).getName()).isEqualTo(name);
-    assertThat(result.getContent().get(0).getEmail()).isEqualTo(email);
-    assertThat(result.getContent().get(0).getUsername()).isEqualTo(username);
-    assertThat(result.getContent().get(0).getUuid()).isEqualTo(uuid);
+    assertThat(result.getContent().getFirst().getName()).isEqualTo(name);
+    assertThat(result.getContent().getFirst().getEmail()).isEqualTo(email);
+    assertThat(result.getContent().getFirst().getUsername()).isEqualTo(username);
+    assertThat(result.getContent().getFirst().getUuid()).isEqualTo(uuid);
   }
 
   private static Stream<Arguments> provideUsersWithSubdomainEmails() {

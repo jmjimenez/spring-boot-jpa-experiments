@@ -1,20 +1,16 @@
-package es.jmjg.experiments.domain.repository;
+package es.jmjg.experiments.domain.tag.repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 
 public interface TagRepository {
 
   Optional<Tag> findByUuid(UUID uuid);
 
   void deleteByUuid(UUID uuid);
-
-  boolean isTagUsedInPosts(Integer id);
-
-  boolean isTagUsedInUsers(Integer id);
 
   Optional<Tag> findByName(String trim);
 

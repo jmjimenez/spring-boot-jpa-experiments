@@ -2,6 +2,7 @@ package es.jmjg.experiments.application.post.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -9,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.jmjg.experiments.application.post.DeletePost;
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
-import es.jmjg.experiments.application.shared.exception.Forbidden;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
@@ -89,7 +90,7 @@ class DeletePostIntegrationTest extends BaseIntegration {
 
     // When & Then
     assertThatThrownBy(() -> deletePost.delete(deletePostDto))
-        .isInstanceOf(es.jmjg.experiments.application.post.exception.PostNotFound.class)
+        .isInstanceOf(PostNotFound.class)
         .hasMessage("Post not found with uuid: " + nonExistentUuid);
   }
 }

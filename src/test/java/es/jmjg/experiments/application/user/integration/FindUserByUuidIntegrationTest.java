@@ -5,16 +5,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.UUID;
 
-import es.jmjg.experiments.application.user.exception.UserNotFound;
+import es.jmjg.experiments.domain.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
-import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;

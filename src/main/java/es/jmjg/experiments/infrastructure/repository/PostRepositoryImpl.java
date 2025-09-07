@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.repository;
 
+import es.jmjg.experiments.domain.post.repository.PostRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,12 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jmjg.experiments.domain.entity.Post;
+import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.infrastructure.repository.jpa.JpaPostRepository;
 
 @Repository
 @Transactional(readOnly = true)
-public class PostRepositoryImpl implements es.jmjg.experiments.domain.repository.PostRepository {
+public class PostRepositoryImpl implements PostRepository {
 
   private final JpaPostRepository jpaPostRepository;
 
@@ -68,9 +69,4 @@ public class PostRepositoryImpl implements es.jmjg.experiments.domain.repository
   public List<Post> findByUserId(Integer userId) {
     return jpaPostRepository.findByUserId(userId);
   }
-
-  public Long count() {
-    return jpaPostRepository.count();
-  }
-
 }

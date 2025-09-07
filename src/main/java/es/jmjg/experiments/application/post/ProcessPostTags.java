@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
+import es.jmjg.experiments.domain.tag.exception.TagNotFound;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.domain.repository.TagRepository;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.tag.repository.TagRepository;
 
 //TODO: test this service
 @Service

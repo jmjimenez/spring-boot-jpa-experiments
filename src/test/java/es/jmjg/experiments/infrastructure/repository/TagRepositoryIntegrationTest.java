@@ -2,6 +2,7 @@ package es.jmjg.experiments.infrastructure.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.domain.tag.exception.TagInUseException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
-import es.jmjg.experiments.domain.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
 
 @Import(TagRepositoryImpl.class)
@@ -112,7 +113,7 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
 
     // When & Then - Should throw exception when trying to delete
     assertThatThrownBy(() -> tagRepository.deleteByUuid(javaTag.get().getUuid()))
-        .isInstanceOf(es.jmjg.experiments.domain.exception.TagInUseException.class)
+        .isInstanceOf(TagInUseException.class)
         .hasMessageContaining("Cannot delete tag 'java' because it is assigned to posts");
   }
 

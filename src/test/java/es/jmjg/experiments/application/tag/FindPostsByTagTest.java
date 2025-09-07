@@ -14,12 +14,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.domain.entity.User;
-import es.jmjg.experiments.domain.repository.PostRepository;
-import es.jmjg.experiments.domain.repository.TagRepository;
+import es.jmjg.experiments.domain.tag.exception.TagNotFound;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.domain.post.repository.PostRepository;
+import es.jmjg.experiments.domain.tag.repository.TagRepository;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.UserFactory;

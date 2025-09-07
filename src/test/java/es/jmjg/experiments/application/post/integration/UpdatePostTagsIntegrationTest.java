@@ -7,10 +7,10 @@ import java.util.List;
 
 import es.jmjg.experiments.application.post.UpdatePostTags;
 import es.jmjg.experiments.application.post.dto.UpdatePostTagsDto;
-import es.jmjg.experiments.application.tag.exception.TagNotFound;
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.tag.exception.TagNotFound;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;

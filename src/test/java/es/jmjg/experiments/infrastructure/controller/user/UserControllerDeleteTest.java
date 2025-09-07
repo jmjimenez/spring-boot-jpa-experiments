@@ -17,11 +17,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.jmjg.experiments.application.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.DeleteUser;
 import es.jmjg.experiments.application.user.dto.DeleteUserDto;
-import es.jmjg.experiments.application.user.exception.UserNotFound;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.user.exception.UserNotFound;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.UserFactory;
 
 class UserControllerDeleteTest extends BaseUserControllerTest {

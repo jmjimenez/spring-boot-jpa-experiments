@@ -1,6 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.tag.mapper;
 
-import es.jmjg.experiments.application.shared.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.application.tag.dto.DeleteTagDto;
 import es.jmjg.experiments.application.tag.dto.SaveTagDto;
 import es.jmjg.experiments.application.tag.dto.UpdateTagDto;
@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import es.jmjg.experiments.domain.entity.Post;
-import es.jmjg.experiments.domain.entity.Tag;
-import es.jmjg.experiments.domain.entity.User;
+import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.FindTagByPatternResponseDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.FindTagByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
