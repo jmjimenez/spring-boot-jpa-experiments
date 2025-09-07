@@ -53,4 +53,21 @@ class TagControllerGetUsersByTagUuidIntegrationTest extends BaseControllerIntegr
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
+
+  @Test
+  void whenUnauthorized_shouldFindUsersByTag() {
+    // Given
+    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
+
+    // When
+    ResponseEntity<Object> response = restTemplate.exchange(
+      "/api/tags/" + tagUuid + "/users",
+      HttpMethod.GET,
+      null,
+      new ParameterizedTypeReference<>() { }
+    );
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
 }

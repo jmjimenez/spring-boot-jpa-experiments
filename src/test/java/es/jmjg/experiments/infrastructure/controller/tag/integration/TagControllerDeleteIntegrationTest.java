@@ -71,4 +71,16 @@ class TagControllerDeleteIntegrationTest extends BaseControllerIntegration {
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
   }
+  @Test
+  void when_Unauthorized_shouldReturnUnauthorized() {
+    // Given
+    UUID tagUuid = TestDataSamples.NOT_USED_UUID;
+
+    // When
+    ResponseEntity<Void> response = restTemplate.exchange(
+      "/api/tags/" + tagUuid, HttpMethod.DELETE, null, Void.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
 }

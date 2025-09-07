@@ -99,4 +99,17 @@ class TagControllerPostIntegrationTest extends BaseControllerIntegration {
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
   }
+  @Test
+  void whenUnauthorized_shouldReturnUnauthorized() {
+    // Given
+    SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "new-tag");
+
+    // When
+    HttpEntity<SaveTagRequestDto> request = createUnauthenticatedRequest(tagDto);
+    ResponseEntity<SaveTagResponseDto> response = restTemplate.exchange(
+      "/api/tags", HttpMethod.POST, request, SaveTagResponseDto.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
 }

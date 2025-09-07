@@ -54,4 +54,20 @@ class TagControllerPutIntegrationTest extends BaseControllerIntegration {
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
+
+  @Test
+  void whenUnauthorized_shouldReturnUnathorized() {
+    // Given
+    UUID tagUuid = TestDataSamples.JAVA_UUID;
+    UpdateTagRequestDto updateDto = new UpdateTagRequestDto(tagUuid, "updated-java");
+
+    // When
+    HttpEntity<UpdateTagRequestDto> request = createUnauthenticatedRequest(updateDto);
+    ResponseEntity<UpdateTagResponseDto> response = restTemplate.exchange(
+      "/api/tags/" + tagUuid, HttpMethod.PUT, request,
+      UpdateTagResponseDto.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
 }

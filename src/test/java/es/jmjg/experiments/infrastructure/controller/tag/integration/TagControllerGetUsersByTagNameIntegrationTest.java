@@ -51,4 +51,23 @@ class TagControllerGetUsersByTagNameIntegrationTest extends BaseControllerIntegr
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
+
+  @Test
+  void whenUnathorized_shouldFindUsersByTagName() {
+    // Given
+    String tagName = "technology";
+
+    // When
+    ResponseEntity<Object> response = restTemplate.exchange(
+      "/api/tags/search/users?name=" + tagName,
+      HttpMethod.GET,
+      null,
+      new ParameterizedTypeReference<>() { }
+    );
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Object responseBody = response.getBody();
+    assertThat(responseBody).isNotNull();
+  }
 }

@@ -53,4 +53,20 @@ class TagControllerGetPostsByTagNameIntegrationTest extends BaseControllerIntegr
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
+  @Test
+  void whenUnauthorized_shouldFindPostsByTagName() {
+    // Given
+    String tagName = "technology";
+
+    // When
+    ResponseEntity<Object> response = restTemplate.exchange(
+      "/api/tags/search/posts?name=" + tagName,
+      HttpMethod.GET,
+      null,
+      new ParameterizedTypeReference<>() { }
+    );
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
 }

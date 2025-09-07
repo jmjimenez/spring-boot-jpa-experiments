@@ -97,4 +97,21 @@ class TagControllerGetSearchIntegrationTest extends BaseControllerIntegration {
       assertThat(tag.getUsers()).isNotEmpty();
     }
   }
+
+  @Test
+  void whenUnauthorized_shouldFindTagsByPattern() {
+    // Given
+    String pattern = "tech";
+
+    // When
+    ResponseEntity<FindTagByPatternResponseDto[]> response = restTemplate.exchange(
+      "/api/tags/search?pattern=" + pattern,
+      HttpMethod.GET,
+      null,
+      new ParameterizedTypeReference<>() { }
+    );
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
 }
