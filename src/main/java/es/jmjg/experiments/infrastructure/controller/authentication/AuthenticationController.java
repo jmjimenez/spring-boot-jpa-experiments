@@ -35,13 +35,15 @@ public class AuthenticationController {
   private final AuthenticationMapper authenticationMapper;
 
   @PostMapping("/authenticate")
-  @Operation(summary = "Authenticate user", description = "Authenticates a user and returns a JWT token. Use this endpoint to get a token for accessing protected API endpoints.", security = {})
+  @Operation(summary = "Authenticate user", description = "Authenticates a user and returns a JWT token. Use this endpoint to get a token for accessing protected API endpoints.")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
-      @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
+    @ApiResponse(responseCode = "400", description = "Missing credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Invalid credentials")
   })
   public AuthenticationResponseDto authenticate(
-      @Parameter(description = "User credentials", required = true) @RequestBody @Valid final AuthenticationRequestDto authenticationRequest) {
+    @Parameter(description = "User credentials", required = true) @RequestBody @Valid final AuthenticationRequestDto authenticationRequest) {
+
     authenticateUser(authenticationRequest.getLogin(), authenticationRequest.getPassword());
 
     final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(authenticationRequest.getLogin());
@@ -49,14 +51,16 @@ public class AuthenticationController {
   }
 
   @PostMapping(value = "/authenticate", consumes = "application/x-www-form-urlencoded")
-  @Operation(summary = "Authenticate user (OAuth2)", description = "OAuth2 password flow endpoint for authentication", security = {})
+  @Operation(summary = "Authenticate user (OAuth2)", description = "OAuth2 password flow endpoint for authentication")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
-      @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
+    @ApiResponse(responseCode = "400", description = "Missing credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Invalid credentials")
   })
   public AuthenticationResponseDto authenticateOAuth2(
-      @Parameter(description = "Username for authentication", required = true) @RequestParam("username") String username,
-      @Parameter(description = "Password for authentication", required = true) @RequestParam("password") String password) {
+    @Parameter(description = "Username for authentication", required = true) @RequestParam("username") String username,
+    @Parameter(description = "Password for authentication", required = true) @RequestParam("password") String password) {
+
     authenticateUser(username, password);
 
     final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
@@ -66,7 +70,7 @@ public class AuthenticationController {
   private void authenticateUser(String username, String password) {
     try {
       authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(username, password));
+        new UsernamePasswordAuthenticationToken(username, password));
     } catch (final BadCredentialsException ex) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
