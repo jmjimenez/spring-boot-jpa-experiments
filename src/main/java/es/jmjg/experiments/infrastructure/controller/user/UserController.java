@@ -1,5 +1,8 @@
 package es.jmjg.experiments.infrastructure.controller.user;
 
+import es.jmjg.experiments.application.user.GeneratePasswordReset;
+import es.jmjg.experiments.application.user.dto.GeneratePasswordResetDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.PasswordResetResponseDto;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -71,6 +74,7 @@ public class UserController {
   private final FindUserByUsername findUserByUsername;
   private final FindAllUsers findAllUsers;
   private final DeleteUser deleteUser;
+  private final GeneratePasswordReset generatePasswordReset;
 
   public UserController(
       UserMapper userMapper,
@@ -80,7 +84,9 @@ public class UserController {
       FindUserByEmail findUserByEmail,
       FindUserByUsername findUserByUsername,
       FindAllUsers findAllUsers,
-      DeleteUser deleteUser) {
+      DeleteUser deleteUser,
+      GeneratePasswordReset generatePasswordReset
+  ) {
     this.userMapper = userMapper;
     this.saveUser = saveUser;
     this.updateUser = updateUser;
@@ -89,6 +95,7 @@ public class UserController {
     this.findUserByUsername = findUserByUsername;
     this.findAllUsers = findAllUsers;
     this.deleteUser = deleteUser;
+    this.generatePasswordReset = generatePasswordReset;
   }
 
   @GetMapping("")
@@ -202,6 +209,7 @@ public class UserController {
       @Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
       @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
 
+    //TODO: use a mapper
     UpdateUserDto updateUserDto = new UpdateUserDto(
         uuid,
         userDto.getName(),
@@ -226,5 +234,21 @@ public class UserController {
       @PathVariable UUID uuid) {
     DeleteUserDto deleteUserDto = new DeleteUserDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
     deleteUser.delete(deleteUserDto);
+  }
+
+  @GetMapping("/password/{username}/{email}/reset")
+  @Operation(summary = "Request pasword reset", description = "User can request pasword reset")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Reset generated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PasswordResetResponseDto.class))),
+    @ApiResponse(responseCode = "404", description = "User not found")
+  })
+  PasswordResetResponseDto generateResetPassword(
+    @Parameter(description = "username") @PathVariable String username,
+    @Parameter(description = "email") @PathVariable String email) {
+
+    GeneratePasswordResetDto generatePasswordResetDto = new GeneratePasswordResetDto( username, email);
+
+    String resetKey = generatePasswordReset.generate(generatePasswordResetDto);
+    return userMapper.toPasswordResetResponseDto(resetKey);
   }
 }

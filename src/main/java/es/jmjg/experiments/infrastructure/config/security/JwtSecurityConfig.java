@@ -60,6 +60,8 @@ public class JwtSecurityConfig {
         authorize -> authorize
           .requestMatchers("/", "/authenticate", "/api-docs/**", "/swagger-ui/**")
           .permitAll()
+          .requestMatchers(HttpMethod.GET, "/api/users/password/*/*/reset")
+          .permitAll()
           .requestMatchers(HttpMethod.GET, "/api/posts")
           .permitAll()
           .requestMatchers(HttpMethod.GET, "/api/posts/{uuid}")

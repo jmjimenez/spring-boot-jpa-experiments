@@ -2,6 +2,7 @@ package es.jmjg.experiments.infrastructure.controller.user.mapper;
 
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.infrastructure.controller.user.dto.PasswordResetResponseDto;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -49,6 +50,10 @@ public class UserMapper {
 
   public UpdateUserResponseDto toUpdateUserResponseDto(User updatedUser) {
     return mapToResponseDto(updatedUser, UpdateUserResponseDto::new);
+  }
+
+  public PasswordResetResponseDto toPasswordResetResponseDto(String resetKey) {
+    return new PasswordResetResponseDto(resetKey);
   }
 
   @FunctionalInterface

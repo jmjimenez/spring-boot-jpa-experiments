@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import es.jmjg.experiments.application.post.UpdatePostTags;
+import es.jmjg.experiments.application.user.GeneratePasswordReset;
 import java.util.UUID;
 
 import org.springframework.boot.test.context.TestConfiguration;
@@ -140,6 +141,12 @@ public class ControllerTestConfig {
   @Primary
   public DeleteUser deleteUser() {
     return mock(DeleteUser.class);
+  }
+
+  @Bean
+  @Primary
+  public GeneratePasswordReset generatePasswordReset() {
+    return mock(GeneratePasswordReset.class);
   }
 
   @Bean
