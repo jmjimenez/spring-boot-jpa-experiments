@@ -360,4 +360,13 @@ public final class JsonSamples {
       throw new RuntimeException("Failed to serialize UpdatePostTagsRequestDto", e);
     }
   }
+
+  public static String createResetPasswordRequestJson(String resetKey, String newPassword) {
+    return """
+        {
+            "resetKey":"%s",
+            "newPassword":"%s"
+        }
+        """.formatted(resetKey, newPassword);
+  }
 }

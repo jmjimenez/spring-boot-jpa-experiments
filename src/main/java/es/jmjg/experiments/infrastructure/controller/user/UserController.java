@@ -1,8 +1,11 @@
 package es.jmjg.experiments.infrastructure.controller.user;
 
 import es.jmjg.experiments.application.user.GeneratePasswordReset;
+import es.jmjg.experiments.application.user.ResetPassword;
 import es.jmjg.experiments.application.user.dto.GeneratePasswordResetDto;
+import es.jmjg.experiments.application.user.dto.ResetPasswordDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.PasswordResetResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.ResetPasswordRequestDto;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -75,17 +79,19 @@ public class UserController {
   private final FindAllUsers findAllUsers;
   private final DeleteUser deleteUser;
   private final GeneratePasswordReset generatePasswordReset;
+  private final ResetPassword resetPassword;
 
   public UserController(
-      UserMapper userMapper,
-      SaveUser saveUser,
-      UpdateUser updateUser,
-      FindUserByUuid findUserByUuid,
-      FindUserByEmail findUserByEmail,
-      FindUserByUsername findUserByUsername,
-      FindAllUsers findAllUsers,
-      DeleteUser deleteUser,
-      GeneratePasswordReset generatePasswordReset
+    UserMapper userMapper,
+    SaveUser saveUser,
+    UpdateUser updateUser,
+    FindUserByUuid findUserByUuid,
+    FindUserByEmail findUserByEmail,
+    FindUserByUsername findUserByUsername,
+    FindAllUsers findAllUsers,
+    DeleteUser deleteUser,
+    GeneratePasswordReset generatePasswordReset,
+    ResetPassword resetPassword
   ) {
     this.userMapper = userMapper;
     this.saveUser = saveUser;
@@ -96,19 +102,20 @@ public class UserController {
     this.findAllUsers = findAllUsers;
     this.deleteUser = deleteUser;
     this.generatePasswordReset = generatePasswordReset;
+    this.resetPassword = resetPassword;
   }
 
   @GetMapping("")
   @Transactional(readOnly = true)
   @Operation(summary = "Get all users", description = "Retrieves a paginated list of all users")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
-      @ApiResponse(responseCode = "401", description = "Unauthorized"),
-      @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "403", description = "Forbidden")
   })
   Page<FindAllUsersResponseDto> findAll(
-      @AuthenticationPrincipal JwtUserDetails userDetails,
-      Pageable pageable) {
+    @AuthenticationPrincipal JwtUserDetails userDetails,
+    Pageable pageable) {
     FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, userMapper.toAuthenticatedUserDto(userDetails));
     Page<User> users = findAllUsers.findAll(findAllUsersDto);
     return users.map(userMapper::toFindAllUsersResponseDto);
@@ -118,14 +125,14 @@ public class UserController {
   @Transactional(readOnly = true)
   @Operation(summary = "Get user by UUID", description = "Retrieves a specific user by its UUID")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByUuidResponseDto.class))),
-      @ApiResponse(responseCode = "401", description = "Unauthorized"),
-      @ApiResponse(responseCode = "403", description = "Forbidden"),
-      @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByUuidResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "403", description = "Forbidden"),
+    @ApiResponse(responseCode = "404", description = "User not found")
   })
   FindUserByUuidResponseDto findByUuid(
-      @AuthenticationPrincipal JwtUserDetails userDetails,
-      @Parameter(description = "UUID of the user to retrieve") @PathVariable UUID uuid) {
+    @AuthenticationPrincipal JwtUserDetails userDetails,
+    @Parameter(description = "UUID of the user to retrieve") @PathVariable UUID uuid) {
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByUuid.findByUuid(findUserByUuidDto);
     return userMapper.toFindUserByUuidResponseDto(user);
@@ -135,14 +142,14 @@ public class UserController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find user by email", description = "Finds a user by their email address")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByEmailResponseDto.class))),
-      @ApiResponse(responseCode = "401", description = "Unauthorized"),
-      @ApiResponse(responseCode = "403", description = "Forbidden"),
-      @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByEmailResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "403", description = "Forbidden"),
+    @ApiResponse(responseCode = "404", description = "User not found")
   })
   FindUserByEmailResponseDto findByEmail(
-      @AuthenticationPrincipal JwtUserDetails userDetails,
-      @Parameter(description = "Email address to search for") @RequestParam String email) {
+    @AuthenticationPrincipal JwtUserDetails userDetails,
+    @Parameter(description = "Email address to search for") @RequestParam String email) {
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(email, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByEmail.findByEmail(findUserByEmailDto);
     return userMapper.toFindUserByEmailResponseDto(user);
@@ -152,14 +159,14 @@ public class UserController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find user by username", description = "Finds a user by their username")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByUsernameResponseDto.class))),
-      @ApiResponse(responseCode = "401", description = "Unauthorized"),
-      @ApiResponse(responseCode = "403", description = "Forbidden"),
-      @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByUsernameResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "403", description = "Forbidden"),
+    @ApiResponse(responseCode = "404", description = "User not found")
   })
   FindUserByUsernameResponseDto findByUsername(
-      @AuthenticationPrincipal JwtUserDetails userDetails,
-      @Parameter(description = "Username to search for") @RequestParam String username) {
+    @AuthenticationPrincipal JwtUserDetails userDetails,
+    @Parameter(description = "Username to search for") @RequestParam String username) {
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(username, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByUsername.findByUsername(findUserByUsernameDto);
     return userMapper.toFindUserByUsernameResponseDto(user);
@@ -168,53 +175,53 @@ public class UserController {
   @PostMapping("")
   @Operation(summary = "Create a new user", description = "Creates a new user with the provided data")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveUserResponseDto.class))),
-      @ApiResponse(responseCode = "401", description = "Unauthorized"),
-      @ApiResponse(responseCode = "403", description = "Forbidden"),
-      @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveUserResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "403", description = "Forbidden"),
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
   ResponseEntity<SaveUserResponseDto> save(
-      @AuthenticationPrincipal JwtUserDetails userDetails,
-      @Parameter(description = "User data to create") @RequestBody @Valid SaveUserRequestDto userDto) {
+    @AuthenticationPrincipal JwtUserDetails userDetails,
+    @Parameter(description = "User data to create") @RequestBody @Valid SaveUserRequestDto userDto) {
     SaveUserDto saveUserDto = new SaveUserDto(
-        userDto.getUuid(),
-        userDto.getName(),
-        userDto.getEmail(),
-        userDto.getUsername(),
-        userDto.getPassword(),
-        userMapper.toAuthenticatedUserDto(userDetails));
+      userDto.getUuid(),
+      userDto.getName(),
+      userDto.getEmail(),
+      userDto.getUsername(),
+      userDto.getPassword(),
+      userMapper.toAuthenticatedUserDto(userDetails));
     User savedUser = saveUser.save(saveUserDto);
     SaveUserResponseDto responseDto = userMapper.toSaveUserResponseDto(savedUser);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/users/{uuid}")
-        .buildAndExpand(savedUser.getUuid())
-        .toUriString();
+      .buildAndExpand(savedUser.getUuid())
+      .toUriString();
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .header("Location", locationUrl)
-        .body(responseDto);
+      .header("Location", locationUrl)
+      .body(responseDto);
   }
 
   @PutMapping("/{uuid}")
   @Operation(summary = "Update a user", description = "Updates an existing user with the provided data")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUserResponseDto.class))),
-      @ApiResponse(responseCode = "401", description = "Unauthorized"),
-      @ApiResponse(responseCode = "403", description = "Forbidden"),
-      @ApiResponse(responseCode = "404", description = "User not found"),
-      @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUserResponseDto.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "403", description = "Forbidden"),
+    @ApiResponse(responseCode = "404", description = "User not found"),
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
   })
   UpdateUserResponseDto update(
-      @AuthenticationPrincipal JwtUserDetails userDetails,
-      @Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
-      @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
+    @AuthenticationPrincipal JwtUserDetails userDetails,
+    @Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
+    @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
 
     //TODO: use a mapper
     UpdateUserDto updateUserDto = new UpdateUserDto(
-        uuid,
-        userDto.getName(),
-        userDto.getEmail(),
-        userMapper.toAuthenticatedUserDto(userDetails));
+      uuid,
+      userDto.getName(),
+      userDto.getEmail(),
+      userMapper.toAuthenticatedUserDto(userDetails));
 
     User updatedUser = updateUser.update(updateUserDto);
     return userMapper.toUpdateUserResponseDto(updatedUser);
@@ -224,14 +231,14 @@ public class UserController {
   @DeleteMapping("/{uuid}")
   @Operation(summary = "Delete a user by UUID", description = "Deletes a user by its UUID")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "204", description = "User deleted successfully"),
-      @ApiResponse(responseCode = "401", description = "Unauthorized"),
-      @ApiResponse(responseCode = "403", description = "Forbidden"),
-      @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "204", description = "User deleted successfully"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "403", description = "Forbidden"),
+    @ApiResponse(responseCode = "404", description = "User not found")
   })
   void deleteByUuid(
-      @AuthenticationPrincipal JwtUserDetails userDetails,
-      @PathVariable UUID uuid) {
+    @AuthenticationPrincipal JwtUserDetails userDetails,
+    @PathVariable UUID uuid) {
     DeleteUserDto deleteUserDto = new DeleteUserDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
     deleteUser.delete(deleteUserDto);
   }
@@ -246,9 +253,28 @@ public class UserController {
     @Parameter(description = "username") @PathVariable String username,
     @Parameter(description = "email") @PathVariable String email) {
 
-    GeneratePasswordResetDto generatePasswordResetDto = new GeneratePasswordResetDto( username, email);
+    GeneratePasswordResetDto generatePasswordResetDto = new GeneratePasswordResetDto(username, email);
 
     String resetKey = generatePasswordReset.generate(generatePasswordResetDto);
     return userMapper.toPasswordResetResponseDto(resetKey);
+  }
+
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PatchMapping("/password/{username}/{email}/reset")
+  @Operation(summary = "Reset pasword", description = "Reset user password with provided new password")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Password reset successfully"),
+    @ApiResponse(responseCode = "400", description = "Invalid input data"),
+    @ApiResponse(responseCode = "404", description = "User not found")
+  })
+  void resetPassword(
+    @Parameter(description = "username") @PathVariable String username,
+    @Parameter(description = "email") @PathVariable String email,
+    @Parameter(description = "update password data") @RequestBody @Valid ResetPasswordRequestDto dto
+  ) {
+
+    ResetPasswordDto resetPasswordDto = new ResetPasswordDto(username, email, dto.getResetKey(), dto.getNewPassword());
+
+    resetPassword.reset(resetPasswordDto);
   }
 }

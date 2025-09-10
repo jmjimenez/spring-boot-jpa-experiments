@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import es.jmjg.experiments.application.post.UpdatePostTags;
 import es.jmjg.experiments.application.user.GeneratePasswordReset;
+import es.jmjg.experiments.application.user.ResetPassword;
 import java.util.UUID;
 
 import org.springframework.boot.test.context.TestConfiguration;
@@ -147,6 +148,12 @@ public class ControllerTestConfig {
   @Primary
   public GeneratePasswordReset generatePasswordReset() {
     return mock(GeneratePasswordReset.class);
+  }
+
+  @Bean
+  @Primary
+  public ResetPassword resetPassword() {
+    return mock(ResetPassword.class);
   }
 
   @Bean

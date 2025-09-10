@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import es.jmjg.experiments.application.user.dto.GeneratePasswordResetDto;
+import es.jmjg.experiments.application.user.shared.ResetPasswordKeyService;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.domain.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.user.repository.UserRepository;
@@ -23,6 +24,9 @@ class GeneratePasswordResetTest {
   @Mock
   private UserRepository userRepository;
 
+  @Mock
+  private ResetPasswordKeyService resetPasswordKeyService;
+
   @InjectMocks
   private GeneratePasswordReset generatePasswordReset;
 
@@ -36,11 +40,13 @@ class GeneratePasswordResetTest {
   @Test
   void whenUserExists_ShouldGenerateResetKey() {
     // Given
+    String generatedResetKey = "generatedResetKey";
     when(userRepository.findByUsername(testUser.getUsername())).thenReturn(Optional.of(testUser));
+    when(resetPasswordKeyService.generateResetkey(testUser.getUsername(), testUser.getEmail())).thenReturn(generatedResetKey);
 
     // When
     GeneratePasswordResetDto dto = new GeneratePasswordResetDto(testUser.getUsername(), testUser.getEmail());
-    assertThat(generatePasswordReset.generate(dto)).isNotEmpty();
+    assertThat(generatePasswordReset.generate(dto)).isEqualTo(generatedResetKey);
   }
 
   @Test

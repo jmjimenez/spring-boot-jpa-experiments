@@ -62,6 +62,8 @@ public class JwtSecurityConfig {
           .permitAll()
           .requestMatchers(HttpMethod.GET, "/api/users/password/*/*/reset")
           .permitAll()
+          .requestMatchers(HttpMethod.PATCH, "/api/users/password/*/*/reset")
+          .permitAll()
           .requestMatchers(HttpMethod.GET, "/api/posts")
           .permitAll()
           .requestMatchers(HttpMethod.GET, "/api/posts/{uuid}")
