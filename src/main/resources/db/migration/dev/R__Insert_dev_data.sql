@@ -9,9 +9,9 @@ TRUNCATE TABLE user_tag CASCADE;
 
 TRUNCATE TABLE tag CASCADE;
 
-TRUNCATE TABLE Post CASCADE;
+TRUNCATE TABLE post CASCADE;
 
-TRUNCATE TABLE Users CASCADE;
+TRUNCATE TABLE users CASCADE;
 
 -- Reset the sequence to start from 1
 ALTER SEQUENCE users_id_seq RESTART WITH 1;
@@ -20,9 +20,9 @@ ALTER SEQUENCE post_id_seq RESTART WITH 1;
 
 ALTER SEQUENCE tag_id_seq RESTART WITH 1;
 
--- Insert Users
+-- Insert users
 INSERT INTO
-    Users (
+    users (
         uuid,
         name,
         email,
@@ -136,9 +136,9 @@ VALUES (
         'security'
     );
 
--- Insert Posts for Leanne Graham (user_id = 1)
+-- Insert posts for Leanne Graham (user_id = 1)
 INSERT INTO
-    Post (uuid, user_id, title, body)
+    post (uuid, user_id, title, body)
 VALUES (
         '550e8400-e29b-41d4-a716-446655440006',
         1,
@@ -200,9 +200,9 @@ VALUES (
         'quo et expedita modi cum officia vel magni\ndoloribus qui repudiandae\nvero nisi sit\nquos veniam quod sed accusamus veritatis error'
     );
 
--- Insert Posts for Ervin Howell (user_id = 2)
+-- Insert posts for Ervin Howell (user_id = 2)
 INSERT INTO
-    Post (uuid, user_id, title, body)
+    post (uuid, user_id, title, body)
 VALUES (
         '550e8400-e29b-41d4-a716-446655440016',
         2,
@@ -264,9 +264,9 @@ VALUES (
         'qui consequuntur ducimus possimus quisquam amet similique\nsuscipit porro ipsam amet\neos veritatis officiis exercitationem vel fugit aut necessitatibus totam\nomnis rerum consequatur expedita quidem cumque explicabo'
     );
 
--- Insert Posts for Clementine Bauch (user_id = 3)
+-- Insert posts for Clementine Bauch (user_id = 3)
 INSERT INTO
-    Post (uuid, user_id, title, body)
+    post (uuid, user_id, title, body)
 VALUES (
         '550e8400-e29b-41d4-a716-446655440026',
         3,
@@ -328,9 +328,9 @@ VALUES (
         'alias dolor cumque\nimpedit blanditiis non eveniet odio maxime\nblanditiis amet eius quis tempora quia autem rem\na provident perspiciatis quia'
     );
 
--- Insert Posts for Patricia Lebsack (user_id = 4)
+-- Insert posts for Patricia Lebsack (user_id = 4)
 INSERT INTO
-    Post (uuid, user_id, title, body)
+    post (uuid, user_id, title, body)
 VALUES (
         '550e8400-e29b-41d4-a716-446655440036',
         4,
@@ -392,9 +392,9 @@ VALUES (
         'iusto est quibusdam fuga quas quaerat molestias\na enim ut assumenda dolores veniam tenetur\niste aut autem textus quibusdam cupiditate\net possimus sunt qui veritatis'
     );
 
--- Insert Posts for Chelsey Dietrich (user_id = 5)
+-- Insert posts for Chelsey Dietrich (user_id = 5)
 INSERT INTO
-    Post (uuid, user_id, title, body)
+    post (uuid, user_id, title, body)
 VALUES (
         '550e8400-e29b-41d4-a716-446655440046',
         5,
@@ -502,7 +502,7 @@ VALUES (5, 1), -- technology
     (5, 9);
 -- best-practices
 
--- Insert Post Tags
+-- Insert post Tags
 -- Technology posts (posts 1-5) - Leanne Graham
 INSERT INTO
     post_tag (post_id, tag_id)
