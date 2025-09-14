@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.repository;
 
+import static es.jmjg.experiments.shared.TestDataSamples.*;
 import static org.assertj.core.api.Assertions.*;
 
 import es.jmjg.experiments.domain.tag.exception.TagInUseException;
@@ -19,24 +20,14 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
   @Autowired
   private TagRepositoryImpl tagRepository;
 
-  // Sample tags from Flyway migration
-  private static final UUID TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
-  private static final UUID PROGRAMMING_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440057");
-  private static final UUID JAVA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
-  private static final UUID SPRING_BOOT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440059");
-  private static final UUID JPA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440060");
-  private static final UUID DATABASE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440061");
-  private static final UUID WEB_DEVELOPMENT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440062");
-  private static final UUID BEST_PRACTICES_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440064");
-
   @Test
   void shouldFindTagByName() {
     // When
-    Optional<Tag> foundTag = tagRepository.findByName("technology");
+    Optional<Tag> foundTag = tagRepository.findByName(TECHNOLOGY_TAG_NAME);
 
     // Then
     assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getName()).isEqualTo("technology");
+    assertThat(foundTag.get().getName()).isEqualTo(TECHNOLOGY_TAG_NAME);
     assertThat(foundTag.get().getUuid()).isEqualTo(TECHNOLOGY_UUID);
   }
 
@@ -48,7 +39,7 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
     // Then
     assertThat(foundTag).isPresent();
     assertThat(foundTag.get().getUuid()).isEqualTo(JAVA_UUID);
-    assertThat(foundTag.get().getName()).isEqualTo("java");
+    assertThat(foundTag.get().getName()).isEqualTo(JAVA_TAG_NAME);
   }
 
   @Test
@@ -60,21 +51,21 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
 
     // Then
     assertThat(springBootTag).isPresent();
-    assertThat(springBootTag.get().getName()).isEqualTo("spring-boot");
+    assertThat(springBootTag.get().getName()).isEqualTo(SPRING_BOOT_TAG_NAME);
 
     assertThat(jpaTag).isPresent();
-    assertThat(jpaTag.get().getName()).isEqualTo("jpa");
+    assertThat(jpaTag.get().getName()).isEqualTo(JPA_TAG_NAME);
 
     assertThat(databaseTag).isPresent();
-    assertThat(databaseTag.get().getName()).isEqualTo("database");
+    assertThat(databaseTag.get().getName()).isEqualTo(DATABASE_TAG_NAME);
   }
 
   @Test
   void shouldFindTagsByName() {
     // When
-    Optional<Tag> programmingTag = tagRepository.findByName("programming");
-    Optional<Tag> webDevelopmentTag = tagRepository.findByName("web-development");
-    Optional<Tag> bestPracticesTag = tagRepository.findByName("best-practices");
+    Optional<Tag> programmingTag = tagRepository.findByName(PROGRAMMING_TAG_NAME);
+    Optional<Tag> webDevelopmentTag = tagRepository.findByName(WEB_DEVELOPMENT_TAG_NAME);
+    Optional<Tag> bestPracticesTag = tagRepository.findByName(BEST_PRACTICES_TAG_NAME);
 
     // Then
     assertThat(programmingTag).isPresent();
@@ -108,27 +99,27 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldPreventDeletionOfTagAssignedToPosts() {
     // Given - Use the "java" tag which is assigned to posts in the migration data
-    Optional<Tag> javaTag = tagRepository.findByName("java");
+    Optional<Tag> javaTag = tagRepository.findByName(JAVA_TAG_NAME);
     assertThat(javaTag).isPresent();
 
     // When & Then - Should throw exception when trying to delete
     assertThatThrownBy(() -> tagRepository.deleteByUuid(javaTag.get().getUuid()))
         .isInstanceOf(TagInUseException.class)
-        .hasMessageContaining("Cannot delete tag 'java' because it is assigned to posts");
+        .hasMessageContaining("Cannot delete tag '" + JAVA_TAG_NAME + "' because it is assigned to posts");
   }
 
   @Test
   void shouldFindAllPredefinedTags() {
     // When & Then - Verify all predefined tags exist
-    assertThat(tagRepository.findByName("technology")).isPresent();
-    assertThat(tagRepository.findByName("programming")).isPresent();
-    assertThat(tagRepository.findByName("java")).isPresent();
-    assertThat(tagRepository.findByName("spring-boot")).isPresent();
-    assertThat(tagRepository.findByName("jpa")).isPresent();
-    assertThat(tagRepository.findByName("database")).isPresent();
-    assertThat(tagRepository.findByName("web-development")).isPresent();
+    assertThat(tagRepository.findByName(TECHNOLOGY_TAG_NAME)).isPresent();
+    assertThat(tagRepository.findByName(PROGRAMMING_TAG_NAME)).isPresent();
+    assertThat(tagRepository.findByName(JAVA_TAG_NAME)).isPresent();
+    assertThat(tagRepository.findByName(SPRING_BOOT_TAG_NAME)).isPresent();
+    assertThat(tagRepository.findByName(JPA_TAG_NAME)).isPresent();
+    assertThat(tagRepository.findByName(DATABASE_TAG_NAME)).isPresent();
+    assertThat(tagRepository.findByName(WEB_DEVELOPMENT_TAG_NAME)).isPresent();
     assertThat(tagRepository.findByName("tutorial")).isPresent();
-    assertThat(tagRepository.findByName("best-practices")).isPresent();
+    assertThat(tagRepository.findByName(BEST_PRACTICES_TAG_NAME)).isPresent();
     assertThat(tagRepository.findByName("architecture")).isPresent();
     assertThat(tagRepository.findByName("microservices")).isPresent();
     assertThat(tagRepository.findByName("testing")).isPresent();

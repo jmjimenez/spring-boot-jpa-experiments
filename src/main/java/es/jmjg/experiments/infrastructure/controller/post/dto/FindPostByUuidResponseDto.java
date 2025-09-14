@@ -34,5 +34,6 @@ public class FindPostByUuidResponseDto {
     this.title = title;
     this.body = body;
     this.tags = tags != null ? tags : List.of();
+    //TODO: add comments
   }
 }

@@ -30,4 +30,6 @@ public class FindUserByEmailResponseDto {
 
   @Schema(description = "List of tag names associated with the user")
   private List<String> tags;
+
+  //TODO: add comments
 }

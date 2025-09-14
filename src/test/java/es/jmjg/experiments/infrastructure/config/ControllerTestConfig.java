@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.config;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.application.post.SavePostComment;
 import es.jmjg.experiments.application.post.UpdatePostTags;
 import es.jmjg.experiments.application.user.GeneratePasswordReset;
 import es.jmjg.experiments.application.user.ResetPassword;
@@ -54,6 +55,12 @@ public class ControllerTestConfig {
   @Primary
   public DeletePost deletePostById() {
     return mock(DeletePost.class);
+  }
+
+  @Bean
+  @Primary
+  public SavePostComment savePostComment() {
+    return mock(SavePostComment.class);
   }
 
   @Bean

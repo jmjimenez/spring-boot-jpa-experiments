@@ -1,5 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.post.mapper;
 
+import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.TagDto;
 import java.util.List;
 import java.util.Optional;
@@ -151,6 +153,15 @@ public class PostMapper {
             : List.of();
 
     return new UpdatePostTagsResponseDto(post.getUuid(), post.getTitle(), tags);
+  }
+
+  public SavePostCommentResponseDto toSavePostCommentResponseDto(PostComment postComment) {
+    return new SavePostCommentResponseDto(
+      postComment.getUuid(),
+      postComment.getUser().getUuid(),
+      postComment.getPost().getUuid(),
+      postComment.getComment()
+    );
   }
 
   // Private helper methods for creating specific response DTOs

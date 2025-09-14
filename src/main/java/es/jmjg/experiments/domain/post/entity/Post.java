@@ -2,6 +2,7 @@ package es.jmjg.experiments.domain.post.entity;
 
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.domain.user.entity.User;
+import jakarta.persistence.CascadeType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -55,7 +57,10 @@ public class Post {
   @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private List<Tag> tags = new ArrayList<>();
 
-  // Constructor with UUID
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  private List<PostComment> comments = new ArrayList<>();
+
+  //TODO: make sure it is not used
   public Post(Integer id, UUID uuid, User user, String title, String body) {
     this.id = id;
     this.uuid = uuid;

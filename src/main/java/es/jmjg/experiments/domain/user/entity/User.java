@@ -1,6 +1,7 @@
 package es.jmjg.experiments.domain.user.entity;
 
 import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.post.entity.PostComment;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,10 @@ public class User {
   @JoinTable(name = "user_tag", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private List<Tag> tags = new ArrayList<>();
 
-  // Constructor with UUID
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  private List<PostComment> comments = new ArrayList<>();
+
+  //TODO: make sure it is not used
   public User(Integer id, UUID uuid, String name, String email, String username, String password, List<Post> posts) {
     this.id = id;
     this.uuid = uuid;

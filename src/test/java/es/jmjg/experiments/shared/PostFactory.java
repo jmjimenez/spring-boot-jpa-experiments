@@ -1,5 +1,7 @@
 package es.jmjg.experiments.shared;
 
+import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
+import es.jmjg.experiments.domain.post.entity.PostComment;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,6 +38,15 @@ public class PostFactory {
     post.setTitle(title);
     post.setBody(body);
     return post;
+  }
+
+  public static PostComment createPostComment(User user, Post post, String comment) {
+    PostComment postComment = new PostComment();
+    postComment.setUser(user);
+    postComment.setPost(post);
+    postComment.setUuid(UUID.randomUUID());
+    postComment.setComment(comment);
+    return postComment;
   }
 
   public static SavePostDto createSavePostDto(User user, String title, String body) {
@@ -78,5 +89,14 @@ public class PostFactory {
     return new DeletePostDto(
         uuid,
         AuthenticatedUserFactory.createAuthenticatedUserDto(authenticatedUser));
+  }
+
+  public static SavePostCommentDto createSavePostCommentDto(User user, UUID uuid, Post post, String comment) {
+    return new SavePostCommentDto(
+      uuid,
+      post.getUuid(),
+      comment,
+      AuthenticatedUserFactory.createAuthenticatedUserDto(user)
+    );
   }
 }

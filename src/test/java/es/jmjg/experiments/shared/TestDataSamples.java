@@ -17,12 +17,21 @@ public final class TestDataSamples {
   public static final UUID TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
   public static final UUID JAVA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
   public static final UUID DEVELOPER_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440071");
+  public static final UUID SPRING_BOOT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440059");
   public static final UUID NOT_USED_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440072");
+  public static final UUID PROGRAMMING_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440057");
+  public static final UUID JPA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440060");
+  public static final UUID DATABASE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440061");
+  public static final UUID WEB_DEVELOPMENT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440062");
+  public static final UUID BEST_PRACTICES_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440064");
 
   // Tag name constants for tests
   public static final String TAG_JAVA = "java";
   public static final String TAG_SPRING_BOOT = "spring-boot";
   public static final String TAG_DEVELOPER = "developer";
+  public static final String PROGRAMMING_TAG_NAME = "programming";
+  public static final String WEB_DEVELOPMENT_TAG_NAME = "web-development";
+  public static final String BEST_PRACTICES_TAG_NAME = "best-practices";
 
   // Sample users from Flyway migration data
   public static final int LEANNE_ID = 1;

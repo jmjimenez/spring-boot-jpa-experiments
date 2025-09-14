@@ -36,7 +36,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   @Autowired
   private UserRepositoryImpl userRepository;
 
-  private User testUser;
+  private User leanneUser;
   private Tag technologyTag;
   private Tag javaTag;
   private Tag springBootTag;
@@ -44,27 +44,10 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   @BeforeEach
   void setUp() {
     // Create test user and tags for tag assignment tests
-    testUser = userRepository.save(createTestUser());
-    technologyTag = tagRepository.save(createTestTag("technology-test"));
-    javaTag = tagRepository.save(createTestTag("java-test"));
-    springBootTag = tagRepository.save(createTestTag("spring-boot-test"));
-  }
-
-  private User createTestUser() {
-    User user = new User();
-    user.setUuid(UUID.randomUUID());
-    user.setName("Test User");
-    user.setEmail("test@example.com");
-    user.setUsername("testuser");
-    user.setPassword("encodedPassword123");
-    return user;
-  }
-
-  private Tag createTestTag(String name) {
-    Tag tag = new Tag();
-    tag.setUuid(UUID.randomUUID());
-    tag.setName(name);
-    return tag;
+    leanneUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    technologyTag = tagRepository.findByUuid(TestDataSamples.TECHNOLOGY_UUID).orElseThrow();
+    javaTag = tagRepository.findByUuid(TestDataSamples.JAVA_UUID).orElseThrow();
+    springBootTag = tagRepository.findByUuid(TestDataSamples.SPRING_BOOT_UUID).orElseThrow();
   }
 
   @Test
@@ -173,7 +156,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     // Given
     Post post = new Post();
     post.setUuid(UUID.randomUUID());
-    post.setUser(testUser);
+    post.setUser(leanneUser);
     post.setTitle("Java Programming");
     post.setBody("Learn Java programming");
 
@@ -190,16 +173,16 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(savedPost.getId()).isNotNull();
     assertThat(savedPost.getTitle()).isEqualTo("Java Programming");
     assertThat(savedPost.getBody()).isEqualTo("Learn Java programming");
-    assertThat(savedPost.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(savedPost.getUser().getId()).isEqualTo(leanneUser.getId());
     assertThat(savedPost.getTags()).hasSize(2);
-    assertThat(savedPost.getTags()).extracting("name").containsExactlyInAnyOrder("technology-test", "java-test");
+    assertThat(savedPost.getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.TAG_JAVA);
 
     // Verify it was actually saved to the database with tags
     Optional<Post> retrievedPost = postRepository.findById(savedPost.getId());
     assertThat(retrievedPost).isPresent();
     assertThat(retrievedPost.get().getTags()).hasSize(2);
-    assertThat(retrievedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder("technology-test",
-        "java-test");
+    assertThat(retrievedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME,
+      TestDataSamples.TAG_JAVA);
   }
 
   @Test
@@ -207,7 +190,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     // Given
     Post post = new Post();
     post.setUuid(UUID.randomUUID());
-    post.setUser(testUser);
+    post.setUser(leanneUser);
     post.setTitle("Spring Boot Tutorial");
     post.setBody("Learn Spring Boot");
 
@@ -223,15 +206,15 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(savedPost.getId()).isNotNull();
     assertThat(savedPost.getTitle()).isEqualTo("Spring Boot Tutorial");
     assertThat(savedPost.getBody()).isEqualTo("Learn Spring Boot");
-    assertThat(savedPost.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(savedPost.getUser().getId()).isEqualTo(leanneUser.getId());
     assertThat(savedPost.getTags()).hasSize(1);
-    assertThat(savedPost.getTags().getFirst().getName()).isEqualTo("spring-boot-test");
+    assertThat(savedPost.getTags().getFirst().getName()).isEqualTo(TestDataSamples.SPRING_BOOT_TAG_NAME);
 
     // Verify it was actually saved to the database with tag
     Optional<Post> retrievedPost = postRepository.findById(savedPost.getId());
     assertThat(retrievedPost).isPresent();
     assertThat(retrievedPost.get().getTags()).hasSize(1);
-    assertThat(retrievedPost.get().getTags().getFirst().getName()).isEqualTo("spring-boot-test");
+    assertThat(retrievedPost.get().getTags().getFirst().getName()).isEqualTo(TestDataSamples.SPRING_BOOT_TAG_NAME);
   }
 
   @Test
@@ -239,7 +222,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     // Given
     Post post = new Post();
     post.setUuid(UUID.randomUUID());
-    post.setUser(testUser);
+    post.setUser(leanneUser);
     post.setTitle("Post Without Tags");
     post.setBody("This post has no tags");
     post.setTags(new ArrayList<>());
@@ -252,7 +235,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(savedPost.getId()).isNotNull();
     assertThat(savedPost.getTitle()).isEqualTo("Post Without Tags");
     assertThat(savedPost.getBody()).isEqualTo("This post has no tags");
-    assertThat(savedPost.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(savedPost.getUser().getId()).isEqualTo(leanneUser.getId());
     assertThat(savedPost.getTags()).isEmpty();
 
     // Verify it was actually saved to the database without tags
@@ -266,7 +249,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     // Given
     Post post = new Post();
     post.setUuid(UUID.randomUUID());
-    post.setUser(testUser);
+    post.setUser(leanneUser);
     post.setTitle("Full Stack Java");
     post.setBody("Complete Java development guide");
 
@@ -284,17 +267,17 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(savedPost.getId()).isNotNull();
     assertThat(savedPost.getTitle()).isEqualTo("Full Stack Java");
     assertThat(savedPost.getBody()).isEqualTo("Complete Java development guide");
-    assertThat(savedPost.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(savedPost.getUser().getId()).isEqualTo(leanneUser.getId());
     assertThat(savedPost.getTags()).hasSize(3);
     assertThat(savedPost.getTags()).extracting("name").containsExactlyInAnyOrder(
-        "technology-test", "java-test", "spring-boot-test");
+        TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.TAG_JAVA, TestDataSamples.SPRING_BOOT_TAG_NAME);
 
     // Verify it was actually saved to the database with all tags
     Optional<Post> retrievedPost = postRepository.findById(savedPost.getId());
     assertThat(retrievedPost).isPresent();
     assertThat(retrievedPost.get().getTags()).hasSize(3);
     assertThat(retrievedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder(
-        "technology-test", "java-test", "spring-boot-test");
+      TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.TAG_JAVA, TestDataSamples.SPRING_BOOT_TAG_NAME);
   }
 
   @Test
@@ -302,7 +285,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     // Given - First save a post without tags
     Post post = new Post();
     post.setUuid(UUID.randomUUID());
-    post.setUser(testUser);
+    post.setUser(leanneUser);
     post.setTitle("Original Post");
     post.setBody("Original content");
     post.setTags(new ArrayList<>());
@@ -324,16 +307,16 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(updatedPost.getId()).isEqualTo(savedPost.getId());
     assertThat(updatedPost.getTitle()).isEqualTo("Updated Post");
     assertThat(updatedPost.getBody()).isEqualTo("Updated content");
-    assertThat(updatedPost.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(updatedPost.getUser().getId()).isEqualTo(leanneUser.getId());
     assertThat(updatedPost.getTags()).hasSize(2);
-    assertThat(updatedPost.getTags()).extracting("name").containsExactlyInAnyOrder("technology-test", "java-test");
+    assertThat(updatedPost.getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.TAG_JAVA);
 
     // Verify it was actually updated in the database with tags
     Optional<Post> retrievedPost = postRepository.findById(updatedPost.getId());
     assertThat(retrievedPost).isPresent();
     assertThat(retrievedPost.get().getTags()).hasSize(2);
-    assertThat(retrievedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder("technology-test",
-        "java-test");
+    assertThat(retrievedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME,
+      TestDataSamples.TAG_JAVA);
   }
 
   @Test
@@ -341,7 +324,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     // Given - First save a post with tags
     Post post = new Post();
     post.setUuid(UUID.randomUUID());
-    post.setUser(testUser);
+    post.setUser(leanneUser);
     post.setTitle("Post With Tags");
     post.setBody("Content with tags");
 
@@ -364,7 +347,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(updatedPost.getId()).isEqualTo(savedPost.getId());
     assertThat(updatedPost.getTitle()).isEqualTo("Post Without Tags");
     assertThat(updatedPost.getBody()).isEqualTo("Content without tags");
-    assertThat(updatedPost.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(updatedPost.getUser().getId()).isEqualTo(leanneUser.getId());
     assertThat(updatedPost.getTags()).isEmpty();
 
     // Verify it was actually updated in the database without tags
@@ -378,7 +361,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     // Given - First save a post with initial tags
     Post post = new Post();
     post.setUuid(UUID.randomUUID());
-    post.setUser(testUser);
+    post.setUser(leanneUser);
     post.setTitle("Post With Initial Tags");
     post.setBody("Content with initial tags");
 
@@ -403,15 +386,15 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(updatedPost.getId()).isEqualTo(savedPost.getId());
     assertThat(updatedPost.getTitle()).isEqualTo("Post With Modified Tags");
     assertThat(updatedPost.getBody()).isEqualTo("Content with modified tags");
-    assertThat(updatedPost.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(updatedPost.getUser().getId()).isEqualTo(leanneUser.getId());
     assertThat(updatedPost.getTags()).hasSize(2);
-    assertThat(updatedPost.getTags()).extracting("name").containsExactlyInAnyOrder("java-test", "spring-boot-test");
+    assertThat(updatedPost.getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.SPRING_BOOT_TAG_NAME);
 
     // Verify it was actually updated in the database with new tags
     Optional<Post> retrievedPost = postRepository.findById(updatedPost.getId());
     assertThat(retrievedPost).isPresent();
     assertThat(retrievedPost.get().getTags()).hasSize(2);
-    assertThat(retrievedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder("java-test",
-        "spring-boot-test");
+    assertThat(retrievedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA,
+      TestDataSamples.SPRING_BOOT_TAG_NAME);
   }
 }

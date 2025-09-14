@@ -1,5 +1,6 @@
 package es.jmjg.experiments.shared;
 
+import es.jmjg.experiments.domain.post.entity.PostComment;
 import java.util.List;
 import java.util.UUID;
 
@@ -368,5 +369,27 @@ public final class JsonSamples {
             "newPassword":"%s"
         }
         """.formatted(resetKey, newPassword);
+  }
+
+  //TODO: replace all references to uuid to id
+  //TODO: use kebab-case for json fields
+  public static String createAddPostCommentRequestJson(PostComment postComment) {
+    return """
+        {
+            "uuid":"%s",
+            "comment":"%s"
+        }
+        """.formatted(postComment.getUuid(), postComment.getComment());
+  }
+
+  public static String createAddPostCommentResponseJson(PostComment postComment) {
+    return """
+        {
+            "id":"%s",
+            "userId":"%s",
+            "postId":"%s",
+            "comment":"%s"
+        }
+        """.formatted(postComment.getUuid(), postComment.getUser().getUuid(), postComment.getPost().getUuid(), postComment.getComment());
   }
 }

@@ -1,5 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.post;
 
+import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
+import es.jmjg.experiments.domain.post.entity.PostComment;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +46,7 @@ public class PostController {
   private final FindAllPosts findAllPosts;
   private final DeletePost deletePost;
   private final UpdatePostTags updatePostTags;
+  private final SavePostComment savePostComment;
 
   public PostController(
     PostMapper postMapper,
@@ -54,7 +57,7 @@ public class PostController {
     FindPostByUuid findPostByUuid,
     FindAllPosts findAllPosts,
     DeletePost deletePost,
-    UpdatePostTags updatePostTags) {
+    UpdatePostTags updatePostTags, SavePostComment savePostComment) {
     this.postMapper = postMapper;
     this.userMapper = userMapper;
     this.findPosts = findPosts;
@@ -64,6 +67,7 @@ public class PostController {
     this.findAllPosts = findAllPosts;
     this.deletePost = deletePost;
     this.updatePostTags = updatePostTags;
+    this.savePostComment = savePostComment;
   }
 
   @GetMapping("")
@@ -197,5 +201,28 @@ public class PostController {
 
     var deletePostDto = new DeletePostDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
     deletePost.delete(deletePostDto);
+  }
+
+  //TODO: make sure response code 404
+  @PostMapping("/{uuid}/comments")
+  @Transactional
+  @Operation(summary = "Adds a comment", description = "Adds a comment")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "201", description = "Post comment added successfully"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+    @ApiResponse(responseCode = "404", description = "Post or User not found"),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  ResponseEntity<SavePostCommentResponseDto> addComment(@Parameter(description = "UUID of the post") @PathVariable UUID uuid,
+    @Parameter(description = "Post comment data to create", required = true) @RequestBody @Valid SavePostCommentRequestDto requestDto,
+    @AuthenticationPrincipal JwtUserDetails userDetails) {
+
+    var savePostCommentDto = new SavePostCommentDto(requestDto.getUuid(), uuid, requestDto.getComment(), userMapper.toAuthenticatedUserDto(userDetails));
+    PostComment result = savePostComment.save(savePostCommentDto);
+
+    return ResponseEntity.status(HttpStatus.CREATED)
+      //TODO: add location
+//      .header("Location", locationUrl)
+      .body(postMapper.toSavePostCommentResponseDto(result));
   }
 }

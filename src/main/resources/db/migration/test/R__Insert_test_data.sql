@@ -711,3 +711,10 @@ VALUES (46, 15),
     (50, 10),
     (50, 11);
 -- security, architecture, microservices
+
+-- Insert sample comments for initial posts
+INSERT INTO post_comment (uuid, post_id, user_id, comment, created_at) VALUES
+    ('550e8400-e29b-41d4-a716-446655442001', 1, 2, 'Great post! Very informative.', '2025-09-13 10:00:00'),
+    ('550e8400-e29b-41d4-a716-446655442002', 1, 3, 'Thanks for sharing this.', '2025-09-13 10:05:00'),
+    ('550e8400-e29b-41d4-a716-446655442003', 2, 4, 'I have a question about this topic.', '2025-09-13 10:10:00'),
+    ('550e8400-e29b-41d4-a716-446655442004', 2, 5, 'Excellent explanation, helped me a lot.', '2025-09-13 10:15:00');
