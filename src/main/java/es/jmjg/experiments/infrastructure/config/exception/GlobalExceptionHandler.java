@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.exception;
+package es.jmjg.experiments.infrastructure.config.exception;
 
 import es.jmjg.experiments.domain.post.exception.PostCommentNotFound;
 import java.time.LocalDateTime;

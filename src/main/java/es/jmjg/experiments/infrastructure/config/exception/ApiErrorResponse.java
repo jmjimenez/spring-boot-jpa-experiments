@@ -1,14 +1,17 @@
-package es.jmjg.experiments.infrastructure.controller.exception;
+package es.jmjg.experiments.infrastructure.config.exception;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
 
+@Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiErrorResponse {
 
+  // Getters
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime timestamp;
 
@@ -20,31 +23,6 @@ public class ApiErrorResponse {
 
   // Private constructor for builder pattern
   private ApiErrorResponse() {}
-
-  // Getters
-  public LocalDateTime getTimestamp() {
-    return timestamp;
-  }
-
-  public int getStatus() {
-    return status;
-  }
-
-  public String getError() {
-    return error;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public String getPath() {
-    return path;
-  }
-
-  public Map<String, String> getDetails() {
-    return details;
-  }
 
   // Builder class
   public static class Builder {

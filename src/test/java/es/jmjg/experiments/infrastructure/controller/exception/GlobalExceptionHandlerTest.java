@@ -2,6 +2,8 @@ package es.jmjg.experiments.infrastructure.controller.exception;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.infrastructure.config.exception.ApiErrorResponse;
+import es.jmjg.experiments.infrastructure.config.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
