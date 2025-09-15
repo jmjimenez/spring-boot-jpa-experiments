@@ -1,6 +1,7 @@
 package es.jmjg.experiments.shared;
 
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -391,5 +392,18 @@ public final class JsonSamples {
             "comment":"%s"
         }
         """.formatted(postComment.getUuid(), postComment.getUser().getUuid(), postComment.getPost().getUuid(), postComment.getComment());
+  }
+
+  public static String createFindPostCommentByUuidJsonResponse(PostComment postComment) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    return """
+        {
+            "id":"%s",
+            "postId":"%s",
+            "userId":"%s",
+            "comment":"%s",
+            "createdAt":"%s"
+        }
+        """.formatted(postComment.getUuid(), postComment.getPost().getUuid(), postComment.getUser().getUuid(), postComment.getComment(), postComment.getCreatedAt().format(formatter));
   }
 }

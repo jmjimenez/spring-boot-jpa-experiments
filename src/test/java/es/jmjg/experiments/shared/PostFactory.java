@@ -2,6 +2,7 @@ package es.jmjg.experiments.shared;
 
 import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +47,12 @@ public class PostFactory {
     postComment.setPost(post);
     postComment.setUuid(UUID.randomUUID());
     postComment.setComment(comment);
+    return postComment;
+  }
+
+  public static PostComment createPostComment(User user, Post post, String comment, LocalDateTime createdAt) {
+    PostComment postComment = createPostComment(user, post, comment);
+    postComment.setCreatedAt(createdAt);
     return postComment;
   }
 

@@ -1,8 +1,10 @@
 package es.jmjg.experiments.infrastructure.controller.post.mapper;
 
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostCommentByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.TagDto;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -325,5 +327,17 @@ public class PostMapper {
       logger.error("LazyInitializationException in convertTagsToPostTagResponseDto. Error: {}", e.getMessage(), e);
       throw e;
     }
+  }
+
+  public FindPostCommentByUuidResponseDto toFindPostCommentByUuidResponseDto(
+    PostComment postComment) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    return new FindPostCommentByUuidResponseDto(
+      postComment.getUuid(),
+      postComment.getPost().getUuid(),
+      postComment.getUser().getUuid(),
+      postComment.getComment(),
+      postComment.getCreatedAt() != null ? postComment.getCreatedAt().format(formatter) : null
+    );
   }
 }

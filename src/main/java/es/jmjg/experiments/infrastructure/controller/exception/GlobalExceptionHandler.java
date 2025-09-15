@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.exception;
 
+import es.jmjg.experiments.domain.post.exception.PostCommentNotFound;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class GlobalExceptionHandler {
 
     log.warn("Post not found: {}", ex.getMessage());
 
+    //TODO: refactor to use a common method to build the response
     ApiErrorResponse errorResponse = ApiErrorResponse.builder()
         .timestamp(LocalDateTime.now())
         .status(HttpStatus.NOT_FOUND.value())
@@ -43,6 +45,22 @@ public class GlobalExceptionHandler {
         .message(ex.getMessage())
         .path(request.getDescription(false))
         .build();
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
+
+  @ExceptionHandler(PostCommentNotFound.class)
+  public ResponseEntity<ApiErrorResponse> handlePostCommentNotFound(PostCommentNotFound ex, WebRequest request) {
+
+    log.warn("Post comment not found: {}", ex.getMessage());
+
+    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+      .timestamp(LocalDateTime.now())
+      .status(HttpStatus.NOT_FOUND.value())
+      .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+      .message(ex.getMessage())
+      .path(request.getDescription(false))
+      .build();
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }

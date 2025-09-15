@@ -107,4 +107,6 @@ public final class TestDataSamples {
   // Test post data for new posts (not from migration data)
   public static final String NEW_POST_TITLE = "Test Post 1";
   public static final String NEW_POST_BODY = "Test Body 1";
+
+  public static final UUID COMMENT_LEANNE_POST_BY_ERWIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655442001");
 }

@@ -70,6 +70,8 @@ public class JwtSecurityConfig {
           .permitAll()
           .requestMatchers(HttpMethod.GET, "/api/posts/search")
           .permitAll()
+          .requestMatchers(HttpMethod.GET, "/api/posts/*/comments/*")
+          .permitAll()
           .requestMatchers(HttpMethod.GET, "/api/tags/**")
           .permitAll()
           .requestMatchers("/api/**")

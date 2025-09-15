@@ -47,6 +47,7 @@ public class PostController {
   private final DeletePost deletePost;
   private final UpdatePostTags updatePostTags;
   private final SavePostComment savePostComment;
+  private final FindPostCommentByUuid findPostCommentByUuid;
 
   public PostController(
     PostMapper postMapper,
@@ -57,7 +58,8 @@ public class PostController {
     FindPostByUuid findPostByUuid,
     FindAllPosts findAllPosts,
     DeletePost deletePost,
-    UpdatePostTags updatePostTags, SavePostComment savePostComment) {
+    UpdatePostTags updatePostTags, SavePostComment savePostComment,
+    FindPostCommentByUuid findPostCommentByUuid) {
     this.postMapper = postMapper;
     this.userMapper = userMapper;
     this.findPosts = findPosts;
@@ -68,6 +70,7 @@ public class PostController {
     this.deletePost = deletePost;
     this.updatePostTags = updatePostTags;
     this.savePostComment = savePostComment;
+    this.findPostCommentByUuid = findPostCommentByUuid;
   }
 
   @GetMapping("")
@@ -203,7 +206,6 @@ public class PostController {
     deletePost.delete(deletePostDto);
   }
 
-  //TODO: make sure response code 404
   @PostMapping("/{uuid}/comments")
   @Transactional
   @Operation(summary = "Adds a comment", description = "Adds a comment")
@@ -220,9 +222,28 @@ public class PostController {
     var savePostCommentDto = new SavePostCommentDto(requestDto.getUuid(), uuid, requestDto.getComment(), userMapper.toAuthenticatedUserDto(userDetails));
     PostComment result = savePostComment.save(savePostCommentDto);
 
+    String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{uuid}/comments/{commentUuid}")
+      .buildAndExpand(result.getPost().getUuid(), result.getUuid())
+      .toUriString();
+
     return ResponseEntity.status(HttpStatus.CREATED)
-      //TODO: add location
-//      .header("Location", locationUrl)
+      .header("Location", locationUrl)
       .body(postMapper.toSavePostCommentResponseDto(result));
+  }
+
+  @GetMapping("/{postUuid}/comments/{commentUuid}")
+  @Transactional(readOnly = true)
+  @Operation(summary = "Get post comment by id", description = "Retrieves a specific post comment by its identifier")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved post comment", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostCommentByUuidResponseDto.class))),
+    @ApiResponse(responseCode = "404", description = "Post or Post Comment not found"),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  FindPostCommentByUuidResponseDto findByUuid(
+    @Parameter(description = "id of the post to retrieve") @PathVariable UUID postUuid,
+    @Parameter(description = "id of the post comment to retrieve") @PathVariable UUID commentUuid) {
+
+    PostComment postComment = findPostCommentByUuid.findByUuid(postUuid, commentUuid);
+    return postMapper.toFindPostCommentByUuidResponseDto(postComment);
   }
 }

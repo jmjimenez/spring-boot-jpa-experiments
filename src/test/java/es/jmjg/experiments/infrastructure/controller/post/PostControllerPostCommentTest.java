@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import es.jmjg.experiments.application.post.SavePostComment;
@@ -48,7 +49,7 @@ class PostControllerPostCommentTest extends BasePostControllerTest {
             .content(requestBody)
             .with(user(userDetails)))
         .andExpect(status().isCreated())
-//        .andExpect(header().string("Location", "/api/posts/comments" + post.getUuid().toString()))
+        .andExpect(header().string("Location", "/api/posts/" + post.getUuid() + "/comments/" + postComment.getUuid()))
         .andExpect(content().json(expectedResponse));
   }
 
