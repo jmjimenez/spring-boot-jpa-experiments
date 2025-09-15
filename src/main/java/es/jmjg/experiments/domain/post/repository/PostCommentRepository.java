@@ -7,4 +7,5 @@ import java.util.UUID;
 public interface PostCommentRepository {
   PostComment save(PostComment postComment);
   Optional<PostComment> findByUuid(UUID uuid);
+  void deleteById(Integer id);
 }

@@ -1,5 +1,6 @@
 package es.jmjg.experiments.shared;
 
+import es.jmjg.experiments.application.post.dto.DeletePostCommentDto;
 import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
 import java.time.LocalDateTime;
@@ -103,6 +104,15 @@ public class PostFactory {
       uuid,
       post.getUuid(),
       comment,
+      AuthenticatedUserFactory.createAuthenticatedUserDto(user)
+    );
+  }
+
+  public static DeletePostCommentDto createDeletePostCommentDto(UUID postUuid, UUID uuid,
+    User user) {
+    return new DeletePostCommentDto(
+      uuid,
+      postUuid,
       AuthenticatedUserFactory.createAuthenticatedUserDto(user)
     );
   }

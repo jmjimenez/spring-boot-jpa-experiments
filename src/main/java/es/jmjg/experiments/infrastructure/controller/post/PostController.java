@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post;
 
+import es.jmjg.experiments.application.post.dto.DeletePostCommentDto;
 import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
 import java.util.List;
@@ -48,6 +49,7 @@ public class PostController {
   private final UpdatePostTags updatePostTags;
   private final SavePostComment savePostComment;
   private final FindPostCommentByUuid findPostCommentByUuid;
+  private final DeletePostComment deletePostComment;
 
   public PostController(
     PostMapper postMapper,
@@ -58,8 +60,10 @@ public class PostController {
     FindPostByUuid findPostByUuid,
     FindAllPosts findAllPosts,
     DeletePost deletePost,
-    UpdatePostTags updatePostTags, SavePostComment savePostComment,
-    FindPostCommentByUuid findPostCommentByUuid) {
+    UpdatePostTags updatePostTags,
+    SavePostComment savePostComment,
+    FindPostCommentByUuid findPostCommentByUuid,
+    DeletePostComment deletePostComment) {
     this.postMapper = postMapper;
     this.userMapper = userMapper;
     this.findPosts = findPosts;
@@ -71,6 +75,7 @@ public class PostController {
     this.updatePostTags = updatePostTags;
     this.savePostComment = savePostComment;
     this.findPostCommentByUuid = findPostCommentByUuid;
+    this.deletePostComment = deletePostComment;
   }
 
   @GetMapping("")
@@ -245,5 +250,24 @@ public class PostController {
 
     PostComment postComment = findPostCommentByUuid.findByUuid(postUuid, commentUuid);
     return postMapper.toFindPostCommentByUuidResponseDto(postComment);
+  }
+
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @DeleteMapping("/{postUuid}/comments/{commentUuid}")
+  @Transactional
+  @Operation(summary = "Delete a post comment", description = "Deletes a post comment by its identifier")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Post comment deleted successfully"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete this post"),
+    @ApiResponse(responseCode = "404", description = "Post not found"),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  void deleteComment(@Parameter(description = "Identifier of the post") @PathVariable UUID postUuid,
+    @Parameter(description = "Identifier of the post comment to delete") @PathVariable UUID commentUuid,
+    @AuthenticationPrincipal JwtUserDetails userDetails) {
+
+    var deletePostCommentDto = new DeletePostCommentDto(commentUuid, postUuid, userMapper.toAuthenticatedUserDto(userDetails));
+    deletePostComment.delete(deletePostCommentDto);
   }
 }

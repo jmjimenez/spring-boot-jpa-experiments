@@ -27,4 +27,9 @@ public class PostCommentRepositoryImpl implements PostCommentRepository {
   public Optional<PostComment> findByUuid(UUID uuid) {
     return jpaPostCommentRepository.findByUuid(uuid);
   }
+
+  @Override
+  public void deleteById(Integer id) {
+    jpaPostCommentRepository.deleteById(id);
+  }
 }

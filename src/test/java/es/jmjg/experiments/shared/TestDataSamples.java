@@ -109,4 +109,5 @@ public final class TestDataSamples {
   public static final String NEW_POST_BODY = "Test Body 1";
 
   public static final UUID COMMENT_LEANNE_POST_BY_ERWIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655442001");
+  public static final UUID COMMENT_LEANNE_POST_BY_CLEMENTINE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655442002");
 }

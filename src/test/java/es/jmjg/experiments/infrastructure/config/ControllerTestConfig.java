@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.config;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.application.post.DeletePostComment;
 import es.jmjg.experiments.application.post.FindPostCommentByUuid;
 import es.jmjg.experiments.application.post.SavePostComment;
 import es.jmjg.experiments.application.post.UpdatePostTags;
@@ -54,7 +55,13 @@ public class ControllerTestConfig {
 
   @Bean
   @Primary
-  public DeletePost deletePostById() {
+  public DeletePostComment deletePostCommentByUuid() {
+    return mock(DeletePostComment.class);
+  }
+
+  @Bean
+  @Primary
+  public DeletePost deletePostByUuid() {
     return mock(DeletePost.class);
   }
 
