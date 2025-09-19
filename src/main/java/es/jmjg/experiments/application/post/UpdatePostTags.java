@@ -1,6 +1,7 @@
 package es.jmjg.experiments.application.post;
 
 import es.jmjg.experiments.application.post.dto.UpdatePostTagsDto;
+import es.jmjg.experiments.application.post.shared.ProcessPostTags;
 import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
 import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.shared.exception.Forbidden;

@@ -1,4 +1,4 @@
-package es.jmjg.experiments.application.post;
+package es.jmjg.experiments.application.post.shared;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,6 @@ import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.domain.tag.repository.TagRepository;
 
-//TODO: test this service
 @Service
 public class ProcessPostTags {
 

@@ -1,5 +1,6 @@
 package es.jmjg.experiments.application.post;
 
+import es.jmjg.experiments.application.post.shared.ProcessPostTags;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;

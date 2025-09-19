@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.application.post.shared.ProcessPostTags;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
