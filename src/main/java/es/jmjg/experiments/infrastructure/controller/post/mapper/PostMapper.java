@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.mapper;
 
+import es.jmjg.experiments.application.post.dto.FindAllPostsDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostCommentByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentResponseDto;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import es.jmjg.experiments.application.post.dto.SavePostDto;
@@ -339,5 +341,9 @@ public class PostMapper {
       postComment.getComment(),
       postComment.getCreatedAt() != null ? postComment.getCreatedAt().format(formatter) : null
     );
+  }
+
+  public FindAllPostsDto toFindAllPostsDto(Pageable pageable) {
+    return new FindAllPostsDto(pageable);
   }
 }

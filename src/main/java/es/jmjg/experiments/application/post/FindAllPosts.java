@@ -1,7 +1,7 @@
 package es.jmjg.experiments.application.post;
 
+import es.jmjg.experiments.application.post.dto.FindAllPostsDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +17,8 @@ public class FindAllPosts {
     this.postRepository = postRepository;
   }
 
-  //TODO: parameter should be a dto
   @Transactional(readOnly = true)
-  public Page<Post> findAll(Pageable pageable) {
-    return postRepository.findAll(pageable);
+  public Page<Post> findAll(FindAllPostsDto dto) {
+    return postRepository.findAll(dto.pageable());
   }
 }

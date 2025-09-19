@@ -5,6 +5,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import es.jmjg.experiments.application.post.dto.FindAllPostsDto;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,7 +53,7 @@ class FindAllPostsTest {
     when(postRepository.findAll(pageable)).thenReturn(expectedPage);
 
     // When
-    Page<Post> result = findAllPosts.findAll(pageable);
+    Page<Post> result = findAllPosts.findAll(new FindAllPostsDto(pageable));
 
     // Then
     assertThat(result).isNotNull();
@@ -71,7 +72,7 @@ class FindAllPostsTest {
     when(postRepository.findAll(pageable)).thenReturn(expectedPage);
 
     // When
-    Page<Post> result = findAllPosts.findAll(pageable);
+    Page<Post> result = findAllPosts.findAll(new FindAllPostsDto(pageable));
 
     // Then
     assertThat(result).isNotNull();
@@ -89,7 +90,7 @@ class FindAllPostsTest {
     when(postRepository.findAll(secondPage)).thenReturn(expectedPage);
 
     // When
-    Page<Post> result = findAllPosts.findAll(secondPage);
+    Page<Post> result = findAllPosts.findAll(new FindAllPostsDto(secondPage));
 
     // Then
     assertThat(result).isNotNull();

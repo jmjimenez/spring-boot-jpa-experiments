@@ -90,7 +90,7 @@ public class PostController {
     @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
 
     Pageable pageable = PageRequest.of(page, size);
-    var postsPage = findAllPosts.findAll(pageable);
+    var postsPage = findAllPosts.findAll(postMapper.toFindAllPostsDto(pageable));
 
     return postMapper.toPagedResponseDto(postsPage);
   }

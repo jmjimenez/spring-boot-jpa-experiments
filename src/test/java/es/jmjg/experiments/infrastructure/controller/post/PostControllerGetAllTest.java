@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import es.jmjg.experiments.application.post.dto.FindAllPostsDto;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,7 +56,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
   void shouldFindAllPostsUsingWhen() throws Exception {
     String jsonResponse = JsonSamples.createFindAllPostsJsonResponse(posts);
 
-    when(findAllPosts.findAll(any(Pageable.class))).thenReturn(postsPage);
+    when(findAllPosts.findAll(any(FindAllPostsDto.class))).thenReturn(postsPage);
 
     ResultActions resultActions = mockMvc
         .perform(get("/api/posts"))
@@ -69,7 +70,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
   void shouldFindAllPostsUsingDoReturn() throws Exception {
     String jsonResponse = JsonSamples.createFindAllPostsJsonResponse(posts);
 
-    doReturn(postsPage).when(findAllPosts).findAll(any(Pageable.class));
+    doReturn(postsPage).when(findAllPosts).findAll(any(FindAllPostsDto.class));
 
     ResultActions resultActions = mockMvc
         .perform(get("/api/posts"))
@@ -85,7 +86,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
     Pageable pageable = PageRequest.of(0, 1);
     Page<Post> singlePostPage = new PageImpl<>(List.of(posts.getFirst()), pageable, 2);
-    when(findAllPosts.findAll(any(Pageable.class))).thenReturn(singlePostPage);
+    when(findAllPosts.findAll(any(FindAllPostsDto.class))).thenReturn(singlePostPage);
 
     ResultActions resultActions = mockMvc
         .perform(get("/api/posts?page=0&size=1"))
@@ -101,7 +102,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
     Pageable pageable = PageRequest.of(0, 20);
     Page<Post> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
-    when(findAllPosts.findAll(any(Pageable.class))).thenReturn(emptyPage);
+    when(findAllPosts.findAll(any(FindAllPostsDto.class))).thenReturn(emptyPage);
 
     ResultActions resultActions = mockMvc
         .perform(get("/api/posts"))

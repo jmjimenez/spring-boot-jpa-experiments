@@ -2,6 +2,7 @@ package es.jmjg.experiments.application.post.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.infrastructure.controller.post.mapper.PostMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ class FindAllPostsIntegrationTest extends BaseIntegration {
   private FindAllPosts findAllPosts;
 
   private Pageable pageable;
+  @Autowired
+  private PostMapper postMapper;
 
   @BeforeEach
   void setUp() {
@@ -28,7 +31,7 @@ class FindAllPostsIntegrationTest extends BaseIntegration {
   @Test
   void findAll_ShouldReturnAllPosts() {
     // When
-    Page<Post> result = findAllPosts.findAll(pageable);
+    Page<Post> result = findAllPosts.findAll(postMapper.toFindAllPostsDto(pageable));
 
     // Then
     assertThat(result).isNotNull();
@@ -43,7 +46,7 @@ class FindAllPostsIntegrationTest extends BaseIntegration {
     Pageable emptyPage = PageRequest.of(999, 10);
 
     // When
-    Page<Post> result = findAllPosts.findAll(emptyPage);
+    Page<Post> result = findAllPosts.findAll(postMapper.toFindAllPostsDto(emptyPage));
 
     // Then
     assertThat(result).isNotNull();
@@ -57,7 +60,7 @@ class FindAllPostsIntegrationTest extends BaseIntegration {
     Pageable firstPage = PageRequest.of(0, 5);
 
     // When
-    Page<Post> result = findAllPosts.findAll(firstPage);
+    Page<Post> result = findAllPosts.findAll(postMapper.toFindAllPostsDto(firstPage));
 
     // Then
     assertThat(result).isNotNull();
