@@ -5,8 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -28,23 +27,15 @@ import es.jmjg.experiments.domain.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.user.exception.UserNotFound;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-
-  private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
   @ExceptionHandler(PostNotFound.class)
   public ResponseEntity<ApiErrorResponse> handlePostNotFound(PostNotFound ex, WebRequest request) {
 
     log.warn("Post not found: {}", ex.getMessage());
 
-    //TODO: refactor to use a common method to build the response
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.NOT_FOUND.value())
-        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(ex, request, HttpStatus.NOT_FOUND);
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
@@ -54,13 +45,7 @@ public class GlobalExceptionHandler {
 
     log.warn("Post comment not found: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-      .timestamp(LocalDateTime.now())
-      .status(HttpStatus.NOT_FOUND.value())
-      .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-      .message(ex.getMessage())
-      .path(request.getDescription(false))
-      .build();
+    ApiErrorResponse errorResponse = buildApiResponse(ex, request, HttpStatus.NOT_FOUND);
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
@@ -70,13 +55,7 @@ public class GlobalExceptionHandler {
 
     log.warn("User not found: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.NOT_FOUND.value())
-        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(ex, request, HttpStatus.NOT_FOUND);
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
@@ -86,13 +65,7 @@ public class GlobalExceptionHandler {
 
     log.warn("Tag not found: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.NOT_FOUND.value())
-        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(ex, request, HttpStatus.NOT_FOUND);
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
@@ -103,13 +76,7 @@ public class GlobalExceptionHandler {
 
     log.warn("Tag in use: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.CONFLICT.value())
-        .error(HttpStatus.CONFLICT.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(ex, request, HttpStatus.CONFLICT);
 
     return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
   }
@@ -120,13 +87,7 @@ public class GlobalExceptionHandler {
 
     log.warn("Tag already exists: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.CONFLICT.value())
-        .error(HttpStatus.CONFLICT.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(ex, request, HttpStatus.CONFLICT);
 
     return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
   }
@@ -137,13 +98,7 @@ public class GlobalExceptionHandler {
 
     log.warn("Invalid request: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.BAD_REQUEST.value())
-        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(ex, request, HttpStatus.BAD_REQUEST);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
@@ -154,13 +109,7 @@ public class GlobalExceptionHandler {
 
     log.warn("Access forbidden: {}", ex.getMessage());
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.FORBIDDEN.value())
-        .error(HttpStatus.FORBIDDEN.getReasonPhrase())
-        .message(ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(ex, request, HttpStatus.FORBIDDEN);
 
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
   }
@@ -181,14 +130,7 @@ public class GlobalExceptionHandler {
               errors.put(fieldName, errorMessage);
             });
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.BAD_REQUEST.value())
-        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-        .message("Validation failed")
-        .path(request.getDescription(false))
-        .details(errors)
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(request, errors);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
@@ -196,30 +138,22 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ApiErrorResponse> handleTypeMismatch(
       MethodArgumentTypeMismatchException ex, WebRequest request) {
+
     log.warn("Type mismatch: {}", ex.getMessage());
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.BAD_REQUEST.value())
-        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-        .message("Invalid parameter: " + ex.getName() + ". " + ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+
+    ApiErrorResponse errorResponse = buildApiResponse(request, HttpStatus.BAD_REQUEST, "Invalid parameter: " + ex.getName() + ". " + ex.getMessage());
+
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
   @ExceptionHandler(ResponseStatusException.class)
   public ResponseEntity<ApiErrorResponse> handleResponseStatusException(
       ResponseStatusException ex, WebRequest request) {
+
     log.warn("Response status exception: {}", ex.getMessage());
 
     HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(status.value())
-        .error(status.getReasonPhrase())
-        .message(ex.getReason() != null ? ex.getReason() : ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(request, status, ex.getReason() != null ? ex.getReason() : ex.getMessage());
 
     return ResponseEntity.status(status).body(errorResponse);
   }
@@ -227,14 +161,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NoResourceFoundException.class)
   public ResponseEntity<ApiErrorResponse> handleNoResourceFoundException(
       NoResourceFoundException ex, WebRequest request) {
+
     log.warn("No resource found: {}", ex.getMessage());
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.BAD_REQUEST.value())
-        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-        .message("Resource not found: " + ex.getMessage())
-        .path(request.getDescription(false))
-        .build();
+
+    ApiErrorResponse errorResponse = buildApiResponse(request, HttpStatus.BAD_REQUEST, "Resource not found: " + ex.getMessage());
+
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
@@ -243,13 +174,8 @@ public class GlobalExceptionHandler {
 
     log.error("HttpMessageNotReadable exception occurred: {}", ex.getMessage(), ex);
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-      .timestamp(LocalDateTime.now())
-      .status(HttpStatus.BAD_REQUEST.value())
-      .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-      .message("Malformed or missing request body")
-      .path(request.getDescription(false))
-      .build();
+    ApiErrorResponse errorResponse = buildApiResponse(request, HttpStatus.BAD_REQUEST, "Malformed or missing request body");
+
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
@@ -258,14 +184,39 @@ public class GlobalExceptionHandler {
 
     log.error("Unhandled exception occurred: {}", ex.getMessage(), ex);
 
-    ApiErrorResponse errorResponse = ApiErrorResponse.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-        .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-        .message("An unexpected error occurred")
-        .path(request.getDescription(false))
-        .build();
+    ApiErrorResponse errorResponse = buildApiResponse(request, HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+  }
+
+  private ApiErrorResponse buildApiResponse(Exception ex, WebRequest request, HttpStatus status) {
+    return ApiErrorResponse.builder()
+      .timestamp(LocalDateTime.now())
+      .status(status.value())
+      .error(status.getReasonPhrase())
+      .message(ex.getMessage())
+      .path(request.getDescription(false))
+      .build();
+  }
+
+  private ApiErrorResponse buildApiResponse(WebRequest request, Map<String, String> errorDetails) {
+    return ApiErrorResponse.builder()
+      .timestamp(LocalDateTime.now())
+      .status(HttpStatus.BAD_REQUEST.value())
+      .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+      .message("Validation failed")
+      .path(request.getDescription(false))
+      .details(errorDetails)
+      .build();
+  }
+
+  private ApiErrorResponse buildApiResponse(WebRequest request, HttpStatus status, String errorMessage) {
+    return ApiErrorResponse.builder()
+      .timestamp(LocalDateTime.now())
+      .status(status.value())
+      .error(status.getReasonPhrase())
+      .message(errorMessage)
+      .path(request.getDescription(false))
+      .build();
   }
 }
