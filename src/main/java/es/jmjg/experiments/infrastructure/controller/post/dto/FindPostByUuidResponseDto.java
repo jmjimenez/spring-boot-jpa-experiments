@@ -26,14 +26,16 @@ public class FindPostByUuidResponseDto {
   @Schema(description = "List of tags associated with the post")
   private List<PostTagResponseDto> tags;
 
-  // Constructor with tags
+  @Schema(description = "List of comments associated with the post")
+  private List<PostCommentResponseDto> comments;
+
   public FindPostByUuidResponseDto(UUID uuid, UUID userId, String title, String body,
-      List<PostTagResponseDto> tags) {
+      List<PostTagResponseDto> tags, List<PostCommentResponseDto> comments) {
     this.uuid = uuid;
     this.userId = userId;
     this.title = title;
     this.body = body;
     this.tags = tags != null ? tags : List.of();
-    //TODO: add comments
+    this.comments = comments != null ? comments : List.of();
   }
 }
