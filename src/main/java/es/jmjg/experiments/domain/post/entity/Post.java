@@ -59,13 +59,4 @@ public class Post {
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   private List<PostComment> comments = new ArrayList<>();
-
-  //TODO: make sure it is not used
-  public Post(Integer id, UUID uuid, User user, String title, String body) {
-    this.id = id;
-    this.uuid = uuid;
-    this.user = user;
-    this.title = title;
-    this.body = body;
-  }
 }

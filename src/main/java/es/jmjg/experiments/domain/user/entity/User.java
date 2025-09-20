@@ -63,15 +63,4 @@ public class User {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   private List<PostComment> comments = new ArrayList<>();
-
-  //TODO: make sure it is not used
-  public User(Integer id, UUID uuid, String name, String email, String username, String password, List<Post> posts) {
-    this.id = id;
-    this.uuid = uuid;
-    this.name = name;
-    this.email = email;
-    this.username = username;
-    this.password = password;
-    this.posts = posts != null ? posts : new ArrayList<>();
-  }
 }

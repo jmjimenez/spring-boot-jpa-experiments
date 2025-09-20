@@ -11,12 +11,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import es.jmjg.experiments.domain.post.entity.Post;
-import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.domain.tag.exception.TagNotFound;
 import es.jmjg.experiments.domain.tag.repository.TagRepository;
+import es.jmjg.experiments.shared.TagFactory;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,8 +36,8 @@ class ProcessPostTagsTest {
     Post post = mock(Post.class);
     List<String> tags = Arrays.asList("tag1", "tag2");
 
-    when(tagRepository.findByName("tag1")).thenReturn(of(new Tag(1, UUID.randomUUID(), "tag1")));
-    when(tagRepository.findByName("tag2")).thenReturn(of(new Tag(2, UUID.randomUUID(), "tag2")));
+    when(tagRepository.findByName("tag1")).thenReturn(of(TagFactory.createTag("tag1")));
+    when(tagRepository.findByName("tag2")).thenReturn(of(TagFactory.createTag( "tag2")));
 
     processPostTags.processTagsForPost(post, tags);
 
@@ -53,7 +52,7 @@ class ProcessPostTagsTest {
     Post post = mock(Post.class);
     List<String> tags = Arrays.asList("tag1", "tag2");
 
-    when(tagRepository.findByName("tag1")).thenReturn(of(new Tag(1, UUID.randomUUID(), "tag1")));
+    when(tagRepository.findByName("tag1")).thenReturn(of(TagFactory.createTag("tag1")));
     when(tagRepository.findByName("tag2")).thenReturn(empty());
 
     assertThatThrownBy(() -> processPostTags.processTagsForPost(post, tags))

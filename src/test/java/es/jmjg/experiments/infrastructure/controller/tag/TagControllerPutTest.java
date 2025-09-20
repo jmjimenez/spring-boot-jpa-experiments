@@ -32,8 +32,8 @@ class TagControllerPutTest extends BaseTagControllerTest {
   void shouldUpdateTagName() throws Exception {
     // Given
     String updatedName = "updated-tag";
-    Tag tag = TagFactory.createTag("original-tag");
-    Tag updatedTag = new Tag(tag.getId(), tag.getUuid(), updatedName);
+    Tag tag = TagFactory.createTag("original-tag", 1);
+    Tag updatedTag = TagFactory.createTag(updatedName, tag.getId());
     when(updateTag.update(any())).thenReturn(updatedTag);
 
     // When & Then
