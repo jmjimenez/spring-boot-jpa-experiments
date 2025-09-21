@@ -6,16 +6,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 @Schema(description = "Request DTO for creating a new user")
 public class SaveUserRequestDto {
-  @NotNull(message = "UUID is required")
-  @Schema(description = "Unique identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
+  @NotNull(message = "Identifiers is required")
+  @Schema(description = "Identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
   private UUID uuid;
 
   @NotEmpty(message = "Name is required")

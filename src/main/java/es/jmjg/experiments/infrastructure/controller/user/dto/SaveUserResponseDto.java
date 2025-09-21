@@ -4,15 +4,13 @@ import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 @Schema(description = "Response DTO for created user")
 public class SaveUserResponseDto {
-  @Schema(description = "Unique identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
+  @Schema(description = "Identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
   private UUID uuid;
 
   @Schema(description = "Name of the user", example = "John Doe")

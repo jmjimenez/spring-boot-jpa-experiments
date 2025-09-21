@@ -7,16 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 @Schema(description = "Request DTO for creating a new post")
 public class SavePostRequestDto {
-  @NotNull(message = "UUID is required")
-  @Schema(description = "Unique identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
+  @NotNull(message = "Identifier is required")
+  @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
   private UUID uuid;
 
   @NotEmpty(message = "Title is required")

@@ -5,15 +5,13 @@ import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 @Schema(description = "Response DTO for user found by email")
 public class FindUserByEmailResponseDto {
-  @Schema(description = "Unique identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
+  @Schema(description = "Identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
   private UUID uuid;
 
   @Schema(description = "Name of the user", example = "John Doe")
@@ -25,7 +23,7 @@ public class FindUserByEmailResponseDto {
   @Schema(description = "Username of the user", example = "johndoe")
   private String username;
 
-  @Schema(description = "List of post UUIDs associated with the user")
+  @Schema(description = "List of post identifiers associated with the user")
   private List<UUID> posts;
 
   @Schema(description = "List of tag names associated with the user")
