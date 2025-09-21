@@ -18,11 +18,6 @@ public final class JsonSamples {
     // Utility class - prevent instantiation
   }
 
-  // Post-related JSON methods
-
-  /**
-   * Creates JSON response for findAllPosts endpoint.
-   */
   public static String createFindAllPostsJsonResponse(List<Post> posts) {
     return """
         {
@@ -50,13 +45,10 @@ public final class JsonSamples {
             "hasPrevious":false
         }
         """
-        .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid(), posts.get(1).getUuid(),
-            posts.get(1).getUser().getUuid());
+      .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid(), posts.get(1).getUuid(),
+        posts.get(1).getUser().getUuid());
   }
 
-  /**
-   * Creates JSON response for findAllPosts with pagination.
-   */
   public static String createFindAllPostsWithPaginationJsonResponse(List<Post> posts) {
     return """
         {
@@ -77,12 +69,9 @@ public final class JsonSamples {
             "hasPrevious":false
         }
         """
-        .formatted(posts.getFirst().getUuid(), posts.getFirst().getUser().getUuid());
+      .formatted(posts.getFirst().getUuid(), posts.getFirst().getUser().getUuid());
   }
 
-  /**
-   * Creates JSON response for empty posts list.
-   */
   public static String createEmptyPostsJsonResponse() {
     return """
         {
@@ -97,29 +86,36 @@ public final class JsonSamples {
         """;
   }
 
-  /**
-   * Creates JSON response for findPostByUuid endpoint.
-   */
   public static String createFindPostByUuidJsonResponse(Post post) {
+    String tags = post.getTags().stream()
+      .map(tag -> "{\"uuid\":\"%s\",\"name\":\"%s\"}".formatted(tag.getUuid(), tag.getName()))
+      .reduce((a, b) -> a + "," + b)
+      .orElse("");
+
+    String comments = post.getComments().stream()
+      .map(comment -> "{\"uuid\":\"%s\"}".formatted(comment.getUuid()))
+      .reduce((a, b) -> a + "," + b)
+      .orElse("");
+
     return """
         {
             "uuid":"%s",
             "userId":"%s",
             "title":"%s",
             "body":"%s",
-            "tags":[]
+            "tags":[%s],
+            "postComments":[%s]
         }
         """
-        .formatted(
-            post.getUuid(),
-            post.getUser().getUuid(),
-            post.getTitle(),
-            post.getBody());
+      .formatted(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody(),
+        tags,
+        comments);
   }
 
-  /**
-   * Creates JSON request for creating a post.
-   */
   public static String createCreatePostRequestJson(Post post) {
     return """
         {
@@ -128,12 +124,9 @@ public final class JsonSamples {
             "body":"%s"
         }
         """
-        .formatted(post.getUuid(), post.getTitle(), post.getBody());
+      .formatted(post.getUuid(), post.getTitle(), post.getBody());
   }
 
-  /**
-   * Creates JSON response for creating a post.
-   */
   public static String createCreatePostResponseJson(Post post) {
     return """
         {
@@ -144,16 +137,13 @@ public final class JsonSamples {
             "tags":[]
         }
         """
-        .formatted(
-            post.getUuid(),
-            post.getUser().getUuid(),
-            post.getTitle(),
-            post.getBody());
+      .formatted(
+        post.getUuid(),
+        post.getUser().getUuid(),
+        post.getTitle(),
+        post.getBody());
   }
 
-  /**
-   * Creates JSON request for updating a post.
-   */
   public static String createUpdatePostRequestJson(Post post) {
     return """
         {
@@ -162,15 +152,12 @@ public final class JsonSamples {
             "body":"%s"
         }
         """
-        .formatted(
-            post.getUuid(),
-            post.getTitle(),
-            post.getBody());
+      .formatted(
+        post.getUuid(),
+        post.getTitle(),
+        post.getBody());
   }
 
-  /**
-   * Creates JSON response for searching posts.
-   */
   public static String createSearchPostsJsonResponse(List<Post> searchResults) {
     return """
         [
@@ -188,20 +175,15 @@ public final class JsonSamples {
             }
         ]
         """
-        .formatted(
-            searchResults.get(0).getUuid(),
-            searchResults.get(0).getTitle(),
-            searchResults.get(0).getBody(),
-            searchResults.get(1).getUuid(),
-            searchResults.get(1).getTitle(),
-            searchResults.get(1).getBody());
+      .formatted(
+        searchResults.get(0).getUuid(),
+        searchResults.get(0).getTitle(),
+        searchResults.get(0).getBody(),
+        searchResults.get(1).getUuid(),
+        searchResults.get(1).getTitle(),
+        searchResults.get(1).getBody());
   }
 
-  // User-related JSON methods
-
-  /**
-   * Creates JSON response for findAllUsers endpoint.
-   */
   public static String createFindAllUsersJsonResponse(List<Post> testPosts, UUID testUuid) {
     return """
         {
@@ -244,9 +226,6 @@ public final class JsonSamples {
         """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
   }
 
-  /**
-   * Creates JSON response for findUserByUuid endpoint.
-   */
   public static String createFindUserByUuidJsonResponse(List<Post> testPosts, UUID testUuid) {
     return """
         {
@@ -260,9 +239,6 @@ public final class JsonSamples {
         """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
   }
 
-  /**
-   * Creates JSON response for findUserByEmail endpoint.
-   */
   public static String createFindUserByEmailJsonResponse(List<Post> testPosts, UUID testUuid) {
     return """
         {
@@ -276,9 +252,6 @@ public final class JsonSamples {
         """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
   }
 
-  /**
-   * Creates JSON response for findUserByUsername endpoint.
-   */
   public static String createFindUserByUsernameJsonResponse(List<Post> testPosts, UUID testUuid) {
     return """
         {
@@ -292,9 +265,6 @@ public final class JsonSamples {
         """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
   }
 
-  /**
-   * Creates JSON request for saving a user.
-   */
   public static String createSaveUserRequestJson(UUID testUuid) {
     return """
         {
@@ -307,9 +277,6 @@ public final class JsonSamples {
         """.formatted(testUuid);
   }
 
-  /**
-   * Creates JSON response for saving a user.
-   */
   public static String createSaveUserResponseJson(UUID testUuid) {
     return """
         {
@@ -321,9 +288,6 @@ public final class JsonSamples {
         """.formatted(testUuid);
   }
 
-  /**
-   * Creates JSON request for updating a user.
-   */
   public static String createUpdateUserRequestJson(UUID testUuid) {
     return """
         {
@@ -336,9 +300,6 @@ public final class JsonSamples {
         """.formatted(testUuid);
   }
 
-  /**
-   * Creates JSON response for updating a user.
-   */
   public static String createUpdateUserResponseJson(List<Post> testPosts, UUID testUuid) {
     return """
         {
@@ -352,9 +313,6 @@ public final class JsonSamples {
         """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
   }
 
-  /**
-   * Serializes UpdatePostTagsRequestDto to JSON for patch tags requests.
-   */
   public static String createUpdatePostTagsRequestJson(es.jmjg.experiments.infrastructure.controller.post.dto.UpdatePostTagsRequestDto dto) {
     try {
       return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(dto);

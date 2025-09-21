@@ -233,13 +233,15 @@ public class PostMapper {
       UUID userUuid = post.getUser().getUuid();
 
       List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
 
       return new FindAllPostsResponseDto(
         post.getUuid(),
         userUuid,
         post.getTitle(),
         post.getBody(),
-        tags);
+        tags,
+        comments);
     } catch (org.hibernate.LazyInitializationException e) {
       log.error("LazyInitializationException in createFindAllPostsResponseDto for post UUID: {}. Error: {}",
         post.getUuid(), e.getMessage(), e);
@@ -252,13 +254,15 @@ public class PostMapper {
       UUID userUuid = post.getUser().getUuid();
 
       List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
 
       return new FindPostByTagResponseDto(
         post.getUuid(),
         userUuid,
         post.getTitle(),
         post.getBody(),
-        tags);
+        tags,
+        comments);
     } catch (org.hibernate.LazyInitializationException e) {
       log.error("LazyInitializationException in createFindPostByTagResponseDto for post UUID: {}. Error: {}",
         post.getUuid(), e.getMessage(), e);
@@ -271,13 +275,15 @@ public class PostMapper {
       UUID userUuid = post.getUser().getUuid();
 
       List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
+      List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
 
       return new FindPostByTagNameResponseDto(
         post.getUuid(),
         userUuid,
         post.getTitle(),
         post.getBody(),
-        tags);
+        tags,
+        comments);
     } catch (org.hibernate.LazyInitializationException e) {
       log.error("LazyInitializationException in createFindPostByTagNameResponseDto for post UUID: {}. Error: {}",
         post.getUuid(), e.getMessage(), e);

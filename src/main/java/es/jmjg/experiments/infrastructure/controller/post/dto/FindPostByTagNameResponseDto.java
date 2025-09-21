@@ -1,27 +1,13 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.UUID;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-public class FindPostByTagNameResponseDto {
-  private UUID uuid;
-  private UUID userId;
-  private String title;
-  private String body;
-  private List<PostTagResponseDto> tags;
-
-  // Constructor with tags
+@Schema(description = "Response DTO")
+public class FindPostByTagNameResponseDto extends  PostResponseDto {
   public FindPostByTagNameResponseDto(UUID uuid, UUID userId, String title, String body,
-      List<PostTagResponseDto> tags) {
-    this.uuid = uuid;
-    this.userId = userId;
-    this.title = title;
-    this.body = body;
-    this.tags = tags != null ? tags : List.of();
+    List<PostTagResponseDto> tags, List<PostCommentResponseDto> postComments) {
+    super(uuid, userId, title, body, tags, postComments);
   }
 }

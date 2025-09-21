@@ -20,7 +20,7 @@ class PostControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
         TestDataSamples.USER_PASSWORD);
 
     ResponseEntity<FindPostByUuidResponseDto> response = restTemplate.exchange(
-        "/api/posts/" + TestDataSamples.POST_2_UUID,
+        "/api/posts/" + TestDataSamples.LEANNE_POST_UUID,
         HttpMethod.GET,
         request,
         FindPostByUuidResponseDto.class);
@@ -28,12 +28,13 @@ class PostControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
 
     FindPostByUuidResponseDto post = response.getBody();
     assertThat(post).isNotNull().satisfies(p -> {
-      assertThat(p.getTitle()).isEqualTo(TestDataSamples.POST_2_TITLE);
+      assertThat(p.getTitle()).isEqualTo(TestDataSamples.LEANNE_POST_TITLE);
       assertThat(p.getTags()).isNotNull();
       assertThat(p.getTags()).hasSize(3);
       assertThat(p.getTags()).extracting("name")
-          .containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.SPRING_BOOT_TAG_NAME,
-              TestDataSamples.JPA_TAG_NAME);
+          .containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.JAVA_TAG_NAME,
+              TestDataSamples.PROGRAMMING_TAG_NAME);
+      assertThat(p.getPostComments()).hasSize(2);
     });
   }
 
