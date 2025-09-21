@@ -1,6 +1,5 @@
 package es.jmjg.experiments.infrastructure.repository;
 
-import es.jmjg.experiments.domain.post.repository.PostRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.post.repository.PostRepository;
 import es.jmjg.experiments.infrastructure.repository.jpa.JpaPostRepository;
 
 @Repository

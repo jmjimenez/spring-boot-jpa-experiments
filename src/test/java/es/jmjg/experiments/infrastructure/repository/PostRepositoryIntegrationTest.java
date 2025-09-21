@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,14 +18,19 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.post.entity.PostComment;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.infrastructure.repository.jpa.PostCommentRepositoryImpl;
 import es.jmjg.experiments.shared.BaseJpaIntegration;
+import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
+import jakarta.persistence.EntityManager;
 
-@Import({ PostRepositoryImpl.class, TagRepositoryImpl.class, UserRepositoryImpl.class })
+@Import({ PostRepositoryImpl.class, TagRepositoryImpl.class, UserRepositoryImpl.class, PostCommentRepositoryImpl.class })
 public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
@@ -35,6 +41,12 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
 
   @Autowired
   private UserRepositoryImpl userRepository;
+
+  @Autowired
+  private PostCommentRepositoryImpl postCommentRepository;
+
+  @Autowired
+  private EntityManager entityManager;
 
   private User leanneUser;
   private Tag technologyTag;
@@ -388,13 +400,60 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(updatedPost.getBody()).isEqualTo("Content with modified tags");
     assertThat(updatedPost.getUser().getId()).isEqualTo(leanneUser.getId());
     assertThat(updatedPost.getTags()).hasSize(2);
-    assertThat(updatedPost.getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA, TestDataSamples.SPRING_BOOT_TAG_NAME);
+    assertThat(updatedPost.getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA,
+        TestDataSamples.SPRING_BOOT_TAG_NAME);
 
     // Verify it was actually updated in the database with new tags
     Optional<Post> retrievedPost = postRepository.findById(updatedPost.getId());
     assertThat(retrievedPost).isPresent();
     assertThat(retrievedPost.get().getTags()).hasSize(2);
     assertThat(retrievedPost.get().getTags()).extracting("name").containsExactlyInAnyOrder(TestDataSamples.TAG_JAVA,
-      TestDataSamples.SPRING_BOOT_TAG_NAME);
+        TestDataSamples.SPRING_BOOT_TAG_NAME);
+  }
+  
+  @Test
+  @Transactional
+  void whenUpdatePostInSameTransaction_ShouldUpdatePost() {
+    Tag tagTechnology = tagRepository.findByName(TestDataSamples.TECHNOLOGY_TAG_NAME)
+        .orElseThrow(() -> new RuntimeException("tag not found"));
+    Tag tagJava = tagRepository.findByName(TestDataSamples.TAG_JAVA)
+        .orElseThrow(() -> new RuntimeException("tag not found"));
+    List<Tag> tags = Arrays.asList(tagTechnology, tagJava);
+
+    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID)
+        .orElseThrow(() -> new RuntimeException("user not found"));
+    Post testPost = PostFactory.createBasicPost(testUser);
+    testPost.setTags(tags);
+    postRepository.save(testPost);
+
+    User anotherUser = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID)
+        .orElseThrow(() -> new RuntimeException("user not found"));
+    PostComment comment1 = PostFactory.createPostComment(anotherUser, testPost, "comment 1");
+    // comment1.setPost(testPost);
+    postCommentRepository.save(comment1);
+
+    Tag tagSpringBoot = tagRepository.findByName(TestDataSamples.TAG_SPRING_BOOT)
+        .orElseThrow(() -> new RuntimeException("Spring Boot tag not found"));
+    List<Tag> updatedTags = new ArrayList<>(testPost.getTags());
+    updatedTags.add(tagSpringBoot);
+    testPost.setTags(updatedTags);
+    postRepository.save(testPost);
+
+    entityManager.flush();
+    entityManager.refresh(testPost);
+
+    // When
+    Post result = postRepository.findByUuid(testPost.getUuid()).orElseThrow();
+
+    // Then
+    assertThat(result.getBody()).isEqualTo(testPost.getBody());
+    assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
+    assertThat(result.getUuid()).isEqualTo(testPost.getUuid());
+    assertThat(result.getTitle()).isEqualTo(testPost.getTitle());
+    assertThat(result.getTags()).hasSize(3);
+    assertThat(result.getTags()).extracting("name").containsExactlyInAnyOrder(
+        TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING_BOOT);
+    assertThat(result.getComments()).hasSize(1);
+    assertThat(result.getComments().getFirst().getComment()).isEqualTo("comment 1");
   }
 }
