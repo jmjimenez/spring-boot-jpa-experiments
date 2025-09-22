@@ -32,10 +32,9 @@ class PostControllerPostCommentIntegrationTest extends BaseControllerIntegration
         SavePostCommentResponseDto.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-    //TODO: Verify Location header is present and correct
-//    String locationHeader = response.getHeaders().getFirst("Location");
-//    assertThat(locationHeader).isNotNull();
-//    assertThat(locationHeader).startsWith("/api/posts/");
+    String locationHeader = response.getHeaders().getFirst("Location");
+    assertThat(locationHeader).isNotNull();
+    assertThat(locationHeader).startsWith("/api/posts/" + TestDataSamples.LEANNE_POST_UUID + "/comments/");
 
     SavePostCommentResponseDto responseDto = response.getBody();
     assertThat(responseDto).isNotNull()
@@ -45,8 +44,7 @@ class PostControllerPostCommentIntegrationTest extends BaseControllerIntegration
               assertThat(body.getUserId()).isEqualTo(TestDataSamples.ERVIN_UUID);
               assertThat(body.getPostId()).isEqualTo(TestDataSamples.LEANNE_POST_UUID);
               assertThat(body.getComment()).isEqualTo(comment);
-              // TODOL Verify the Location header contains the correct UUID
-//              assertThat(locationHeader).isEqualTo("/api/posts/" + body.getUuid().toString());
+              assertThat(locationHeader).isEqualTo("/api/posts/" + TestDataSamples.LEANNE_POST_UUID + "/comments/" + postCommentUuid);
             });
   }
 
