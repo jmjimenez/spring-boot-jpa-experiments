@@ -20,7 +20,7 @@ class PostControllerPutIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldUpdatePostWhenPostExists() {
-    final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
+    final String existingTagName = TestDataSamples.TAG_TECHNOLOGY;
     final String updatedTitle = "Updated Title";
     final String updatedBody = "Updated Body";
 
@@ -70,7 +70,7 @@ class PostControllerPutIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldNotUpdatePostWhenUserIsNotAuthenticated() {
-    final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
+    final String existingTagName = TestDataSamples.TAG_TECHNOLOGY;
     final String newTagName = "update-test-tag";
     final String updatedTitle = "Updated Title";
     final String updatedBody = "Updated Body";
@@ -87,7 +87,7 @@ class PostControllerPutIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldNotUpdatePostWhenUserIsNotOwner() {
-    final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
+    final String existingTagName = TestDataSamples.TAG_TECHNOLOGY;
     final String newTagName = "update-test-tag";
     final String updatedTitle = "Updated Title";
     final String updatedBody = "Updated Body";

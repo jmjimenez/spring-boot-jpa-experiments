@@ -32,8 +32,8 @@ class PostControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
       assertThat(p.getTags()).isNotNull();
       assertThat(p.getTags()).hasSize(3);
       assertThat(p.getTags()).extracting("name")
-          .containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.JAVA_TAG_NAME,
-              TestDataSamples.PROGRAMMING_TAG_NAME);
+          .containsExactlyInAnyOrder(TestDataSamples.TAG_TECHNOLOGY, TestDataSamples.TAG_JAVA,
+              TestDataSamples.TAG_PROGRAMMING);
       assertThat(p.getPostComments()).hasSize(2);
     });
   }
@@ -53,8 +53,8 @@ class PostControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
       assertThat(p.getTags()).isNotNull();
       assertThat(p.getTags()).hasSize(3);
       assertThat(p.getTags()).extracting("name")
-          .containsExactlyInAnyOrder(TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.SPRING_BOOT_TAG_NAME,
-              TestDataSamples.JPA_TAG_NAME);
+          .containsExactlyInAnyOrder(TestDataSamples.TAG_TECHNOLOGY, TestDataSamples.TAG_SPRING_BOOT,
+              TestDataSamples.TAG_JPA);
     });
   }
 

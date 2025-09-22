@@ -17,7 +17,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldFindTagByUuid() {
     // Given
-    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -35,7 +35,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
     FindTagByUuidResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
       assertThat(t.getUuid()).isEqualTo(tagUuid);
-      assertThat(t.getName()).isEqualTo(TestDataSamples.TECHNOLOGY_TAG_NAME);
+      assertThat(t.getName()).isEqualTo(TestDataSamples.TAG_TECHNOLOGY);
       assertThat(t.getPosts()).isNotNull();
       assertThat(t.getUsers()).isNotNull();
       // Technology tag should have posts and users based on migration data
@@ -47,7 +47,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldFindTagByUuidWithNoRelations() {
     // Given
-    UUID tagUuid = TestDataSamples.NOT_USED_UUID;
+    UUID tagUuid = TestDataSamples.TAG_NOT_USED_UUID;
 
     // When
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -96,7 +96,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   @Test
   void whenRequestIsNotAuthenticated_shouldFindTagByUuid() {
     // Given
-    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(
@@ -112,7 +112,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
     FindTagByUuidResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
       assertThat(t.getUuid()).isEqualTo(tagUuid);
-      assertThat(t.getName()).isEqualTo(TestDataSamples.TECHNOLOGY_TAG_NAME);
+      assertThat(t.getName()).isEqualTo(TestDataSamples.TAG_TECHNOLOGY);
       assertThat(t.getPosts()).isNotNull();
       assertThat(t.getUsers()).isNotNull();
       // Technology tag should have posts and users based on migration data
@@ -124,7 +124,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   @Test
   void whenUnauthorized_shouldFindTagByUuid() {
     // Given
-    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(

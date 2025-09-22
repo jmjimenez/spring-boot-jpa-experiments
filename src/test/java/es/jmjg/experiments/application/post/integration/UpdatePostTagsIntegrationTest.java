@@ -38,7 +38,7 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
     User owner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post post = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(owner);
-    List<String> newTags = List.of(TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.JAVA_TAG_NAME);
+    List<String> newTags = List.of(TestDataSamples.TAG_TECHNOLOGY, TestDataSamples.TAG_JAVA);
     UpdatePostTagsDto dto = new UpdatePostTagsDto(post.getUuid(), newTags, authenticatedUser);
 
     // When
@@ -83,7 +83,7 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
     User owner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post post = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(owner);
-    List<String> newTags = List.of(TestDataSamples.TECHNOLOGY_TAG_NAME, "notfound");
+    List<String> newTags = List.of(TestDataSamples.TAG_TECHNOLOGY, "notfound");
     UpdatePostTagsDto dto = new UpdatePostTagsDto(post.getUuid(), newTags, authenticatedUser);
 
     // When / Then

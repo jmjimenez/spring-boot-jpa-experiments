@@ -28,7 +28,7 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenTagExists_ShouldUpdateAndReturnTag() {
     // Given
-    Tag tag = tagRepository.findByUuid(TestDataSamples.TECHNOLOGY_UUID).orElseThrow();
+    Tag tag = tagRepository.findByUuid(TestDataSamples.TAG_TECHNOLOGY_UUID).orElseThrow();
     String newName = "updated-technology";
 
     // When
@@ -60,7 +60,7 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenNewNameIsNull_ShouldThrowIllegalArgumentException() {
     // Given
-    Tag tag = tagRepository.findByUuid(TestDataSamples.JAVA_UUID).orElseThrow();
+    Tag tag = tagRepository.findByUuid(TestDataSamples.TAG_JAVA_UUID).orElseThrow();
 
     // When & Then
     assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), null, UserFactory.createAdminUser())))
@@ -71,7 +71,7 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenNewNameIsEmpty_ShouldThrowIllegalArgumentException() {
     // Given
-    Tag tag = tagRepository.findByUuid(TestDataSamples.JAVA_UUID).orElseThrow();
+    Tag tag = tagRepository.findByUuid(TestDataSamples.TAG_JAVA_UUID).orElseThrow();
 
     // When & Then
     assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), "", UserFactory.createAdminUser())))
@@ -82,7 +82,7 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenNewNameIsWhitespace_ShouldThrowIllegalArgumentException() {
     // Given
-    Tag tag = tagRepository.findByUuid(TestDataSamples.JAVA_UUID).orElseThrow();
+    Tag tag = tagRepository.findByUuid(TestDataSamples.TAG_JAVA_UUID).orElseThrow();
 
     // When & Then
     assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), "   ", UserFactory.createAdminUser())))
@@ -93,7 +93,7 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
   @Test
   void updateName_WhenNewNameIsTrimmed_ShouldWorkCorrectly() {
     // Given
-    Tag tag = tagRepository.findByUuid(TestDataSamples.JAVA_UUID).orElseThrow();
+    Tag tag = tagRepository.findByUuid(TestDataSamples.TAG_JAVA_UUID).orElseThrow();
     String newName = "  updated-java  ";
 
     // When

@@ -30,7 +30,7 @@ class FindPostByUuidIntegrationTest extends BaseIntegration {
     assertThat(result.getTitle()).isEqualTo(TestDataSamples.LEANNE_POST_TITLE);
     assertThat(result.getTags()).hasSize(3);
     assertThat(result.getTags()).extracting("name").containsExactlyInAnyOrder(
-        TestDataSamples.TECHNOLOGY_TAG_NAME, TestDataSamples.PROGRAMMING_TAG_NAME, TestDataSamples.JAVA_TAG_NAME);
+        TestDataSamples.TAG_TECHNOLOGY, TestDataSamples.TAG_PROGRAMMING, TestDataSamples.TAG_JAVA);
     assertThat(result.getComments()).hasSize(2);
     assertThat(result.getComments()).extracting("uuid").containsExactlyInAnyOrder(
         TestDataSamples.COMMENT_LEANNE_POST_BY_ERWIN_UUID, TestDataSamples.COMMENT_LEANNE_POST_BY_CLEMENTINE_UUID);

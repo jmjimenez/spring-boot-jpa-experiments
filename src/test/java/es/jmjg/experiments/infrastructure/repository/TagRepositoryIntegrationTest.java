@@ -4,6 +4,7 @@ import static es.jmjg.experiments.shared.TestDataSamples.*;
 import static org.assertj.core.api.Assertions.*;
 
 import es.jmjg.experiments.domain.tag.exception.TagInUseException;
+import es.jmjg.experiments.shared.TestDataSamples;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,59 +24,59 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldFindTagByName() {
     // When
-    Optional<Tag> foundTag = tagRepository.findByName(TECHNOLOGY_TAG_NAME);
+    Optional<Tag> foundTag = tagRepository.findByName(TAG_TECHNOLOGY);
 
     // Then
     assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getName()).isEqualTo(TECHNOLOGY_TAG_NAME);
-    assertThat(foundTag.get().getUuid()).isEqualTo(TECHNOLOGY_UUID);
+    assertThat(foundTag.get().getName()).isEqualTo(TAG_TECHNOLOGY);
+    assertThat(foundTag.get().getUuid()).isEqualTo(TAG_TECHNOLOGY_UUID);
   }
 
   @Test
   void shouldFindTagByUuid() {
     // When
-    Optional<Tag> foundTag = tagRepository.findByUuid(JAVA_UUID);
+    Optional<Tag> foundTag = tagRepository.findByUuid(TAG_JAVA_UUID);
 
     // Then
     assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getUuid()).isEqualTo(JAVA_UUID);
-    assertThat(foundTag.get().getName()).isEqualTo(JAVA_TAG_NAME);
+    assertThat(foundTag.get().getUuid()).isEqualTo(TAG_JAVA_UUID);
+    assertThat(foundTag.get().getName()).isEqualTo(TestDataSamples.TAG_JAVA);
   }
 
   @Test
   void shouldFindMultipleTagsByUuid() {
     // When
-    Optional<Tag> springBootTag = tagRepository.findByUuid(SPRING_BOOT_UUID);
-    Optional<Tag> jpaTag = tagRepository.findByUuid(JPA_UUID);
-    Optional<Tag> databaseTag = tagRepository.findByUuid(DATABASE_UUID);
+    Optional<Tag> springBootTag = tagRepository.findByUuid(TAG_SPRING_BOOT_UUID);
+    Optional<Tag> jpaTag = tagRepository.findByUuid(TAG_JPA_UUID);
+    Optional<Tag> databaseTag = tagRepository.findByUuid(TAG_DATABASE_UUID);
 
     // Then
     assertThat(springBootTag).isPresent();
-    assertThat(springBootTag.get().getName()).isEqualTo(SPRING_BOOT_TAG_NAME);
+    assertThat(springBootTag.get().getName()).isEqualTo(TestDataSamples.TAG_SPRING_BOOT);
 
     assertThat(jpaTag).isPresent();
-    assertThat(jpaTag.get().getName()).isEqualTo(JPA_TAG_NAME);
+    assertThat(jpaTag.get().getName()).isEqualTo(TAG_JPA);
 
     assertThat(databaseTag).isPresent();
-    assertThat(databaseTag.get().getName()).isEqualTo(DATABASE_TAG_NAME);
+    assertThat(databaseTag.get().getName()).isEqualTo(TAG_DATABASE);
   }
 
   @Test
   void shouldFindTagsByName() {
     // When
-    Optional<Tag> programmingTag = tagRepository.findByName(PROGRAMMING_TAG_NAME);
-    Optional<Tag> webDevelopmentTag = tagRepository.findByName(WEB_DEVELOPMENT_TAG_NAME);
-    Optional<Tag> bestPracticesTag = tagRepository.findByName(BEST_PRACTICES_TAG_NAME);
+    Optional<Tag> programmingTag = tagRepository.findByName(TAG_PROGRAMMING);
+    Optional<Tag> webDevelopmentTag = tagRepository.findByName(TAG_WEB_DEVELOPMENT);
+    Optional<Tag> bestPracticesTag = tagRepository.findByName(TAG_BEST_PRACTICES);
 
     // Then
     assertThat(programmingTag).isPresent();
-    assertThat(programmingTag.get().getUuid()).isEqualTo(PROGRAMMING_UUID);
+    assertThat(programmingTag.get().getUuid()).isEqualTo(TAG_PROGRAMMING_UUID);
 
     assertThat(webDevelopmentTag).isPresent();
-    assertThat(webDevelopmentTag.get().getUuid()).isEqualTo(WEB_DEVELOPMENT_UUID);
+    assertThat(webDevelopmentTag.get().getUuid()).isEqualTo(TAG_WEB_DEVELOPMENT_UUID);
 
     assertThat(bestPracticesTag).isPresent();
-    assertThat(bestPracticesTag.get().getUuid()).isEqualTo(BEST_PRACTICES_UUID);
+    assertThat(bestPracticesTag.get().getUuid()).isEqualTo(TAG_BEST_PRACTICES_UUID);
   }
 
   @Test
@@ -99,27 +100,27 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldPreventDeletionOfTagAssignedToPosts() {
     // Given - Use the "java" tag which is assigned to posts in the migration data
-    Optional<Tag> javaTag = tagRepository.findByName(JAVA_TAG_NAME);
+    Optional<Tag> javaTag = tagRepository.findByName(TestDataSamples.TAG_JAVA);
     assertThat(javaTag).isPresent();
 
     // When & Then - Should throw exception when trying to delete
     assertThatThrownBy(() -> tagRepository.deleteByUuid(javaTag.get().getUuid()))
         .isInstanceOf(TagInUseException.class)
-        .hasMessageContaining("Cannot delete tag '" + JAVA_TAG_NAME + "' because it is assigned to posts");
+        .hasMessageContaining("Cannot delete tag '" + TestDataSamples.TAG_JAVA + "' because it is assigned to posts");
   }
 
   @Test
   void shouldFindAllPredefinedTags() {
     // When & Then - Verify all predefined tags exist
-    assertThat(tagRepository.findByName(TECHNOLOGY_TAG_NAME)).isPresent();
-    assertThat(tagRepository.findByName(PROGRAMMING_TAG_NAME)).isPresent();
-    assertThat(tagRepository.findByName(JAVA_TAG_NAME)).isPresent();
-    assertThat(tagRepository.findByName(SPRING_BOOT_TAG_NAME)).isPresent();
-    assertThat(tagRepository.findByName(JPA_TAG_NAME)).isPresent();
-    assertThat(tagRepository.findByName(DATABASE_TAG_NAME)).isPresent();
-    assertThat(tagRepository.findByName(WEB_DEVELOPMENT_TAG_NAME)).isPresent();
+    assertThat(tagRepository.findByName(TAG_TECHNOLOGY)).isPresent();
+    assertThat(tagRepository.findByName(TAG_PROGRAMMING)).isPresent();
+    assertThat(tagRepository.findByName(TestDataSamples.TAG_JAVA)).isPresent();
+    assertThat(tagRepository.findByName(TestDataSamples.TAG_SPRING_BOOT)).isPresent();
+    assertThat(tagRepository.findByName(TAG_JPA)).isPresent();
+    assertThat(tagRepository.findByName(TAG_DATABASE)).isPresent();
+    assertThat(tagRepository.findByName(TAG_WEB_DEVELOPMENT)).isPresent();
     assertThat(tagRepository.findByName("tutorial")).isPresent();
-    assertThat(tagRepository.findByName(BEST_PRACTICES_TAG_NAME)).isPresent();
+    assertThat(tagRepository.findByName(TAG_BEST_PRACTICES)).isPresent();
     assertThat(tagRepository.findByName("architecture")).isPresent();
     assertThat(tagRepository.findByName("microservices")).isPresent();
     assertThat(tagRepository.findByName("testing")).isPresent();

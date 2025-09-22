@@ -17,7 +17,7 @@ class TagControllerGetUsersByTagUuidIntegrationTest extends BaseControllerIntegr
   @Test
   void shouldFindUsersByTag() {
     // Given
-    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -57,7 +57,7 @@ class TagControllerGetUsersByTagUuidIntegrationTest extends BaseControllerIntegr
   @Test
   void whenUnauthorized_shouldFindUsersByTag() {
     // Given
-    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     ResponseEntity<Object> response = restTemplate.exchange(

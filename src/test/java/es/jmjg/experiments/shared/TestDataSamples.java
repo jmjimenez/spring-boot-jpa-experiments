@@ -13,25 +13,27 @@ public final class TestDataSamples {
   }
 
   // Sample tags from Flyway migration data
-  //TODO: rename to TAG_XXXX_UUID
-  public static final UUID TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
-  public static final UUID JAVA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
-  public static final UUID DEVELOPER_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440071");
-  public static final UUID SPRING_BOOT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440059");
-  public static final UUID NOT_USED_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440072");
-  public static final UUID PROGRAMMING_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440057");
-  public static final UUID JPA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440060");
-  public static final UUID DATABASE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440061");
-  public static final UUID WEB_DEVELOPMENT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440062");
-  public static final UUID BEST_PRACTICES_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440064");
+  public static final UUID TAG_TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
+  public static final UUID TAG_JAVA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
+  public static final UUID TAG_DEVELOPER_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440071");
+  public static final UUID TAG_SPRING_BOOT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440059");
+  public static final UUID TAG_NOT_USED_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440072");
+  public static final UUID TAG_PROGRAMMING_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440057");
+  public static final UUID TAG_JPA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440060");
+  public static final UUID TAG_DATABASE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440061");
+  public static final UUID TAG_WEB_DEVELOPMENT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440062");
+  public static final UUID TAG_BEST_PRACTICES_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440064");
 
   // Tag name constants for tests
   public static final String TAG_JAVA = "java";
   public static final String TAG_SPRING_BOOT = "spring-boot";
   public static final String TAG_DEVELOPER = "developer";
-  public static final String PROGRAMMING_TAG_NAME = "programming";
-  public static final String WEB_DEVELOPMENT_TAG_NAME = "web-development";
-  public static final String BEST_PRACTICES_TAG_NAME = "best-practices";
+  public static final String TAG_PROGRAMMING = "programming";
+  public static final String TAG_WEB_DEVELOPMENT = "web-development";
+  public static final String TAG_BEST_PRACTICES = "best-practices";
+  public static final String TAG_TECHNOLOGY = "technology";
+  public static final String TAG_JPA = "jpa";
+  public static final String TAG_DATABASE = "database";
 
   // Sample users from Flyway migration data
   public static final int LEANNE_ID = 1;
@@ -89,16 +91,6 @@ public final class TestDataSamples {
   public static final String CLEMENTINE_POST_BODY = "repellat aliquid praesentium dolorem quo\\nsed totam minus non itaque\\nnihil labore molestiae sunt dolor eveniet hic recusandae veniam\\ntempora et tenetur expedita sunt";
   public static final UUID CLEMENTINE_POST_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440026");
 
-  // Sample tag names from Flyway migration data
-  public static final String TECHNOLOGY_TAG_NAME = "technology";
-  public static final String JAVA_TAG_NAME = "java";
-  public static final String SPRING_BOOT_TAG_NAME = "spring-boot";
-  public static final String JPA_TAG_NAME = "jpa";
-  public static final String DATABASE_TAG_NAME = "database";
-
-  // Additional tag UUIDs from Flyway migration data
-  public static final UUID SPRING_BOOT_TAG_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440059");
-  public static final UUID DATABASE_TAG_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440061");
 
   // Sample search terms and expected counts from Flyway migration data
   public static final String SEARCH_TERM_SUNT = "fugiat";

@@ -69,7 +69,7 @@ class SaveTagIntegrationTest extends BaseIntegration {
   void save_WhenDuplicateUuid_ShouldThrowTagAlreadyExistsException() {
     // Given
     Tag tag = TagFactory.createTag("different-name");
-    tag.setUuid(TestDataSamples.TECHNOLOGY_UUID); // Use the same UUID
+    tag.setUuid(TestDataSamples.TAG_TECHNOLOGY_UUID); // Use the same UUID
 
     // When & Then
     assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), UserFactory.createAdminUser())))
@@ -80,11 +80,12 @@ class SaveTagIntegrationTest extends BaseIntegration {
   @Test
   void save_WhenDuplicateName_ShouldThrowTagAlreadyExistsException() {
     // Given - using existing sample data from migration test
-    Tag tag = TagFactory.createTag(TestDataSamples.TECHNOLOGY_TAG_NAME);
+    Tag tag = TagFactory.createTag(TestDataSamples.TAG_TECHNOLOGY);
 
     // When & Then
     assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), UserFactory.createAdminUser())))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with name '" + tag.getName() + "' already exists with uuid '" + TestDataSamples.TECHNOLOGY_UUID + "'");
+        .hasMessage("Tag with name '" + tag.getName() + "' already exists with uuid '" + TestDataSamples.TAG_TECHNOLOGY_UUID
+            + "'");
   }
 }

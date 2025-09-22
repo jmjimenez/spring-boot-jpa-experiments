@@ -18,7 +18,7 @@ class TagControllerPutIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldUpdateExistingTagName() {
     // Given
-    UUID tagUuid = TestDataSamples.JAVA_UUID;
+    UUID tagUuid = TestDataSamples.TAG_JAVA_UUID;
     UpdateTagRequestDto updateDto = new UpdateTagRequestDto(tagUuid, "updated-java");
 
     // When
@@ -58,7 +58,7 @@ class TagControllerPutIntegrationTest extends BaseControllerIntegration {
   @Test
   void whenUnauthorized_shouldReturnUnathorized() {
     // Given
-    UUID tagUuid = TestDataSamples.JAVA_UUID;
+    UUID tagUuid = TestDataSamples.TAG_JAVA_UUID;
     UpdateTagRequestDto updateDto = new UpdateTagRequestDto(tagUuid, "updated-java");
 
     // When

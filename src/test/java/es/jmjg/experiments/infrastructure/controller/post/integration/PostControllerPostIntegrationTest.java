@@ -20,7 +20,7 @@ class PostControllerPostIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldCreateNewPostWhenPostIsValid() {
-    final String existingTagName = TestDataSamples.TECHNOLOGY_TAG_NAME;
+    final String existingTagName = TestDataSamples.TAG_TECHNOLOGY;
     final String postTitle = "101 Title";
     final String postBody = "101 Body";
 

@@ -15,7 +15,7 @@ class TagControllerDeleteIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldDeleteUnusedTagByUuid() {
     // Given
-    UUID tagUuid = TestDataSamples.NOT_USED_UUID;
+    UUID tagUuid = TestDataSamples.TAG_NOT_USED_UUID;
 
     // When
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -30,7 +30,7 @@ class TagControllerDeleteIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnErrorWhenDeletingTagUsedByUser() {
     // Given
-    UUID tagUuid = TestDataSamples.DEVELOPER_UUID;
+    UUID tagUuid = TestDataSamples.TAG_DEVELOPER_UUID;
 
     // When
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -60,7 +60,7 @@ class TagControllerDeleteIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnErrorWhenDeletingTagUsedByPost() {
     // Given
-    UUID tagUuid = TestDataSamples.TECHNOLOGY_UUID;
+    UUID tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -74,7 +74,7 @@ class TagControllerDeleteIntegrationTest extends BaseControllerIntegration {
   @Test
   void when_Unauthorized_shouldReturnUnauthorized() {
     // Given
-    UUID tagUuid = TestDataSamples.NOT_USED_UUID;
+    UUID tagUuid = TestDataSamples.TAG_NOT_USED_UUID;
 
     // When
     ResponseEntity<Void> response = restTemplate.exchange(

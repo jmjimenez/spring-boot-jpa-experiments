@@ -23,7 +23,7 @@ class PostControllerPatchTagsIntegrationTest extends BaseControllerIntegration {
     final String username = TestDataSamples.LEANNE_USERNAME;
     final String password = TestDataSamples.LEANNE_PASSWORD;
     final UUID postUuid = TestDataSamples.LEANNE_POST_UUID;
-    final List<String> newTags = List.of(TestDataSamples.JAVA_TAG_NAME, TestDataSamples.TECHNOLOGY_TAG_NAME);
+    final List<String> newTags = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_TECHNOLOGY);
 
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(newTags);
     final String accessToken = createAccessToken(username, password);
@@ -41,7 +41,7 @@ class PostControllerPatchTagsIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnUnauthorizedWhenUserNotAuthenticated() {
     final UUID postUuid = TestDataSamples.LEANNE_UUID; // Replace with actual post UUID for Leanne
-    final List<String> newTags = List.of(TestDataSamples.JAVA_TAG_NAME, TestDataSamples.TECHNOLOGY_TAG_NAME);
+    final List<String> newTags = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_TECHNOLOGY);
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(newTags);
     HttpEntity<UpdatePostTagsRequestDto> request = new HttpEntity<>(requestDto);
 
@@ -55,7 +55,7 @@ class PostControllerPatchTagsIntegrationTest extends BaseControllerIntegration {
     final String username = TestDataSamples.LEANNE_USERNAME;
     final String password = TestDataSamples.LEANNE_PASSWORD;
     final UUID nonExistentUuid = UUID.randomUUID();
-    final List<String> newTags = List.of(TestDataSamples.JAVA_TAG_NAME, TestDataSamples.TECHNOLOGY_TAG_NAME);
+    final List<String> newTags = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_TECHNOLOGY);
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(newTags);
     final String accessToken = createAccessToken(username, password);
     HttpEntity<UpdatePostTagsRequestDto> request = createAuthenticatedRequestWithAccessToken(accessToken, requestDto);

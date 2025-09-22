@@ -22,14 +22,14 @@ class FindTagByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenTagExists_ShouldReturnTag() {
     // Given - using existing test data from migration
-    UUID existingTagUuid = TestDataSamples.TECHNOLOGY_UUID;
+    UUID existingTagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     Tag result = findTagByUuid.findByUuid(existingTagUuid);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getName()).isEqualTo(TestDataSamples.TECHNOLOGY_TAG_NAME);
+    assertThat(result.getName()).isEqualTo(TestDataSamples.TAG_TECHNOLOGY);
     assertThat(result.getUuid()).isEqualTo(existingTagUuid);
   }
 
@@ -55,14 +55,14 @@ class FindTagByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuidOptional_WhenTagExists_ShouldReturnOptionalWithTag() {
     // Given - using existing test data from migration
-    UUID existingTagUuid = TestDataSamples.JAVA_UUID;
+    UUID existingTagUuid = TestDataSamples.TAG_JAVA_UUID;
 
     // When
     Optional<Tag> result = findTagByUuid.findByUuidOptional(existingTagUuid);
 
     // Then
     assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo(TestDataSamples.JAVA_TAG_NAME);
+    assertThat(result.get().getName()).isEqualTo(TestDataSamples.TAG_JAVA);
     assertThat(result.get().getUuid()).isEqualTo(existingTagUuid);
   }
 
@@ -90,8 +90,8 @@ class FindTagByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenMultipleTagsExist_ShouldReturnCorrectTag() {
     // Given - using existing test data from migration
-    UUID springBootTagUuid = TestDataSamples.SPRING_BOOT_TAG_UUID;
-    UUID databaseTagUuid = TestDataSamples.DATABASE_TAG_UUID;
+    UUID springBootTagUuid = TestDataSamples.TAG_SPRING_BOOT_UUID;
+    UUID databaseTagUuid = TestDataSamples.TAG_DATABASE_UUID;
 
     // When
     Tag springBootResult = findTagByUuid.findByUuid(springBootTagUuid);
@@ -99,11 +99,11 @@ class FindTagByUuidIntegrationTest extends BaseIntegration {
 
     // Then
     assertThat(springBootResult).isNotNull();
-    assertThat(springBootResult.getName()).isEqualTo(TestDataSamples.SPRING_BOOT_TAG_NAME);
+    assertThat(springBootResult.getName()).isEqualTo(TestDataSamples.TAG_SPRING_BOOT);
     assertThat(springBootResult.getUuid()).isEqualTo(springBootTagUuid);
 
     assertThat(databaseResult).isNotNull();
-    assertThat(databaseResult.getName()).isEqualTo(TestDataSamples.DATABASE_TAG_NAME);
+    assertThat(databaseResult.getName()).isEqualTo(TestDataSamples.TAG_DATABASE);
     assertThat(databaseResult.getUuid()).isEqualTo(databaseTagUuid);
   }
 }
