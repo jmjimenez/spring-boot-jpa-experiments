@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Schema(description = "Response DTO for post in paginated list")
-abstract public class PostResponseDto {
+abstract public class AbstractPostResponseDto {
   @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
   private final UUID id;
 
@@ -26,7 +26,7 @@ abstract public class PostResponseDto {
   @Schema(description = "List of identifiers of comments associated with the post")
   private final List<PostCommentResponseDto> postComments;
 
-  public PostResponseDto(UUID id, UUID userId, String title, String body,
+  public AbstractPostResponseDto(UUID id, UUID userId, String title, String body,
       List<PostTagResponseDto> tags, List<PostCommentResponseDto> postComments) {
     this.id = id;
     this.userId = userId;

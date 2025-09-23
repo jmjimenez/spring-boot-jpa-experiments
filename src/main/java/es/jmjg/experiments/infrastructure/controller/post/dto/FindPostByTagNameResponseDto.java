@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Schema(description = "Response DTO")
-public class FindPostByTagNameResponseDto extends  PostResponseDto {
+public class FindPostByTagNameResponseDto extends AbstractPostResponseDto {
   public FindPostByTagNameResponseDto(UUID uuid, UUID userId, String title, String body,
     List<PostTagResponseDto> tags, List<PostCommentResponseDto> postComments) {
     super(uuid, userId, title, body, tags, postComments);
