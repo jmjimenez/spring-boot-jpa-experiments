@@ -6,7 +6,6 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostCommentByU
 import es.jmjg.experiments.infrastructure.controller.post.dto.PostCommentResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.TagDto;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -163,7 +162,8 @@ public class PostMapper {
       postComment.getUuid(),
       postComment.getUser().getUuid(),
       postComment.getPost().getUuid(),
-      postComment.getComment()
+      postComment.getComment(),
+      postComment.getCreatedAt()
     );
   }
 
@@ -312,13 +312,12 @@ public class PostMapper {
 
   public FindPostCommentByUuidResponseDto toFindPostCommentByUuidResponseDto(
     PostComment postComment) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     return new FindPostCommentByUuidResponseDto(
       postComment.getUuid(),
       postComment.getPost().getUuid(),
       postComment.getUser().getUuid(),
       postComment.getComment(),
-      postComment.getCreatedAt() != null ? postComment.getCreatedAt().format(formatter) : null
+      postComment.getCreatedAt()
     );
   }
 

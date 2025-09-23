@@ -1,23 +1,18 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
-@Schema(description = "Response DTO for created post")
-public class SavePostCommentResponseDto {
-  @Schema(description = "Identifier for the comment", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID id;
-
-  @Schema(description = "Identifier of the user who created the comment", example = "123e4567-e89b-12d3-a456-426614174001")
-  private UUID userId;
-
-  @Schema(description = "Identifier of the post to comment", example = "123e4567-e89b-12d3-a456-426614174001")
-  private UUID postId;
-
-  @Schema(description = "Text of the comment", example = "My First Comment")
-  private String comment;
+@Schema(description = "Response DTO for created post comment")
+public class SavePostCommentResponseDto extends AbstractPostCommentResponseDto {
+  public SavePostCommentResponseDto(
+      UUID id,
+      UUID userId,
+      UUID postId,
+      String comment,
+      LocalDateTime createdAt
+  ) {
+    super(id, userId, postId, comment,  createdAt);
+  }
 }

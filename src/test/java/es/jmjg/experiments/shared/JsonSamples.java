@@ -356,8 +356,8 @@ public final class JsonSamples {
     return """
         {
             "id":"%s",
-            "postId":"%s",
             "userId":"%s",
+            "postId":"%s",
             "comment":"%s",
             "createdAt":"%s"
         }
