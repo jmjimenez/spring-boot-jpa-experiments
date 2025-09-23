@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Schema(description = "Response DTO for post in paginated list")
-public class PostResponseDto {
+abstract public class PostResponseDto {
   @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
   private final UUID id;
 
