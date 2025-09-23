@@ -4,22 +4,10 @@ import java.util.List;
 import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
 @Schema(description = "Response DTO for created tag")
-public class SaveTagResponseDto {
-  @Schema(description = "Identifier for the tag", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID uuid;
-
-  @Schema(description = "Name of the tag", example = "java")
-  private String name;
-
-  @Schema(description = "List of post identifiers associated with this tag")
-  private List<UUID> posts;
-
-  @Schema(description = "List of user identifiers associated with this tag")
-  private List<UUID> users;
+public class SaveTagResponseDto extends TagResponseDto {
+  public SaveTagResponseDto(UUID uuid, String name, List<UUID> posts, List<UUID> users) {
+    super(uuid, name, posts, users);
+  }
 }
