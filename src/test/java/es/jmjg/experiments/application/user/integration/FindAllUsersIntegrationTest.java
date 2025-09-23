@@ -192,7 +192,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(result.getContent()).hasSize(5);
     assertThat(result.getContent()).extracting("name")
         .doesNotContain(TestDataSamples.LEANNE_NAME);
-    assertThat(result.getContent()).extracting("uuid")
+    assertThat(result.getContent()).extracting("id")
         .doesNotContain(TestDataSamples.LEANNE_UUID);
     assertThat(result.getTotalElements()).isEqualTo(5);
     assertThat(result.getTotalPages()).isEqualTo(1);

@@ -14,6 +14,6 @@ public class PostNotFound extends RuntimeException {
   }
 
   public PostNotFound(UUID uuid) {
-    super("Post not found with uuid: " + uuid);
+    super("Post not found with id: " + uuid);
   }
 }

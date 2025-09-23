@@ -14,6 +14,6 @@ public class TagNotFound extends RuntimeException {
   }
 
   public TagNotFound(UUID uuid) {
-    super("Tag not found with uuid: " + uuid);
+    super("Tag not found with id: " + uuid);
   }
 }

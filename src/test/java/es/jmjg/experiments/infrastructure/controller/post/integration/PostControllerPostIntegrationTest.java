@@ -54,7 +54,7 @@ class PostControllerPostIntegrationTest extends BaseControllerIntegration {
               assertThat(body.getTags()).extracting("name")
                   .containsExactlyInAnyOrder(existingTagName);
               // Verify the Location header contains the correct UUID
-              assertThat(locationHeader).isEqualTo("/api/posts/" + body.getUuid().toString());
+              assertThat(locationHeader).isEqualTo("/api/posts/" + body.getId().toString());
             });
 
     // Verify the post can be found and has the expected tags
@@ -62,7 +62,7 @@ class PostControllerPostIntegrationTest extends BaseControllerIntegration {
       HttpEntity<String> getRequest = createAuthenticatedRequestWithAccessToken(accessToken);
 
       ResponseEntity<FindPostByUuidResponseDto> foundPostResponse = restTemplate.exchange(
-          "/api/posts/" + p.getUuid(),
+          "/api/posts/" + p.getId(),
           HttpMethod.GET,
           getRequest,
           FindPostByUuidResponseDto.class);

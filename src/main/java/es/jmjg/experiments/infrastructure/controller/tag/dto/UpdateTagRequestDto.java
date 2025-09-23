@@ -14,7 +14,7 @@ import lombok.Getter;
 public class UpdateTagRequestDto {
   @NotNull(message = "Identifier is required")
   @Schema(description = "Identifier for the tag", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID uuid;
+  private UUID id;
 
   @NotEmpty(message = "Name is required")
   @Schema(description = "New name for the tag", example = "spring-boot")

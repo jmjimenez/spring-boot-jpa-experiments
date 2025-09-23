@@ -120,7 +120,7 @@ class UpdatePostTest {
     var updatePostDto = PostFactory.createPostUpdateDto(nonExistentPostUuid, "Updated Title", "Updated Body", testUser);
     assertThatThrownBy(() -> updatePost.update(updatePostDto))
         .isInstanceOf(PostNotFound.class)
-        .hasMessage("Post not found with uuid: " + nonExistentPostUuid);
+        .hasMessage("Post not found with id: " + nonExistentPostUuid);
 
     verify(postRepository, times(1)).findByUuid(nonExistentPostUuid);
     verify(postRepository, never()).save(any());

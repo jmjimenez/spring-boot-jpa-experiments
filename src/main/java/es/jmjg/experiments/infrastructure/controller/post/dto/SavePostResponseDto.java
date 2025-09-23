@@ -11,7 +11,7 @@ import lombok.Getter;
 @Schema(description = "Response DTO for created post")
 public class SavePostResponseDto {
   @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
-  private final UUID uuid;
+  private final UUID id;
 
   @Schema(description = "Identifier of the user who created the post", example = "123e4567-e89b-12d3-a456-426614174001")
   private final UUID userId;
@@ -25,9 +25,9 @@ public class SavePostResponseDto {
   @Schema(description = "List of tags associated with the post")
   private final List<PostTagResponseDto> tags;
 
-  public SavePostResponseDto(UUID uuid, UUID userId, String title, String body,
+  public SavePostResponseDto(UUID id, UUID userId, String title, String body,
       List<PostTagResponseDto> tags) {
-    this.uuid = uuid;
+    this.id = id;
     this.userId = userId;
     this.title = title;
     this.body = body;

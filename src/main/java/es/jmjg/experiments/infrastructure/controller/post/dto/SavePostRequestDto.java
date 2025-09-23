@@ -15,7 +15,7 @@ import lombok.Getter;
 public class SavePostRequestDto {
   @NotNull(message = "Identifier is required")
   @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID uuid;
+  private UUID id;
 
   @NotEmpty(message = "Title is required")
   @Schema(description = "Title of the post", example = "My First Post")

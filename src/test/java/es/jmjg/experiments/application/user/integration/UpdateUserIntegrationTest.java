@@ -67,6 +67,6 @@ class UpdateUserIntegrationTest extends BaseIntegration {
 
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)
-        .hasMessageContaining("User not found with uuid: " + updateUserDto.uuid());
+        .hasMessageContaining("User not found with id: " + updateUserDto.uuid());
   }
 }

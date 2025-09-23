@@ -11,7 +11,7 @@ import lombok.Getter;
 public class TagDto {
   @NotEmpty(message = "Identifier is required")
   @Schema(description = "Identifier of the tag", example = "123e4567-e89b-12d3-a456-426614174001")
-  private UUID uuid;
+  private UUID id;
 
   @NotEmpty(message = "Name is required")
   @Schema(description = "Name of the tag", example = "java")

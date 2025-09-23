@@ -12,7 +12,7 @@ public record DeleteTagDto(
   AuthenticatedUserDto authenticatedUser) {
 
   public DeleteTagDto {
-      Objects.requireNonNull(uuid, "uuid cannot be null");
+      Objects.requireNonNull(uuid, "id cannot be null");
       Objects.requireNonNull(authenticatedUser, "authenticatedUserDto cannot be null");
     }
 }

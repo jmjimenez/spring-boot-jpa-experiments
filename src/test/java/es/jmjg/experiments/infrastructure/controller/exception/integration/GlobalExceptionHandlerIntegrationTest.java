@@ -46,7 +46,7 @@ class GlobalExceptionHandlerIntegrationTest extends BaseControllerIntegration {
         TestDataSamples.ADMIN_PASSWORD);
 
     ResponseEntity<ApiErrorResponse> response = restTemplate.exchange(
-        "/api/posts/invalid-uuid-format",
+        "/api/posts/invalid-id-format",
         HttpMethod.GET,
         request,
         ApiErrorResponse.class);
@@ -57,8 +57,8 @@ class GlobalExceptionHandlerIntegrationTest extends BaseControllerIntegration {
     assertThat(responseBody).isNotNull().satisfies(errorResponse -> {
     assertThat(errorResponse.getStatus()).isEqualTo(400);
       assertThat(errorResponse.getError()).isEqualTo("Bad Request");
-      assertThat(errorResponse.getMessage()).contains("Invalid parameter: uuid");
-      assertThat(errorResponse.getPath()).isEqualTo("uri=/api/posts/invalid-uuid-format");
+      assertThat(errorResponse.getMessage()).contains("Invalid parameter: id");
+      assertThat(errorResponse.getPath()).isEqualTo("uri=/api/posts/invalid-id-format");
     });
   }
 

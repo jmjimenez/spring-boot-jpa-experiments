@@ -54,7 +54,7 @@ class DeleteTagTest {
     // When & Then
     assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(uuid, adminUser)))
         .isInstanceOf(TagNotFound.class)
-        .hasMessage("Tag not found with uuid: " + uuid);
+        .hasMessage("Tag not found with id: " + uuid);
   }
 
   @Test

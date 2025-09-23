@@ -11,8 +11,8 @@ public record DeletePostCommentDto(
     @NotNull AuthenticatedUserDto authenticatedUser) {
 
   public DeletePostCommentDto {
-    Objects.requireNonNull(uuid, "uuid cannot be null");
-    Objects.requireNonNull(postUuid, "post uuid cannot be null");
+    Objects.requireNonNull(uuid, "id cannot be null");
+    Objects.requireNonNull(postUuid, "post id cannot be null");
     Objects.requireNonNull(authenticatedUser, "authenticatedUserDto cannot be null");
   }
 }

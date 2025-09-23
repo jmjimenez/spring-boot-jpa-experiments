@@ -74,7 +74,7 @@ class SaveTagIntegrationTest extends BaseIntegration {
     // When & Then
     assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), UserFactory.createAdminUser())))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with uuid '" + tag.getUuid() + "' already exists");
+        .hasMessage("Tag with id '" + tag.getUuid() + "' already exists");
   }
 
   @Test
@@ -85,7 +85,7 @@ class SaveTagIntegrationTest extends BaseIntegration {
     // When & Then
     assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), UserFactory.createAdminUser())))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with name '" + tag.getName() + "' already exists with uuid '" + TestDataSamples.TAG_TECHNOLOGY_UUID
+        .hasMessage("Tag with name '" + tag.getName() + "' already exists with id '" + TestDataSamples.TAG_TECHNOLOGY_UUID
             + "'");
   }
 }

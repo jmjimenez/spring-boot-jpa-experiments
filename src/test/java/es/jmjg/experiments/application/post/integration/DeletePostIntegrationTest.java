@@ -91,6 +91,6 @@ class DeletePostIntegrationTest extends BaseIntegration {
     // When & Then
     assertThatThrownBy(() -> deletePost.delete(deletePostDto))
         .isInstanceOf(PostNotFound.class)
-        .hasMessage("Post not found with uuid: " + nonExistentUuid);
+        .hasMessage("Post not found with id: " + nonExistentUuid);
   }
 }

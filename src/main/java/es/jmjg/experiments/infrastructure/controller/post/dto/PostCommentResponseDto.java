@@ -10,5 +10,5 @@ import lombok.Getter;
 @Schema(description = "Response DTO for post comment")
 public class PostCommentResponseDto {
   @Schema(description = "Identifier for the comment", example = "123e4567-e89b-12d3-a456-426614174002")
-  private UUID uuid;
+  private UUID id;
 }

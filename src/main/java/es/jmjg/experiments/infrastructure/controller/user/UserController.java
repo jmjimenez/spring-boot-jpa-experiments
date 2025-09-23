@@ -184,7 +184,7 @@ public class UserController {
     @AuthenticationPrincipal JwtUserDetails userDetails,
     @Parameter(description = "User data to create") @RequestBody @Valid SaveUserRequestDto userDto) {
     SaveUserDto saveUserDto = new SaveUserDto(
-      userDto.getUuid(),
+      userDto.getId(),
       userDto.getName(),
       userDto.getEmail(),
       userDto.getUsername(),

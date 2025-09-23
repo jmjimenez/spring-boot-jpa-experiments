@@ -14,7 +14,7 @@ public record SaveTagDto(
   AuthenticatedUserDto authenticatedUser) {
 
   public SaveTagDto {
-    Objects.requireNonNull(uuid, "uuid cannot be null");
+    Objects.requireNonNull(uuid, "id cannot be null");
     Objects.requireNonNull(uuid, "tag name cannot be null");
     Objects.requireNonNull(authenticatedUser, "authenticatedUserDto cannot be null");
   }

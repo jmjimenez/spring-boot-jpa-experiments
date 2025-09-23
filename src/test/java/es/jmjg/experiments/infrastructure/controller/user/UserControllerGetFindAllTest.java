@@ -69,6 +69,7 @@ class UserControllerGetFindAllTest extends BaseUserControllerTest {
     Page<User> emptyUserPage = new PageImpl<>(emptyUsers, pageable, 0);
     when(findAllUsers.findAll(any(FindAllUsersDto.class))).thenReturn(emptyUserPage);
 
+    //TODO: move this json to json samples
     String expectedEmptyJson = """
         {
           "content": [],

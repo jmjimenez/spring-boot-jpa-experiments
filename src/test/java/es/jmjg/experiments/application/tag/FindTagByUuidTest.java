@@ -58,7 +58,7 @@ class FindTagByUuidTest {
     // When & Then
     assertThatThrownBy(() -> findTagByUuid.findByUuid(uuid))
         .isInstanceOf(TagNotFound.class)
-        .hasMessage("Tag not found with uuid: " + uuid);
+        .hasMessage("Tag not found with id: " + uuid);
   }
 
   @Test

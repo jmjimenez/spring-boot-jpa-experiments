@@ -41,9 +41,9 @@ class UserControllerPostIntegrationTest extends BaseControllerIntegration {
       assertThat(u.getName()).isEqualTo("New User");
       assertThat(u.getEmail()).isEqualTo("new@example.com");
       assertThat(u.getUsername()).isEqualTo("newuser");
-      assertThat(u.getUuid()).isNotNull();
+      assertThat(u.getId()).isNotNull();
       // Verify the Location header contains the correct UUID
-      assertThat(locationHeader).isEqualTo("/api/users/" + u.getUuid());
+      assertThat(locationHeader).isEqualTo("/api/users/" + u.getId());
     });
 
     // Test that the newly created user can authenticate

@@ -128,7 +128,7 @@ public class PostMapper {
 
   public SavePostDto toSavePostDto(SavePostRequestDto postRequestDto, AuthenticatedUserDto authenticatedUser) {
     return new SavePostDto(
-      postRequestDto.getUuid(),
+      postRequestDto.getId(),
       postRequestDto.getTitle(),
       postRequestDto.getBody(),
       authenticatedUser,

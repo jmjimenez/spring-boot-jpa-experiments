@@ -10,7 +10,7 @@ public record FindUserByUuidDto(
     @NotNull AuthenticatedUserDto authenticatedUser) {
 
   public FindUserByUuidDto {
-    Objects.requireNonNull(uuid, "uuid cannot be null");
+    Objects.requireNonNull(uuid, "id cannot be null");
     Objects.requireNonNull(authenticatedUser, "authenticatedUser cannot be null");
   }
 }

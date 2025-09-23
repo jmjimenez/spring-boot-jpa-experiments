@@ -6,8 +6,8 @@ import java.util.UUID;
 
 @Schema(description = "Response DTO")
 public class FindPostByUuidResponseDto extends PostResponseDto {
-  public FindPostByUuidResponseDto(UUID uuid, UUID userId, String title, String body,
+  public FindPostByUuidResponseDto(UUID id, UUID userId, String title, String body,
     List<PostTagResponseDto> tags, List<PostCommentResponseDto> postComments) {
-    super(uuid, userId, title, body, tags, postComments);
+    super(id, userId, title, body, tags, postComments);
   }
 }

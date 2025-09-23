@@ -77,7 +77,7 @@ class DeletePostTest {
     DeletePostDto deletePostDto = PostFactory.createDeletePostDto(post.getUuid(), postOwner);
     assertThatThrownBy(() -> deletePost.delete(deletePostDto))
         .isInstanceOf(PostNotFound.class)
-        .hasMessage("Post not found with uuid: " + post.getUuid());
+        .hasMessage("Post not found with id: " + post.getUuid());
 
     verify(postRepository, times(1)).findByUuid(post.getUuid());
     verify(postRepository, never()).deleteById(any());

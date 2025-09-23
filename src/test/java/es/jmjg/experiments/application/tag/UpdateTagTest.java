@@ -61,7 +61,7 @@ class UpdateTagTest {
     // When & Then
     assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(uuid, newName,UserFactory.createAdminUser())))
         .isInstanceOf(TagNotFound.class)
-        .hasMessage("Tag not found with uuid: " + uuid);
+        .hasMessage("Tag not found with id: " + uuid);
   }
 
   @Test

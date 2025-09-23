@@ -15,7 +15,7 @@ public record SavePostDto(
     List<String> tagNames) {
 
   public SavePostDto {
-    Objects.requireNonNull(uuid, "uuid cannot be null");
+    Objects.requireNonNull(uuid, "id cannot be null");
     Objects.requireNonNull(title, "title cannot be null");
     Objects.requireNonNull(body, "body cannot be null");
     Objects.requireNonNull(authenticatedUser, "authenticatedUser cannot be null");

@@ -66,7 +66,7 @@ class PostControllerPutTest extends BasePostControllerTest {
 
     UUID nonExistentUuid = UUID.randomUUID();
     when(updatePost.update(any()))
-        .thenThrow(new PostNotFound("Post not found with uuid: " + nonExistentUuid));
+        .thenThrow(new PostNotFound("Post not found with id: " + nonExistentUuid));
     String json = JsonSamples.createUpdatePostRequestJson(updated);
 
     mockMvc

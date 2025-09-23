@@ -56,7 +56,7 @@ class DeleteTagByUuidIntegrationTest extends BaseIntegration {
     // When & Then
     assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(nonExistentUuid, adminUser)))
         .isInstanceOf(TagNotFound.class)
-        .hasMessage("Tag not found with uuid: " + nonExistentUuid);
+        .hasMessage("Tag not found with id: " + nonExistentUuid);
   }
 
   @Test

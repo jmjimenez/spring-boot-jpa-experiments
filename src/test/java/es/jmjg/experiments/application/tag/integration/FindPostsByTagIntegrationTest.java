@@ -44,7 +44,7 @@ class FindPostsByTagIntegrationTest extends BaseIntegration {
     // When & Then
     assertThatThrownBy(() -> findPostsByTag.findByTagUuid(nonExistentUuid))
         .isInstanceOf(TagNotFound.class)
-        .hasMessage("Tag not found with uuid: " + nonExistentUuid);
+        .hasMessage("Tag not found with id: " + nonExistentUuid);
   }
 
   @Test

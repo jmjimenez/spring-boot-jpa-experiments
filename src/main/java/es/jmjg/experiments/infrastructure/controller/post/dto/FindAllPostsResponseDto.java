@@ -6,8 +6,8 @@ import java.util.UUID;
 
 @Schema(description = "Response DTO for post in paginated list")
 public class FindAllPostsResponseDto extends PostResponseDto {
-  public FindAllPostsResponseDto(UUID uuid, UUID userId, String title, String body,
+  public FindAllPostsResponseDto(UUID id, UUID userId, String title, String body,
     List<PostTagResponseDto> tags, List<PostCommentResponseDto> postComments) {
-    super(uuid, userId, title, body, tags, postComments);
+    super(id, userId, title, body, tags, postComments);
   }
 }

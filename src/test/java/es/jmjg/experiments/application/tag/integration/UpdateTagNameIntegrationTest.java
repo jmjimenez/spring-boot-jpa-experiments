@@ -54,7 +54,7 @@ class UpdateTagNameIntegrationTest extends BaseIntegration {
     // When & Then
     assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(nonExistentUuid, newName, UserFactory.createAdminUser())))
         .isInstanceOf(TagNotFound.class)
-        .hasMessage("Tag not found with uuid: " + nonExistentUuid);
+        .hasMessage("Tag not found with id: " + nonExistentUuid);
   }
 
   @Test

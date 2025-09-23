@@ -25,6 +25,6 @@ public class FindUserByUuid {
       throw new Forbidden("Access denied: only admins or the user themselves can view user data");
     }
 
-    return userRepository.findByUuid(findUserByUuidDto.uuid()).orElseThrow(() -> new UserNotFound("user with uuid " + findUserByUuidDto.uuid() + " not found"));
+    return userRepository.findByUuid(findUserByUuidDto.uuid()).orElseThrow(() -> new UserNotFound("user with id " + findUserByUuidDto.uuid() + " not found"));
   }
 }

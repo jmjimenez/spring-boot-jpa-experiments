@@ -13,7 +13,7 @@ import lombok.Getter;
 public class SavePostCommentRequestDto {
   @NotNull(message = "Identifier is required")
   @Schema(description = "Identifier for the comment", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID uuid;
+  private UUID id;
 
   @NotEmpty(message = "Comment is required")
   @Schema(description = "Text of the comment", example = "My First Comment")

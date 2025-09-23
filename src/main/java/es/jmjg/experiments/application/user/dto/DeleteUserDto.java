@@ -10,7 +10,7 @@ public record DeleteUserDto(
     @NotNull AuthenticatedUserDto authenticatedUser) {
 
   public DeleteUserDto {
-    Objects.requireNonNull(uuid, "uuid cannot be null");
+    Objects.requireNonNull(uuid, "id cannot be null");
     Objects.requireNonNull(authenticatedUser, "authenticatedUser cannot be null");
   }
 }

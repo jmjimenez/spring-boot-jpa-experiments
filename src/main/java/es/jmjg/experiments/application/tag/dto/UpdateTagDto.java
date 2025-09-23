@@ -14,7 +14,7 @@ public record UpdateTagDto(
   AuthenticatedUserDto authenticatedUser) {
 
   public UpdateTagDto {
-    Objects.requireNonNull(uuid, "uuid cannot be null");
+    Objects.requireNonNull(uuid, "id cannot be null");
     Objects.requireNonNull(uuid, "tag name cannot be null");
     Objects.requireNonNull(authenticatedUser, "authenticatedUserDto cannot be null");
   }

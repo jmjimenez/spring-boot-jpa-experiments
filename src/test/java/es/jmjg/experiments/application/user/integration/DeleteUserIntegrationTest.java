@@ -67,7 +67,7 @@ class DeleteUserIntegrationTest extends BaseIntegration {
     DeleteUserDto deleteUserDto = new DeleteUserDto(nonExistentUuid, authenticatedAdminUser);
     assertThatThrownBy(() -> deleteUser.delete(deleteUserDto))
         .isInstanceOf(UserNotFound.class)
-        .hasMessage("User not found with uuid: " + nonExistentUuid);
+        .hasMessage("User not found with id: " + nonExistentUuid);
   }
 
   @Test

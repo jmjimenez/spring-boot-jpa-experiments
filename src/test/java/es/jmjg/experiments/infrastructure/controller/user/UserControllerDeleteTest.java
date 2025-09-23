@@ -66,7 +66,7 @@ class UserControllerDeleteTest extends BaseUserControllerTest {
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status").value(404))
         .andExpect(jsonPath("$.error").value("Not Found"))
-        .andExpect(jsonPath("$.message").value("User not found with uuid: " + testUuid));
+        .andExpect(jsonPath("$.message").value("User not found with id: " + testUuid));
 
     verify(deleteUser, times(1)).delete(any(DeleteUserDto.class));
   }

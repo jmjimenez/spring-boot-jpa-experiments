@@ -12,7 +12,7 @@ public record UpdateUserDto(
     @NotNull AuthenticatedUserDto authenticatedUser) {
 
   public UpdateUserDto {
-    Objects.requireNonNull(uuid, "uuid cannot be null");
+    Objects.requireNonNull(uuid, "id cannot be null");
     Objects.requireNonNull(name, "name cannot be null");
     Objects.requireNonNull(email, "email cannot be null");
     Objects.requireNonNull(authenticatedUser, "authenticatedUser cannot be null");

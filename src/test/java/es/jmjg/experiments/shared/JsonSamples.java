@@ -23,14 +23,14 @@ public final class JsonSamples {
         {
             "content":[
                 {
-                    "uuid":"%s",
+                    "id":"%s",
                     "userId":"%s",
                     "title":"Hello, World!",
                     "body":"This is my first post.",
                     "tags":[]
                 },
                 {
-                    "uuid":"%s",
+                    "id":"%s",
                     "userId":"%s",
                     "title":"Second Post",
                     "body":"This is my second post.",
@@ -54,7 +54,7 @@ public final class JsonSamples {
         {
             "content":[
                 {
-                    "uuid":"%s",
+                    "id":"%s",
                     "userId":"%s",
                     "title":"Hello, World!",
                     "body":"This is my first post.",
@@ -88,18 +88,18 @@ public final class JsonSamples {
 
   public static String createFindPostByUuidJsonResponse(Post post) {
     String tags = post.getTags().stream()
-      .map(tag -> "{\"uuid\":\"%s\",\"name\":\"%s\"}".formatted(tag.getUuid(), tag.getName()))
+      .map(tag -> "{\"id\":\"%s\",\"name\":\"%s\"}".formatted(tag.getUuid(), tag.getName()))
       .reduce((a, b) -> a + "," + b)
       .orElse("");
 
     String comments = post.getComments().stream()
-      .map(comment -> "{\"uuid\":\"%s\"}".formatted(comment.getUuid()))
+      .map(comment -> "{\"id\":\"%s\"}".formatted(comment.getUuid()))
       .reduce((a, b) -> a + "," + b)
       .orElse("");
 
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "userId":"%s",
             "title":"%s",
             "body":"%s",
@@ -119,7 +119,7 @@ public final class JsonSamples {
   public static String createCreatePostRequestJson(Post post) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "title":"%s",
             "body":"%s"
         }
@@ -130,7 +130,7 @@ public final class JsonSamples {
   public static String createCreatePostResponseJson(Post post) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "userId":"%s",
             "title":"%s",
             "body":"%s",
@@ -147,7 +147,7 @@ public final class JsonSamples {
   public static String createUpdatePostRequestJson(Post post) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "title":"%s",
             "body":"%s"
         }
@@ -162,13 +162,13 @@ public final class JsonSamples {
     return """
         [
             {
-                "uuid":"%s",
+                "id":"%s",
                 "title":"%s",
                 "body":"%s",
                 "tags":[]
             },
             {
-                "uuid":"%s",
+                "id":"%s",
                 "title":"%s",
                 "body":"%s",
                 "tags":[]
@@ -189,7 +189,7 @@ public final class JsonSamples {
         {
             "content":[
                 {
-                    "uuid":"%s",
+                    "id":"%s",
                     "name":"Test User",
                     "email":"test@example.com",
                     "username":"testuser",
@@ -229,7 +229,7 @@ public final class JsonSamples {
   public static String createFindUserByUuidJsonResponse(List<Post> testPosts, UUID testUuid) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "name":"Test User",
             "email":"test@example.com",
             "username":"testuser",
@@ -242,7 +242,7 @@ public final class JsonSamples {
   public static String createFindUserByEmailJsonResponse(List<Post> testPosts, UUID testUuid) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "name":"Test User",
             "email":"test@example.com",
             "username":"testuser",
@@ -255,7 +255,7 @@ public final class JsonSamples {
   public static String createFindUserByUsernameJsonResponse(List<Post> testPosts, UUID testUuid) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "name":"Test User",
             "email":"test@example.com",
             "username":"testuser",
@@ -268,7 +268,7 @@ public final class JsonSamples {
   public static String createSaveUserRequestJson(UUID testUuid) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "name":"Test User",
             "email":"test@example.com",
             "username":"testuser",
@@ -280,7 +280,7 @@ public final class JsonSamples {
   public static String createSaveUserResponseJson(UUID testUuid) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "name":"Test User",
             "email":"test@example.com",
             "username":"testuser"
@@ -291,7 +291,7 @@ public final class JsonSamples {
   public static String createUpdateUserRequestJson(UUID testUuid) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "name":"Updated User",
             "email":"updated@example.com",
             "username":"updateduser",
@@ -303,7 +303,7 @@ public final class JsonSamples {
   public static String createUpdateUserResponseJson(List<Post> testPosts, UUID testUuid) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "name":"Updated User",
             "email":"updated@example.com",
             "username":"updateduser",
@@ -330,12 +330,11 @@ public final class JsonSamples {
         """.formatted(resetKey, newPassword);
   }
 
-  //TODO: replace all references to uuid to id
   //TODO: use kebab-case for json fields
   public static String createAddPostCommentRequestJson(PostComment postComment) {
     return """
         {
-            "uuid":"%s",
+            "id":"%s",
             "comment":"%s"
         }
         """.formatted(postComment.getUuid(), postComment.getComment());

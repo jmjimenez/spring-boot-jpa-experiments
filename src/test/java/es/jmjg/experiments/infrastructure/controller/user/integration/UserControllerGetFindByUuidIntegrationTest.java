@@ -27,7 +27,7 @@ class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegrati
 
     FindUserByUuidResponseDto user = response.getBody();
     assertThat(user).isNotNull().satisfies(u -> {
-      assertThat(u.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+      assertThat(u.getId()).isEqualTo(TestDataSamples.LEANNE_UUID);
       assertThat(u.getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
       assertThat(u.getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
       assertThat(u.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
@@ -77,7 +77,7 @@ class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegrati
 
     FindUserByUuidResponseDto user = response.getBody();
     assertThat(user).isNotNull().satisfies(u -> {
-      assertThat(u.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+      assertThat(u.getId()).isEqualTo(TestDataSamples.LEANNE_UUID);
       assertThat(u.getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
       assertThat(u.getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
       assertThat(u.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);

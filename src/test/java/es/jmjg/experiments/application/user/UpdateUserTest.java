@@ -108,10 +108,11 @@ class UpdateUserTest {
     // When & Then
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)
-        .hasMessageContaining("User not found with uuid: " + newId);
+        .hasMessageContaining("User not found with id: " + newId);
     verify(userRepository, never()).save(any());
   }
 
+  //TODO: move to factory
   private UpdateUserDto createUpdateUserDto(UUID uuid, AuthenticatedUserDto authenticatedUser, String name,
       String email) {
     return new UpdateUserDto(

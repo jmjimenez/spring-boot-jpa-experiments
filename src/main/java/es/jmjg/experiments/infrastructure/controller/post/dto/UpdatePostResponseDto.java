@@ -11,7 +11,7 @@ import lombok.Getter;
 @Schema(description = "Response DTO for updated post")
 public class UpdatePostResponseDto {
   @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
-  private final UUID uuid;
+  private final UUID id;
 
   @Schema(description = "Identifier of the user who updated the post", example = "123e4567-e89b-12d3-a456-426614174001")
   private final UUID userId;
@@ -26,9 +26,9 @@ public class UpdatePostResponseDto {
   private final List<PostTagResponseDto> tags;
 
   // Constructor with tags
-  public UpdatePostResponseDto(UUID uuid, UUID userId, String title, String body,
+  public UpdatePostResponseDto(UUID id, UUID userId, String title, String body,
       List<PostTagResponseDto> tags) {
-    this.uuid = uuid;
+    this.id = id;
     this.userId = userId;
     this.title = title;
     this.body = body;
