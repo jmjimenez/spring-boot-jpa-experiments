@@ -121,9 +121,9 @@ public class UserController {
     return users.map(userMapper::toFindAllUsersResponseDto);
   }
 
-  @GetMapping("/{uuid}")
+  @GetMapping("/{id}")
   @Transactional(readOnly = true)
-  @Operation(summary = "Get user by UUID", description = "Retrieves a specific user by its UUID")
+  @Operation(summary = "Get user by id", description = "Retrieves a specific user by its identifier")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindUserByUuidResponseDto.class))),
     @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -132,8 +132,8 @@ public class UserController {
   })
   FindUserByUuidResponseDto findByUuid(
     @AuthenticationPrincipal JwtUserDetails userDetails,
-    @Parameter(description = "UUID of the user to retrieve") @PathVariable UUID uuid) {
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
+    @Parameter(description = "Id of the user to retrieve") @PathVariable UUID id) {
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(id, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByUuid.findByUuid(findUserByUuidDto);
     return userMapper.toFindUserByUuidResponseDto(user);
   }
@@ -193,7 +193,7 @@ public class UserController {
     User savedUser = saveUser.save(saveUserDto);
     SaveUserResponseDto responseDto = userMapper.toSaveUserResponseDto(savedUser);
 
-    String locationUrl = UriComponentsBuilder.fromPath("/api/users/{uuid}")
+    String locationUrl = UriComponentsBuilder.fromPath("/api/users/{id}")
       .buildAndExpand(savedUser.getUuid())
       .toUriString();
 
@@ -202,7 +202,7 @@ public class UserController {
       .body(responseDto);
   }
 
-  @PutMapping("/{uuid}")
+  @PutMapping("/{id}")
   @Operation(summary = "Update a user", description = "Updates an existing user with the provided data")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUserResponseDto.class))),
@@ -213,12 +213,12 @@ public class UserController {
   })
   UpdateUserResponseDto update(
     @AuthenticationPrincipal JwtUserDetails userDetails,
-    @Parameter(description = "UUID of the user to update") @PathVariable UUID uuid,
+    @Parameter(description = "Id of the user to update") @PathVariable UUID id,
     @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
 
     //TODO: use a mapper
     UpdateUserDto updateUserDto = new UpdateUserDto(
-      uuid,
+      id,
       userDto.getName(),
       userDto.getEmail(),
       userMapper.toAuthenticatedUserDto(userDetails));
@@ -228,8 +228,8 @@ public class UserController {
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping("/{uuid}")
-  @Operation(summary = "Delete a user by UUID", description = "Deletes a user by its UUID")
+  @DeleteMapping("/{id}")
+  @Operation(summary = "Delete a user by its id", description = "Deletes a user by its identifier")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "204", description = "User deleted successfully"),
     @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -238,8 +238,8 @@ public class UserController {
   })
   void deleteByUuid(
     @AuthenticationPrincipal JwtUserDetails userDetails,
-    @PathVariable UUID uuid) {
-    DeleteUserDto deleteUserDto = new DeleteUserDto(uuid, userMapper.toAuthenticatedUserDto(userDetails));
+    @PathVariable UUID id) {
+    DeleteUserDto deleteUserDto = new DeleteUserDto(id, userMapper.toAuthenticatedUserDto(userDetails));
     deleteUser.delete(deleteUserDto);
   }
 
