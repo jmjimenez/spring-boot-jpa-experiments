@@ -23,7 +23,7 @@ import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
-import es.jmjg.experiments.shared.JsonSamples;
+import es.jmjg.experiments.shared.jsonsample.PostSamples;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.UserDetailsFactory;
@@ -52,7 +52,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
 
     // When & Then
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(List.of(tag1.getName(), tag2.getName()));
-    String requestBody = JsonSamples.createUpdatePostTagsRequestJson(requestDto);
+    String requestBody = PostSamples.createUpdatePostTagsRequestJson(requestDto);
     mockMvc.perform(patch("/api/posts/" + post.getUuid() + "/tags")
         .contentType("application/json")
         .content(requestBody)
@@ -71,7 +71,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
 
     // When & Then
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(List.of(tag.getName()));
-    String requestBody = JsonSamples.createUpdatePostTagsRequestJson(requestDto);
+    String requestBody = PostSamples.createUpdatePostTagsRequestJson(requestDto);
     mockMvc.perform(patch("/api/posts/" + postUuid + "/tags")
         .contentType("application/json")
         .content(requestBody)
@@ -90,7 +90,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
 
     // When & Then
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(List.of(tag.getName()));
-    String requestBody = JsonSamples.createUpdatePostTagsRequestJson(requestDto);
+    String requestBody = PostSamples.createUpdatePostTagsRequestJson(requestDto);
     mockMvc.perform(patch("/api/posts/" + postUuid + "/tags")
         .contentType("application/json")
         .content(requestBody)
@@ -109,7 +109,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
 
     // When & Then
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(List.of(tag.getName()));
-    String requestBody = JsonSamples.createUpdatePostTagsRequestJson(requestDto);
+    String requestBody = PostSamples.createUpdatePostTagsRequestJson(requestDto);
     mockMvc.perform(patch("/api/posts/" + postUuid + "/tags")
         .contentType("application/json")
         .content(requestBody)

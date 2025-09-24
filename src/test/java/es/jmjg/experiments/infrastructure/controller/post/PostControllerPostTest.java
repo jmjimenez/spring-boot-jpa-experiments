@@ -19,7 +19,7 @@ import es.jmjg.experiments.application.post.dto.SavePostDto;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
-import es.jmjg.experiments.shared.JsonSamples;
+import es.jmjg.experiments.shared.jsonsample.PostSamples;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserDetailsFactory;
 import es.jmjg.experiments.shared.UserFactory;
@@ -39,8 +39,8 @@ class PostControllerPostTest extends BasePostControllerTest {
 
     when(savePost.save(any(SavePostDto.class))).thenReturn(post);
 
-    String requestBody = JsonSamples.createCreatePostRequestJson(post);
-    String expectedResponse = JsonSamples.createCreatePostResponseJson(post);
+    String requestBody = PostSamples.createCreatePostRequestJson(post);
+    String expectedResponse = PostSamples.createCreatePostResponseJson(post);
 
     mockMvc
         .perform(post("/api/posts")
@@ -62,7 +62,7 @@ class PostControllerPostTest extends BasePostControllerTest {
 
     when(savePost.save(any(SavePostDto.class))).thenThrow(new TagNotFound("Tag not found"));
 
-    String requestBody = JsonSamples.createCreatePostRequestJson(post);
+    String requestBody = PostSamples.createCreatePostRequestJson(post);
 
     mockMvc
       .perform(post("/api/posts")

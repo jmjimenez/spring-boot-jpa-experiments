@@ -14,8 +14,8 @@ import es.jmjg.experiments.application.user.dto.ResetPasswordDto;
 import es.jmjg.experiments.domain.shared.exception.InvalidRequest;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.domain.user.exception.UserNotFound;
-import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.UserFactory;
+import es.jmjg.experiments.shared.jsonsample.UserSamples;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ class UserControllerPatchPasswordResetTest extends BaseUserControllerTest {
     doNothing().when(resetPassword).reset(any(ResetPasswordDto.class));
 
     // When & Then
-    String requestBody = JsonSamples.createResetPasswordRequestJson(resetKey, newPassword);
+    String requestBody = UserSamples.createResetPasswordRequestJson(resetKey, newPassword);
 
     mockMvc
       .perform(patch("/api/users/password/" + testUser.getUsername() + "/" + testUser.getEmail() + "/reset")
@@ -64,7 +64,7 @@ class UserControllerPatchPasswordResetTest extends BaseUserControllerTest {
     doThrow(new InvalidRequest("invalid request")).when(resetPassword).reset(any(ResetPasswordDto.class));
 
     // When & Then
-    String requestBody = JsonSamples.createResetPasswordRequestJson(resetKey, newPassword);
+    String requestBody = UserSamples.createResetPasswordRequestJson(resetKey, newPassword);
 
     mockMvc
       .perform(patch("/api/users/password/" + testUser.getUsername() + "/" + testUser.getEmail() + "/reset")
@@ -84,7 +84,7 @@ class UserControllerPatchPasswordResetTest extends BaseUserControllerTest {
     doThrow(new UserNotFound("user not found")).when(resetPassword).reset(any(ResetPasswordDto.class));
 
     // When & Then
-    String requestBody = JsonSamples.createResetPasswordRequestJson(resetKey, newPassword);
+    String requestBody = UserSamples.createResetPasswordRequestJson(resetKey, newPassword);
 
     mockMvc
       .perform(patch("/api/users/password/" + testUser.getUsername() + "/" + testUser.getEmail() + "/reset")

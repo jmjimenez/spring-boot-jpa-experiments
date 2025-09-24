@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import es.jmjg.experiments.application.post.FindAllPosts;
 import es.jmjg.experiments.domain.post.entity.Post;
-import es.jmjg.experiments.shared.JsonSamples;
+import es.jmjg.experiments.shared.jsonsample.PostSamples;
 import es.jmjg.experiments.shared.UserFactory;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.domain.user.entity.User;
@@ -54,7 +54,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
   @Test
   void shouldFindAllPostsUsingWhen() throws Exception {
-    String jsonResponse = JsonSamples.createFindAllPostsJsonResponse(posts);
+    String jsonResponse = PostSamples.createFindAllPostsJsonResponse(posts);
 
     when(findAllPosts.findAll(any(FindAllPostsDto.class))).thenReturn(postsPage);
 
@@ -68,7 +68,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
   @Test
   void shouldFindAllPostsUsingDoReturn() throws Exception {
-    String jsonResponse = JsonSamples.createFindAllPostsJsonResponse(posts);
+    String jsonResponse = PostSamples.createFindAllPostsJsonResponse(posts);
 
     doReturn(postsPage).when(findAllPosts).findAll(any(FindAllPostsDto.class));
 
@@ -82,7 +82,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
   @Test
   void shouldFindAllPostsWithPagination() throws Exception {
-    String jsonResponse = JsonSamples.createFindAllPostsWithPaginationJsonResponse(posts);
+    String jsonResponse = PostSamples.createFindAllPostsWithPaginationJsonResponse(posts);
 
     Pageable pageable = PageRequest.of(0, 1);
     Page<Post> singlePostPage = new PageImpl<>(List.of(posts.getFirst()), pageable, 2);
@@ -98,7 +98,7 @@ class PostControllerGetAllTest extends BasePostControllerTest {
 
   @Test
   void shouldReturnEmptyListWhenNoPostsFound() throws Exception {
-    String jsonResponse = JsonSamples.createEmptyPostsJsonResponse();
+    String jsonResponse = PostSamples.createEmptyPostsJsonResponse();
 
     Pageable pageable = PageRequest.of(0, 20);
     Page<Post> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);

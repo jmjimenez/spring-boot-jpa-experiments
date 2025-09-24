@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import es.jmjg.experiments.shared.jsonsample.UserSamples;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import es.jmjg.experiments.application.user.UpdateUser;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.user.exception.UserNotFound;
 import es.jmjg.experiments.domain.user.entity.User;
-import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
 class UserControllerPutTest extends BaseUserControllerTest {
@@ -50,8 +50,8 @@ class UserControllerPutTest extends BaseUserControllerTest {
     when(updateUser.update(any(UpdateUserDto.class))).thenReturn(testUser);
 
     // When & Then
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
-    String expectedResponse = JsonSamples.createUpdateUserResponseJson(testUser.getPosts(), testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String expectedResponse = UserSamples.createUpdateUserResponseJson(testUser.getPosts(), testUser.getUuid());
     mockMvc
         .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
@@ -72,8 +72,8 @@ class UserControllerPutTest extends BaseUserControllerTest {
     when(updateUser.update(any(UpdateUserDto.class))).thenReturn(testUser);
 
     // When & Then - Admin user (admin) updating another user (testUuid)
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
-    String expectedResponse = JsonSamples.createUpdateUserResponseJson(testUser.getPosts(), testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String expectedResponse = UserSamples.createUpdateUserResponseJson(testUser.getPosts(), testUser.getUuid());
     mockMvc
         .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +91,7 @@ class UserControllerPutTest extends BaseUserControllerTest {
     doThrow(new UserNotFound(testUser.getUuid())).when(updateUser).update(any(UpdateUserDto.class));
 
     // When & Then
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
     mockMvc
         .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +112,7 @@ class UserControllerPutTest extends BaseUserControllerTest {
         .update(any(UpdateUserDto.class));
 
     // When & Then
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
     mockMvc
         .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
@@ -130,7 +130,7 @@ class UserControllerPutTest extends BaseUserControllerTest {
   @Test
   void shouldReturnUnauthorizedWhenUserIsNotAuthenticated() throws Exception {
     // Given
-    String requestBody = JsonSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
 
     // When & Then
     mockMvc

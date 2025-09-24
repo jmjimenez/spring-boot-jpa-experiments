@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.jmjg.experiments.application.post.FindPostByUuid;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.user.entity.User;
-import es.jmjg.experiments.shared.JsonSamples;
+import es.jmjg.experiments.shared.jsonsample.PostSamples;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 
@@ -43,7 +43,7 @@ class PostControllerGetByUuidTest extends BasePostControllerTest {
     post.setComments(List.of(comment1, comment2));
 
     when(findPostByUuid.findByUuid(uuid)).thenReturn(post);
-    String json = JsonSamples.createFindPostByUuidJsonResponse(post);
+    String json = PostSamples.createFindPostByUuidJsonResponse(post);
 
     mockMvc
         .perform(get("/api/posts/" + uuid))

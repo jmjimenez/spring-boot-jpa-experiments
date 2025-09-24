@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import es.jmjg.experiments.domain.user.exception.UserNotFound;
+import es.jmjg.experiments.shared.jsonsample.UserSamples;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.application.user.FindUserByUuid;
 import es.jmjg.experiments.application.user.dto.FindUserByUuidDto;
 import es.jmjg.experiments.domain.user.entity.User;
-import es.jmjg.experiments.shared.JsonSamples;
 import es.jmjg.experiments.shared.UserFactory;
 
 class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
@@ -37,7 +37,7 @@ class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
     // Given
     when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(testUser);
 
-    String expectedJson = JsonSamples.createFindUserByUuidJsonResponse(testUser.getPosts(), testUser.getUuid());
+    String expectedJson = UserSamples.createFindUserByUuidJsonResponse(testUser.getPosts(), testUser.getUuid());
 
     // When & Then
     mockMvc

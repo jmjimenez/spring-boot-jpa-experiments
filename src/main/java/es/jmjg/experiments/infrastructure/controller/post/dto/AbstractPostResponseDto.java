@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,7 @@ abstract public class AbstractPostResponseDto {
   private final UUID id;
 
   @Schema(description = "Identifier of the user who created the post", example = "123e4567-e89b-12d3-a456-426614174001")
+  @JsonProperty("user-id")
   private final UUID userId;
 
   @Schema(description = "Title of the post", example = "My First Post")
@@ -24,6 +26,7 @@ abstract public class AbstractPostResponseDto {
   private final List<PostTagResponseDto> tags;
 
   @Schema(description = "List of identifiers of comments associated with the post")
+  @JsonProperty("post-comments")
   private final List<PostCommentResponseDto> postComments;
 
   public AbstractPostResponseDto(UUID id, UUID userId, String title, String body,

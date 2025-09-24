@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ public class SavePostResponseDto {
   private final UUID id;
 
   @Schema(description = "Identifier of the user who created the post", example = "123e4567-e89b-12d3-a456-426614174001")
+  @JsonProperty("user-id")
   private final UUID userId;
 
   @Schema(description = "Title of the post", example = "My First Post")

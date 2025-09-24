@@ -10,7 +10,7 @@ import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostComment;
 import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.user.entity.User;
-import es.jmjg.experiments.shared.JsonSamples;
+import es.jmjg.experiments.shared.jsonsample.PostCommentSamples;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ class PostControllerGetCommentByUuidTest extends BasePostControllerTest {
     PostComment postComment = PostFactory.createPostComment(user, post, "Nice post!", LocalDateTime.now());
 
     when(findPostCommentByUuid.findByUuid(post.getUuid(), postComment.getUuid())).thenReturn(postComment);
-    String json = JsonSamples.createFindPostCommentByUuidJsonResponse(postComment);
+    String json = PostCommentSamples.createFindPostCommentByUuidJsonResponse(postComment);
 
     mockMvc
         .perform(get("/api/posts/" + post.getUuid() + "/comments/" + postComment.getUuid()))

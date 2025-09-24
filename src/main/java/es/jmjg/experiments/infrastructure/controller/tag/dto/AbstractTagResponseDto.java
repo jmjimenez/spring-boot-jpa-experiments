@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 abstract public class AbstractTagResponseDto {
+  //TODO: check uuid vs id consistency
   @Schema(description = "Unique identifier for the tag", example = "123e4567-e89b-12d3-a456-426614174000")
   private UUID uuid;
 
