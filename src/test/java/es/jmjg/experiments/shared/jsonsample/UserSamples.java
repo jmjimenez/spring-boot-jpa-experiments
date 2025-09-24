@@ -147,4 +147,36 @@ public final class UserSamples {
         }
         """.formatted(resetKey, newPassword);
   }
+
+  public static String createFindAllUsersEmptyJsonResponse() {
+    return """
+      {
+        "content": [],
+        "pageable": {
+          "sort": {
+            "empty": true,
+            "sorted": false,
+            "unsorted": true
+          },
+          "offset": 0,
+          "pageNumber": 0,
+          "pageSize": 10,
+          "paged": true,
+          "unpaged": false
+        },
+        "last": true,
+        "totalElements": 0,
+        "totalPages": 0,
+        "size": 10,
+        "number": 0,
+        "sort": {
+          "empty": true,
+          "sorted": false,
+          "unsorted": true
+        },
+        "numberOfElements": 0,
+        "first": true,
+        "empty": true
+      }""";
+  }
 }
