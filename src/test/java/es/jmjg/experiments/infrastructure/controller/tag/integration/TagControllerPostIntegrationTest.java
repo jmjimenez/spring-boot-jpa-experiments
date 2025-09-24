@@ -36,9 +36,9 @@ class TagControllerPostIntegrationTest extends BaseControllerIntegration {
     SaveTagResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
       assertThat(t.getName()).isEqualTo("new-tag");
-      assertThat(t.getUuid()).isNotNull();
+      assertThat(t.getId()).isNotNull();
       // Verify the Location header contains the correct UUID
-      assertThat(locationHeader).isEqualTo("/api/tags/" + t.getUuid());
+      assertThat(locationHeader).isEqualTo("/api/tags/" + t.getId());
     });
   }
 

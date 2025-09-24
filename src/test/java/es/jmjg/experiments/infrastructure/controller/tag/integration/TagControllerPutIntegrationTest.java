@@ -33,7 +33,7 @@ class TagControllerPutIntegrationTest extends BaseControllerIntegration {
 
     UpdateTagResponseDto updatedTag = response.getBody();
     assertThat(updatedTag).isNotNull().satisfies(t -> {
-      assertThat(t.getUuid()).isEqualTo(tagUuid);
+      assertThat(t.getId()).isEqualTo(tagUuid);
       assertThat(t.getName()).isEqualTo("updated-java");
     });
   }

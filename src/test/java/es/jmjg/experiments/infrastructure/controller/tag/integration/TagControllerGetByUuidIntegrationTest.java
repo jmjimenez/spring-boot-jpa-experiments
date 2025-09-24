@@ -34,7 +34,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
 
     FindTagByUuidResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
-      assertThat(t.getUuid()).isEqualTo(tagUuid);
+      assertThat(t.getId()).isEqualTo(tagUuid);
       assertThat(t.getName()).isEqualTo(TestDataSamples.TAG_TECHNOLOGY);
       assertThat(t.getPosts()).isNotNull();
       assertThat(t.getUsers()).isNotNull();
@@ -64,7 +64,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
 
     FindTagByUuidResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
-      assertThat(t.getUuid()).isEqualTo(tagUuid);
+      assertThat(t.getId()).isEqualTo(tagUuid);
       assertThat(t.getName()).isEqualTo("not-used");
       assertThat(t.getPosts()).isNotNull();
       assertThat(t.getUsers()).isNotNull();
@@ -111,7 +111,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
 
     FindTagByUuidResponseDto tag = response.getBody();
     assertThat(tag).isNotNull().satisfies(t -> {
-      assertThat(t.getUuid()).isEqualTo(tagUuid);
+      assertThat(t.getId()).isEqualTo(tagUuid);
       assertThat(t.getName()).isEqualTo(TestDataSamples.TAG_TECHNOLOGY);
       assertThat(t.getPosts()).isNotNull();
       assertThat(t.getUsers()).isNotNull();

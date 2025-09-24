@@ -55,7 +55,7 @@ class TagControllerGetByUuidTest extends BaseTagControllerTest {
     // When & Then
     mockMvc.perform(get("/api/tags/{uuid}", testUuid).header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$.uuid").value(testUuid.toString()))
+      .andExpect(jsonPath("$.id").value(testUuid.toString()))
       .andExpect(jsonPath("$.name").value("test-tag"))
       .andExpect(jsonPath("$.posts").isArray())
       .andExpect(jsonPath("$.posts").value(hasSize(2)))
@@ -78,7 +78,7 @@ class TagControllerGetByUuidTest extends BaseTagControllerTest {
     // When & Then
     mockMvc.perform(get("/api/tags/{uuid}", testUuid).header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$.uuid").value(testUuid.toString()))
+      .andExpect(jsonPath("$.id").value(testUuid.toString()))
       .andExpect(jsonPath("$.name").value("test-tag"))
       .andExpect(jsonPath("$.posts").isArray())
       .andExpect(jsonPath("$.posts").value(hasSize(0)))
