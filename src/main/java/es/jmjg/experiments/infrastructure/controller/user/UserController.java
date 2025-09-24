@@ -116,6 +116,7 @@ public class UserController {
   Page<FindAllUsersResponseDto> findAll(
     @AuthenticationPrincipal JwtUserDetails userDetails,
     Pageable pageable) {
+
     FindAllUsersDto findAllUsersDto = new FindAllUsersDto(pageable, userMapper.toAuthenticatedUserDto(userDetails));
     Page<User> users = findAllUsers.findAll(findAllUsersDto);
     return users.map(userMapper::toFindAllUsersResponseDto);
@@ -133,6 +134,7 @@ public class UserController {
   FindUserByUuidResponseDto findByUuid(
     @AuthenticationPrincipal JwtUserDetails userDetails,
     @Parameter(description = "Id of the user to retrieve") @PathVariable UUID id) {
+
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(id, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByUuid.findByUuid(findUserByUuidDto);
     return userMapper.toFindUserByUuidResponseDto(user);
@@ -150,6 +152,7 @@ public class UserController {
   FindUserByEmailResponseDto findByEmail(
     @AuthenticationPrincipal JwtUserDetails userDetails,
     @Parameter(description = "Email address to search for") @RequestParam String email) {
+
     FindUserByEmailDto findUserByEmailDto = new FindUserByEmailDto(email, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByEmail.findByEmail(findUserByEmailDto);
     return userMapper.toFindUserByEmailResponseDto(user);
@@ -167,6 +170,7 @@ public class UserController {
   FindUserByUsernameResponseDto findByUsername(
     @AuthenticationPrincipal JwtUserDetails userDetails,
     @Parameter(description = "Username to search for") @RequestParam String username) {
+
     FindUserByUsernameDto findUserByUsernameDto = new FindUserByUsernameDto(username, userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByUsername.findByUsername(findUserByUsernameDto);
     return userMapper.toFindUserByUsernameResponseDto(user);
@@ -183,13 +187,8 @@ public class UserController {
   ResponseEntity<SaveUserResponseDto> save(
     @AuthenticationPrincipal JwtUserDetails userDetails,
     @Parameter(description = "User data to create") @RequestBody @Valid SaveUserRequestDto userDto) {
-    SaveUserDto saveUserDto = new SaveUserDto(
-      userDto.getId(),
-      userDto.getName(),
-      userDto.getEmail(),
-      userDto.getUsername(),
-      userDto.getPassword(),
-      userMapper.toAuthenticatedUserDto(userDetails));
+
+    SaveUserDto saveUserDto = userMapper.toSaveUserDto(userDto, userMapper.toAuthenticatedUserDto(userDetails));
     User savedUser = saveUser.save(saveUserDto);
     SaveUserResponseDto responseDto = userMapper.toSaveUserResponseDto(savedUser);
 
@@ -216,13 +215,7 @@ public class UserController {
     @Parameter(description = "Id of the user to update") @PathVariable UUID id,
     @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
 
-    //TODO: use a mapper
-    UpdateUserDto updateUserDto = new UpdateUserDto(
-      id,
-      userDto.getName(),
-      userDto.getEmail(),
-      userMapper.toAuthenticatedUserDto(userDetails));
-
+    UpdateUserDto updateUserDto = userMapper.toUpdateUserDto(userDto, id, userMapper.toAuthenticatedUserDto(userDetails));
     User updatedUser = updateUser.update(updateUserDto);
     return userMapper.toUpdateUserResponseDto(updatedUser);
   }
@@ -239,6 +232,7 @@ public class UserController {
   void deleteByUuid(
     @AuthenticationPrincipal JwtUserDetails userDetails,
     @PathVariable UUID id) {
+
     DeleteUserDto deleteUserDto = new DeleteUserDto(id, userMapper.toAuthenticatedUserDto(userDetails));
     deleteUser.delete(deleteUserDto);
   }
@@ -254,7 +248,6 @@ public class UserController {
     @Parameter(description = "email") @PathVariable String email) {
 
     GeneratePasswordResetDto generatePasswordResetDto = new GeneratePasswordResetDto(username, email);
-
     String resetKey = generatePasswordReset.generate(generatePasswordResetDto);
     return userMapper.toPasswordResetResponseDto(resetKey);
   }

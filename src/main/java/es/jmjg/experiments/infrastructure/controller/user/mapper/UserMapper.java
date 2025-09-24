@@ -1,8 +1,13 @@
 package es.jmjg.experiments.infrastructure.controller.user.mapper;
 
+import es.jmjg.experiments.application.user.dto.SaveUserDto;
+import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.infrastructure.controller.user.dto.PasswordResetResponseDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto;
+import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserRequestDto;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -23,6 +28,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Component
 public class UserMapper {
+
   public FindAllUsersResponseDto toFindAllUsersResponseDto(User user) {
     return mapToResponseDto(user, FindAllUsersResponseDto::new);
   }
@@ -43,9 +49,28 @@ public class UserMapper {
     return mapToResponseDto(user, FindUserByUsernameResponseDto::new);
   }
 
+  public SaveUserDto toSaveUserDto(@Valid SaveUserRequestDto saveUserDto, AuthenticatedUserDto authenticatedUserDto) {
+    return new SaveUserDto(
+      saveUserDto.getId(),
+      saveUserDto.getName(),
+      saveUserDto.getEmail(),
+      saveUserDto.getUsername(),
+      saveUserDto.getPassword(),
+      authenticatedUserDto
+    );
+  }
+
   public SaveUserResponseDto toSaveUserResponseDto(User savedUser) {
     return mapToResponseDto(savedUser, (uuid, name, email, username, posts, tags) -> new SaveUserResponseDto(uuid, name,
         email, username));
+  }
+
+  public UpdateUserDto toUpdateUserDto(@Valid UpdateUserRequestDto updateUserDto, UUID id, AuthenticatedUserDto authenticatedUserDto) {
+    return new UpdateUserDto(
+      id,
+      updateUserDto.getName(),
+      updateUserDto.getEmail(),
+      authenticatedUserDto);
   }
 
   public UpdateUserResponseDto toUpdateUserResponseDto(User updatedUser) {
@@ -54,6 +79,11 @@ public class UserMapper {
 
   public PasswordResetResponseDto toPasswordResetResponseDto(String resetKey) {
     return new PasswordResetResponseDto(resetKey);
+  }
+
+  public @NotNull AuthenticatedUserDto toAuthenticatedUserDto(JwtUserDetails userDetails) {
+    return new AuthenticatedUserDto(userDetails.id, userDetails.getUsername(), userDetails.getPassword(),
+      userDetails.getAuthorities());
   }
 
   @FunctionalInterface
@@ -84,10 +114,5 @@ public class UserMapper {
       return List.of();
     }
     return users.stream().map(mapper).collect(Collectors.toList());
-  }
-
-  public @NotNull AuthenticatedUserDto toAuthenticatedUserDto(JwtUserDetails userDetails) {
-    return new AuthenticatedUserDto(userDetails.id, userDetails.getUsername(), userDetails.getPassword(),
-        userDetails.getAuthorities());
   }
 }

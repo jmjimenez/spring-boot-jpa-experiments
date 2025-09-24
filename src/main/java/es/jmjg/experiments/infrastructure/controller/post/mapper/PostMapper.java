@@ -1,11 +1,15 @@
 package es.jmjg.experiments.infrastructure.controller.post.mapper;
 
 import es.jmjg.experiments.application.post.dto.FindAllPostsDto;
+import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostCommentByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.PostCommentResponseDto;
+import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.TagDto;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -353,5 +357,10 @@ public class PostMapper {
       log.error("LazyInitializationException in convertTagsToPostTagResponseDto. Error: {}", e.getMessage(), e);
       throw e;
     }
+  }
+
+  public SavePostCommentDto toAddCommentDto(@Valid SavePostCommentRequestDto requestDto, UUID id,
+    @NotNull AuthenticatedUserDto authenticatedUserDto) {
+    return new SavePostCommentDto(requestDto.getId(), id, requestDto.getComment(), authenticatedUserDto);
   }
 }

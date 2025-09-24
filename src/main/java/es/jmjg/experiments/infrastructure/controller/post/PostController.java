@@ -224,7 +224,7 @@ public class PostController {
     @Parameter(description = "Post comment data to create", required = true) @RequestBody @Valid SavePostCommentRequestDto requestDto,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    var savePostCommentDto = new SavePostCommentDto(requestDto.getId(), id, requestDto.getComment(), userMapper.toAuthenticatedUserDto(userDetails));
+    SavePostCommentDto savePostCommentDto = postMapper.toAddCommentDto(requestDto, id, userMapper.toAuthenticatedUserDto(userDetails));
     PostComment result = savePostComment.save(savePostCommentDto);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{id}/comments/{commentUuid}")
