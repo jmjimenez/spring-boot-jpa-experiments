@@ -33,6 +33,7 @@ class UserControllerGetFindByUuidIntegrationTest extends BaseControllerIntegrati
       assertThat(u.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
       assertThat(u.getPosts()).isNotEmpty();
       assertThat(u.getTags()).isNotEmpty();
+      assertThat(u.getComments()).isNotEmpty();
     });
   }
 

@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.controller.user.mapper;
 import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.post.entity.PostComment;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.infrastructure.controller.user.dto.PasswordResetResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto;
@@ -61,7 +62,7 @@ public class UserMapper {
   }
 
   public SaveUserResponseDto toSaveUserResponseDto(User savedUser) {
-    return mapToResponseDto(savedUser, (uuid, name, email, username, posts, tags) -> new SaveUserResponseDto(uuid, name,
+    return mapToResponseDto(savedUser, (uuid, name, email, username, posts, tags, comments) -> new SaveUserResponseDto(uuid, name,
         email, username));
   }
 
@@ -88,7 +89,7 @@ public class UserMapper {
 
   @FunctionalInterface
   private interface DtoConstructor<T> {
-    T create(UUID uuid, String name, String email, String username, List<UUID> posts, List<String> tags);
+    T create(UUID uuid, String name, String email, String username, List<UUID> posts, List<String> tags, List<UUID> comments);
   }
 
   private <T> T mapToResponseDto(User user, DtoConstructor<T> dtoConstructor) {
@@ -104,9 +105,13 @@ public class UserMapper {
         .map(Tag::getName)
         .collect(Collectors.toList()) : List.of();
 
+    List<UUID> commentUuids = user.getComments() != null ? user.getComments().stream()
+        .map(PostComment::getUuid)
+        .collect(Collectors.toList()) : List.of();
+
     return dtoConstructor.create(
         user.getUuid(), user.getName(), user.getEmail(), user.getUsername(),
-        postUuids, tagNames);
+        postUuids, tagNames, commentUuids);
   }
 
   private <T> List<T> mapToResponseDtoList(List<User> users, Function<User, T> mapper) {

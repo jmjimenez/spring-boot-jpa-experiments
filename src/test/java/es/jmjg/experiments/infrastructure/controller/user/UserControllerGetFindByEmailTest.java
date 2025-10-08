@@ -37,7 +37,7 @@ class UserControllerGetFindByEmailTest extends BaseUserControllerTest {
     String email = "test@example.com";
     when(findUserByEmail.findByEmail(any(FindUserByEmailDto.class))).thenReturn(testUser);
 
-    String expectedJson = UserSamples.createFindUserByEmailJsonResponse(testUser.getPosts(), testUser.getUuid());
+    String expectedJson = UserSamples.createFindUserByEmailJsonResponse(testUser);
 
     // When & Then
     mockMvc

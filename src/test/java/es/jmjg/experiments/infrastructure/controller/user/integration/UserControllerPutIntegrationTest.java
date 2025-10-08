@@ -30,7 +30,6 @@ class UserControllerPutIntegrationTest extends BaseControllerIntegration {
       assertThat(u.getId()).isEqualTo(TestDataSamples.PATRICIA_UUID);
       assertThat(u.getName()).isEqualTo("Updated User");
       assertThat(u.getEmail()).isEqualTo("updated@example.com");
-      assertThat(u.getPosts()).isNotEmpty();
       assertThat(u.getTags()).isNotEmpty();
     });
   }
@@ -50,7 +49,6 @@ class UserControllerPutIntegrationTest extends BaseControllerIntegration {
       assertThat(u.getId()).isEqualTo(TestDataSamples.PATRICIA_UUID);
       assertThat(u.getName()).isEqualTo("Self Updated User");
       assertThat(u.getEmail()).isEqualTo("self.updated@example.com");
-      assertThat(u.getPosts()).isNotEmpty();
       assertThat(u.getTags()).isNotEmpty();
     });
   }

@@ -37,7 +37,7 @@ class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
     // Given
     when(findUserByUuid.findByUuid(any(FindUserByUuidDto.class))).thenReturn(testUser);
 
-    String expectedJson = UserSamples.createFindUserByUuidJsonResponse(testUser.getPosts(), testUser.getUuid());
+    String expectedJson = UserSamples.createFindUserByUuidJsonResponse(testUser);
 
     // When & Then
     mockMvc

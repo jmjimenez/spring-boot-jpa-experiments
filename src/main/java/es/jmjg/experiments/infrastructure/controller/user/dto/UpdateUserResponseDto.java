@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,9 +24,12 @@ public class UpdateUserResponseDto {
   @Schema(description = "Username of the user", example = "johndoe")
   private String username;
 
-  @Schema(description = "List of post identifiers associated with the user")
+  @JsonIgnore
   private List<UUID> posts;
 
   @Schema(description = "List of tag names associated with the user")
   private List<String> tags;
+
+  @JsonIgnore
+  private List<UUID> comments;
 }

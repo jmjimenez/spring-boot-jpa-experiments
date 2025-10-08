@@ -37,7 +37,7 @@ class UserControllerGetFindByUsernameTest extends BaseUserControllerTest {
     String username = "testuser";
     when(findUserByUsername.findByUsername(any(FindUserByUsernameDto.class))).thenReturn(testUser);
 
-    String expectedJson = UserSamples.createFindUserByUsernameJsonResponse(testUser.getPosts(), testUser.getUuid());
+    String expectedJson = UserSamples.createFindUserByUsernameJsonResponse(testUser);
 
     // When & Then
     mockMvc

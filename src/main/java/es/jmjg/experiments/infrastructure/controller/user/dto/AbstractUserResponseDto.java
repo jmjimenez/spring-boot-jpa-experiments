@@ -26,5 +26,7 @@ abstract public class AbstractUserResponseDto {
 
   @Schema(description = "List of tag names associated with the user")
   private List<String> tags;
-  //TODO: add comments
+
+  @Schema(description = "List of comments posted by the user")
+  private List<UUID> comments;
 }

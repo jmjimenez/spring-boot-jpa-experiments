@@ -1,6 +1,7 @@
 package es.jmjg.experiments.shared.jsonsample;
 
 import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.user.entity.User;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,43 +53,55 @@ public final class UserSamples {
         """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
   }
 
-  public static String createFindUserByUuidJsonResponse(List<Post> testPosts, UUID testUuid) {
+  public static String createFindUserByUuidJsonResponse(User testUser) {
+    String posts = buildPostsJson(testUser);
+    String tags = buildTagsJson(testUser);
+    String comments = buildCommentsJson(testUser);
     return """
         {
             "id":"%s",
-            "name":"Test User",
-            "email":"test@example.com",
-            "username":"testuser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
+            "name":"%s",
+            "email":"%s",
+            "username":"%s",
+            "posts":[%s],
+            "tags":[%s],
+            "comments":[%s]
         }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+        """.formatted(testUser.getUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), posts, tags, comments);
   }
 
-  public static String createFindUserByEmailJsonResponse(List<Post> testPosts, UUID testUuid) {
+  public static String createFindUserByEmailJsonResponse(User testUser) {
+    String posts = buildPostsJson(testUser);
+    String tags = buildTagsJson(testUser);
+    String comments = buildCommentsJson(testUser);
     return """
         {
             "id":"%s",
-            "name":"Test User",
-            "email":"test@example.com",
-            "username":"testuser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
+            "name":"%s",
+            "email":"%s",
+            "username":"%s",
+            "posts":[%s],
+            "tags":[%s],
+            "comments":[%s]
         }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+        """.formatted(testUser.getUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), posts, tags, comments);
   }
 
-  public static String createFindUserByUsernameJsonResponse(List<Post> testPosts, UUID testUuid) {
+  public static String createFindUserByUsernameJsonResponse(User testUser) {
+    String posts = buildPostsJson(testUser);
+    String tags = buildTagsJson(testUser);
+    String comments = buildCommentsJson(testUser);
     return """
         {
             "id":"%s",
-            "name":"Test User",
-            "email":"test@example.com",
-            "username":"testuser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
+            "name":"%s",
+            "email":"%s",
+            "username":"%s",
+            "posts":[%s],
+            "tags":[%s],
+            "comments":[%s]
         }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+        """.formatted(testUser.getUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), posts, tags, comments);
   }
 
   public static String createSaveUserRequestJson(UUID testUuid) {
@@ -126,17 +139,17 @@ public final class UserSamples {
         """.formatted(testUuid);
   }
 
-  public static String createUpdateUserResponseJson(List<Post> testPosts, UUID testUuid) {
+  public static String createUpdateUserResponseJson(User testUser) {
+    String tags = buildTagsJson(testUser);
     return """
         {
             "id":"%s",
-            "name":"Updated User",
-            "email":"updated@example.com",
-            "username":"updateduser",
-            "posts":["%s","%s"],
-            "tags":["technology","java"]
+            "name":"%s",
+            "email":"%s",
+            "username":"%s",
+            "tags":[%s]
         }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+        """.formatted(testUser.getUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), tags);
   }
 
   public static String createResetPasswordRequestJson(String resetKey, String newPassword) {
@@ -178,5 +191,23 @@ public final class UserSamples {
         "first": true,
         "empty": true
       }""";
+  }
+
+  private static String buildPostsJson(User user) {
+    return user.getPosts().stream()
+        .map(post -> "\"" + post.getUuid() + "\"")
+        .collect(java.util.stream.Collectors.joining(","));
+  }
+
+  private static String buildTagsJson(User user) {
+    return user.getTags().stream()
+        .map(tag -> "\"" + tag.getName() + "\"")
+        .collect(java.util.stream.Collectors.joining(","));
+  }
+
+  private static String buildCommentsJson(User user) {
+    return user.getComments().stream()
+        .map(comment -> "\"" + comment.getUuid() + "\"")
+        .collect(java.util.stream.Collectors.joining(","));
   }
 }

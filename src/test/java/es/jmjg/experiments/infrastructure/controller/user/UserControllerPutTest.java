@@ -51,7 +51,7 @@ class UserControllerPutTest extends BaseUserControllerTest {
 
     // When & Then
     String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
-    String expectedResponse = UserSamples.createUpdateUserResponseJson(testUser.getPosts(), testUser.getUuid());
+    String expectedResponse = UserSamples.createUpdateUserResponseJson(testUser);
     mockMvc
         .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
@@ -73,7 +73,7 @@ class UserControllerPutTest extends BaseUserControllerTest {
 
     // When & Then - Admin user (admin) updating another user (testUuid)
     String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
-    String expectedResponse = UserSamples.createUpdateUserResponseJson(testUser.getPosts(), testUser.getUuid());
+    String expectedResponse = UserSamples.createUpdateUserResponseJson(testUser);
     mockMvc
         .perform(put("/api/users/" + testUser.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
