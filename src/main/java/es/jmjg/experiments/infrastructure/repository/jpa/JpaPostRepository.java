@@ -1,8 +1,8 @@
 package es.jmjg.experiments.infrastructure.repository.jpa;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +15,7 @@ import es.jmjg.experiments.domain.post.entity.Post;
 public interface JpaPostRepository extends JpaRepository<Post, Integer> {
 
   @Transactional(readOnly = true)
-  Optional<Post> findByUuid(UUID uuid);
+  Optional<Post> findByPostUuid(PostUuid postUuid);
 
   @Transactional(readOnly = true)
   @Query("SELECT p FROM Post p LEFT JOIN FETCH p.user WHERE p.title = :title")

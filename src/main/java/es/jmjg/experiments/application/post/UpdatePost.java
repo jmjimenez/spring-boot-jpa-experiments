@@ -25,9 +25,9 @@ public class UpdatePost {
 
   @Transactional
   public Post update(UpdatePostDto updatePostDto) {
-    Optional<Post> existing = postRepository.findByUuid(updatePostDto.uuid());
+    Optional<Post> existing = postRepository.findByPostUuid(updatePostDto.uuid());
     if (existing.isEmpty()) {
-      throw new PostNotFound(updatePostDto.uuid());
+      throw new PostNotFound(updatePostDto.uuid().getUuid());
     }
 
     Post existingPost = existing.get();

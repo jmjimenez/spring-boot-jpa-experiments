@@ -50,7 +50,7 @@ public final class UserSamples {
             "numberOfElements":1,
             "empty":false
         }
-        """.formatted(testUuid, testPosts.get(0).getUuid(), testPosts.get(1).getUuid());
+        """.formatted(testUuid, testPosts.get(0).getPostUuid(), testPosts.get(1).getPostUuid());
   }
 
   public static String createFindUserByUuidJsonResponse(User testUser) {
@@ -195,7 +195,7 @@ public final class UserSamples {
 
   private static String buildPostsJson(User user) {
     return user.getPosts().stream()
-        .map(post -> "\"" + post.getUuid() + "\"")
+        .map(post -> "\"" + post.getPostUuid() + "\"")
         .collect(java.util.stream.Collectors.joining(","));
   }
 

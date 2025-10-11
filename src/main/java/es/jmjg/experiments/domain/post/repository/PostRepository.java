@@ -1,8 +1,8 @@
 package es.jmjg.experiments.domain.post.repository;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +17,7 @@ public interface PostRepository {
 
   Optional<Post> findByTitle(String trim);
 
-  Optional<Post> findByUuid(UUID uuid);
+  Optional<Post> findByPostUuid(PostUuid postUuid);
 
   List<Post> searchByContent(String trim, Pageable pageable);
 

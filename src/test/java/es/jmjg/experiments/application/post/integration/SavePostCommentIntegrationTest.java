@@ -44,7 +44,7 @@ class SavePostCommentIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getUuid()).isEqualTo(postComment.getUuid());
-    assertThat(result.getPost().getUuid()).isEqualTo(postComment.getPost().getUuid());
+    assertThat(result.getPost().getPostUuid()).isEqualTo(postComment.getPost().getPostUuid());
     assertThat(result.getUser().getUuid()).isEqualTo(postComment.getUser().getUuid());
     assertThat(result.getComment()).isEqualTo(postComment.getComment());
 

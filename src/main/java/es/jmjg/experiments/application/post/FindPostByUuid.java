@@ -1,6 +1,6 @@
 package es.jmjg.experiments.application.post;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 
 import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ public class FindPostByUuid {
   }
 
   @Transactional(readOnly = true)
-  public Post findByUuid(UUID uuid) {
-    if (uuid == null) {
+  public Post findByUuid(PostUuid postUuid) {
+    if (postUuid == null) {
       throw new IllegalArgumentException("UUID cannot be null");
     }
 
-    return postRepository.findByUuid(uuid).orElseThrow(() -> new PostNotFound("Post with UUID " + uuid + " not found"));
+    return postRepository.findByPostUuid(postUuid).orElseThrow(() -> new PostNotFound("Post with UUID " + postUuid + " not found"));
   }
 }

@@ -3,6 +3,7 @@ package es.jmjg.experiments.application.post;
 import es.jmjg.experiments.application.post.dto.UpdatePostTagsDto;
 import es.jmjg.experiments.application.post.shared.ProcessPostTags;
 import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.tag.exception.TagNotFound;
@@ -21,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,7 +35,7 @@ class UpdatePostTagsTest {
   @InjectMocks
   private UpdatePostTags updatePostTags;
 
-  private UUID postUuid;
+  private PostUuid postUuid;
   private Post post;
   private AuthenticatedUserDto ownerUserDto;
   private AuthenticatedUserDto adminUserDto;
@@ -45,7 +45,7 @@ class UpdatePostTagsTest {
   void setUp() {
     User user = UserFactory.createBasicUser();
     post = PostFactory.createBasicPost(user);
-    postUuid = post.getUuid();
+    postUuid = post.getPostUuid();
 
     ownerUserDto = AuthenticatedUserFactory.createAuthenticatedUserDto(user);
     adminUserDto = AuthenticatedUserFactory.createAuthenticatedUserDto(UserFactory.createAdminUser());
@@ -56,7 +56,7 @@ class UpdatePostTagsTest {
   void update_ok_owner() {
     // given
     UpdatePostTagsDto dto = new UpdatePostTagsDto(postUuid, List.of("java", "spring"), ownerUserDto);
-    when(postRepository.findByUuid(postUuid)).thenReturn(Optional.of(post));
+    when(postRepository.findByPostUuid(postUuid)).thenReturn(Optional.of(post));
     doNothing().when(processPostTags).processTagsForPost(post, dto.tagNames());
     when(postRepository.save(post)).thenReturn(post);
 
@@ -73,7 +73,7 @@ class UpdatePostTagsTest {
   void update_ok_admin() {
     // given
     UpdatePostTagsDto dto = new UpdatePostTagsDto(postUuid, List.of("java", "spring"), adminUserDto);
-    when(postRepository.findByUuid(postUuid)).thenReturn(Optional.of(post));
+    when(postRepository.findByPostUuid(postUuid)).thenReturn(Optional.of(post));
     doNothing().when(processPostTags).processTagsForPost(post, dto.tagNames());
     when(postRepository.save(post)).thenReturn(post);
 
@@ -90,7 +90,7 @@ class UpdatePostTagsTest {
   void update_tagNotFound() {
     // give
     UpdatePostTagsDto dto = new UpdatePostTagsDto(postUuid, List.of("java", "notfound"), ownerUserDto);
-    when(postRepository.findByUuid(postUuid)).thenReturn(Optional.of(post));
+    when(postRepository.findByPostUuid(postUuid)).thenReturn(Optional.of(post));
     doThrow(new TagNotFound("Tag not found: notfound")).when(processPostTags).processTagsForPost(post, dto.tagNames());
 
     // when - then
@@ -103,7 +103,7 @@ class UpdatePostTagsTest {
   void update_postNotFound() {
     // given
     UpdatePostTagsDto dto = new UpdatePostTagsDto(postUuid, List.of("java", "spring"), ownerUserDto);
-    when(postRepository.findByUuid(postUuid)).thenReturn(Optional.empty());
+    when(postRepository.findByPostUuid(postUuid)).thenReturn(Optional.empty());
 
     // when - then
     assertThrows(PostNotFound.class, () -> updatePostTags.update(dto));
@@ -115,7 +115,7 @@ class UpdatePostTagsTest {
   void update_forbidden() {
     // given
     UpdatePostTagsDto dto = new UpdatePostTagsDto(postUuid, List.of("java", "spring"), otherUserDto);
-    when(postRepository.findByUuid(postUuid)).thenReturn(Optional.of(post));
+    when(postRepository.findByPostUuid(postUuid)).thenReturn(Optional.of(post));
 
     // when - then
     assertThrows(Forbidden.class, () -> updatePostTags.update(dto));

@@ -60,7 +60,7 @@ class SavePostCommentTest {
     PostComment newPostComment = PostFactory.createPostComment(testUser, testPost, postComment);
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
     when(postCommentRepository.save(any(PostComment.class))).thenReturn(newPostComment);
 
     // When
@@ -74,7 +74,7 @@ class SavePostCommentTest {
     assertThat(result.getPost()).isEqualTo(newPostComment.getPost());
 
     verify(userRepository, times(1)).findByUuid(testUser.getUuid());
-    verify(postRepository, times(1)).findByUuid(testPost.getUuid());
+    verify(postRepository, times(1)).findByPostUuid(testPost.getPostUuid());
     verify(postCommentRepository, times(1)).save(any(PostComment.class));
   }
 
@@ -100,7 +100,7 @@ class SavePostCommentTest {
     PostComment newPostComment = PostFactory.createPostComment(testUser, testPost, postComment);
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.empty());
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.empty());
 
     // When
     SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getUuid(), newPostComment.getPost(), newPostComment.getComment());
@@ -116,7 +116,7 @@ class SavePostCommentTest {
     PostComment newPostComment = PostFactory.createPostComment(testUser, testPost, postComment);
 
     when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
 
     // When
     SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getUuid(), newPostComment.getPost(), newPostComment.getComment());

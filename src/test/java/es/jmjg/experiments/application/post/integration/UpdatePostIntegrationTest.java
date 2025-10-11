@@ -3,9 +3,9 @@ package es.jmjg.experiments.application.post.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import es.jmjg.experiments.domain.tag.exception.TagNotFound;
 import org.junit.jupiter.api.Test;
@@ -40,13 +40,13 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   void update_ShouldUpdateAndReturnPost() {
     // Given
     User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     final String updatedTitle = "Updated Post Title";
     final String updatedBody = "Updated post body content";
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
-        existingPost.getUuid(),
+        existingPost.getPostUuid(),
         updatedTitle,
         updatedBody,
         testUser);
@@ -57,7 +57,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(existingPost.getId());
-    assertThat(result.getUuid()).isEqualTo(existingPost.getUuid());
+    assertThat(result.getPostUuid()).isEqualTo(existingPost.getPostUuid());
     assertThat(result.getTitle()).isEqualTo(updatedTitle);
     assertThat(result.getBody()).isEqualTo(updatedBody);
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
@@ -75,7 +75,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   void update_WithNonExistentPost_ShouldThrowPostNotFound() {
     // Given
     User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    final UUID nonExistentUuid = UUID.randomUUID();
+    final var nonExistentUuid = PostUuid.randomUUID();
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
         nonExistentUuid,
@@ -93,10 +93,10 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   void update_WithNonOwnerUser_ShouldThrowForbidden() {
     // Given
     User nonOwner = userRepository.findByUuid(TestDataSamples.ERVIN_UUID).orElseThrow();
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
-        existingPost.getUuid(),
+        existingPost.getPostUuid(),
         "Updated Title",
         "Updated Body",
         nonOwner);
@@ -111,13 +111,13 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   void update_WithAdminUser_ShouldUpdateSuccessfully() {
     // Given
     User adminUser = userRepository.findByUuid(TestDataSamples.ADMIN_UUID).orElseThrow();
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     final String updatedTitle = "Admin Updated Title";
     final String updatedBody = "Admin updated post body content";
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
-        existingPost.getUuid(),
+        existingPost.getPostUuid(),
         updatedTitle,
         updatedBody,
         adminUser);
@@ -142,14 +142,14 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   void update_ShouldUpdatePostWithTags() {
     // Given
     User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     final String updatedTitle = "Updated Post Title With Tags";
     final String updatedBody = "Updated post body with tags";
     var tagNames = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING_BOOT);
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
-        existingPost.getUuid(),
+        existingPost.getPostUuid(),
         updatedTitle,
         updatedBody,
         tagNames,
@@ -161,7 +161,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(existingPost.getId());
-    assertThat(result.getUuid()).isEqualTo(existingPost.getUuid());
+    assertThat(result.getPostUuid()).isEqualTo(existingPost.getPostUuid());
     assertThat(result.getTitle()).isEqualTo(updatedTitle);
     assertThat(result.getBody()).isEqualTo(updatedBody);
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
@@ -182,7 +182,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   void update_WithNotFoundTag_ShouldThrowTagNotFound() {
     // Given
     User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     final String updatedTitle = "Updated Post Title With Tags";
     final String updatedBody = "Updated post body with tags";
@@ -190,7 +190,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
     var tagNames = List.of(TestDataSamples.TAG_JAVA, notFoundTag);
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
-      existingPost.getUuid(),
+      existingPost.getPostUuid(),
       updatedTitle,
       updatedBody,
       tagNames,

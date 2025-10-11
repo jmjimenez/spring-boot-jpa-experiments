@@ -1,13 +1,13 @@
 package es.jmjg.experiments.application.post.dto;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.Objects;
-import java.util.UUID;
 
 import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
 import jakarta.validation.constraints.NotNull;
 
 public record DeletePostDto(
-    @NotNull UUID uuid,
+    @NotNull PostUuid uuid,
     @NotNull AuthenticatedUserDto authenticatedUser) {
 
   public DeletePostDto {

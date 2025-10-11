@@ -50,7 +50,7 @@ class DeletePostCommentTest {
 
     // When
     User adminUser = UserFactory.createAdminUser();
-    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getUuid(), postComment.getUuid(), adminUser);
+    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getPostUuid(), postComment.getUuid(), adminUser);
     deletePostComment.delete(dto);
 
     // Then
@@ -64,7 +64,7 @@ class DeletePostCommentTest {
 
     // When & Then
     User adminUser = UserFactory.createAdminUser();
-    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getUuid(), postComment.getUuid(), adminUser);
+    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getPostUuid(), postComment.getUuid(), adminUser);
     assertThatThrownBy(() -> deletePostComment.delete(dto))
         .isInstanceOf(PostCommentNotFound.class)
         .hasMessage("Post comment with id " + postComment.getUuid() + " not found");
@@ -77,7 +77,7 @@ class DeletePostCommentTest {
   void deleteByUuid_WhenUserIsNotAdmin_ShouldThrowForbidden() {
     // When & Then
     User nonOwnerUser = UserFactory.createBasicUser();
-    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getUuid(), postComment.getUuid(), nonOwnerUser);
+    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getPostUuid(), postComment.getUuid(), nonOwnerUser);
     assertThatThrownBy(() -> deletePostComment.delete(dto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("You are not allowed to delete comments");

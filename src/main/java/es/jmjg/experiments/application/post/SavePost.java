@@ -31,7 +31,7 @@ public class SavePost {
   @Transactional
   public Post save(SavePostDto savePostDto) {
     Post post = new Post();
-    post.setUuid(savePostDto.uuid());
+    post.setPostUuid(savePostDto.uuid());
     post.setTitle(savePostDto.title());
     post.setBody(savePostDto.body());
 

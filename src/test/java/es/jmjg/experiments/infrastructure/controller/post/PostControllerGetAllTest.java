@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import es.jmjg.experiments.application.post.dto.FindAllPostsDto;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,7 +27,6 @@ import es.jmjg.experiments.shared.jsonsample.PostSamples;
 import es.jmjg.experiments.shared.UserFactory;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.domain.user.entity.User;
-import java.util.UUID;
 
 class PostControllerGetAllTest extends BasePostControllerTest {
 
@@ -41,10 +41,10 @@ class PostControllerGetAllTest extends BasePostControllerTest {
   void setUp() {
     testUser = UserFactory.createBasicUser();
 
-    Post post1 = PostFactory.createPost(testUser, UUID.randomUUID(), "Hello, World!", "This is my first post.");
+    Post post1 = PostFactory.createPost(testUser, PostUuid.randomUUID(), "Hello, World!", "This is my first post.");
     post1.setId(1);
 
-    Post post2 = PostFactory.createPost(testUser, UUID.randomUUID(), "Second Post", "This is my second post.");
+    Post post2 = PostFactory.createPost(testUser, PostUuid.randomUUID(), "Second Post", "This is my second post.");
     post2.setId(2);
 
     posts = List.of(post1, post2);

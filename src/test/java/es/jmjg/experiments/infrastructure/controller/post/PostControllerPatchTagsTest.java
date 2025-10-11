@@ -7,6 +7,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +45,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
     // Given
     User user = UserFactory.createBasicUser();
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
-    Post post = PostFactory.createPost(user, UUID.randomUUID(), "Post title", "Post body");
+    Post post = PostFactory.createPost(user, PostUuid.randomUUID(), "Post title", "Post body");
     Tag tag1 = TagFactory.createTag(UUID.randomUUID(), "tag1");
     Tag tag2 = TagFactory.createTag(UUID.randomUUID(), "tag2");
     post.setTags(List.of(tag1, tag2));
@@ -53,7 +54,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
     // When & Then
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(List.of(tag1.getName(), tag2.getName()));
     String requestBody = PostSamples.createUpdatePostTagsRequestJson(requestDto);
-    mockMvc.perform(patch("/api/posts/" + post.getUuid() + "/tags")
+    mockMvc.perform(patch("/api/posts/" + post.getPostUuid() + "/tags")
         .contentType("application/json")
         .content(requestBody)
         .with(user(userDetails)))

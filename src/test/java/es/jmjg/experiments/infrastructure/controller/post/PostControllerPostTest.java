@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 
 import es.jmjg.experiments.domain.tag.exception.TagNotFound;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class PostControllerPostTest extends BasePostControllerTest {
 
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
-    Post post = PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
+    Post post = PostFactory.createPost(user, PostUuid.randomUUID(), "This is my brand new post", "TEST BODY");
 
     when(savePost.save(any(SavePostDto.class))).thenReturn(post);
 
@@ -48,7 +48,7 @@ class PostControllerPostTest extends BasePostControllerTest {
             .content(requestBody)
             .with(user(userDetails)))
         .andExpect(status().isCreated())
-        .andExpect(header().string("Location", "/api/posts/" + post.getUuid().toString()))
+        .andExpect(header().string("Location", "/api/posts/" + post.getPostUuid().toString()))
         .andExpect(content().json(expectedResponse));
   }
 
@@ -58,7 +58,7 @@ class PostControllerPostTest extends BasePostControllerTest {
 
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
-    Post post = PostFactory.createPost(user, UUID.randomUUID(), "This is my brand new post", "TEST BODY");
+    Post post = PostFactory.createPost(user, PostUuid.randomUUID(), "This is my brand new post", "TEST BODY");
 
     when(savePost.save(any(SavePostDto.class))).thenThrow(new TagNotFound("Tag not found"));
 

@@ -3,6 +3,7 @@ package es.jmjg.experiments.shared;
 import es.jmjg.experiments.application.post.dto.DeletePostCommentDto;
 import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +18,7 @@ public class PostFactory {
 
   public static Post createBasicPost(User user) {
     Post post = new Post();
-    post.setUuid(UUID.randomUUID());
+    post.setPostUuid(PostUuid.randomUUID());
     post.setUser(user);
     post.setTitle("Test Post");
     post.setBody("Test Body");
@@ -26,16 +27,16 @@ public class PostFactory {
 
   public static Post createPost(User user, String title, String body) {
     Post post = new Post();
-    post.setUuid(UUID.randomUUID());
+    post.setPostUuid(PostUuid.randomUUID());
     post.setUser(user);
     post.setTitle(title);
     post.setBody(body);
     return post;
   }
 
-  public static Post createPost(User user, UUID uuid, String title, String body) {
+  public static Post createPost(User user, PostUuid uuid, String title, String body) {
     Post post = new Post();
-    post.setUuid(uuid);
+    post.setPostUuid(uuid);
     post.setUser(user);
     post.setTitle(title);
     post.setBody(body);
@@ -59,7 +60,7 @@ public class PostFactory {
 
   public static SavePostDto createSavePostDto(User user, String title, String body) {
     return new SavePostDto(
-        UUID.randomUUID(),
+        PostUuid.randomUUID(),
         title,
         body,
         AuthenticatedUserFactory.createAuthenticatedUserDto(user),
@@ -68,14 +69,14 @@ public class PostFactory {
 
   public static SavePostDto createSavePostDto(User user, String title, String body, List<String> tagNames) {
     return new SavePostDto(
-        UUID.randomUUID(),
+        PostUuid.randomUUID(),
         title,
         body,
         AuthenticatedUserFactory.createAuthenticatedUserDto(user),
         tagNames);
   }
 
-  public static UpdatePostDto createPostUpdateDto(UUID uuid, String title, String body, User authenticatedUser) {
+  public static UpdatePostDto createPostUpdateDto(PostUuid uuid, String title, String body, User authenticatedUser) {
     return new UpdatePostDto(
         uuid,
         title,
@@ -84,7 +85,7 @@ public class PostFactory {
         AuthenticatedUserFactory.createAuthenticatedUserDto(authenticatedUser));
   }
 
-  public static UpdatePostDto createPostUpdateDto(UUID uuid, String title, String body, List<String> tagNames, User authenticatedUser) {
+  public static UpdatePostDto createPostUpdateDto(PostUuid uuid, String title, String body, List<String> tagNames, User authenticatedUser) {
     return new UpdatePostDto(
         uuid,
         title,
@@ -93,7 +94,7 @@ public class PostFactory {
         AuthenticatedUserFactory.createAuthenticatedUserDto(authenticatedUser));
   }
 
-  public static DeletePostDto createDeletePostDto(UUID uuid, User authenticatedUser) {
+  public static DeletePostDto createDeletePostDto(PostUuid uuid, User authenticatedUser) {
     return new DeletePostDto(
         uuid,
         AuthenticatedUserFactory.createAuthenticatedUserDto(authenticatedUser));
@@ -101,14 +102,14 @@ public class PostFactory {
 
   public static SavePostCommentDto createSavePostCommentDto(User user, UUID uuid, Post post, String comment) {
     return new SavePostCommentDto(
+      post.getPostUuid(),
       uuid,
-      post.getUuid(),
       comment,
       AuthenticatedUserFactory.createAuthenticatedUserDto(user)
     );
   }
 
-  public static DeletePostCommentDto createDeletePostCommentDto(UUID postUuid, UUID uuid,
+  public static DeletePostCommentDto createDeletePostCommentDto(PostUuid postUuid, UUID uuid,
     User user) {
     return new DeletePostCommentDto(
       uuid,

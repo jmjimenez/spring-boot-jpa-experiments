@@ -1,5 +1,6 @@
 package es.jmjg.experiments.shared;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,10 +16,10 @@ public class UserFactory {
 
     List<Post> testPosts = new ArrayList<>();
     Post post1 = new Post();
-    post1.setUuid(UUID.randomUUID());
+    post1.setPostUuid(PostUuid.randomUUID());
     testPosts.add(post1);
     Post post2 = new Post();
-    post2.setUuid(UUID.randomUUID());
+    post2.setPostUuid(PostUuid.randomUUID());
     testPosts.add(post2);
     testUser.setPosts(testPosts);
 

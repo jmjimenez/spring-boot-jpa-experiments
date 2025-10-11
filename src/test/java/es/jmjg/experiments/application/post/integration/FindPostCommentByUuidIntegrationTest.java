@@ -37,12 +37,12 @@ class FindPostCommentByUuidIntegrationTest extends BaseIntegration {
     // Given
     String commentText = "This is a test comment";
     User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow(() -> new RuntimeException("User sample not found"));
-    Post testPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow(() -> new RuntimeException("Post sample not found"));
+    Post testPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow(() -> new RuntimeException("Post sample not found"));
     PostComment testPostComment = PostFactory.createPostComment(testUser, testPost, commentText);
     postCommentRepository.save(testPostComment);
 
     // When
-    PostComment result = findPostCommentByUuid.findByUuid(testPost.getUuid(), testPostComment.getUuid());
+    PostComment result = findPostCommentByUuid.findByUuid(testPost.getPostUuid(), testPostComment.getUuid());
 
     // Then
     assertThat(result.getUuid()).isEqualTo(testPostComment.getUuid());
@@ -55,10 +55,10 @@ class FindPostCommentByUuidIntegrationTest extends BaseIntegration {
   void findByUuid_WhenPostCommentDoesNotExist_ShouldThrowPostCommentNotFoundException() {
     // Given
     UUID nonExistentUuid = UUID.randomUUID();
-    Post testPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow(() -> new RuntimeException("Post sample not found"));
+    Post testPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow(() -> new RuntimeException("Post sample not found"));
 
     // When
-    assertThatThrownBy(() -> findPostCommentByUuid.findByUuid(testPost.getUuid(), nonExistentUuid))
+    assertThatThrownBy(() -> findPostCommentByUuid.findByUuid(testPost.getPostUuid(), nonExistentUuid))
         .isInstanceOf(PostCommentNotFound.class)
         .hasMessage("Post comment with id " + nonExistentUuid + " not found");
   }
@@ -66,10 +66,10 @@ class FindPostCommentByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenUuidIsNull_ShouldThrowIllegalArgumentException() {
     // Given
-    Post testPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow(() -> new RuntimeException("Post sample not found"));
+    Post testPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow(() -> new RuntimeException("Post sample not found"));
 
     // When
-    assertThatThrownBy(() -> findPostCommentByUuid.findByUuid(testPost.getUuid(), null))
+    assertThatThrownBy(() -> findPostCommentByUuid.findByUuid(testPost.getPostUuid(), null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("id cannot be null");
   }

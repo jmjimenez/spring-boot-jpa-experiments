@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.controller.post.mapper;
 import es.jmjg.experiments.application.post.dto.FindAllPostsDto;
 import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostCommentByUuidResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.PostCommentResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentRequestDto;
@@ -90,16 +91,16 @@ public class PostMapper {
 
   public SavePostDto toSavePostDto(SavePostRequestDto postRequestDto, AuthenticatedUserDto authenticatedUser) {
     return new SavePostDto(
-      postRequestDto.getId(),
+      PostUuid.fromUuid(postRequestDto.getId()),
       postRequestDto.getTitle(),
       postRequestDto.getBody(),
       authenticatedUser,
       Optional.ofNullable(postRequestDto.getTagNames()).orElse(List.of()));
   }
 
-  public UpdatePostDto toUpdatePostDto(UpdatePostRequestDto postRequestDto, UUID PostUuid, AuthenticatedUserDto authenticatedUser) {
+  public UpdatePostDto toUpdatePostDto(UpdatePostRequestDto postRequestDto, UUID postUuid, AuthenticatedUserDto authenticatedUser) {
     return new UpdatePostDto(
-      PostUuid,
+      PostUuid.fromUuid(postUuid),
       postRequestDto.getTitle(),
       postRequestDto.getBody(),
       Optional.ofNullable(postRequestDto.getTagNames()).orElse(List.of()),
@@ -107,7 +108,7 @@ public class PostMapper {
   }
 
   public UpdatePostTagsDto toUpdatePostTagsDto(UpdatePostTagsRequestDto postDto, UUID postUuid, AuthenticatedUserDto user) {
-    return new UpdatePostTagsDto(postUuid, postDto.getTagNames(), user);
+    return new UpdatePostTagsDto(PostUuid.fromUuid(postUuid), postDto.getTagNames(), user);
   }
 
   public UpdatePostTagsResponseDto toUpdatePostTagsResponseDto(Post post) {
@@ -117,14 +118,14 @@ public class PostMapper {
       .collect(java.util.stream.Collectors.toList())
       : List.of();
 
-    return new UpdatePostTagsResponseDto(post.getUuid(), post.getTitle(), tags);
+    return new UpdatePostTagsResponseDto(post.getPostUuid().getUuid(), post.getTitle(), tags);
   }
 
   public SavePostCommentResponseDto toSavePostCommentResponseDto(PostComment postComment) {
     return new SavePostCommentResponseDto(
       postComment.getUuid(),
       postComment.getUser().getUuid(),
-      postComment.getPost().getUuid(),
+      postComment.getPost().getPostUuid().getUuid(),
       postComment.getComment(),
       postComment.getCreatedAt()
     );
@@ -134,7 +135,7 @@ public class PostMapper {
     PostComment postComment) {
     return new FindPostCommentByUuidResponseDto(
       postComment.getUuid(),
-      postComment.getPost().getUuid(),
+      postComment.getPost().getPostUuid().getUuid(),
       postComment.getUser().getUuid(),
       postComment.getComment(),
       postComment.getCreatedAt()
@@ -145,9 +146,9 @@ public class PostMapper {
     return new FindAllPostsDto(pageable);
   }
 
-  public SavePostCommentDto toAddCommentDto(@Valid SavePostCommentRequestDto requestDto, UUID id,
+  public SavePostCommentDto toAddCommentDto(@Valid SavePostCommentRequestDto requestDto, PostUuid id,
     @NotNull AuthenticatedUserDto authenticatedUserDto) {
-    return new SavePostCommentDto(requestDto.getId(), id, requestDto.getComment(), authenticatedUserDto);
+    return new SavePostCommentDto(id, requestDto.getId(), requestDto.getComment(), authenticatedUserDto);
   }
 
   private UpdatePostResponseDto createUpdatePostResponseDto(Post post) {
@@ -158,7 +159,7 @@ public class PostMapper {
     UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     return new SavePostResponseDto(
-      post.getUuid(),
+      post.getPostUuid().getUuid(),
       userUuid,
       post.getTitle(),
       post.getBody(),
@@ -190,7 +191,7 @@ public class PostMapper {
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
     return new FindPostByUuidResponseDto(
-      post.getUuid(),
+      post.getPostUuid().getUuid(),
       userUuid,
       post.getTitle(),
       post.getBody(),
@@ -203,7 +204,7 @@ public class PostMapper {
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
     return new FindAllPostsResponseDto(
-      post.getUuid(),
+      post.getPostUuid().getUuid(),
       userUuid,
       post.getTitle(),
       post.getBody(),
@@ -216,7 +217,7 @@ public class PostMapper {
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
     return new FindPostByTagResponseDto(
-      post.getUuid(),
+      post.getPostUuid().getUuid(),
       userUuid,
       post.getTitle(),
       post.getBody(),
@@ -228,7 +229,7 @@ public class PostMapper {
     UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     return new SearchPostsResponseDto(
-      post.getUuid(),
+      post.getPostUuid().getUuid(),
       userUuid,
       post.getTitle(),
       post.getBody(),
@@ -240,7 +241,7 @@ public class PostMapper {
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
     return new FindPostByTagNameResponseDto(
-      post.getUuid(),
+      post.getPostUuid().getUuid(),
       userUuid,
       post.getTitle(),
       post.getBody(),
@@ -252,7 +253,7 @@ public class PostMapper {
     UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     return new UpdatePostResponseDto(
-      post.getUuid(),
+      post.getPostUuid().getUuid(),
       userUuid,
       post.getTitle(),
       post.getBody(),

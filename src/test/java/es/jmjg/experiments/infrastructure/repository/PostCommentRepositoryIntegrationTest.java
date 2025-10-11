@@ -37,7 +37,7 @@ public class PostCommentRepositoryIntegrationTest extends BaseJpaIntegration {
     PostComment postComment = new PostComment();
     postComment.setUuid(uuid);
     postComment.setComment("This is a test comment");
-    postComment.setPost(postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow());
+    postComment.setPost(postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow());
     postComment.setUser(userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
     postCommentRepository.save(postComment);
 
@@ -55,11 +55,11 @@ public class PostCommentRepositoryIntegrationTest extends BaseJpaIntegration {
     PostComment postComment = new PostComment();
     postComment.setUuid(UUID.randomUUID());
     postComment.setComment("This is a test comment");
-    postComment.setPost(postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow());
+    postComment.setPost(postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow());
     postComment.setUser(userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
     postCommentRepository.save(postComment);
 
-    Post post = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post post = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     assertThat(post.getComments()).contains(postComment);
   }
 
@@ -68,7 +68,7 @@ public class PostCommentRepositoryIntegrationTest extends BaseJpaIntegration {
     PostComment postComment = new PostComment();
     postComment.setUuid(UUID.randomUUID());
     postComment.setComment("This is a test comment");
-    postComment.setPost(postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow());
+    postComment.setPost(postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow());
     postComment.setUser(userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
     postCommentRepository.save(postComment);
 
@@ -83,7 +83,7 @@ public class PostCommentRepositoryIntegrationTest extends BaseJpaIntegration {
     PostComment postComment = new PostComment();
     postComment.setUuid(uuid);
     postComment.setComment("");
-    postComment.setPost(postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow());
+    postComment.setPost(postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow());
     postComment.setUser(userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
     assertThatThrownBy(() -> postCommentRepository.save(postComment))
         .isInstanceOf(ConstraintViolationException.class)

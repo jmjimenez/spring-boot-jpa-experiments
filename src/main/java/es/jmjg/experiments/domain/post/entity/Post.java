@@ -3,9 +3,9 @@ package es.jmjg.experiments.domain.post.entity;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.domain.user.entity.User;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embedded;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,7 +39,8 @@ public class Post {
 
   @NotNull
   @Column(name = "uuid", unique = true, nullable = false)
-  private UUID uuid;
+  @Embedded
+  private PostUuid postUuid;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")

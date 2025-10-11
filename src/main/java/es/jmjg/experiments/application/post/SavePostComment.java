@@ -35,7 +35,7 @@ public class SavePostComment {
     User user = userRepository.findByUuid(savePostCommentDto.authenticatedUser().id())
       .orElseThrow(() -> new UserNotFound("User not found"));
 
-    Post post = postRepository.findByUuid(savePostCommentDto.postId())
+    Post post = postRepository.findByPostUuid(savePostCommentDto.postUuid())
       .orElseThrow(() -> new PostNotFound("Post not found"));
 
     if (savePostCommentDto.comment().isEmpty()) {
@@ -43,7 +43,7 @@ public class SavePostComment {
     }
 
     PostComment postComment = new PostComment();
-    postComment.setUuid(savePostCommentDto.id());
+    postComment.setUuid(savePostCommentDto.uuid());
     postComment.setPost(post);
     postComment.setComment(savePostCommentDto.comment());
     postComment.setUser(user);

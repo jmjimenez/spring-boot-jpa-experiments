@@ -36,10 +36,10 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
   void updateTags_shouldUpdateTagsSuccessfully() {
     // Given
     User owner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    Post post = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post post = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(owner);
     List<String> newTags = List.of(TestDataSamples.TAG_TECHNOLOGY, TestDataSamples.TAG_JAVA);
-    UpdatePostTagsDto dto = new UpdatePostTagsDto(post.getUuid(), newTags, authenticatedUser);
+    UpdatePostTagsDto dto = new UpdatePostTagsDto(post.getPostUuid(), newTags, authenticatedUser);
 
     // When
     Post updatedPost = updatePostTags.update(dto);
@@ -49,7 +49,7 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
     assertThat(updatedPost.getTags()).extracting(Tag::getName).containsExactlyInAnyOrderElementsOf(newTags);
 
     // Also verify persisted state
-    Post persisted = postRepository.findByUuid(post.getUuid()).orElseThrow();
+    Post persisted = postRepository.findByPostUuid(post.getPostUuid()).orElseThrow();
     assertThat(persisted.getTags()).hasSize(2);
     assertThat(persisted.getTags()).extracting(Tag::getName).containsExactlyInAnyOrderElementsOf(newTags);
   }
@@ -60,10 +60,10 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
   void updateTags_WhenTagListIsEmpty_shouldUpdateTagsSuccessfully() {
     // Given
     User owner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    Post post = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post post = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(owner);
     List<String> newTags = List.of();
-    UpdatePostTagsDto dto = new UpdatePostTagsDto(post.getUuid(), newTags, authenticatedUser);
+    UpdatePostTagsDto dto = new UpdatePostTagsDto(post.getPostUuid(), newTags, authenticatedUser);
 
     // When
     Post updatedPost = updatePostTags.update(dto);
@@ -72,7 +72,7 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
     assertThat(updatedPost.getTags()).hasSize(0);
 
     // Also verify persisted state
-    Post persisted = postRepository.findByUuid(post.getUuid()).orElseThrow();
+    Post persisted = postRepository.findByPostUuid(post.getPostUuid()).orElseThrow();
     assertThat(persisted.getTags()).hasSize(0);
   }
 
@@ -81,10 +81,10 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
   void updateTags_shouldThrowTagNotFound() {
     // Given
     User owner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    Post post = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post post = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(owner);
     List<String> newTags = List.of(TestDataSamples.TAG_TECHNOLOGY, "notfound");
-    UpdatePostTagsDto dto = new UpdatePostTagsDto(post.getUuid(), newTags, authenticatedUser);
+    UpdatePostTagsDto dto = new UpdatePostTagsDto(post.getPostUuid(), newTags, authenticatedUser);
 
     // When / Then
     assertThatThrownBy(() -> updatePostTags.update(dto))

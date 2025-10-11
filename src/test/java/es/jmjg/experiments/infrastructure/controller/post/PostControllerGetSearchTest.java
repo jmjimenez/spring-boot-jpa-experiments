@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,10 +34,10 @@ class PostControllerGetSearchTest extends BasePostControllerTest {
     user.setPassword("encodedPassword123");
 
     Post searchResult1 = PostFactory.createPost(
-        user, UUID.randomUUID(), "Spring Boot Tutorial", "Learn Spring Boot");
+        user, PostUuid.randomUUID(), "Spring Boot Tutorial", "Learn Spring Boot");
     searchResult1.setId(1);
 
-    Post searchResult2 = PostFactory.createPost(user, UUID.randomUUID(), "JPA Best Practices", "Learn JPA");
+    Post searchResult2 = PostFactory.createPost(user, PostUuid.randomUUID(), "JPA Best Practices", "Learn JPA");
     searchResult2.setId(2);
 
     List<Post> searchResults = List.of(searchResult1, searchResult2);

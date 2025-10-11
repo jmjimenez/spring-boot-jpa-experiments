@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,7 +66,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   void shouldReturnPostByTitle() {
     Post post = postRepository.findByTitle(TestDataSamples.LEANNE_POST_TITLE).orElseThrow();
     assertEquals(TestDataSamples.LEANNE_POST_TITLE, post.getTitle(), "Post title should match the migration data");
-    assertEquals(TestDataSamples.LEANNE_POST_UUID, post.getUuid(), "Post UUID should match the migration data");
+    assertEquals(TestDataSamples.LEANNE_POST_UUID, post.getPostUuid(), "Post UUID should match the migration data");
   }
 
   @Test
@@ -86,9 +86,9 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertTrue(ervinPost.isPresent(), "Ervin's post should be found");
     assertTrue(clementinePost.isPresent(), "Clementine's post should be found");
 
-    assertEquals(TestDataSamples.LEANNE_POST_UUID, leannePost.get().getUuid());
-    assertEquals(TestDataSamples.ERVIN_POST_UUID, ervinPost.get().getUuid());
-    assertEquals(TestDataSamples.CLEMENTINE_POST_UUID, clementinePost.get().getUuid());
+    assertEquals(TestDataSamples.LEANNE_POST_UUID, leannePost.get().getPostUuid());
+    assertEquals(TestDataSamples.ERVIN_POST_UUID, ervinPost.get().getPostUuid().getUuid());
+    assertEquals(TestDataSamples.CLEMENTINE_POST_UUID, clementinePost.get().getPostUuid().getUuid());
   }
 
   @Test
@@ -167,7 +167,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   void save_WhenPostHasTags_ShouldSavePostWithTags() {
     // Given
     Post post = new Post();
-    post.setUuid(UUID.randomUUID());
+    post.setPostUuid(PostUuid.randomUUID());
     post.setUser(leanneUser);
     post.setTitle("Java Programming");
     post.setBody("Learn Java programming");
@@ -201,7 +201,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   void save_WhenPostHasSingleTag_ShouldSavePostWithTag() {
     // Given
     Post post = new Post();
-    post.setUuid(UUID.randomUUID());
+    post.setPostUuid(PostUuid.randomUUID());
     post.setUser(leanneUser);
     post.setTitle("Spring Boot Tutorial");
     post.setBody("Learn Spring Boot");
@@ -233,7 +233,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   void save_WhenPostHasNoTags_ShouldSavePostWithoutTags() {
     // Given
     Post post = new Post();
-    post.setUuid(UUID.randomUUID());
+    post.setPostUuid(PostUuid.randomUUID());
     post.setUser(leanneUser);
     post.setTitle("Post Without Tags");
     post.setBody("This post has no tags");
@@ -260,7 +260,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   void save_WhenPostHasMultipleTags_ShouldSavePostWithAllTags() {
     // Given
     Post post = new Post();
-    post.setUuid(UUID.randomUUID());
+    post.setPostUuid(PostUuid.randomUUID());
     post.setUser(leanneUser);
     post.setTitle("Full Stack Java");
     post.setBody("Complete Java development guide");
@@ -296,7 +296,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   void update_WhenPostHasTags_ShouldUpdatePostWithTags() {
     // Given - First save a post without tags
     Post post = new Post();
-    post.setUuid(UUID.randomUUID());
+    post.setPostUuid(PostUuid.randomUUID());
     post.setUser(leanneUser);
     post.setTitle("Original Post");
     post.setBody("Original content");
@@ -335,7 +335,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   void update_WhenPostTagsAreRemoved_ShouldUpdatePostWithoutTags() {
     // Given - First save a post with tags
     Post post = new Post();
-    post.setUuid(UUID.randomUUID());
+    post.setPostUuid(PostUuid.randomUUID());
     post.setUser(leanneUser);
     post.setTitle("Post With Tags");
     post.setBody("Content with tags");
@@ -372,7 +372,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   void update_WhenPostTagsAreModified_ShouldUpdatePostWithNewTags() {
     // Given - First save a post with initial tags
     Post post = new Post();
-    post.setUuid(UUID.randomUUID());
+    post.setPostUuid(PostUuid.randomUUID());
     post.setUser(leanneUser);
     post.setTitle("Post With Initial Tags");
     post.setBody("Content with initial tags");
@@ -443,12 +443,12 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     entityManager.refresh(testPost);
 
     // When
-    Post result = postRepository.findByUuid(testPost.getUuid()).orElseThrow();
+    Post result = postRepository.findByPostUuid(testPost.getPostUuid()).orElseThrow();
 
     // Then
     assertThat(result.getBody()).isEqualTo(testPost.getBody());
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
-    assertThat(result.getUuid()).isEqualTo(testPost.getUuid());
+    assertThat(result.getPostUuid()).isEqualTo(testPost.getPostUuid());
     assertThat(result.getTitle()).isEqualTo(testPost.getTitle());
     assertThat(result.getTags()).hasSize(3);
     assertThat(result.getTags()).extracting("name").containsExactlyInAnyOrder(
