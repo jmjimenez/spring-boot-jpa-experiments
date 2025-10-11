@@ -34,7 +34,6 @@ class UpdateUserTest {
   @InjectMocks
   private UpdateUser updateUser;
 
-  private User existingUser;
   private User testUser;
   private AuthenticatedUserDto authenticatedTestUser;
 
@@ -42,24 +41,23 @@ class UpdateUserTest {
   void setUp() {
     testUser = UserFactory.createBasicUser();
     authenticatedTestUser = AuthenticatedUserFactory.createAuthenticatedUserDto(testUser);
-    existingUser = UserFactory.createUser(1, testUser.getUuid(), "Old Name", "old@example.com", "olduser");
   }
 
   @Test
   void update_WhenUserExistsAndIsAuthenticatedUser_ShouldUpdateFields() {
     // Given
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(existingUser));
+    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var updateUserDto = createUpdateUserDto(testUser.getUuid(), authenticatedTestUser, "New Name", "new@example.com");
+    var updateUserDto = new UpdateUserDto(testUser.getUuid(), "New Name", "new@example.com", authenticatedTestUser);
     User result = updateUser.update(updateUserDto);
 
     // Then
-    assertThat(result.getName()).isEqualTo("New Name");
-    assertThat(result.getEmail()).isEqualTo("new@example.com");
+    assertThat(result.getName()).isEqualTo(updateUserDto.name());
+    assertThat(result.getEmail()).isEqualTo(updateUserDto.email());
     assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
-    verify(userRepository, times(1)).save(existingUser);
+    verify(userRepository, times(1)).save(testUser);
   }
 
   @Test
@@ -67,19 +65,18 @@ class UpdateUserTest {
     // Given
     var adminUser = UserFactory.createAdminUser();
     var authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
-    var updateUserDto = createUpdateUserDto(testUser.getUuid(), authenticatedAdminUser, "New Name", "new@example.com");
-
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(existingUser));
+    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
+    var updateUserDto = new UpdateUserDto(testUser.getUuid(), "New Name", "new@example.com", authenticatedAdminUser);
     User result = updateUser.update(updateUserDto);
 
     // Then
-    assertThat(result.getName()).isEqualTo("New Name");
-    assertThat(result.getEmail()).isEqualTo("new@example.com");
+    assertThat(result.getName()).isEqualTo(updateUserDto.name());
+    assertThat(result.getEmail()).isEqualTo(updateUserDto.email());
     assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
-    verify(userRepository, times(1)).save(existingUser);
+    verify(userRepository, times(1)).save(testUser);
   }
 
   @Test
@@ -87,11 +84,12 @@ class UpdateUserTest {
     // Given
     var otherUser = UserFactory.createBasicUser();
     var authenticatedOtherUser = AuthenticatedUserFactory.createAuthenticatedUserDto(otherUser);
-    var updateUserDto = createUpdateUserDto(testUser.getUuid(), authenticatedOtherUser, "New Name", "new@example.com");
 
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(existingUser));
+    // When
+    var updateUserDto = new UpdateUserDto(testUser.getUuid(), "New Name", "new@example.com", authenticatedOtherUser);
+    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
 
-    // When & Then
+    // Then
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("Access denied: only admins or the user themselves can update user data");
@@ -102,7 +100,7 @@ class UpdateUserTest {
   void update_WhenUserDoesNotExist_ShouldThrow() {
     // Given
     var newId = UUID.randomUUID();
-    var updateUserDto = createUpdateUserDto(newId, authenticatedTestUser, "New Name", "new@example.com");
+    var updateUserDto = new UpdateUserDto(newId, "New Name", "new@example.com", authenticatedTestUser);
     when(userRepository.findByUuid(newId)).thenReturn(Optional.empty());
 
     // When & Then
@@ -110,15 +108,5 @@ class UpdateUserTest {
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("User not found with id: " + newId);
     verify(userRepository, never()).save(any());
-  }
-
-  //TODO: move to factory
-  private UpdateUserDto createUpdateUserDto(UUID uuid, AuthenticatedUserDto authenticatedUser, String name,
-      String email) {
-    return new UpdateUserDto(
-        uuid,
-        name,
-        email,
-        authenticatedUser);
   }
 }
