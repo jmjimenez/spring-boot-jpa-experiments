@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.post.exception.PostCommentNotFound;
 import es.jmjg.experiments.domain.post.repository.PostCommentRepository;
 import es.jmjg.experiments.shared.PostFactory;
@@ -47,7 +48,7 @@ class FindPostCommentByUuidTest {
     when(postCommentRepository.findByUuid(testPostComment.getUuid())).thenReturn(Optional.of(testPostComment));
 
     // When
-    PostComment result = findPostCommentByUuid.findByUuid(testPost.getUuid(), testPostComment.getUuid());
+    PostComment result = findPostCommentByUuid.findByUuid(testPost.getPostUuid(), testPostComment.getUuid());
 
     // Then
     assertThat(result).isEqualTo(testPostComment);
@@ -61,7 +62,7 @@ class FindPostCommentByUuidTest {
     when(postCommentRepository.findByUuid(nonExistentUuid)).thenReturn(Optional.empty());
 
     // When
-    assertThatThrownBy(() -> findPostCommentByUuid.findByUuid(testPost.getUuid(), nonExistentUuid))
+    assertThatThrownBy(() -> findPostCommentByUuid.findByUuid(testPost.getPostUuid(), nonExistentUuid))
         .isInstanceOf(PostCommentNotFound.class)
         .hasMessage("Post comment with id " + nonExistentUuid + " not found");
 
@@ -72,7 +73,7 @@ class FindPostCommentByUuidTest {
   @Test
   void findByUuid_WhenPostCommentAndPostDoNotMatch_ShouldThrowPostCommentNotFoundException() {
     // Given
-    var notMatchingPostUuid = UUID.randomUUID();
+    var notMatchingPostUuid = PostUuid.randomUUID();
     when(postCommentRepository.findByUuid(testPostComment.getUuid())).thenReturn(Optional.of(testPostComment));
 
     // When

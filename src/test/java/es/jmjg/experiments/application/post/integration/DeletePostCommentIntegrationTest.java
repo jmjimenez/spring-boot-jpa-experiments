@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import es.jmjg.experiments.application.post.DeletePost;
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.domain.user.entity.User;
@@ -14,7 +15,6 @@ import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,10 +33,10 @@ class DeletePostCommentIntegrationTest extends BaseIntegration {
   void deleteByUuid_WhenUserIsOwner_ShouldDeletePost() {
     // Given - using existing test data from migration
     User postOwner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_1_UUID).orElseThrow();
+    Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     assertThat(postRepository.findById(existingPost.getId())).isPresent();
 
-    DeletePostDto deletePostDto = PostFactory.createDeletePostDto(existingPost.getUuid(), postOwner);
+    DeletePostDto deletePostDto = PostFactory.createDeletePostDto(existingPost.getPostUuid(), postOwner);
 
     // When
     deletePost.delete(deletePostDto);
@@ -49,10 +49,10 @@ class DeletePostCommentIntegrationTest extends BaseIntegration {
   void deleteByUuid_WhenUserIsAdmin_ShouldDeletePost() {
     // Given - using existing test data from migration
     User adminUser = userRepository.findByUsername(TestDataSamples.ADMIN_USERNAME).orElseThrow();
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_16_UUID).orElseThrow();
+    Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_16_UUID).orElseThrow();
     assertThat(postRepository.findById(existingPost.getId())).isPresent();
 
-    DeletePostDto deletePostDto = PostFactory.createDeletePostDto(existingPost.getUuid(), adminUser);
+    DeletePostDto deletePostDto = PostFactory.createDeletePostDto(existingPost.getPostUuid(), adminUser);
 
     // When
     deletePost.delete(deletePostDto);
@@ -65,10 +65,10 @@ class DeletePostCommentIntegrationTest extends BaseIntegration {
   void deleteByUuid_WhenUserIsNotOwnerAndNotAdmin_ShouldThrowForbidden() {
     // Given - using existing test data from migration
     User nonOwnerUser = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
-    Post existingPost = postRepository.findByUuid(TestDataSamples.POST_3_UUID).orElseThrow();
+    Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_3_UUID).orElseThrow();
     assertThat(postRepository.findById(existingPost.getId())).isPresent();
 
-    DeletePostDto deletePostDto = PostFactory.createDeletePostDto(existingPost.getUuid(), nonOwnerUser);
+    DeletePostDto deletePostDto = PostFactory.createDeletePostDto(existingPost.getPostUuid(), nonOwnerUser);
 
     // When & Then
     assertThatThrownBy(() -> deletePost.delete(deletePostDto))
@@ -83,7 +83,7 @@ class DeletePostCommentIntegrationTest extends BaseIntegration {
   void deleteByUuid_WhenPostDoesNotExist_ShouldThrowPostNotFoundException() {
     // Given - using existing test data from migration
     User testUser = userRepository.findByUuid(TestDataSamples.CHELSEY_UUID).orElseThrow();
-    final UUID nonExistentUuid = UUID.randomUUID();
+    final PostUuid nonExistentUuid = PostUuid.randomUUID();
 
     DeletePostDto deletePostDto = PostFactory.createDeletePostDto(nonExistentUuid, testUser);
 

@@ -2,6 +2,7 @@ package es.jmjg.experiments.infrastructure.controller.post.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ class PostControllerPatchTagsIntegrationTest extends BaseControllerIntegration {
   void shouldPatchTagsWhenPostExists() {
     final String username = TestDataSamples.LEANNE_USERNAME;
     final String password = TestDataSamples.LEANNE_PASSWORD;
-    final UUID postUuid = TestDataSamples.LEANNE_POST_UUID;
+    final PostUuid postUuid = TestDataSamples.LEANNE_POST_UUID;
     final List<String> newTags = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_TECHNOLOGY);
 
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(newTags);

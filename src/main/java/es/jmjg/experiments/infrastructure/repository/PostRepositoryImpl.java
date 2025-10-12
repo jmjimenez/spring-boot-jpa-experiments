@@ -1,8 +1,8 @@
 package es.jmjg.experiments.infrastructure.repository;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,8 +40,8 @@ public class PostRepositoryImpl implements PostRepository {
   }
 
   @Override
-  public Optional<Post> findByUuid(UUID uuid) {
-    return jpaPostRepository.findByUuid(uuid);
+  public Optional<Post> findByPostUuid(PostUuid postUuid) {
+    return jpaPostRepository.findByPostUuid(postUuid);
   }
 
   @Override

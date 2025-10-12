@@ -4,6 +4,7 @@ import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.infrastructure.controller.user.dto.PasswordResetResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto;
@@ -98,7 +99,8 @@ public class UserMapper {
     }
 
     List<UUID> postUuids = user.getPosts() != null ? user.getPosts().stream()
-        .map(Post::getUuid)
+        .map(Post::getPostUuid)
+        .map(PostUuid::getUuid)
         .collect(Collectors.toList()) : List.of();
 
     List<String> tagNames = user.getTags() != null ? user.getTags().stream()

@@ -29,11 +29,11 @@ class PostControllerGetCommentByUuidTest extends BasePostControllerTest {
     Post post = PostFactory.createBasicPost(user);
     PostComment postComment = PostFactory.createPostComment(user, post, "Nice post!", LocalDateTime.now());
 
-    when(findPostCommentByUuid.findByUuid(post.getUuid(), postComment.getUuid())).thenReturn(postComment);
+    when(findPostCommentByUuid.findByUuid(post.getPostUuid(), postComment.getUuid())).thenReturn(postComment);
     String json = PostCommentSamples.createFindPostCommentByUuidJsonResponse(postComment);
 
     mockMvc
-        .perform(get("/api/posts/" + post.getUuid() + "/comments/" + postComment.getUuid()))
+        .perform(get("/api/posts/" + post.getPostUuid() + "/comments/" + postComment.getUuid()))
         .andExpect(status().isOk())
         .andExpect(content().json(json));
   }
@@ -43,8 +43,8 @@ class PostControllerGetCommentByUuidTest extends BasePostControllerTest {
     UUID uuid = UUID.randomUUID();
     User user = UserFactory.createBasicUser();
     Post post = PostFactory.createBasicPost(user);
-    when(findPostCommentByUuid.findByUuid(post.getUuid(), uuid)).thenThrow(new PostNotFound("Post Comment not found"));
+    when(findPostCommentByUuid.findByUuid(post.getPostUuid(), uuid)).thenThrow(new PostNotFound("Post Comment not found"));
 
-    mockMvc.perform(get("/api/posts/" + post.getUuid() + "/comments/" + uuid)).andExpect(status().isNotFound());
+    mockMvc.perform(get("/api/posts/" + post.getPostUuid() + "/comments/" + uuid)).andExpect(status().isNotFound());
   }
 }

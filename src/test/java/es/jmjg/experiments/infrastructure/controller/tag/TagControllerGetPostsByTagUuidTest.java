@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import es.jmjg.experiments.application.tag.FindPostsByTag;
 import es.jmjg.experiments.domain.post.entity.Post;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.PostFactory;
@@ -37,7 +38,7 @@ class TagControllerGetPostsByTagUuidTest extends BaseTagControllerTest {
   void shouldFindPostsByTag() throws Exception {
     // Given
     User user = UserFactory.createUser("Test User", "test@example.com", "testuser");
-    Post post = PostFactory.createPost(user, UUID.randomUUID(), "Test Post", "Test content");
+    Post post = PostFactory.createPost(user, PostUuid.randomUUID(), "Test Post", "Test content");
     List<Post> posts = List.of(post);
     when(findPostsByTag.findByTagUuid(testUuid)).thenReturn(posts);
 

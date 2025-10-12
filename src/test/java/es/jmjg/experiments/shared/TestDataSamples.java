@@ -1,5 +1,6 @@
 package es.jmjg.experiments.shared;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.UUID;
 
 /**
@@ -73,17 +74,17 @@ public final class TestDataSamples {
   public static final String CHELSEY_USERNAME = "chelsey_dietrich";
 
   // Sample posts from Flyway migration data
-  public static final UUID POST_1_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
+  public static final PostUuid POST_1_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440006");
   public static final String POST_1_TITLE = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
   public static final String POST_1_BODY = "quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto";
   public static final UUID POST_2_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440007");
   public static final String POST_2_TITLE = "qui est esse";
-  public static final UUID POST_3_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440008");
-  public static final UUID POST_16_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
+  public static final PostUuid POST_3_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440008");
+  public static final PostUuid POST_16_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440016");
 
   // Additional post titles and bodies from Flyway migration data
   public static final String LEANNE_POST_TITLE = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
-  public static final UUID LEANNE_POST_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
+  public static final PostUuid LEANNE_POST_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440006");
   public static final String ERVIN_POST_TITLE = "et ea vero quia laudantium autem";
   public static final String ERVIN_POST_BODY = "delectus reiciendis molestiae occaecati non minima eveniet qui voluptatibus\\naccusamus in eum beatae sit\\nvel qui neque voluptates ut commodi qui incidunt\\nut animi commodi";
   public static final UUID ERVIN_POST_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");

@@ -42,7 +42,7 @@ class PostControllerPostCommentIntegrationTest extends BaseControllerIntegration
             body -> {
               assertThat(body.getId()).isEqualTo(postCommentUuid);
               assertThat(body.getUserId()).isEqualTo(TestDataSamples.ERVIN_UUID);
-              assertThat(body.getPostId()).isEqualTo(TestDataSamples.LEANNE_POST_UUID);
+              assertThat(body.getPostId()).isEqualTo(TestDataSamples.LEANNE_POST_UUID.getUuid());
               assertThat(body.getComment()).isEqualTo(comment);
               assertThat(locationHeader).isEqualTo("/api/posts/" + TestDataSamples.LEANNE_POST_UUID + "/comments/" + postCommentUuid);
             });

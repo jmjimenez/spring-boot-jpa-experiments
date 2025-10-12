@@ -42,7 +42,7 @@ public final class PostSamples {
             "hasPrevious":false
         }
         """
-      .formatted(posts.get(0).getUuid(), posts.get(0).getUser().getUuid(), posts.get(1).getUuid(),
+      .formatted(posts.get(0).getPostUuid(), posts.get(0).getUser().getUuid(), posts.get(1).getPostUuid(),
         posts.get(1).getUser().getUuid());
   }
 
@@ -66,7 +66,7 @@ public final class PostSamples {
             "hasPrevious":false
         }
         """
-      .formatted(posts.getFirst().getUuid(), posts.getFirst().getUser().getUuid());
+      .formatted(posts.getFirst().getPostUuid(), posts.getFirst().getUser().getUuid());
   }
 
   public static String createEmptyPostsJsonResponse() {
@@ -105,7 +105,7 @@ public final class PostSamples {
         }
         """
       .formatted(
-        post.getUuid(),
+        post.getPostUuid(),
         post.getUser().getUuid(),
         post.getTitle(),
         post.getBody(),
@@ -121,7 +121,7 @@ public final class PostSamples {
             "body":"%s"
         }
         """
-      .formatted(post.getUuid(), post.getTitle(), post.getBody());
+      .formatted(post.getPostUuid(), post.getTitle(), post.getBody());
   }
 
   public static String createCreatePostResponseJson(Post post) {
@@ -135,7 +135,7 @@ public final class PostSamples {
         }
         """
       .formatted(
-        post.getUuid(),
+        post.getPostUuid(),
         post.getUser().getUuid(),
         post.getTitle(),
         post.getBody());
@@ -150,7 +150,7 @@ public final class PostSamples {
         }
         """
       .formatted(
-        post.getUuid(),
+        post.getPostUuid(),
         post.getTitle(),
         post.getBody());
   }
@@ -173,10 +173,10 @@ public final class PostSamples {
         ]
         """
       .formatted(
-        searchResults.get(0).getUuid(),
+        searchResults.get(0).getPostUuid(),
         searchResults.get(0).getTitle(),
         searchResults.get(0).getBody(),
-        searchResults.get(1).getUuid(),
+        searchResults.get(1).getPostUuid(),
         searchResults.get(1).getTitle(),
         searchResults.get(1).getBody());
   }

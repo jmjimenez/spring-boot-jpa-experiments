@@ -19,10 +19,10 @@ public class DeletePost {
 
   @Transactional
   public void delete(DeletePostDto deletePostDto) {
-    var post = postRepository.findByUuid(deletePostDto.uuid());
+    var post = postRepository.findByPostUuid(deletePostDto.uuid());
 
     if (post.isEmpty()) {
-      throw new PostNotFound(deletePostDto.uuid());
+      throw new PostNotFound(deletePostDto.uuid().getUuid());
     }
 
     if (!post.get().getUser().getUuid().equals(deletePostDto.authenticatedUser().id()) &&

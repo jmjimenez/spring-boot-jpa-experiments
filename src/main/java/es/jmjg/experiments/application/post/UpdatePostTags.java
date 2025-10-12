@@ -22,7 +22,7 @@ public class UpdatePostTags {
 
     @Transactional
     public Post update(UpdatePostTagsDto dto) {
-        Post post = postRepository.findByUuid(dto.postUuid())
+        Post post = postRepository.findByPostUuid(dto.postUuid())
             .orElseThrow(() -> new PostNotFound("Post not found"));
 
         AuthenticatedUserDto user = dto.authenticatedUserDto();

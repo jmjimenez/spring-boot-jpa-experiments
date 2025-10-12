@@ -24,7 +24,7 @@ public class DeletePostComment {
 
     var postComment = postCommentRepository.findByUuid(deletePostCommentDto.uuid()).orElseThrow(() -> new PostCommentNotFound("Post comment with id " + deletePostCommentDto.uuid() + " not found"));
 
-    if (!postComment.getPost().getUuid().equals(deletePostCommentDto.postUuid())) {
+    if (!postComment.getPost().getPostUuid().equals(deletePostCommentDto.postUuid())) {
       throw new PostCommentNotFound("Post comment with id " + deletePostCommentDto.uuid() + " not found for post with id " + deletePostCommentDto.postUuid());
     }
 

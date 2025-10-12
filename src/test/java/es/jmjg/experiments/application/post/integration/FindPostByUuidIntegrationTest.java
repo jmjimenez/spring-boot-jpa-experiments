@@ -2,7 +2,7 @@ package es.jmjg.experiments.application.post.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ class FindPostByUuidIntegrationTest extends BaseIntegration {
     Post result = findPostByUuid.findByUuid(TestDataSamples.LEANNE_POST_UUID);
 
     // Then
-    assertThat(result.getUuid()).isEqualTo(TestDataSamples.LEANNE_POST_UUID);
+    assertThat(result.getPostUuid()).isEqualTo(TestDataSamples.LEANNE_POST_UUID);
     assertThat(result.getTitle()).isEqualTo(TestDataSamples.LEANNE_POST_TITLE);
     assertThat(result.getTags()).hasSize(3);
     assertThat(result.getTags()).extracting("name").containsExactlyInAnyOrder(
@@ -39,7 +39,7 @@ class FindPostByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenPostDoesNotExist_ShouldThrowPostNotFoundException() {
     // Given
-    UUID nonExistentUuid = UUID.randomUUID();
+    final var nonExistentUuid = PostUuid.randomUUID();
 
     // When
     assertThatThrownBy(() -> findPostByUuid.findByUuid(nonExistentUuid))

@@ -3,8 +3,8 @@ package es.jmjg.experiments.application.post;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.Optional;
-import java.util.UUID;
 
 import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,21 +39,21 @@ class FindPostByUuidTest {
   @Test
   void findByUuid_WhenPostExists_ShouldReturnPost() {
     // Given
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
 
     // When
-    Post result = findPostByUuid.findByUuid(testPost.getUuid());
+    Post result = findPostByUuid.findByUuid(testPost.getPostUuid());
 
     // Then
     assertThat(result).isEqualTo(testPost);
-    verify(postRepository, times(1)).findByUuid(testPost.getUuid());
+    verify(postRepository, times(1)).findByPostUuid(testPost.getPostUuid());
   }
 
   @Test
   void findByUuid_WhenPostDoesNotExist_ShouldThrowPostNotFoundException() {
     // Given
-    var nonExistentUuid = UUID.randomUUID();
-    when(postRepository.findByUuid(nonExistentUuid)).thenReturn(Optional.empty());
+    var nonExistentUuid = PostUuid.randomUUID();
+    when(postRepository.findByPostUuid(nonExistentUuid)).thenReturn(Optional.empty());
 
     // When
     assertThatThrownBy(() -> findPostByUuid.findByUuid(nonExistentUuid))
@@ -61,7 +61,7 @@ class FindPostByUuidTest {
         .hasMessage("Post with UUID " + nonExistentUuid + " not found");
 
     // Then
-    verify(postRepository, times(1)).findByUuid(nonExistentUuid);
+    verify(postRepository, times(1)).findByPostUuid(nonExistentUuid);
   }
 
   @Test
@@ -72,6 +72,6 @@ class FindPostByUuidTest {
         .hasMessage("UUID cannot be null");
 
     // Then
-    verify(postRepository, never()).findByUuid(null);
+    verify(postRepository, never()).findByPostUuid(null);
   }
 }

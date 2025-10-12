@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import es.jmjg.experiments.application.post.shared.ProcessPostTags;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,14 +51,14 @@ class UpdatePostTest {
   @Test
   void update_WhenPostExistsAndUserIsOwner_ShouldUpdatePost() {
     // Given
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
             invocation -> invocation.<Post>getArgument(0));
     doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
-    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUser);
+    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getPostUuid(), "Updated Title", "Updated Body", testUser);
     Post result = updatePost.update(updatePostDto);
 
     // Then
@@ -67,21 +67,21 @@ class UpdatePostTest {
     assertThat(result.getBody()).isEqualTo(updatePostDto.body());
     assertThat(result.getTags()).isNotNull(); // Tags field should be present
 
-    verify(postRepository, times(1)).findByUuid(testPost.getUuid());
+    verify(postRepository, times(1)).findByPostUuid(testPost.getPostUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
   @Test
   void update_WhenPostExistsAndUserIsAdmin_ShouldUpdatePost() {
     // Given
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
             invocation -> invocation.<Post>getArgument(0));
     doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
-    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUserAdmin);
+    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getPostUuid(), "Updated Title", "Updated Body", testUserAdmin);
     Post result = updatePost.update(updatePostDto);
 
     // Then
@@ -90,31 +90,31 @@ class UpdatePostTest {
     assertThat(result.getBody()).isEqualTo(updatePostDto.body());
     assertThat(result.getTags()).isNotNull(); // Tags field should be present
 
-    verify(postRepository, times(1)).findByUuid(testPost.getUuid());
+    verify(postRepository, times(1)).findByPostUuid(testPost.getPostUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
   @Test
   void update_WhenPostExistsAndUserIsNotOwner_ShouldThrowForbidden() {
     // Given
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
 
     // When
-    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUser2);
+    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getPostUuid(), "Updated Title", "Updated Body", testUser2);
     assertThatThrownBy(() -> updatePost.update(updatePostDto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("You are not the owner of this post");
 
     // Then
-    verify(postRepository, times(1)).findByUuid(testPost.getUuid());
+    verify(postRepository, times(1)).findByPostUuid(testPost.getPostUuid());
     verify(postRepository, never()).save(any());
   }
 
   @Test
   void update_WhenPostDoesNotExist_ShouldThrowPostNotFound() {
     // Given
-    UUID nonExistentPostUuid = UUID.randomUUID();
-    when(postRepository.findByUuid(nonExistentPostUuid)).thenReturn(Optional.empty());
+    final var nonExistentPostUuid = PostUuid.randomUUID();
+    when(postRepository.findByPostUuid(nonExistentPostUuid)).thenReturn(Optional.empty());
 
     // When & Then
     var updatePostDto = PostFactory.createPostUpdateDto(nonExistentPostUuid, "Updated Title", "Updated Body", testUser);
@@ -122,45 +122,45 @@ class UpdatePostTest {
         .isInstanceOf(PostNotFound.class)
         .hasMessage("Post not found with id: " + nonExistentPostUuid);
 
-    verify(postRepository, times(1)).findByUuid(nonExistentPostUuid);
+    verify(postRepository, times(1)).findByPostUuid(nonExistentPostUuid);
     verify(postRepository, never()).save(any());
   }
 
   @Test
   void update_ShouldPreserveOriginalUuidAndUserId() {
     // Given
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
             invocation -> invocation.<Post>getArgument(0));
     doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
-    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUser);
+    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getPostUuid(), "Updated Title", "Updated Body", testUser);
     Post result = updatePost.update(updatePostDto);
 
     // Then
-    assertThat(result.getUuid()).isEqualTo(testPost.getUuid());
+    assertThat(result.getPostUuid()).isEqualTo(testPost.getPostUuid());
     assertThat(result.getUser().getUuid()).isEqualTo(testUser.getUuid());
     assertThat(result.getTitle()).isEqualTo(updatePostDto.title());
     assertThat(result.getBody()).isEqualTo(updatePostDto.body());
     assertThat(result.getTags()).isNotNull();
 
-    verify(postRepository, times(1)).findByUuid(testPost.getUuid());
+    verify(postRepository, times(1)).findByPostUuid(testPost.getPostUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
   @Test
   void update_WhenPostHasUser_ShouldNotUsePostUser() {
     // Given
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
             invocation -> invocation.<Post>getArgument(0));
     doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
-    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUser);
+    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getPostUuid(), "Updated Title", "Updated Body", testUser);
     Post result = updatePost.update(updatePostDto);
 
     // Then
@@ -170,27 +170,27 @@ class UpdatePostTest {
     assertThat(result.getBody()).isEqualTo(updatePostDto.body());
     assertThat(result.getTags()).isNotNull(); // Tags field should be present
 
-    verify(postRepository, times(1)).findByUuid(testPost.getUuid());
+    verify(postRepository, times(1)).findByPostUuid(testPost.getPostUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
   @Test
   void update_WhenUuidProvided_ShouldNotUpdateUuid() {
     // Given
-    when(postRepository.findByUuid(testPost.getUuid())).thenReturn(Optional.of(testPost));
+    when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
             invocation -> invocation.<Post>getArgument(0));
     doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
     // When
-    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getUuid(), "Updated Title", "Updated Body", testUser);
+    var updatePostDto = PostFactory.createPostUpdateDto(testPost.getPostUuid(), "Updated Title", "Updated Body", testUser);
     Post result = updatePost.update(updatePostDto);
 
     // Then
-    assertThat(result.getUuid()).isEqualTo(testPost.getUuid());
+    assertThat(result.getPostUuid()).isEqualTo(testPost.getPostUuid());
     assertThat(result.getTags()).isNotNull(); // Tags field should be present
-    verify(postRepository, times(1)).findByUuid(testPost.getUuid());
+    verify(postRepository, times(1)).findByPostUuid(testPost.getPostUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 }

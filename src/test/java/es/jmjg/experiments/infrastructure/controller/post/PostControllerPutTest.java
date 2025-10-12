@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class PostControllerPutTest extends BasePostControllerTest {
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
 
     Post updated = PostFactory.createPost(
-        user, UUID.randomUUID(), "This is my brand new post", "UPDATED BODY");
+        user, PostUuid.randomUUID(), "This is my brand new post", "UPDATED BODY");
     updated.setId(1);
 
     when(updatePost.update(any())).thenReturn(updated);
@@ -59,7 +60,7 @@ class PostControllerPutTest extends BasePostControllerTest {
 
     Post updated = new Post();
     updated.setId(50);
-    updated.setUuid(UUID.randomUUID());
+    updated.setPostUuid(PostUuid.randomUUID());
     updated.setUser(user);
     updated.setTitle("This is my brand new post");
     updated.setBody("UPDATED BODY");

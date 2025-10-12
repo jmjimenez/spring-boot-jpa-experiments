@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.controller.post;
 import es.jmjg.experiments.application.post.dto.DeletePostCommentDto;
 import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 import java.util.UUID;
 
@@ -106,7 +107,7 @@ public class PostController {
   FindPostByUuidResponseDto findByUuid(
     @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID id) {
 
-    Post post = findPostByUuid.findByUuid(id);
+    Post post = findPostByUuid.findByUuid(PostUuid.fromUuid(id));
     return postMapper.toFindByUuidResponseDto(post);
   }
 
@@ -143,7 +144,7 @@ public class PostController {
     SavePostResponseDto responseDto = postMapper.toSavePostResponseDto(savedPost);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{id}")
-      .buildAndExpand(savedPost.getUuid())
+      .buildAndExpand(savedPost.getPostUuid())
       .toUriString();
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -207,7 +208,7 @@ public class PostController {
   void delete(@Parameter(description = "UUID of the post to delete") @PathVariable UUID id,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    var deletePostDto = new DeletePostDto(id, userMapper.toAuthenticatedUserDto(userDetails));
+    var deletePostDto = new DeletePostDto(PostUuid.fromUuid(id), userMapper.toAuthenticatedUserDto(userDetails));
     deletePost.delete(deletePostDto);
   }
 
@@ -224,11 +225,11 @@ public class PostController {
     @Parameter(description = "Post comment data to create", required = true) @RequestBody @Valid SavePostCommentRequestDto requestDto,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    SavePostCommentDto savePostCommentDto = postMapper.toAddCommentDto(requestDto, id, userMapper.toAuthenticatedUserDto(userDetails));
+    SavePostCommentDto savePostCommentDto = postMapper.toAddCommentDto(requestDto, PostUuid.fromUuid(id), userMapper.toAuthenticatedUserDto(userDetails));
     PostComment result = savePostComment.save(savePostCommentDto);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{id}/comments/{commentUuid}")
-      .buildAndExpand(result.getPost().getUuid(), result.getUuid())
+      .buildAndExpand(result.getPost().getPostUuid(), result.getUuid())
       .toUriString();
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -248,7 +249,7 @@ public class PostController {
     @Parameter(description = "id of the post to retrieve") @PathVariable UUID postUuid,
     @Parameter(description = "id of the post comment to retrieve") @PathVariable UUID commentUuid) {
 
-    PostComment postComment = findPostCommentByUuid.findByUuid(postUuid, commentUuid);
+    PostComment postComment = findPostCommentByUuid.findByUuid(PostUuid.fromUuid(postUuid), commentUuid);
     return postMapper.toFindPostCommentByUuidResponseDto(postComment);
   }
 
@@ -267,7 +268,7 @@ public class PostController {
     @Parameter(description = "Identifier of the post comment to delete") @PathVariable UUID commentUuid,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    var deletePostCommentDto = new DeletePostCommentDto(commentUuid, postUuid, userMapper.toAuthenticatedUserDto(userDetails));
+    var deletePostCommentDto = new DeletePostCommentDto(commentUuid, PostUuid.fromUuid(postUuid), userMapper.toAuthenticatedUserDto(userDetails));
     deletePostComment.delete(deletePostCommentDto);
   }
 }
