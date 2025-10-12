@@ -32,7 +32,7 @@ public class UpdatePost {
 
     Post existingPost = existing.get();
 
-    if (!existingPost.getUser().getUuid().equals(updatePostDto.authenticatedUser().id()) &&
+    if (!existingPost.getUser().getUserUuid().equals(updatePostDto.authenticatedUser().id()) &&
         !updatePostDto.authenticatedUser().isAdmin()) {
       throw new Forbidden("You are not the owner of this post");
     }

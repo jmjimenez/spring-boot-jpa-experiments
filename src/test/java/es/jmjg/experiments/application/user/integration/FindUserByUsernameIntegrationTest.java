@@ -51,7 +51,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     assertThat(result.getName()).isEqualTo(TestDataSamples.ERVIN_NAME);
     assertThat(result.getEmail()).isEqualTo(TestDataSamples.ERVIN_EMAIL);
     assertThat(result.getUsername()).isEqualTo(TestDataSamples.ERVIN_USERNAME);
-    assertThat(result.getUuid()).isEqualTo(TestDataSamples.ERVIN_UUID);
+    assertThat(result.getUserUuid()).isEqualTo(TestDataSamples.ERVIN_UUID);
     assertThat(result.getId()).isEqualTo(2); // Second user from migration
   }
 
@@ -102,7 +102,7 @@ class FindUserByUsernameIntegrationTest extends BaseIntegration {
     assertThat(result.getName()).isEqualTo("Updated Test User");
     assertThat(result.getEmail()).isEqualTo("updated@example.com");
     assertThat(result.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
-    assertThat(result.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+    assertThat(result.getUserUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
   }
 
   @Test

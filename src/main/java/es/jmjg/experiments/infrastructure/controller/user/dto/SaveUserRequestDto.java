@@ -1,6 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.user.dto;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,7 +14,7 @@ import lombok.Getter;
 public class SaveUserRequestDto {
   @NotNull(message = "Identifiers is required")
   @Schema(description = "Identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID id;
+  private UserUuid id;
 
   @NotEmpty(message = "Name is required")
   @Schema(description = "Name of the user", example = "John Doe")

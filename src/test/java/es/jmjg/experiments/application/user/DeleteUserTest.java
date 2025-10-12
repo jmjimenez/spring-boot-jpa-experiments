@@ -10,8 +10,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import es.jmjg.experiments.domain.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,73 +52,73 @@ class DeleteUserTest {
   @Test
   void delete_WhenUserExists_ShouldDeleteUser() {
     // Given
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
-    doNothing().when(userRepository).deleteByUuid(testUser.getUuid());
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
+    doNothing().when(userRepository).deleteByUserUuid(testUser.getUserUuid());
 
     // When
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUser.getUuid(), authenticatedAdminUser);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUser.getUserUuid(), authenticatedAdminUser);
     deleteUser.delete(deleteUserDto);
 
     // Then
-    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
-    verify(userRepository, times(1)).deleteByUuid(testUser.getUuid());
+    verify(userRepository, times(1)).findByUserUuid(testUser.getUserUuid());
+    verify(userRepository, times(1)).deleteByUserUuid(testUser.getUserUuid());
   }
 
   @Test
   void delete_WhenUserDoesNotExist_ShouldThrowUserNotFound() {
     // Given
-    var nonExistentUuid = UUID.randomUUID();
+    var nonExistentUuid = UserUuid.randomUUID();
 
     // When & Then
     DeleteUserDto deleteUserDto = new DeleteUserDto(nonExistentUuid, authenticatedAdminUser);
     assertThatThrownBy(() -> deleteUser.delete(deleteUserDto))
         .isInstanceOf(UserNotFound.class)
         .hasMessage("User not found with id: " + nonExistentUuid);
-    verify(userRepository, never()).deleteByUuid(nonExistentUuid);
+    verify(userRepository, never()).deleteByUserUuid(nonExistentUuid);
   }
 
   @Test
   void delete_WhenRepositoryThrowsException_ShouldPropagateException() {
     // Given
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
-    doThrow(new RuntimeException("Database error")).when(userRepository).deleteByUuid(testUser.getUuid());
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
+    doThrow(new RuntimeException("Database error")).when(userRepository).deleteByUserUuid(testUser.getUserUuid());
 
     // When & Then
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUser.getUuid(), authenticatedAdminUser);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUser.getUserUuid(), authenticatedAdminUser);
     assertThatThrownBy(() -> deleteUser.delete(deleteUserDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
-    verify(userRepository, times(1)).deleteByUuid(testUser.getUuid());
+    verify(userRepository, times(1)).deleteByUserUuid(testUser.getUserUuid());
   }
 
   @Test
   void delete_WhenCalledMultipleTimes_ShouldCallRepositoryEachTime() {
     // Given
-    var secondUuid = UUID.randomUUID();
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
-    when(userRepository.findByUuid(secondUuid)).thenReturn(Optional.of(testUser));
-    doNothing().when(userRepository).deleteByUuid(any(UUID.class));
+    var secondUuid = UserUuid.randomUUID();
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUserUuid(secondUuid)).thenReturn(Optional.of(testUser));
+    doNothing().when(userRepository).deleteByUserUuid(any(UserUuid.class));
 
     // When
-    DeleteUserDto deleteUserDto1 = new DeleteUserDto(testUser.getUuid(), authenticatedAdminUser);
+    DeleteUserDto deleteUserDto1 = new DeleteUserDto(testUser.getUserUuid(), authenticatedAdminUser);
     deleteUser.delete(deleteUserDto1);
     DeleteUserDto deleteUserDto2 = new DeleteUserDto(secondUuid, authenticatedAdminUser);
     deleteUser.delete(deleteUserDto2);
 
     // Then
-    verify(userRepository, times(1)).deleteByUuid(testUser.getUuid());
-    verify(userRepository, times(1)).deleteByUuid(secondUuid);
-    verify(userRepository, times(2)).deleteByUuid(any(UUID.class));
+    verify(userRepository, times(1)).deleteByUserUuid(testUser.getUserUuid());
+    verify(userRepository, times(1)).deleteByUserUuid(secondUuid);
+    verify(userRepository, times(2)).deleteByUserUuid(any(UserUuid.class));
   }
 
   @Test
   void delete_WhenAuthorizedUserIsNotAdmin_ShouldThrowForbidden() {
     // When & Then
-    DeleteUserDto deleteUserDto = new DeleteUserDto(testUser.getUuid(), authenticatedTestUser);
+    DeleteUserDto deleteUserDto = new DeleteUserDto(testUser.getUserUuid(), authenticatedTestUser);
     assertThatThrownBy(() -> deleteUser.delete(deleteUserDto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("Only admin users can delete users");
 
-    verify(userRepository, never()).deleteByUuid(any(UUID.class));
+    verify(userRepository, never()).deleteByUserUuid(any(UserUuid.class));
   }
 }

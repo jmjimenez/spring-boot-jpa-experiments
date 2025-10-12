@@ -1,8 +1,8 @@
 package es.jmjg.experiments.application.user.dto;
 
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,10 +10,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 
 public record AuthenticatedUserDto(
-    UUID id,
-        String username,
-        String password,
-        Collection<GrantedAuthority> authorities
+  UserUuid id,
+  String username,
+  String password,
+  Collection<GrantedAuthority> authorities
 ) {
 
   public AuthenticatedUserDto {

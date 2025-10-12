@@ -41,7 +41,7 @@ class UserControllerGetFindByUuidTest extends BaseUserControllerTest {
 
     // When & Then
     mockMvc
-        .perform(get("/api/users/" + testUser.getUuid()).header("Authorization", "Bearer " + adminUser.getUsername()))
+        .perform(get("/api/users/" + testUser.getUserUuid()).header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }

@@ -1,7 +1,8 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.List;
-import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -11,10 +12,10 @@ import lombok.Getter;
 @Schema(description = "Response DTO for updated post")
 public class UpdatePostResponseDto {
   @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
-  private final UUID id;
+  private final PostUuid id;
 
   @Schema(description = "Identifier of the user who updated the post", example = "123e4567-e89b-12d3-a456-426614174001")
-  private final UUID userId;
+  private final UserUuid userId;
 
   @Schema(description = "Updated title of the post", example = "Updated Post Title")
   private final String title;
@@ -26,7 +27,7 @@ public class UpdatePostResponseDto {
   private final List<PostTagResponseDto> tags;
 
   // Constructor with tags
-  public UpdatePostResponseDto(UUID id, UUID userId, String title, String body,
+  public UpdatePostResponseDto(PostUuid id, UserUuid userId, String title, String body,
       List<PostTagResponseDto> tags) {
     this.id = id;
     this.userId = userId;

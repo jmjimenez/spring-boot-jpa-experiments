@@ -1,12 +1,12 @@
 package es.jmjg.experiments.application.user.dto;
 
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.Objects;
-import java.util.UUID;
 
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateUserDto(
-    @NotNull UUID uuid,
+    @NotNull UserUuid uuid,
     @NotNull String name,
     @NotNull String email,
     @NotNull AuthenticatedUserDto authenticatedUser) {

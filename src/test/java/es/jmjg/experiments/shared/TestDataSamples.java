@@ -1,6 +1,7 @@
 package es.jmjg.experiments.shared;
 
 import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.UUID;
 
 /**
@@ -38,37 +39,37 @@ public final class TestDataSamples {
 
   // Sample users from Flyway migration data
   public static final int LEANNE_ID = 1;
-  public static final UUID LEANNE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+  public static final UserUuid LEANNE_UUID = UserUuid.fromString("550e8400-e29b-41d4-a716-446655440001");
   public static final String LEANNE_NAME = "Leanne Graham";
   public static final String LEANNE_EMAIL = "leanne.graham@example.com";
   public static final String LEANNE_USERNAME = "leanne_graham";
   public static final String LEANNE_PASSWORD = "testpass";
 
   public static final int ERVIN_ID = 2;
-  public static final UUID ERVIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+  public static final UserUuid ERVIN_UUID = UserUuid.fromString("550e8400-e29b-41d4-a716-446655440002");
   public static final String ERVIN_NAME = "Ervin Howell";
   public static final String ERVIN_EMAIL = "ervin.howell@example.com";
   public static final String ERVIN_USERNAME = "ervin_howell";
 
   public static final int CLEMENTINE_ID = 3;
-  public static final UUID CLEMENTINE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
+  public static final UserUuid CLEMENTINE_UUID = UserUuid.fromString("550e8400-e29b-41d4-a716-446655440003");
   public static final String CLEMENTINE_NAME = "Clementine Bauch";
   public static final String CLEMENTINE_EMAIL = "clementine.bauch@example.com";
   public static final String CLEMENTINE_USERNAME = "clementine_bauch";
 
-  public static final UUID ADMIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
+  public static final UserUuid ADMIN_UUID = UserUuid.fromString("550e8400-e29b-41d4-a716-446655440006");
   public static final String ADMIN_NAME = "Admin User";
   public static final String ADMIN_USERNAME = "admin";
   public static final String ADMIN_PASSWORD = "testpass";
   public static final String ADMIN_EMAIL = "admin@example.com";
   public static final String USER_PASSWORD = "testpass";
 
-  public static final UUID PATRICIA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440004");
+  public static final UserUuid PATRICIA_UUID = UserUuid.fromString("550e8400-e29b-41d4-a716-446655440004");
   public static final String PATRICIA_NAME = "Patricia Lebsack";
   public static final String PATRICIA_EMAIL = "patricia.lebsack@example.com";
   public static final String PATRICIA_USERNAME = "patricia_lebsack";
 
-  public static final UUID CHELSEY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440005");
+  public static final UserUuid CHELSEY_UUID = UserUuid.fromString("550e8400-e29b-41d4-a716-446655440005");
   public static final String CHELSEY_NAME = "Chelsey Dietrich";
   public static final String CHELSEY_EMAIL = "chelsey.dietrich@example.com";
   public static final String CHELSEY_USERNAME = "chelsey_dietrich";

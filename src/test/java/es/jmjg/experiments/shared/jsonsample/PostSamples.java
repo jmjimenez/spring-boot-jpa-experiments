@@ -42,8 +42,8 @@ public final class PostSamples {
             "hasPrevious":false
         }
         """
-      .formatted(posts.get(0).getPostUuid(), posts.get(0).getUser().getUuid(), posts.get(1).getPostUuid(),
-        posts.get(1).getUser().getUuid());
+      .formatted(posts.get(0).getPostUuid(), posts.get(0).getUser().getUserUuid(), posts.get(1).getPostUuid(),
+        posts.get(1).getUser().getUserUuid());
   }
 
   public static String createFindAllPostsWithPaginationJsonResponse(List<Post> posts) {
@@ -66,7 +66,7 @@ public final class PostSamples {
             "hasPrevious":false
         }
         """
-      .formatted(posts.getFirst().getPostUuid(), posts.getFirst().getUser().getUuid());
+      .formatted(posts.getFirst().getPostUuid(), posts.getFirst().getUser().getUserUuid());
   }
 
   public static String createEmptyPostsJsonResponse() {
@@ -106,7 +106,7 @@ public final class PostSamples {
         """
       .formatted(
         post.getPostUuid(),
-        post.getUser().getUuid(),
+        post.getUser().getUserUuid(),
         post.getTitle(),
         post.getBody(),
         tags,
@@ -136,7 +136,7 @@ public final class PostSamples {
         """
       .formatted(
         post.getPostUuid(),
-        post.getUser().getUuid(),
+        post.getUser().getUserUuid(),
         post.getTitle(),
         post.getBody());
   }

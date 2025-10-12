@@ -3,7 +3,7 @@ package es.jmjg.experiments.application.user.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +74,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
         .containsExactlyInAnyOrder(TestDataSamples.LEANNE_USERNAME, TestDataSamples.ERVIN_USERNAME,
             TestDataSamples.CLEMENTINE_USERNAME, TestDataSamples.PATRICIA_USERNAME,
             TestDataSamples.CHELSEY_USERNAME, TestDataSamples.ADMIN_USERNAME);
-    assertThat(result.getContent()).extracting("uuid")
+    assertThat(result.getContent()).extracting("userUuid")
         .containsExactlyInAnyOrder(TestDataSamples.LEANNE_UUID, TestDataSamples.ERVIN_UUID,
             TestDataSamples.CLEMENTINE_UUID,
             TestDataSamples.PATRICIA_UUID, TestDataSamples.CHELSEY_UUID, TestDataSamples.ADMIN_UUID);
@@ -119,7 +119,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(result.getContent().getFirst().getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
     assertThat(result.getContent().getFirst().getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
     assertThat(result.getContent().getFirst().getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
-    assertThat(result.getContent().getFirst().getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+    assertThat(result.getContent().getFirst().getUserUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
     assertThat(result.getTotalElements()).isEqualTo(1);
     assertThat(result.getTotalPages()).isEqualTo(1);
   }
@@ -146,7 +146,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(result.getContent()).extracting("name").allMatch(TestDataSamples.LEANNE_NAME::equals);
     assertThat(result.getContent()).extracting("email")
         .containsExactlyInAnyOrder(TestDataSamples.LEANNE_EMAIL, TestDataSamples.ERVIN_EMAIL);
-    assertThat(result.getContent()).extracting("uuid")
+    assertThat(result.getContent()).extracting("userUuid")
         .containsExactlyInAnyOrder(TestDataSamples.LEANNE_UUID, TestDataSamples.ERVIN_UUID);
     assertThat(result.getTotalElements()).isEqualTo(2);
     assertThat(result.getTotalPages()).isEqualTo(1);
@@ -156,7 +156,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Transactional
   void findAll_WhenUsersAreUpdated_ShouldReturnUpdatedUsers() {
     // Given - find existing user and update it
-    User existingUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User existingUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     existingUser.setName("Updated Leanne Graham");
     existingUser.setEmail("updated.leanne@example.com");
     userRepository.save(existingUser);
@@ -180,7 +180,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Transactional
   void findAll_WhenUserIsDeleted_ShouldNotReturnDeletedUser() {
     // Given - delete one user from the existing data
-    User userToDelete = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User userToDelete = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     userRepository.deleteById(userToDelete.getId());
 
     // When
@@ -201,7 +201,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @ParameterizedTest
   @MethodSource("provideUsersWithSpecialCharacters")
   @Transactional
-  void findAll_WhenUsersHaveSpecialCharacters_ShouldReturnAllUsers(UUID uuid, String name, String email,
+  void findAll_WhenUsersHaveSpecialCharacters_ShouldReturnAllUsers(UserUuid uuid, String name, String email,
       String username) {
     // Given - clear all users and add one user with special characters
     deleteAllUsers();
@@ -218,19 +218,19 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(result.getContent().getFirst().getName()).isEqualTo(name);
     assertThat(result.getContent().getFirst().getEmail()).isEqualTo(email);
     assertThat(result.getContent().getFirst().getUsername()).isEqualTo(username);
-    assertThat(result.getContent().getFirst().getUuid()).isEqualTo(uuid);
+    assertThat(result.getContent().getFirst().getUserUuid()).isEqualTo(uuid);
   }
 
   private static Stream<Arguments> provideUsersWithSpecialCharacters() {
     return Stream.of(
-        Arguments.of(UUID.randomUUID(), "José García", "jose@example.com", "jose_garcia"),
-        Arguments.of(UUID.randomUUID(), "Maria O'Connor", "maria@example.com", "maria_oconnor"));
+        Arguments.of(UserUuid.randomUUID(), "José García", "jose@example.com", "jose_garcia"),
+        Arguments.of(UserUuid.randomUUID(), "Maria O'Connor", "maria@example.com", "maria_oconnor"));
   }
 
   @ParameterizedTest
   @MethodSource("provideUsersWithLongNames")
   @Transactional
-  void findAll_WhenUsersHaveLongNames_ShouldReturnAllUsers(UUID uuid, String name, String email,
+  void findAll_WhenUsersHaveLongNames_ShouldReturnAllUsers(UserUuid uuid, String name, String email,
       String username) {
     // Given - clear all users and add one user with long name
     deleteAllUsers();
@@ -247,17 +247,17 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(result.getContent().getFirst().getName()).isEqualTo(name);
     assertThat(result.getContent().getFirst().getEmail()).isEqualTo(email);
     assertThat(result.getContent().getFirst().getUsername()).isEqualTo(username);
-    assertThat(result.getContent().getFirst().getUuid()).isEqualTo(uuid);
+    assertThat(result.getContent().getFirst().getUserUuid()).isEqualTo(uuid);
   }
 
   private static Stream<Arguments> provideUsersWithLongNames() {
     return Stream.of(
-        Arguments.of(UUID.randomUUID(), "Dr. John Michael Smith-Jones III, Ph.D., M.D., F.A.C.S.",
+        Arguments.of(UserUuid.randomUUID(), "Dr. John Michael Smith-Jones III, Ph.D., M.D., F.A.C.S.",
             "dr.john.smith-jones@university.edu", "dr_john_smith_jones_iii"),
-        Arguments.of(UUID.randomUUID(),
+        Arguments.of(UserUuid.randomUUID(),
             "Professor María del Carmen Rodríguez-González y Fernández de la Vega",
             "prof.maria.rodriguez-gonzalez@universidad.es", "prof_maria_rodriguez_gonzalez"),
-        Arguments.of(UUID.randomUUID(),
+        Arguments.of(UserUuid.randomUUID(),
             "Sir William Henry Gates III, KBE, FRS, FRSE, HonFRCP, HonFREng",
             "sir.william.gates@microsoft.com", "sir_william_gates_iii"));
   }
@@ -265,7 +265,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @ParameterizedTest
   @MethodSource("provideUsersWithSubdomainEmails")
   @Transactional
-  void findAll_WhenUsersHaveSubdomainEmails_ShouldReturnAllUsers(UUID uuid, String name, String email,
+  void findAll_WhenUsersHaveSubdomainEmails_ShouldReturnAllUsers(UserUuid uuid, String name, String email,
       String username) {
     // Given - clear all users and add one user with subdomain email
     deleteAllUsers();
@@ -282,16 +282,16 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(result.getContent().getFirst().getName()).isEqualTo(name);
     assertThat(result.getContent().getFirst().getEmail()).isEqualTo(email);
     assertThat(result.getContent().getFirst().getUsername()).isEqualTo(username);
-    assertThat(result.getContent().getFirst().getUuid()).isEqualTo(uuid);
+    assertThat(result.getContent().getFirst().getUserUuid()).isEqualTo(uuid);
   }
 
   private static Stream<Arguments> provideUsersWithSubdomainEmails() {
     return Stream.of(
-        Arguments.of(UUID.randomUUID(), "Subdomain User 1", "user1@subdomain.example.com", "subdomainuser1"),
-        Arguments.of(UUID.randomUUID(), "Subdomain User 2", "user2@another-subdomain.example.com", "subdomainuser2"),
-        Arguments.of(UUID.randomUUID(), "Deep Subdomain User", "user@deep.nested.subdomain.example.com",
+        Arguments.of(UserUuid.randomUUID(), "Subdomain User 1", "user1@subdomain.example.com", "subdomainuser1"),
+        Arguments.of(UserUuid.randomUUID(), "Subdomain User 2", "user2@another-subdomain.example.com", "subdomainuser2"),
+        Arguments.of(UserUuid.randomUUID(), "Deep Subdomain User", "user@deep.nested.subdomain.example.com",
             "deepsubdomainuser"),
-        Arguments.of(UUID.randomUUID(), "Multi-Level User", "admin@dev.staging.production.company.org",
+        Arguments.of(UserUuid.randomUUID(), "Multi-Level User", "admin@dev.staging.production.company.org",
             "multileveluser"));
   }
 
@@ -307,11 +307,11 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(secondResult).isNotNull();
     assertThat(firstResult.getContent()).hasSize(6);
     assertThat(secondResult.getContent()).hasSize(6);
-    assertThat(firstResult.getContent()).extracting("uuid")
+    assertThat(firstResult.getContent()).extracting("userUuid")
         .containsExactlyInAnyOrder(TestDataSamples.LEANNE_UUID, TestDataSamples.ERVIN_UUID,
             TestDataSamples.CLEMENTINE_UUID, TestDataSamples.PATRICIA_UUID,
             TestDataSamples.CHELSEY_UUID, TestDataSamples.ADMIN_UUID);
-    assertThat(secondResult.getContent()).extracting("uuid")
+    assertThat(secondResult.getContent()).extracting("userUuid")
         .containsExactlyInAnyOrder(TestDataSamples.LEANNE_UUID, TestDataSamples.ERVIN_UUID,
             TestDataSamples.CLEMENTINE_UUID, TestDataSamples.PATRICIA_UUID,
             TestDataSamples.CHELSEY_UUID, TestDataSamples.ADMIN_UUID);
@@ -325,9 +325,9 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
   @Transactional
   void findAll_WhenUsersHaveDifferentDataTypes_ShouldReturnAllUsers() {
     // Given - add users with different data types
-    UUID uuid1 = UUID.randomUUID();
-    UUID uuid2 = UUID.randomUUID();
-    UUID uuid3 = UUID.randomUUID();
+    UserUuid uuid1 = UserUuid.randomUUID();
+    UserUuid uuid2 = UserUuid.randomUUID();
+    UserUuid uuid3 = UserUuid.randomUUID();
     User userWithNumbers = UserFactory.createUser(uuid1, "User123",
         "user123@example.com", "user123");
     User userWithUnderscores = UserFactory.createUser(uuid2, "User_With_Underscores",
@@ -350,7 +350,7 @@ class FindAllUsersIntegrationTest extends BaseIntegration {
     assertThat(result.getContent()).extracting("email")
         .contains("user123@example.com", "user_with_underscores@example.com",
             "user-with-dashes@example.com");
-    assertThat(result.getContent()).extracting("uuid")
+    assertThat(result.getContent()).extracting("userUuid")
         .contains(uuid1, uuid2, uuid3);
   }
 

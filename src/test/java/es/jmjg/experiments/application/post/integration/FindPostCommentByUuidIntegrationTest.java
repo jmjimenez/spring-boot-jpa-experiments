@@ -36,7 +36,7 @@ class FindPostCommentByUuidIntegrationTest extends BaseIntegration {
   void findByUuid_WhenPostCommentExists_ShouldReturnPostComment() {
     // Given
     String commentText = "This is a test comment";
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow(() -> new RuntimeException("User sample not found"));
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow(() -> new RuntimeException("User sample not found"));
     Post testPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow(() -> new RuntimeException("Post sample not found"));
     PostComment testPostComment = PostFactory.createPostComment(testUser, testPost, commentText);
     postCommentRepository.save(testPostComment);

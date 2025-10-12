@@ -27,7 +27,7 @@ public class SaveUser {
     }
 
     User user = new User();
-    user.setUuid(saveUserDto.uuid());
+    user.setUserUuid(saveUserDto.uuid());
     user.setName(saveUserDto.name());
     user.setEmail(saveUserDto.email());
     user.setUsername(saveUserDto.username());

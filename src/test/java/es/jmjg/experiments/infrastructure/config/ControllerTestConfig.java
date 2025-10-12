@@ -9,7 +9,7 @@ import es.jmjg.experiments.application.post.SavePostComment;
 import es.jmjg.experiments.application.post.UpdatePostTags;
 import es.jmjg.experiments.application.user.GeneratePasswordReset;
 import es.jmjg.experiments.application.user.ResetPassword;
-import java.util.UUID;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -250,7 +250,7 @@ public class ControllerTestConfig {
           }
 
           // For all other users, return with ROLE_USER authority
-          User user = UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", username);
+          User user = UserFactory.createUser(UserUuid.randomUUID(), "Test User", "test@example.com", username);
           return UserDetailsFactory.createJwtUserDetails(user);
         });
 

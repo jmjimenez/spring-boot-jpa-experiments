@@ -6,6 +6,7 @@ import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostComment;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import es.jmjg.experiments.infrastructure.controller.user.dto.PasswordResetResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserRequestDto;
@@ -67,7 +68,7 @@ public class UserMapper {
         email, username));
   }
 
-  public UpdateUserDto toUpdateUserDto(@Valid UpdateUserRequestDto updateUserDto, UUID id, AuthenticatedUserDto authenticatedUserDto) {
+  public UpdateUserDto toUpdateUserDto(@Valid UpdateUserRequestDto updateUserDto, UserUuid id, AuthenticatedUserDto authenticatedUserDto) {
     return new UpdateUserDto(
       id,
       updateUserDto.getName(),
@@ -90,7 +91,7 @@ public class UserMapper {
 
   @FunctionalInterface
   private interface DtoConstructor<T> {
-    T create(UUID uuid, String name, String email, String username, List<UUID> posts, List<String> tags, List<UUID> comments);
+    T create(UserUuid uuid, String name, String email, String username, List<PostUuid> posts, List<String> tags, List<UUID> comments);
   }
 
   private <T> T mapToResponseDto(User user, DtoConstructor<T> dtoConstructor) {
@@ -98,9 +99,8 @@ public class UserMapper {
       return null;
     }
 
-    List<UUID> postUuids = user.getPosts() != null ? user.getPosts().stream()
+    List<PostUuid> postUuids = user.getPosts() != null ? user.getPosts().stream()
         .map(Post::getPostUuid)
-        .map(PostUuid::getUuid)
         .collect(Collectors.toList()) : List.of();
 
     List<String> tagNames = user.getTags() != null ? user.getTags().stream()
@@ -112,7 +112,7 @@ public class UserMapper {
         .collect(Collectors.toList()) : List.of();
 
     return dtoConstructor.create(
-        user.getUuid(), user.getName(), user.getEmail(), user.getUsername(),
+        user.getUserUuid(), user.getName(), user.getEmail(), user.getUsername(),
         postUuids, tagNames, commentUuids);
   }
 

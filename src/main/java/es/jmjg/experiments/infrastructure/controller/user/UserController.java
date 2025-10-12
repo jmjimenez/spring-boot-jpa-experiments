@@ -4,6 +4,7 @@ import es.jmjg.experiments.application.user.GeneratePasswordReset;
 import es.jmjg.experiments.application.user.ResetPassword;
 import es.jmjg.experiments.application.user.dto.GeneratePasswordResetDto;
 import es.jmjg.experiments.application.user.dto.ResetPasswordDto;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import es.jmjg.experiments.infrastructure.controller.user.dto.PasswordResetResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.ResetPasswordRequestDto;
 import java.util.UUID;
@@ -135,7 +136,7 @@ public class UserController {
     @AuthenticationPrincipal JwtUserDetails userDetails,
     @Parameter(description = "Id of the user to retrieve") @PathVariable UUID id) {
 
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(id, userMapper.toAuthenticatedUserDto(userDetails));
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UserUuid.fromUuid(id), userMapper.toAuthenticatedUserDto(userDetails));
     User user = findUserByUuid.findByUuid(findUserByUuidDto);
     return userMapper.toFindUserByUuidResponseDto(user);
   }
@@ -193,7 +194,7 @@ public class UserController {
     SaveUserResponseDto responseDto = userMapper.toSaveUserResponseDto(savedUser);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/users/{id}")
-      .buildAndExpand(savedUser.getUuid())
+      .buildAndExpand(savedUser.getUserUuid())
       .toUriString();
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -215,7 +216,7 @@ public class UserController {
     @Parameter(description = "Id of the user to update") @PathVariable UUID id,
     @Parameter(description = "Updated user data") @RequestBody @Valid UpdateUserRequestDto userDto) {
 
-    UpdateUserDto updateUserDto = userMapper.toUpdateUserDto(userDto, id, userMapper.toAuthenticatedUserDto(userDetails));
+    UpdateUserDto updateUserDto = userMapper.toUpdateUserDto(userDto, UserUuid.fromUuid(id), userMapper.toAuthenticatedUserDto(userDetails));
     User updatedUser = updateUser.update(updateUserDto);
     return userMapper.toUpdateUserResponseDto(updatedUser);
   }
@@ -233,7 +234,7 @@ public class UserController {
     @AuthenticationPrincipal JwtUserDetails userDetails,
     @PathVariable UUID id) {
 
-    DeleteUserDto deleteUserDto = new DeleteUserDto(id, userMapper.toAuthenticatedUserDto(userDetails));
+    DeleteUserDto deleteUserDto = new DeleteUserDto(UserUuid.fromUuid(id), userMapper.toAuthenticatedUserDto(userDetails));
     deleteUser.delete(deleteUserDto);
   }
 

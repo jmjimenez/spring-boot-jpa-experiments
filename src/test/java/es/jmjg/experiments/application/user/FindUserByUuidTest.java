@@ -8,8 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.Optional;
-import java.util.UUID;
 
 import es.jmjg.experiments.domain.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,8 +51,8 @@ class FindUserByUuidTest {
   @Test
   void findByUuid_WhenUserExists_ShouldReturnUser() {
     // Given
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUser.getUuid(), authenticatedAdminUser);
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUser.getUserUuid(), authenticatedAdminUser);
 
     // When
     User result = findUserByUuid.findByUuid(findUserByUuidDto);
@@ -62,42 +62,42 @@ class FindUserByUuidTest {
     assertThat(result.getName()).isEqualTo(testUser.getName());
     assertThat(result.getEmail()).isEqualTo(testUser.getEmail());
     assertThat(result.getUsername()).isEqualTo(testUser.getUsername());
-    assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
-    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
+    assertThat(result.getUserUuid()).isEqualTo(testUser.getUserUuid());
+    verify(userRepository, times(1)).findByUserUuid(testUser.getUserUuid());
   }
 
   @Test
   void findByUuid_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // Given
-    UUID nonExistentUuid = UUID.randomUUID();
-    when(userRepository.findByUuid(nonExistentUuid)).thenReturn(Optional.empty());
+    UserUuid nonExistentUuid = UserUuid.randomUUID();
+    when(userRepository.findByUserUuid(nonExistentUuid)).thenReturn(Optional.empty());
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(nonExistentUuid, authenticatedAdminUser);
 
     // When
     assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto)).isInstanceOf(UserNotFound.class);
 
     // Then
-    verify(userRepository, times(1)).findByUuid(nonExistentUuid);
+    verify(userRepository, times(1)).findByUserUuid(nonExistentUuid);
   }
 
   @Test
   void findByUuid_WhenRepositoryThrowsException_ShouldPropagateException() {
     // Given
-    when(userRepository.findByUuid(testUser.getUuid()))
+    when(userRepository.findByUserUuid(testUser.getUserUuid()))
         .thenThrow(new RuntimeException("Database error"));
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUser.getUuid(), authenticatedAdminUser);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(testUser.getUserUuid(), authenticatedAdminUser);
 
     // When & Then
     assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");
-    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
+    verify(userRepository, times(1)).findByUserUuid(testUser.getUserUuid());
   }
 
   @Test
   void findByUuid_WhenUserIsNeitherAdminNorSameUuid_ShouldThrowForbiddenException() {
     // Given
-    UUID differentUuid = UUID.randomUUID();
+    UserUuid differentUuid = UserUuid.randomUUID();
 
     // When & Then
     FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(differentUuid, authenticatedTestUser);
@@ -106,6 +106,6 @@ class FindUserByUuidTest {
         .hasMessage("Access denied: only admins or the user themselves can view user data");
 
     // Verify that repository is never called
-    verify(userRepository, never()).findByUuid(any());
+    verify(userRepository, never()).findByUserUuid(any());
   }
 }

@@ -32,7 +32,7 @@ public class SavePostComment {
       throw new InvalidRequest("Comment must have a user");
     }
 
-    User user = userRepository.findByUuid(savePostCommentDto.authenticatedUser().id())
+    User user = userRepository.findByUserUuid(savePostCommentDto.authenticatedUser().id())
       .orElseThrow(() -> new UserNotFound("User not found"));
 
     Post post = postRepository.findByPostUuid(savePostCommentDto.postUuid())

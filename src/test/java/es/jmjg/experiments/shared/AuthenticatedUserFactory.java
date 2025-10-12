@@ -12,7 +12,7 @@ public class AuthenticatedUserFactory {
 
   public static AuthenticatedUserDto createAuthenticatedUserDto(User user) {
     return new AuthenticatedUserDto(
-        user.getUuid(),
+        user.getUserUuid(),
         user.getUsername(),
         user.getPassword(),
         user.getUsername().equals(TestDataSamples.ADMIN_USERNAME)

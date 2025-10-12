@@ -1,5 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -8,8 +10,8 @@ import java.util.UUID;
 public class SavePostCommentResponseDto extends AbstractPostCommentResponseDto {
   public SavePostCommentResponseDto(
       UUID id,
-      UUID userId,
-      UUID postId,
+      UserUuid userId,
+      PostUuid postId,
       String comment,
       LocalDateTime createdAt
   ) {

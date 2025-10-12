@@ -50,10 +50,10 @@ class UserControllerPutTest extends BaseUserControllerTest {
     when(updateUser.update(any(UpdateUserDto.class))).thenReturn(testUser);
 
     // When & Then
-    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUserUuid());
     String expectedResponse = UserSamples.createUpdateUserResponseJson(testUser);
     mockMvc
-        .perform(put("/api/users/" + testUser.getUuid())
+        .perform(put("/api/users/" + testUser.getUserUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody)
             .header("Authorization", "Bearer " + adminUser.getUsername()))
@@ -72,10 +72,10 @@ class UserControllerPutTest extends BaseUserControllerTest {
     when(updateUser.update(any(UpdateUserDto.class))).thenReturn(testUser);
 
     // When & Then - Admin user (admin) updating another user (testUuid)
-    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUserUuid());
     String expectedResponse = UserSamples.createUpdateUserResponseJson(testUser);
     mockMvc
-        .perform(put("/api/users/" + testUser.getUuid())
+        .perform(put("/api/users/" + testUser.getUserUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody)
             .header("Authorization", "Bearer " + adminUser.getUsername()))
@@ -88,19 +88,19 @@ class UserControllerPutTest extends BaseUserControllerTest {
   @Test
   void shouldReturnNotFoundWhenUserDoesNotExist() throws Exception {
     // Given
-    doThrow(new UserNotFound(testUser.getUuid())).when(updateUser).update(any(UpdateUserDto.class));
+    doThrow(new UserNotFound(testUser.getUserUuid())).when(updateUser).update(any(UpdateUserDto.class));
 
     // When & Then
-    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUserUuid());
     mockMvc
-        .perform(put("/api/users/" + testUser.getUuid())
+        .perform(put("/api/users/" + testUser.getUserUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody)
             .header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status").value(404))
         .andExpect(jsonPath("$.error").value("Not Found"))
-        .andExpect(jsonPath("$.message").value("User not found with id: " + testUser.getUuid()));
+        .andExpect(jsonPath("$.message").value("User not found with id: " + testUser.getUserUuid()));
 
     verify(updateUser, times(1)).update(any(UpdateUserDto.class));
   }
@@ -112,9 +112,9 @@ class UserControllerPutTest extends BaseUserControllerTest {
         .update(any(UpdateUserDto.class));
 
     // When & Then
-    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUserUuid());
     mockMvc
-        .perform(put("/api/users/" + testUser.getUuid())
+        .perform(put("/api/users/" + testUser.getUserUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody)
             .header("Authorization", "Bearer " + testUser.getUsername()))
@@ -130,11 +130,11 @@ class UserControllerPutTest extends BaseUserControllerTest {
   @Test
   void shouldReturnUnauthorizedWhenUserIsNotAuthenticated() throws Exception {
     // Given
-    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUuid());
+    String requestBody = UserSamples.createUpdateUserRequestJson(testUser.getUserUuid());
 
     // When & Then
     mockMvc
-        .perform(put("/api/users/" + testUser.getUuid())
+        .perform(put("/api/users/" + testUser.getUserUuid())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
         .andExpect(status().isUnauthorized());

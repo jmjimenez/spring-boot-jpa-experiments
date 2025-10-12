@@ -8,8 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,17 +46,17 @@ class UpdateUserTest {
   @Test
   void update_WhenUserExistsAndIsAuthenticatedUser_ShouldUpdateFields() {
     // Given
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var updateUserDto = new UpdateUserDto(testUser.getUuid(), "New Name", "new@example.com", authenticatedTestUser);
+    var updateUserDto = new UpdateUserDto(testUser.getUserUuid(), "New Name", "new@example.com", authenticatedTestUser);
     User result = updateUser.update(updateUserDto);
 
     // Then
     assertThat(result.getName()).isEqualTo(updateUserDto.name());
     assertThat(result.getEmail()).isEqualTo(updateUserDto.email());
-    assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
+    assertThat(result.getUserUuid()).isEqualTo(testUser.getUserUuid());
     verify(userRepository, times(1)).save(testUser);
   }
 
@@ -65,17 +65,17 @@ class UpdateUserTest {
     // Given
     var adminUser = UserFactory.createAdminUser();
     var authenticatedAdminUser = AuthenticatedUserFactory.createAuthenticatedUserDto(adminUser);
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var updateUserDto = new UpdateUserDto(testUser.getUuid(), "New Name", "new@example.com", authenticatedAdminUser);
+    var updateUserDto = new UpdateUserDto(testUser.getUserUuid(), "New Name", "new@example.com", authenticatedAdminUser);
     User result = updateUser.update(updateUserDto);
 
     // Then
     assertThat(result.getName()).isEqualTo(updateUserDto.name());
     assertThat(result.getEmail()).isEqualTo(updateUserDto.email());
-    assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
+    assertThat(result.getUserUuid()).isEqualTo(testUser.getUserUuid());
     verify(userRepository, times(1)).save(testUser);
   }
 
@@ -86,8 +86,8 @@ class UpdateUserTest {
     var authenticatedOtherUser = AuthenticatedUserFactory.createAuthenticatedUserDto(otherUser);
 
     // When
-    var updateUserDto = new UpdateUserDto(testUser.getUuid(), "New Name", "new@example.com", authenticatedOtherUser);
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    var updateUserDto = new UpdateUserDto(testUser.getUserUuid(), "New Name", "new@example.com", authenticatedOtherUser);
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
 
     // Then
     assertThatThrownBy(() -> updateUser.update(updateUserDto))
@@ -99,9 +99,9 @@ class UpdateUserTest {
   @Test
   void update_WhenUserDoesNotExist_ShouldThrow() {
     // Given
-    var newId = UUID.randomUUID();
+    var newId = UserUuid.randomUUID();
     var updateUserDto = new UpdateUserDto(newId, "New Name", "new@example.com", authenticatedTestUser);
-    when(userRepository.findByUuid(newId)).thenReturn(Optional.empty());
+    when(userRepository.findByUserUuid(newId)).thenReturn(Optional.empty());
 
     // When & Then
     assertThatThrownBy(() -> updateUser.update(updateUserDto))

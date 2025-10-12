@@ -26,7 +26,7 @@ public final class PostCommentSamples {
             "post-id":"%s",
             "comment":"%s"
         }
-        """.formatted(postComment.getUuid(), postComment.getUser().getUuid(), postComment.getPost().getPostUuid(), postComment.getComment());
+        """.formatted(postComment.getUuid(), postComment.getUser().getUserUuid(), postComment.getPost().getPostUuid(), postComment.getComment());
   }
 
   public static String createFindPostCommentByUuidJsonResponse(PostComment postComment) {
@@ -39,6 +39,6 @@ public final class PostCommentSamples {
             "comment":"%s",
             "created-time":"%s"
         }
-        """.formatted(postComment.getUuid(), postComment.getPost().getPostUuid(), postComment.getUser().getUuid(), postComment.getComment(), postComment.getCreatedAt().format(formatter));
+        """.formatted(postComment.getUuid(), postComment.getUser().getUserUuid(), postComment.getPost().getPostUuid(), postComment.getComment(), postComment.getCreatedAt().format(formatter));
   }
 }

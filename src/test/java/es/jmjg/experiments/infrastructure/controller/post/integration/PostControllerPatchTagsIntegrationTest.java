@@ -41,7 +41,7 @@ class PostControllerPatchTagsIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldReturnUnauthorizedWhenUserNotAuthenticated() {
-    final UUID postUuid = TestDataSamples.LEANNE_UUID; // Replace with actual post UUID for Leanne
+    final var postUuid = TestDataSamples.LEANNE_UUID; // Replace with actual post UUID for Leanne
     final List<String> newTags = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_TECHNOLOGY);
     UpdatePostTagsRequestDto requestDto = new UpdatePostTagsRequestDto(newTags);
     HttpEntity<UpdatePostTagsRequestDto> request = new HttpEntity<>(requestDto);

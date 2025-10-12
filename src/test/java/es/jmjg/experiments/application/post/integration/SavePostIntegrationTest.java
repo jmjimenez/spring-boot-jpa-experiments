@@ -35,7 +35,7 @@ class SavePostIntegrationTest extends BaseIntegration {
   @Transactional
   void save_ShouldSaveAndReturnPost() {
     // Given
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, TestDataSamples.NEW_POST_TITLE,
         TestDataSamples.NEW_POST_BODY);
 
@@ -61,7 +61,7 @@ class SavePostIntegrationTest extends BaseIntegration {
   @Transactional
   void save_ShouldSavePostWithTags() {
     // Given
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     var tagNames = List.of(TestDataSamples.TAG_JAVA, TestDataSamples.TAG_SPRING_BOOT);
     SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, TestDataSamples.NEW_POST_TITLE,
         TestDataSamples.NEW_POST_BODY, tagNames);
@@ -90,7 +90,7 @@ class SavePostIntegrationTest extends BaseIntegration {
   @Transactional
   void save_WithNotFoundTag_ShouldThrowTagNotFound() {
     // Given
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     final String nonExistentTag = "NonExistentTag";
     var tagNames = List.of(TestDataSamples.TAG_JAVA, nonExistentTag);
     SavePostDto savePostDto = PostFactory.createSavePostDto(testUser, TestDataSamples.NEW_POST_TITLE,

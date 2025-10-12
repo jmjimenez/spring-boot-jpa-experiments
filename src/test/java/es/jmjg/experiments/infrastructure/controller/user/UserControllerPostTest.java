@@ -37,8 +37,8 @@ class UserControllerPostTest extends BaseUserControllerTest {
     // Given
     when(saveUser.save(any(SaveUserDto.class))).thenReturn(testUser);
 
-    String requestBody = UserSamples.createSaveUserRequestJson(testUser.getUuid());
-    String expectedResponse = UserSamples.createSaveUserResponseJson(testUser.getUuid());
+    String requestBody = UserSamples.createSaveUserRequestJson(testUser.getUserUuid());
+    String expectedResponse = UserSamples.createSaveUserResponseJson(testUser.getUserUuid());
 
     // When & Then
     mockMvc
@@ -47,7 +47,7 @@ class UserControllerPostTest extends BaseUserControllerTest {
             .content(requestBody)
             .header("Authorization", "Bearer " + adminUser.getUsername()))
         .andExpect(status().isCreated())
-        .andExpect(header().string("Location", "/api/users/" + testUser.getUuid().toString()))
+        .andExpect(header().string("Location", "/api/users/" + testUser.getUserUuid().toString()))
         .andExpect(content().json(expectedResponse));
   }
 

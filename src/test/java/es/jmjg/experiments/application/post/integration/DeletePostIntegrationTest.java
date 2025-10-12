@@ -33,7 +33,7 @@ class DeletePostIntegrationTest extends BaseIntegration {
   @Test
   void deleteByUuid_WhenUserIsOwner_ShouldDeletePost() {
     // Given - using existing test data from migration
-    User postOwner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User postOwner = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     assertThat(postRepository.findById(existingPost.getId())).isPresent();
 
@@ -65,7 +65,7 @@ class DeletePostIntegrationTest extends BaseIntegration {
   @Test
   void deleteByUuid_WhenUserIsNotOwnerAndNotAdmin_ShouldThrowForbidden() {
     // Given - using existing test data from migration
-    User nonOwnerUser = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
+    User nonOwnerUser = userRepository.findByUserUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
     Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_3_UUID).orElseThrow();
     assertThat(postRepository.findById(existingPost.getId())).isPresent();
 
@@ -83,7 +83,7 @@ class DeletePostIntegrationTest extends BaseIntegration {
   @Test
   void deleteByUuid_WhenPostDoesNotExist_ShouldThrowPostNotFoundException() {
     // Given - using existing test data from migration
-    User testUser = userRepository.findByUuid(TestDataSamples.CHELSEY_UUID).orElseThrow();
+    User testUser = userRepository.findByUserUuid(TestDataSamples.CHELSEY_UUID).orElseThrow();
     final var nonExistentUuid = PostUuid.randomUUID();
 
     DeletePostDto deletePostDto = PostFactory.createDeletePostDto(nonExistentUuid, testUser);

@@ -39,7 +39,7 @@ public class SavePost {
       throw new InvalidRequest("Post must have a user");
     }
 
-    Optional<User> user = userRepository.findByUuid(savePostDto.authenticatedUser().id());
+    Optional<User> user = userRepository.findByUserUuid(savePostDto.authenticatedUser().id());
     if (user.isPresent()) {
       post.setUser(user.get());
     } else {

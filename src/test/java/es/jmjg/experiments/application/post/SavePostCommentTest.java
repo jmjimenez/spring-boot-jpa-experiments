@@ -59,7 +59,7 @@ class SavePostCommentTest {
     String postComment = "This is a test comment";
     PostComment newPostComment = PostFactory.createPostComment(testUser, testPost, postComment);
 
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
     when(postCommentRepository.save(any(PostComment.class))).thenReturn(newPostComment);
 
@@ -73,7 +73,7 @@ class SavePostCommentTest {
     assertThat(result.getUser()).isEqualTo(newPostComment.getUser());
     assertThat(result.getPost()).isEqualTo(newPostComment.getPost());
 
-    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
+    verify(userRepository, times(1)).findByUserUuid(testUser.getUserUuid());
     verify(postRepository, times(1)).findByPostUuid(testPost.getPostUuid());
     verify(postCommentRepository, times(1)).save(any(PostComment.class));
   }
@@ -84,7 +84,7 @@ class SavePostCommentTest {
     String postComment = "This is a test comment";
     PostComment newPostComment = PostFactory.createPostComment(testUser, testPost, postComment);
 
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.empty());
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.empty());
 
     // When
     SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getUuid(), newPostComment.getPost(), newPostComment.getComment());
@@ -99,7 +99,7 @@ class SavePostCommentTest {
     String postComment = "This is a test comment";
     PostComment newPostComment = PostFactory.createPostComment(testUser, testPost, postComment);
 
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.empty());
 
     // When
@@ -115,7 +115,7 @@ class SavePostCommentTest {
     String postComment = "";
     PostComment newPostComment = PostFactory.createPostComment(testUser, testPost, postComment);
 
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
 
     // When

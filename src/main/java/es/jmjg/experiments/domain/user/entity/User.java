@@ -3,9 +3,9 @@ package es.jmjg.experiments.domain.user.entity;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostComment;
 import es.jmjg.experiments.domain.tag.entity.Tag;
+import jakarta.persistence.Embedded;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -38,7 +38,8 @@ public class User {
 
   @NotNull
   @Column(name = "uuid", unique = true, nullable = false)
-  private UUID uuid;
+  @Embedded
+  private UserUuid userUuid;
 
   @NotEmpty
   private String name;

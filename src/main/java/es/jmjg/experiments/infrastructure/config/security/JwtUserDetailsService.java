@@ -42,6 +42,6 @@ public class JwtUserDetailsService implements UserDetailsService {
       roles.add(new SimpleGrantedAuthority(ROLE_ADMIN));
     }
 
-    return new JwtUserDetails(user.getUuid(), username, user.getPassword(), roles);
+    return new JwtUserDetails(user.getUserUuid(), username, user.getPassword(), roles);
   }
 }

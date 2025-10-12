@@ -1,6 +1,8 @@
 package es.jmjg.experiments.infrastructure.controller.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,7 +15,7 @@ import lombok.Getter;
 @Schema(description = "Response DTO for updated user")
 public class UpdateUserResponseDto {
   @Schema(description = "Identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID id;
+  private UserUuid id;
 
   @Schema(description = "Name of the user", example = "John Doe")
   private String name;
@@ -25,7 +27,7 @@ public class UpdateUserResponseDto {
   private String username;
 
   @JsonIgnore
-  private List<UUID> posts;
+  private List<PostUuid> posts;
 
   @Schema(description = "List of tag names associated with the user")
   private List<String> tags;

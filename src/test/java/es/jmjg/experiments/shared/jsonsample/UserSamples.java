@@ -2,8 +2,8 @@ package es.jmjg.experiments.shared.jsonsample;
 
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.user.entity.User;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.List;
-import java.util.UUID;
 
 public final class UserSamples {
 
@@ -11,7 +11,7 @@ public final class UserSamples {
     // Utility class - prevent instantiation
   }
 
-  public static String createFindAllUsersJsonResponse(List<Post> testPosts, UUID testUuid) {
+  public static String createFindAllUsersJsonResponse(List<Post> testPosts, UserUuid testUuid) {
     return """
         {
             "content":[
@@ -67,7 +67,7 @@ public final class UserSamples {
             "tags":[%s],
             "comments":[%s]
         }
-        """.formatted(testUser.getUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), posts, tags, comments);
+        """.formatted(testUser.getUserUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), posts, tags, comments);
   }
 
   public static String createFindUserByEmailJsonResponse(User testUser) {
@@ -84,7 +84,7 @@ public final class UserSamples {
             "tags":[%s],
             "comments":[%s]
         }
-        """.formatted(testUser.getUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), posts, tags, comments);
+        """.formatted(testUser.getUserUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), posts, tags, comments);
   }
 
   public static String createFindUserByUsernameJsonResponse(User testUser) {
@@ -101,10 +101,10 @@ public final class UserSamples {
             "tags":[%s],
             "comments":[%s]
         }
-        """.formatted(testUser.getUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), posts, tags, comments);
+        """.formatted(testUser.getUserUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), posts, tags, comments);
   }
 
-  public static String createSaveUserRequestJson(UUID testUuid) {
+  public static String createSaveUserRequestJson(UserUuid testUuid) {
     return """
         {
             "id":"%s",
@@ -116,7 +116,7 @@ public final class UserSamples {
         """.formatted(testUuid);
   }
 
-  public static String createSaveUserResponseJson(UUID testUuid) {
+  public static String createSaveUserResponseJson(UserUuid testUuid) {
     return """
         {
             "id":"%s",
@@ -127,7 +127,7 @@ public final class UserSamples {
         """.formatted(testUuid);
   }
 
-  public static String createUpdateUserRequestJson(UUID testUuid) {
+  public static String createUpdateUserRequestJson(UserUuid testUuid) {
     return """
         {
             "id":"%s",
@@ -149,7 +149,7 @@ public final class UserSamples {
             "username":"%s",
             "tags":[%s]
         }
-        """.formatted(testUser.getUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), tags);
+        """.formatted(testUser.getUserUuid(), testUser.getName(), testUser.getEmail(), testUser.getUsername(), tags);
   }
 
   public static String createResetPasswordRequestJson(String resetKey, String newPassword) {

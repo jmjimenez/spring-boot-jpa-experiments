@@ -45,7 +45,7 @@ class UserControllerGetFindAllTest extends BaseUserControllerTest {
     Page<User> userPage = new PageImpl<>(users, pageable, users.size());
     when(findAllUsers.findAll(any(FindAllUsersDto.class))).thenReturn(userPage);
 
-    String expectedJson = UserSamples.createFindAllUsersJsonResponse(testUser.getPosts(), testUser.getUuid());
+    String expectedJson = UserSamples.createFindAllUsersJsonResponse(testUser.getPosts(), testUser.getUserUuid());
 
     // When & Then
     mockMvc

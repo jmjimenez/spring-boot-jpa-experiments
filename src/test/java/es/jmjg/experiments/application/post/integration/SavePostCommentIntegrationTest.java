@@ -32,7 +32,7 @@ class SavePostCommentIntegrationTest extends BaseIntegration {
   @Transactional
   void save_ShouldSaveAndReturnPostComment() {
     // Given
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post testPost = testUser.getPosts().getFirst();
     String comment = "This is a test comment";
     PostComment postComment = PostFactory.createPostComment(testUser, testPost, comment);
@@ -45,7 +45,7 @@ class SavePostCommentIntegrationTest extends BaseIntegration {
     assertThat(result).isNotNull();
     assertThat(result.getUuid()).isEqualTo(postComment.getUuid());
     assertThat(result.getPost().getPostUuid()).isEqualTo(postComment.getPost().getPostUuid());
-    assertThat(result.getUser().getUuid()).isEqualTo(postComment.getUser().getUuid());
+    assertThat(result.getUser().getUserUuid()).isEqualTo(postComment.getUser().getUserUuid());
     assertThat(result.getComment()).isEqualTo(postComment.getComment());
 
     // Verify it was actually saved to the database

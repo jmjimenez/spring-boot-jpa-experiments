@@ -1,6 +1,6 @@
 package es.jmjg.experiments.domain.user.exception;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 
 /** Exception thrown when a user is not found in the application layer. */
 public class UserNotFound extends RuntimeException {
@@ -9,7 +9,7 @@ public class UserNotFound extends RuntimeException {
     super(message);
   }
 
-  public UserNotFound(UUID uuid) {
+  public UserNotFound(UserUuid uuid) {
     super("User not found with id: " + uuid);
   }
 }

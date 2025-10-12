@@ -48,7 +48,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     assertThat(result.getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
     assertThat(result.getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
     assertThat(result.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
-    assertThat(result.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+    assertThat(result.getUserUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
   }
 
   @Test
@@ -62,7 +62,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   void findByEmail_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given
     // Use an existing user from the database (Ervin Howell)
-    User existingUser = userRepository.findByUuid(TestDataSamples.ERVIN_UUID)
+    User existingUser = userRepository.findByUserUuid(TestDataSamples.ERVIN_UUID)
         .orElseThrow(() -> new RuntimeException("Test user not found in database"));
 
     // Update the user
@@ -78,7 +78,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     assertThat(result.getName()).isEqualTo("Updated Ervin User");
     assertThat(result.getEmail()).isEqualTo("updated.ervin@example.com");
     assertThat(result.getUsername()).isEqualTo(TestDataSamples.ERVIN_USERNAME);
-    assertThat(result.getUuid()).isEqualTo(TestDataSamples.ERVIN_UUID);
+    assertThat(result.getUserUuid()).isEqualTo(TestDataSamples.ERVIN_UUID);
     assertThat(result.getId()).isEqualTo(updatedUser.getId());
   }
 
@@ -100,7 +100,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   void findByEmail_WhenUserIsDeleted_ShouldReturnEmpty() {
     // Given
     // Use an existing user from the database (Clementine Bauch)
-    User existingUser = userRepository.findByUuid(TestDataSamples.CLEMENTINE_UUID)
+    User existingUser = userRepository.findByUserUuid(TestDataSamples.CLEMENTINE_UUID)
         .orElseThrow(() -> new RuntimeException("Test user not found in database"));
     String userEmail = existingUser.getEmail();
 
@@ -122,7 +122,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
   void findByEmail_WhenEmailHasDifferentCase_ShouldReturnEmpty() {
     // Given
     // Use an existing user from the database (Patricia Lebsack)
-    User existingUser = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID)
+    User existingUser = userRepository.findByUserUuid(TestDataSamples.PATRICIA_UUID)
         .orElseThrow(() -> new RuntimeException("Test user not found in database"));
 
     // When
@@ -145,7 +145,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     assertThat(result.getName()).isEqualTo(specialUser.getName());
     assertThat(result.getEmail()).isEqualTo(specialUser.getEmail());
     assertThat(result.getUsername()).isEqualTo(specialUser.getUsername());
-    assertThat(result.getUuid()).isEqualTo(specialUser.getUuid());
+    assertThat(result.getUserUuid()).isEqualTo(specialUser.getUserUuid());
     assertThat(result.getId()).isEqualTo(savedUser.getId());
   }
 
@@ -163,7 +163,7 @@ class FindUserByEmailIntegrationTest extends BaseIntegration {
     assertThat(result.getName()).isEqualTo(subdomainUser.getName());
     assertThat(result.getEmail()).isEqualTo(subdomainUser.getEmail());
     assertThat(result.getUsername()).isEqualTo(subdomainUser.getUsername());
-    assertThat(result.getUuid()).isEqualTo(subdomainUser.getUuid());
+    assertThat(result.getUserUuid()).isEqualTo(subdomainUser.getUserUuid());
     assertThat(result.getId()).isEqualTo(savedUser.getId());
   }
 }

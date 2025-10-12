@@ -2,8 +2,8 @@ package es.jmjg.experiments.application.user.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class UpdateUserIntegrationTest extends BaseIntegration {
 
   @Test
   void update_WhenUserExists_ShouldUpdateFields() {
-    UUID leanneUuid = TestDataSamples.LEANNE_UUID;
+    var leanneUuid = TestDataSamples.LEANNE_UUID;
 
     UpdateUserDto updateUserDto = new UpdateUserDto(
         leanneUuid,
@@ -49,9 +49,9 @@ class UpdateUserIntegrationTest extends BaseIntegration {
 
     assertThat(result.getName()).isEqualTo("Updated Ervin");
     assertThat(result.getEmail()).isEqualTo("updatedervin@example.com");
-    assertThat(result.getUuid()).isEqualTo(leanneUuid);
+    assertThat(result.getUserUuid()).isEqualTo(leanneUuid);
 
-    Optional<User> dbUser = userRepository.findByUuid(leanneUuid);
+    Optional<User> dbUser = userRepository.findByUserUuid(leanneUuid);
     assertThat(dbUser).isPresent();
     assertThat(dbUser.get().getName()).isEqualTo("Updated Ervin");
     assertThat(dbUser.get().getEmail()).isEqualTo("updatedervin@example.com");
@@ -60,7 +60,7 @@ class UpdateUserIntegrationTest extends BaseIntegration {
   @Test
   void update_WhenUserDoesNotExist_ShouldThrow() {
     UpdateUserDto updateUserDto = new UpdateUserDto(
-        UUID.randomUUID(),
+        UserUuid.randomUUID(),
         "Updated Name",
         "updated@example.com",
         authenticatedAdminUser);

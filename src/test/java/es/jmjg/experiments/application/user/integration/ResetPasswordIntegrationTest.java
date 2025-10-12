@@ -28,7 +28,7 @@ class ResetPasswordIntegrationTest extends BaseIntegration {
   @Transactional
   void whenResetRequestIsCorrect_ShouldUpdatePassword() {
     // Given
-    User user = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User user = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     var newPassword = "newPassword1234";
     var oldPassword = user.getPassword();
     String resetKey = resetPasswordKeyService.generateResetkey(user.getUsername(), user.getEmail());
@@ -38,7 +38,7 @@ class ResetPasswordIntegrationTest extends BaseIntegration {
     resetPassword.reset(dto);
 
     // Then
-    User savedUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User savedUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     assertThat(savedUser.getPassword()).isNotEqualTo(oldPassword);
   }
 }

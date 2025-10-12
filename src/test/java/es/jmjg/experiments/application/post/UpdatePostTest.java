@@ -141,7 +141,7 @@ class UpdatePostTest {
 
     // Then
     assertThat(result.getPostUuid()).isEqualTo(testPost.getPostUuid());
-    assertThat(result.getUser().getUuid()).isEqualTo(testUser.getUuid());
+    assertThat(result.getUser().getUserUuid()).isEqualTo(testUser.getUserUuid());
     assertThat(result.getTitle()).isEqualTo(updatePostDto.title());
     assertThat(result.getBody()).isEqualTo(updatePostDto.body());
     assertThat(result.getTags()).isNotNull();

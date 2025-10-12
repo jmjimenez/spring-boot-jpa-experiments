@@ -8,8 +8,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -185,7 +185,7 @@ class AuthenticationControllerTest {
             }
 
             // For all other users, return with ROLE_USER authority
-            User user = UserFactory.createUser(UUID.randomUUID(), "Test User", "test@example.com", username);
+            User user = UserFactory.createUser(UserUuid.randomUUID(), "Test User", "test@example.com", username);
             return UserDetailsFactory.createJwtUserDetails(user);
           });
 

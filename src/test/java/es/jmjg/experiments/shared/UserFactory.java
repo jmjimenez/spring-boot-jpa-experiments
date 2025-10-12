@@ -1,9 +1,9 @@
 package es.jmjg.experiments.shared;
 
 import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.tag.entity.Tag;
@@ -36,16 +36,16 @@ public class UserFactory {
   }
 
   public static User createBasicUser() {
-    return createUser(UUID.randomUUID(), "Test User", "test@example.com", "testuser");
+    return createUser(UserUuid.randomUUID(), "Test User", "test@example.com", "testuser");
   }
 
   public static User createAdminUser() {
-    return createUser(UUID.randomUUID(), "Admin User", "admin@example.com", "admin");
+    return createUser(UserUuid.randomUUID(), "Admin User", "admin@example.com", "admin");
   }
 
   public static User createUser(String name, String email, String username) {
     User user = new User();
-    user.setUuid(UUID.randomUUID());
+    user.setUserUuid(UserUuid.randomUUID());
     user.setName(name);
     user.setEmail(email);
     user.setUsername(username);
@@ -53,9 +53,9 @@ public class UserFactory {
     return user;
   }
 
-  public static User createUser(UUID uuid, String name, String email, String username) {
+  public static User createUser(UserUuid uuid, String name, String email, String username) {
     User user = new User();
-    user.setUuid(uuid);
+    user.setUserUuid(uuid);
     user.setName(name);
     user.setEmail(email);
     user.setUsername(username);
@@ -66,7 +66,7 @@ public class UserFactory {
   public static User createUser(Integer id, String name, String email, String username) {
     User user = new User();
     user.setId(id);
-    user.setUuid(UUID.randomUUID());
+    user.setUserUuid(UserUuid.randomUUID());
     user.setName(name);
     user.setEmail(email);
     user.setUsername(username);
@@ -74,10 +74,10 @@ public class UserFactory {
     return user;
   }
 
-  public static User createUser(Integer id, UUID uuid, String name, String email, String username) {
+  public static User createUser(Integer id, UserUuid uuid, String name, String email, String username) {
     User user = new User();
     user.setId(id);
-    user.setUuid(uuid);
+    user.setUserUuid(uuid);
     user.setName(name);
     user.setEmail(email);
     user.setUsername(username);
