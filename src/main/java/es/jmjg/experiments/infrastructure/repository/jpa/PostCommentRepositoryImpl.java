@@ -1,9 +1,9 @@
 package es.jmjg.experiments.infrastructure.repository.jpa;
 
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.repository.PostCommentRepository;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +24,8 @@ public class PostCommentRepositoryImpl implements PostCommentRepository {
   }
 
   @Override
-  public Optional<PostComment> findByUuid(UUID uuid) {
-    return jpaPostCommentRepository.findByUuid(uuid);
+  public Optional<PostComment> findByCommentUuid(PostCommentUuid uuid) {
+    return jpaPostCommentRepository.findByCommentUuid(uuid);
   }
 
   @Override

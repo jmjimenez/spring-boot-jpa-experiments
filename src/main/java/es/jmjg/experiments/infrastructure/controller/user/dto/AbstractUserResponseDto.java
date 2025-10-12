@@ -1,10 +1,10 @@
 package es.jmjg.experiments.infrastructure.controller.user.dto;
 
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -30,5 +30,5 @@ abstract public class AbstractUserResponseDto {
   private List<String> tags;
 
   @Schema(description = "List of comments posted by the user")
-  private List<UUID> comments;
+  private List<PostCommentUuid> comments;
 }

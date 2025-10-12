@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import es.jmjg.experiments.application.post.FindPostCommentByUuid;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.exception.PostCommentNotFound;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.PostRepositoryImpl;
@@ -14,7 +15,6 @@ import es.jmjg.experiments.infrastructure.repository.jpa.PostCommentRepositoryIm
 import es.jmjg.experiments.shared.BaseIntegration;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,10 +42,10 @@ class FindPostCommentByUuidIntegrationTest extends BaseIntegration {
     postCommentRepository.save(testPostComment);
 
     // When
-    PostComment result = findPostCommentByUuid.findByUuid(testPost.getPostUuid(), testPostComment.getUuid());
+    PostComment result = findPostCommentByUuid.findByUuid(testPost.getPostUuid(), testPostComment.getCommentUuid());
 
     // Then
-    assertThat(result.getUuid()).isEqualTo(testPostComment.getUuid());
+    assertThat(result.getCommentUuid()).isEqualTo(testPostComment.getCommentUuid());
     assertThat(result.getUser().getId()).isEqualTo(testUser.getId());
     assertThat(result.getPost().getId()).isEqualTo(testPost.getId());
     assertThat(result.getComment()).isEqualTo(commentText);
@@ -54,7 +54,7 @@ class FindPostCommentByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenPostCommentDoesNotExist_ShouldThrowPostCommentNotFoundException() {
     // Given
-    UUID nonExistentUuid = UUID.randomUUID();
+    var nonExistentUuid = PostCommentUuid.randomUUID();
     Post testPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow(() -> new RuntimeException("Post sample not found"));
 
     // When

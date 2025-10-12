@@ -27,7 +27,7 @@ public class UpdatePost {
   public Post update(UpdatePostDto updatePostDto) {
     Optional<Post> existing = postRepository.findByPostUuid(updatePostDto.uuid());
     if (existing.isEmpty()) {
-      throw new PostNotFound(updatePostDto.uuid().getUuid());
+      throw new PostNotFound(updatePostDto.uuid());
     }
 
     Post existingPost = existing.get();

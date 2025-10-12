@@ -43,7 +43,7 @@ public class SavePostComment {
     }
 
     PostComment postComment = new PostComment();
-    postComment.setUuid(savePostCommentDto.uuid());
+    postComment.setCommentUuid(savePostCommentDto.uuid());
     postComment.setPost(post);
     postComment.setComment(savePostCommentDto.comment());
     postComment.setUser(user);

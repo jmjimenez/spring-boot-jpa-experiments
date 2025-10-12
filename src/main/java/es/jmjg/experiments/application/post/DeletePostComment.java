@@ -22,7 +22,7 @@ public class DeletePostComment {
       throw new Forbidden("You are not allowed to delete comments");
     }
 
-    var postComment = postCommentRepository.findByUuid(deletePostCommentDto.uuid()).orElseThrow(() -> new PostCommentNotFound("Post comment with id " + deletePostCommentDto.uuid() + " not found"));
+    var postComment = postCommentRepository.findByCommentUuid(deletePostCommentDto.uuid()).orElseThrow(() -> new PostCommentNotFound("Post comment with id " + deletePostCommentDto.uuid() + " not found"));
 
     if (!postComment.getPost().getPostUuid().equals(deletePostCommentDto.postUuid())) {
       throw new PostCommentNotFound("Post comment with id " + deletePostCommentDto.uuid() + " not found for post with id " + deletePostCommentDto.postUuid());

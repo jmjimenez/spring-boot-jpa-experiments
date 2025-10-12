@@ -22,7 +22,7 @@ public class DeletePost {
     var post = postRepository.findByPostUuid(deletePostDto.uuid());
 
     if (post.isEmpty()) {
-      throw new PostNotFound(deletePostDto.uuid().getUuid());
+      throw new PostNotFound(deletePostDto.uuid());
     }
 
     if (!post.get().getUser().getUserUuid().equals(deletePostDto.authenticatedUser().id()) &&

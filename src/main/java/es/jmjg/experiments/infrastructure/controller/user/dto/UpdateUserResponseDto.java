@@ -1,10 +1,10 @@
 package es.jmjg.experiments.infrastructure.controller.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.List;
-import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -33,5 +33,5 @@ public class UpdateUserResponseDto {
   private List<String> tags;
 
   @JsonIgnore
-  private List<UUID> comments;
+  private List<PostCommentUuid> comments;
 }

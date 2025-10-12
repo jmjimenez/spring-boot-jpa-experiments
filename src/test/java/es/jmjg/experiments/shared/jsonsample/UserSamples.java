@@ -4,6 +4,7 @@ import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class UserSamples {
 
@@ -207,7 +208,7 @@ public final class UserSamples {
 
   private static String buildCommentsJson(User user) {
     return user.getComments().stream()
-        .map(comment -> "\"" + comment.getUuid() + "\"")
-        .collect(java.util.stream.Collectors.joining(","));
+        .map(comment -> "\"" + comment.getCommentUuid() + "\"")
+        .collect(Collectors.joining(","));
   }
 }

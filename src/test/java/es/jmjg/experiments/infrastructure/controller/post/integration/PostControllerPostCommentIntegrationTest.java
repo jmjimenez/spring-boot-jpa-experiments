@@ -2,6 +2,7 @@ package es.jmjg.experiments.infrastructure.controller.post.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDto;
@@ -18,7 +19,7 @@ class PostControllerPostCommentIntegrationTest extends BaseControllerIntegration
 
   @Test
   void shouldCreateNewPostCommentWhenPostCommentIsValid() {
-    UUID postCommentUuid = UUID.randomUUID();
+    var postCommentUuid = PostCommentUuid.randomUUID();
     String comment = "This is a test comment";
     SavePostCommentRequestDto requestDto = new SavePostCommentRequestDto(postCommentUuid, comment);
 
@@ -50,7 +51,7 @@ class PostControllerPostCommentIntegrationTest extends BaseControllerIntegration
 
   @Test
   void shouldNotCreateNewPostCommentWhenUserIsNotAuthenticated() {
-    UUID postCommentUuid = UUID.randomUUID();
+    var postCommentUuid = PostCommentUuid.randomUUID();
     String comment = "This is a test comment";
     SavePostCommentRequestDto requestDto = new SavePostCommentRequestDto(postCommentUuid, comment);
     HttpEntity<SavePostCommentRequestDto> request = createUnauthenticatedRequest(requestDto);
@@ -66,7 +67,7 @@ class PostControllerPostCommentIntegrationTest extends BaseControllerIntegration
 
   @Test
   void shouldNotCreateNewPostWhenValidationFails() {
-    UUID postCommentUuid = UUID.randomUUID();
+    var postCommentUuid = PostCommentUuid.randomUUID();
     String comment = "This is a test comment";
     SavePostCommentRequestDto requestDto = new SavePostCommentRequestDto(postCommentUuid, comment);
 

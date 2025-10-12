@@ -2,7 +2,6 @@ package es.jmjg.experiments.domain.post.entity;
 
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import es.jmjg.experiments.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -22,7 +21,8 @@ public class PostComment {
   private Integer id;
 
   @Column(name = "uuid", nullable = false, unique = true)
-  private UUID uuid;
+  @Embedded
+  private PostCommentUuid commentUuid;
 
   @NotBlank
   @Column(name = "comment", columnDefinition = "TEXT", nullable = false)

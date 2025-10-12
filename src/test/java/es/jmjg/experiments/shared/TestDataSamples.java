@@ -1,9 +1,9 @@
 package es.jmjg.experiments.shared;
 
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
-import java.util.UUID;
 
 /**
  * Test data samples from Flyway migration data.
@@ -79,7 +79,7 @@ public final class TestDataSamples {
   public static final PostUuid POST_1_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440006");
   public static final String POST_1_TITLE = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
   public static final String POST_1_BODY = "quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto";
-  public static final UUID POST_2_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440007");
+  public static final PostUuid POST_2_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440007");
   public static final String POST_2_TITLE = "qui est esse";
   public static final PostUuid POST_3_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440008");
   public static final PostUuid POST_16_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440016");
@@ -89,10 +89,10 @@ public final class TestDataSamples {
   public static final PostUuid LEANNE_POST_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440006");
   public static final String ERVIN_POST_TITLE = "et ea vero quia laudantium autem";
   public static final String ERVIN_POST_BODY = "delectus reiciendis molestiae occaecati non minima eveniet qui voluptatibus\\naccusamus in eum beatae sit\\nvel qui neque voluptates ut commodi qui incidunt\\nut animi commodi";
-  public static final UUID ERVIN_POST_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
+  public static final PostUuid ERVIN_POST_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440016");
   public static final String CLEMENTINE_POST_TITLE = "asperiores ea ipsam voluptatibus modi minima quia sint";
   public static final String CLEMENTINE_POST_BODY = "repellat aliquid praesentium dolorem quo\\nsed totam minus non itaque\\nnihil labore molestiae sunt dolor eveniet hic recusandae veniam\\ntempora et tenetur expedita sunt";
-  public static final UUID CLEMENTINE_POST_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440026");
+  public static final PostUuid CLEMENTINE_POST_UUID = PostUuid.fromString("550e8400-e29b-41d4-a716-446655440026");
 
 
   // Sample search terms and expected counts from Flyway migration data
@@ -103,6 +103,6 @@ public final class TestDataSamples {
   public static final String NEW_POST_TITLE = "Test Post 1";
   public static final String NEW_POST_BODY = "Test Body 1";
 
-  public static final UUID COMMENT_LEANNE_POST_BY_ERWIN_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655442001");
-  public static final UUID COMMENT_LEANNE_POST_BY_CLEMENTINE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655442002");
+  public static final PostCommentUuid COMMENT_LEANNE_POST_BY_ERWIN_UUID = PostCommentUuid.fromString("550e8400-e29b-41d4-a716-446655442001");
+  public static final PostCommentUuid COMMENT_LEANNE_POST_BY_CLEMENTINE_UUID = PostCommentUuid.fromString("550e8400-e29b-41d4-a716-446655442002");
 }

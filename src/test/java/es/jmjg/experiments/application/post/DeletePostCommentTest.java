@@ -45,31 +45,31 @@ class DeletePostCommentTest {
 
   @Test
   void deleteByUuid_WhenPostCommentExistsAndUserIsAdmin_ShouldDeletePost() {
-    when(postCommentRepository.findByUuid(postComment.getUuid())).thenReturn(Optional.of(postComment));
+    when(postCommentRepository.findByCommentUuid(postComment.getCommentUuid())).thenReturn(Optional.of(postComment));
     doNothing().when(postCommentRepository).deleteById(postComment.getId());
 
     // When
     User adminUser = UserFactory.createAdminUser();
-    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getPostUuid(), postComment.getUuid(), adminUser);
+    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getPostUuid(), postComment.getCommentUuid(), adminUser);
     deletePostComment.delete(dto);
 
     // Then
-    verify(postCommentRepository, times(1)).findByUuid(postComment.getUuid());
+    verify(postCommentRepository, times(1)).findByCommentUuid(postComment.getCommentUuid());
     verify(postCommentRepository, times(1)).deleteById(postComment.getId());
   }
 
   @Test
   void deleteByUuid_WhenPostCommentDoesNotExist_ShouldThrowPostCommentNotFound() {
-    when(postCommentRepository.findByUuid(postComment.getUuid())).thenReturn(Optional.empty());
+    when(postCommentRepository.findByCommentUuid(postComment.getCommentUuid())).thenReturn(Optional.empty());
 
     // When & Then
     User adminUser = UserFactory.createAdminUser();
-    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getPostUuid(), postComment.getUuid(), adminUser);
+    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getPostUuid(), postComment.getCommentUuid(), adminUser);
     assertThatThrownBy(() -> deletePostComment.delete(dto))
         .isInstanceOf(PostCommentNotFound.class)
-        .hasMessage("Post comment with id " + postComment.getUuid() + " not found");
+        .hasMessage("Post comment with id " + postComment.getCommentUuid() + " not found");
 
-    verify(postCommentRepository, times(1)).findByUuid(postComment.getUuid());
+    verify(postCommentRepository, times(1)).findByCommentUuid(postComment.getCommentUuid());
     verify(postCommentRepository, never()).deleteById(any());
   }
 
@@ -77,12 +77,12 @@ class DeletePostCommentTest {
   void deleteByUuid_WhenUserIsNotAdmin_ShouldThrowForbidden() {
     // When & Then
     User nonOwnerUser = UserFactory.createBasicUser();
-    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getPostUuid(), postComment.getUuid(), nonOwnerUser);
+    DeletePostCommentDto dto = PostFactory.createDeletePostCommentDto(postComment.getPost().getPostUuid(), postComment.getCommentUuid(), nonOwnerUser);
     assertThatThrownBy(() -> deletePostComment.delete(dto))
         .isInstanceOf(Forbidden.class)
         .hasMessage("You are not allowed to delete comments");
 
-    verify(postCommentRepository, never()).findByUuid(postComment.getUuid());
+    verify(postCommentRepository, never()).findByCommentUuid(postComment.getCommentUuid());
     verify(postCommentRepository, never()).deleteById(any());
   }
 }

@@ -9,13 +9,13 @@ import static org.mockito.Mockito.when;
 
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.post.exception.PostCommentNotFound;
 import es.jmjg.experiments.domain.post.repository.PostCommentRepository;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,21 +45,21 @@ class FindPostCommentByUuidTest {
   @Test
   void findByUuid_WhenPostCommentExists_ShouldReturnPostComment() {
     // Given
-    when(postCommentRepository.findByUuid(testPostComment.getUuid())).thenReturn(Optional.of(testPostComment));
+    when(postCommentRepository.findByCommentUuid(testPostComment.getCommentUuid())).thenReturn(Optional.of(testPostComment));
 
     // When
-    PostComment result = findPostCommentByUuid.findByUuid(testPost.getPostUuid(), testPostComment.getUuid());
+    PostComment result = findPostCommentByUuid.findByUuid(testPost.getPostUuid(), testPostComment.getCommentUuid());
 
     // Then
     assertThat(result).isEqualTo(testPostComment);
-    verify(postCommentRepository, times(1)).findByUuid(testPostComment.getUuid());
+    verify(postCommentRepository, times(1)).findByCommentUuid(testPostComment.getCommentUuid());
   }
 
   @Test
   void findByUuid_WhenPostCommentDoesNotExist_ShouldThrowPostCommentNotFoundException() {
     // Given
-    var nonExistentUuid = UUID.randomUUID();
-    when(postCommentRepository.findByUuid(nonExistentUuid)).thenReturn(Optional.empty());
+    var nonExistentUuid = PostCommentUuid.randomUUID();
+    when(postCommentRepository.findByCommentUuid(nonExistentUuid)).thenReturn(Optional.empty());
 
     // When
     assertThatThrownBy(() -> findPostCommentByUuid.findByUuid(testPost.getPostUuid(), nonExistentUuid))
@@ -67,22 +67,22 @@ class FindPostCommentByUuidTest {
         .hasMessage("Post comment with id " + nonExistentUuid + " not found");
 
     // Then
-    verify(postCommentRepository, times(1)).findByUuid(nonExistentUuid);
+    verify(postCommentRepository, times(1)).findByCommentUuid(nonExistentUuid);
   }
 
   @Test
   void findByUuid_WhenPostCommentAndPostDoNotMatch_ShouldThrowPostCommentNotFoundException() {
     // Given
     var notMatchingPostUuid = PostUuid.randomUUID();
-    when(postCommentRepository.findByUuid(testPostComment.getUuid())).thenReturn(Optional.of(testPostComment));
+    when(postCommentRepository.findByCommentUuid(testPostComment.getCommentUuid())).thenReturn(Optional.of(testPostComment));
 
     // When
-    assertThatThrownBy(() -> findPostCommentByUuid.findByUuid(notMatchingPostUuid, testPostComment.getUuid()))
+    assertThatThrownBy(() -> findPostCommentByUuid.findByUuid(notMatchingPostUuid, testPostComment.getCommentUuid()))
       .isInstanceOf(PostCommentNotFound.class)
-      .hasMessage("Post comment with id " + testPostComment.getUuid() + " not found for post with id " + notMatchingPostUuid);
+      .hasMessage("Post comment with id " + testPostComment.getCommentUuid() + " not found for post with id " + notMatchingPostUuid);
 
     // Then
-    verify(postCommentRepository, times(1)).findByUuid(testPostComment.getUuid());
+    verify(postCommentRepository, times(1)).findByCommentUuid(testPostComment.getCommentUuid());
   }
 
   @Test
@@ -93,6 +93,6 @@ class FindPostCommentByUuidTest {
         .hasMessage("post id cannot be null");
 
     // Then
-    verify(postCommentRepository, never()).findByUuid(null);
+    verify(postCommentRepository, never()).findByCommentUuid(null);
   }
 }

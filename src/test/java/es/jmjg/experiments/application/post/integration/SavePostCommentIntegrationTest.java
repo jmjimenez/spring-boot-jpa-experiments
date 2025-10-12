@@ -36,20 +36,20 @@ class SavePostCommentIntegrationTest extends BaseIntegration {
     Post testPost = testUser.getPosts().getFirst();
     String comment = "This is a test comment";
     PostComment postComment = PostFactory.createPostComment(testUser, testPost, comment);
-    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, postComment.getUuid(), testPost, postComment.getComment());
+    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, postComment.getCommentUuid(), testPost, postComment.getComment());
 
     // When
     PostComment result = savePostComment.save(dto);
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getUuid()).isEqualTo(postComment.getUuid());
+    assertThat(result.getCommentUuid()).isEqualTo(postComment.getCommentUuid());
     assertThat(result.getPost().getPostUuid()).isEqualTo(postComment.getPost().getPostUuid());
     assertThat(result.getUser().getUserUuid()).isEqualTo(postComment.getUser().getUserUuid());
     assertThat(result.getComment()).isEqualTo(postComment.getComment());
 
     // Verify it was actually saved to the database
-    Optional<PostComment> savedPostComment = postCommentRepository.findByUuid(result.getUuid());
+    Optional<PostComment> savedPostComment = postCommentRepository.findByCommentUuid(result.getCommentUuid());
     assertThat(savedPostComment).isPresent();
     assertThat(savedPostComment.get().getId()).isEqualTo(result.getId());
     assertThat(savedPostComment.get().getComment()).isEqualTo(result.getComment());

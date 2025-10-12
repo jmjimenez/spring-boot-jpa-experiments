@@ -64,7 +64,7 @@ class SavePostCommentTest {
     when(postCommentRepository.save(any(PostComment.class))).thenReturn(newPostComment);
 
     // When
-    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getUuid(), newPostComment.getPost(), newPostComment.getComment());
+    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getCommentUuid(), newPostComment.getPost(), newPostComment.getComment());
     PostComment result = savePostComment.save(dto);
 
     // Then
@@ -87,7 +87,7 @@ class SavePostCommentTest {
     when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.empty());
 
     // When
-    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getUuid(), newPostComment.getPost(), newPostComment.getComment());
+    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getCommentUuid(), newPostComment.getPost(), newPostComment.getComment());
     assertThatThrownBy(() -> savePostComment.save(dto)).isInstanceOf(UserNotFound.class);
 
     verify(postCommentRepository, times(0)).save(any(PostComment.class));
@@ -103,7 +103,7 @@ class SavePostCommentTest {
     when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.empty());
 
     // When
-    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getUuid(), newPostComment.getPost(), newPostComment.getComment());
+    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getCommentUuid(), newPostComment.getPost(), newPostComment.getComment());
     assertThatThrownBy(() -> savePostComment.save(dto)).isInstanceOf(PostNotFound.class);
 
     verify(postCommentRepository, times(0)).save(any(PostComment.class));
@@ -119,7 +119,7 @@ class SavePostCommentTest {
     when(postRepository.findByPostUuid(testPost.getPostUuid())).thenReturn(Optional.of(testPost));
 
     // When
-    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getUuid(), newPostComment.getPost(), newPostComment.getComment());
+    SavePostCommentDto dto = PostFactory.createSavePostCommentDto(testUser, newPostComment.getCommentUuid(), newPostComment.getPost(), newPostComment.getComment());
     assertThatThrownBy(() -> savePostComment.save(dto))
       .isInstanceOf(InvalidRequest.class)
       .hasMessage("Comment cannot be empty");

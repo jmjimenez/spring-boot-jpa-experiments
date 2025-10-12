@@ -123,7 +123,7 @@ public class PostMapper {
 
   public SavePostCommentResponseDto toSavePostCommentResponseDto(PostComment postComment) {
     return new SavePostCommentResponseDto(
-      postComment.getUuid(),
+      postComment.getCommentUuid(),
       postComment.getUser().getUserUuid(),
       postComment.getPost().getPostUuid(),
       postComment.getComment(),
@@ -134,7 +134,7 @@ public class PostMapper {
   public FindPostCommentByUuidResponseDto toFindPostCommentByUuidResponseDto(
     PostComment postComment) {
     return new FindPostCommentByUuidResponseDto(
-      postComment.getUuid(),
+      postComment.getCommentUuid(),
       postComment.getUser().getUserUuid(),
       postComment.getPost().getPostUuid(),
       postComment.getComment(),
@@ -294,8 +294,8 @@ public class PostMapper {
       return List.of();
     }
     return comments.stream()
-      .filter(comment -> comment != null && comment.getUuid() != null)
-      .map(comment -> new PostCommentResponseDto(comment.getUuid()))
+      .filter(comment -> comment != null && comment.getCommentUuid() != null)
+      .map(comment -> new PostCommentResponseDto(comment.getCommentUuid()))
       .collect(Collectors.toList());
   }
 

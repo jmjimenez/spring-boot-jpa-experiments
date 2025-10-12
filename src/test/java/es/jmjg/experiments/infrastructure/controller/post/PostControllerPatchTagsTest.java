@@ -86,7 +86,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
     // Given
     User user = UserFactory.createBasicUser();
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
-    UUID postUuid = UUID.randomUUID();
+    PostUuid postUuid = PostUuid.randomUUID();
     Tag tag = TagFactory.createTag(TagUuid.randomUUID(), "tagName");
     when(updatePostTags.update(any())).thenThrow(new PostNotFound(postUuid));
 
