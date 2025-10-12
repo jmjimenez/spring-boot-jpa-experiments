@@ -1,6 +1,6 @@
 package es.jmjg.experiments.domain.tag.exception;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 
 /** Exception thrown when a tag is not found in the application layer. */
 public class TagNotFound extends RuntimeException {
@@ -13,7 +13,7 @@ public class TagNotFound extends RuntimeException {
     super("Tag not found with id: " + id);
   }
 
-  public TagNotFound(UUID uuid) {
+  public TagNotFound(TagUuid uuid) {
     super("Tag not found with id: " + uuid);
   }
 }

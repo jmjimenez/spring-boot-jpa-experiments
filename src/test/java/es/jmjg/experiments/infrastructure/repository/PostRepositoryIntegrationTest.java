@@ -57,9 +57,9 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   void setUp() {
     // Create test user and tags for tag assignment tests
     leanneUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
-    technologyTag = tagRepository.findByUuid(TestDataSamples.TAG_TECHNOLOGY_UUID).orElseThrow();
-    javaTag = tagRepository.findByUuid(TestDataSamples.TAG_JAVA_UUID).orElseThrow();
-    springBootTag = tagRepository.findByUuid(TestDataSamples.TAG_SPRING_BOOT_UUID).orElseThrow();
+    technologyTag = tagRepository.findByTagUuid(TestDataSamples.TAG_TECHNOLOGY_UUID).orElseThrow();
+    javaTag = tagRepository.findByTagUuid(TestDataSamples.TAG_JAVA_UUID).orElseThrow();
+    springBootTag = tagRepository.findByTagUuid(TestDataSamples.TAG_SPRING_BOOT_UUID).orElseThrow();
   }
 
   @Test

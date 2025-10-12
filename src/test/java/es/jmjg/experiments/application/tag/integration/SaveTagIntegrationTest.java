@@ -29,19 +29,19 @@ class SaveTagIntegrationTest extends BaseIntegration {
     Tag tag = TagFactory.createTag("basic-save-test");
 
     // When
-    Tag savedTag = saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), adminUser));
+    Tag savedTag = saveTag.save(TagFactory.createSaveTagDto(tag.getTagUuid(), tag.getName(), adminUser));
 
     // Then
     assertThat(savedTag).isNotNull();
     assertThat(savedTag.getId()).isNotNull();
     assertThat(savedTag.getName()).isEqualTo(tag.getName());
-    assertThat(savedTag.getUuid()).isNotNull();
+    assertThat(savedTag.getTagUuid()).isNotNull();
 
     // Verify we can retrieve it from the database
     var foundTag = tagRepository.findById(savedTag.getId());
     assertThat(foundTag).isPresent();
     assertThat(foundTag.get().getName()).isEqualTo(tag.getName());
-    assertThat(foundTag.get().getUuid()).isEqualTo(savedTag.getUuid());
+    assertThat(foundTag.get().getTagUuid()).isEqualTo(savedTag.getTagUuid());
   }
 
   @Test
@@ -51,13 +51,13 @@ class SaveTagIntegrationTest extends BaseIntegration {
     Tag tag = TagFactory.createTag("custom-tag");
 
     // When
-    Tag savedTag = saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), adminUser));
+    Tag savedTag = saveTag.save(TagFactory.createSaveTagDto(tag.getTagUuid(), tag.getName(), adminUser));
 
     // Then
     assertThat(savedTag).isNotNull();
     assertThat(savedTag.getId()).isNotNull();
     assertThat(savedTag.getName()).isEqualTo("custom-tag");
-    assertThat(savedTag.getUuid()).isNotNull();
+    assertThat(savedTag.getTagUuid()).isNotNull();
 
     // Verify we can retrieve it from the database
     var foundTag = tagRepository.findById(savedTag.getId());
@@ -69,12 +69,12 @@ class SaveTagIntegrationTest extends BaseIntegration {
   void save_WhenDuplicateUuid_ShouldThrowTagAlreadyExistsException() {
     // Given
     Tag tag = TagFactory.createTag("different-name");
-    tag.setUuid(TestDataSamples.TAG_TECHNOLOGY_UUID); // Use the same UUID
+    tag.setTagUuid(TestDataSamples.TAG_TECHNOLOGY_UUID); // Use the same UUID
 
     // When & Then
-    assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), UserFactory.createAdminUser())))
+    assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getTagUuid(), tag.getName(), UserFactory.createAdminUser())))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with id '" + tag.getUuid() + "' already exists");
+        .hasMessage("Tag with id '" + tag.getTagUuid() + "' already exists");
   }
 
   @Test
@@ -83,7 +83,7 @@ class SaveTagIntegrationTest extends BaseIntegration {
     Tag tag = TagFactory.createTag(TestDataSamples.TAG_TECHNOLOGY);
 
     // When & Then
-    assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), UserFactory.createAdminUser())))
+    assertThatThrownBy(() -> saveTag.save(TagFactory.createSaveTagDto(tag.getTagUuid(), tag.getName(), UserFactory.createAdminUser())))
         .isInstanceOf(TagAlreadyExistsException.class)
         .hasMessage("Tag with name '" + tag.getName() + "' already exists with id '" + TestDataSamples.TAG_TECHNOLOGY_UUID
             + "'");

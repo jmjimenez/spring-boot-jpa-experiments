@@ -2,11 +2,11 @@ package es.jmjg.experiments.infrastructure.controller.tag.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -18,7 +18,7 @@ class TagControllerPutIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldUpdateExistingTagName() {
     // Given
-    UUID tagUuid = TestDataSamples.TAG_JAVA_UUID;
+    var tagUuid = TestDataSamples.TAG_JAVA_UUID;
     UpdateTagRequestDto updateDto = new UpdateTagRequestDto(tagUuid, "updated-java");
 
     // When
@@ -41,7 +41,7 @@ class TagControllerPutIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnNotFoundWhenUpdatingNonExistentTag() {
     // Given
-    UUID nonExistentUuid = UUID.randomUUID();
+    var nonExistentUuid = TagUuid.randomUUID();
     UpdateTagRequestDto updateDto = new UpdateTagRequestDto(nonExistentUuid, "updated-tag");
 
     // When
@@ -58,7 +58,7 @@ class TagControllerPutIntegrationTest extends BaseControllerIntegration {
   @Test
   void whenUnauthorized_shouldReturnUnathorized() {
     // Given
-    UUID tagUuid = TestDataSamples.TAG_JAVA_UUID;
+    var tagUuid = TestDataSamples.TAG_JAVA_UUID;
     UpdateTagRequestDto updateDto = new UpdateTagRequestDto(tagUuid, "updated-java");
 
     // When

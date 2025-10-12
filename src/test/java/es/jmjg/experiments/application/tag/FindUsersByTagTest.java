@@ -3,10 +3,10 @@ package es.jmjg.experiments.application.tag;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,11 +46,11 @@ class FindUsersByTagTest {
     User user2 = UserFactory.createUser("Another User", "another@example.com", "another_user");
     List<User> expectedUsers = Arrays.asList(user1, user2);
 
-    when(tagRepository.findByUuid(tag.getUuid())).thenReturn(Optional.of(tag));
+    when(tagRepository.findByTagUuid(tag.getTagUuid())).thenReturn(Optional.of(tag));
     when(userRepository.findByTagId(tag.getId())).thenReturn(expectedUsers);
 
     // When
-    List<User> result = findUsersByTag.findByTagUuid(tag.getUuid());
+    List<User> result = findUsersByTag.findByTagUuid(tag.getTagUuid());
 
     // Then
     assertThat(result).isNotNull();
@@ -61,8 +61,8 @@ class FindUsersByTagTest {
   @Test
   void findByTagUuid_WhenTagDoesNotExist_ShouldThrowTagNotFound() {
     // Given
-    UUID tagUuid = UUID.randomUUID();
-    when(tagRepository.findByUuid(tagUuid)).thenReturn(Optional.empty());
+    var tagUuid = TagUuid.randomUUID();
+    when(tagRepository.findByTagUuid(tagUuid)).thenReturn(Optional.empty());
 
     // When & Then
     assertThatThrownBy(() -> findUsersByTag.findByTagUuid(tagUuid))

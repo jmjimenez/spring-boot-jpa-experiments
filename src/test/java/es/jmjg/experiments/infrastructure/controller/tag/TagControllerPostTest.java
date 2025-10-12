@@ -10,10 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.jmjg.experiments.application.tag.SaveTag;
 import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +24,12 @@ class TagControllerPostTest extends BaseTagControllerTest {
   private SaveTag saveTag;
 
   private Tag testTag;
-  private UUID testUuid;
+  private TagUuid testUuid;
   private ObjectMapper objectMapper;
 
   @BeforeEach
   void setUp() {
-    testUuid = UUID.randomUUID();
+    testUuid = TagUuid.randomUUID();
     Integer testId = 1;
     testTag = TagFactory.createTag(testUuid, "test-tag");
     testTag.setId(testId);

@@ -2,8 +2,7 @@ package es.jmjg.experiments.application.tag.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Optional;
-import java.util.UUID;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +21,24 @@ class FindTagByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenTagExists_ShouldReturnTag() {
     // Given - using existing test data from migration
-    UUID existingTagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
+    final var existingTagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
-    Tag result = findTagByUuid.findByUuid(existingTagUuid);
+    Tag result = findTagByUuid.findByTagUuid(existingTagUuid);
 
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getName()).isEqualTo(TestDataSamples.TAG_TECHNOLOGY);
-    assertThat(result.getUuid()).isEqualTo(existingTagUuid);
+    assertThat(result.getTagUuid()).isEqualTo(existingTagUuid);
   }
 
   @Test
   void findByUuid_WhenTagDoesNotExist_ShouldThrowTagNotFound() {
     // Given
-    UUID nonExistentUuid = UUID.randomUUID();
+    var nonExistentUuid = TagUuid.randomUUID();
 
     // When & Then
-    assertThatThrownBy(() -> findTagByUuid.findByUuid(nonExistentUuid))
+    assertThatThrownBy(() -> findTagByUuid.findByTagUuid(nonExistentUuid))
         .isInstanceOf(TagNotFound.class)
         .hasMessage("Tag not found with id: " + nonExistentUuid);
   }
@@ -47,63 +46,28 @@ class FindTagByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenUuidIsNull_ShouldThrowIllegalArgumentException() {
     // When & Then
-    assertThatThrownBy(() -> findTagByUuid.findByUuid(null))
+    assertThatThrownBy(() -> findTagByUuid.findByTagUuid(null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("UUID cannot be null");
   }
 
   @Test
-  void findByUuidOptional_WhenTagExists_ShouldReturnOptionalWithTag() {
-    // Given - using existing test data from migration
-    UUID existingTagUuid = TestDataSamples.TAG_JAVA_UUID;
-
-    // When
-    Optional<Tag> result = findTagByUuid.findByUuidOptional(existingTagUuid);
-
-    // Then
-    assertThat(result).isPresent();
-    assertThat(result.get().getName()).isEqualTo(TestDataSamples.TAG_JAVA);
-    assertThat(result.get().getUuid()).isEqualTo(existingTagUuid);
-  }
-
-  @Test
-  void findByUuidOptional_WhenTagDoesNotExist_ShouldReturnEmptyOptional() {
-    // Given
-    UUID nonExistentUuid = UUID.randomUUID();
-
-    // When
-    Optional<Tag> result = findTagByUuid.findByUuidOptional(nonExistentUuid);
-
-    // Then
-    assertThat(result).isEmpty();
-  }
-
-  @Test
-  void findByUuidOptional_WhenUuidIsNull_ShouldReturnEmptyOptional() {
-    // When
-    Optional<Tag> result = findTagByUuid.findByUuidOptional(null);
-
-    // Then
-    assertThat(result).isEmpty();
-  }
-
-  @Test
   void findByUuid_WhenMultipleTagsExist_ShouldReturnCorrectTag() {
     // Given - using existing test data from migration
-    UUID springBootTagUuid = TestDataSamples.TAG_SPRING_BOOT_UUID;
-    UUID databaseTagUuid = TestDataSamples.TAG_DATABASE_UUID;
+    var springBootTagUuid = TestDataSamples.TAG_SPRING_BOOT_UUID;
+    var databaseTagUuid = TestDataSamples.TAG_DATABASE_UUID;
 
     // When
-    Tag springBootResult = findTagByUuid.findByUuid(springBootTagUuid);
-    Tag databaseResult = findTagByUuid.findByUuid(databaseTagUuid);
+    Tag springBootResult = findTagByUuid.findByTagUuid(springBootTagUuid);
+    Tag databaseResult = findTagByUuid.findByTagUuid(databaseTagUuid);
 
     // Then
     assertThat(springBootResult).isNotNull();
     assertThat(springBootResult.getName()).isEqualTo(TestDataSamples.TAG_SPRING_BOOT);
-    assertThat(springBootResult.getUuid()).isEqualTo(springBootTagUuid);
+    assertThat(springBootResult.getTagUuid()).isEqualTo(springBootTagUuid);
 
     assertThat(databaseResult).isNotNull();
     assertThat(databaseResult.getName()).isEqualTo(TestDataSamples.TAG_DATABASE);
-    assertThat(databaseResult.getUuid()).isEqualTo(databaseTagUuid);
+    assertThat(databaseResult.getTagUuid()).isEqualTo(databaseTagUuid);
   }
 }

@@ -1,6 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.tag;
 
 import es.jmjg.experiments.application.tag.DeleteTag;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
 import java.util.List;
 import java.util.UUID;
@@ -116,7 +117,7 @@ public class TagController {
   FindTagByUuidResponseDto findByUuid(
     @Parameter(description = "UUID of the tag to retrieve") @PathVariable UUID uuid) {
 
-    Tag tag = findTagByUuid.findByUuid(uuid);
+    Tag tag = findTagByUuid.findByTagUuid(TagUuid.fromUuid(uuid));
     return tagMapper.toFindByUuidResponseDto(tag, tag.getPosts(), tag.getUsers());
   }
 
@@ -130,7 +131,7 @@ public class TagController {
   List<FindAllUsersResponseDto> findUsersByTag(
     @Parameter(description = "UUID of the tag") @PathVariable UUID uuid) {
 
-    List<User> users = findUsersByTag.findByTagUuid(uuid);
+    List<User> users = findUsersByTag.findByTagUuid(TagUuid.fromUuid(uuid));
     return userMapper.toFindAllUsersResponseDto(users);
   }
 
@@ -144,7 +145,7 @@ public class TagController {
   List<FindPostByTagResponseDto> findPostsByTag(
     @Parameter(description = "UUID of the tag") @PathVariable UUID uuid) {
 
-    List<Post> posts = findPostsByTag.findByTagUuid(uuid);
+    List<Post> posts = findPostsByTag.findByTagUuid(TagUuid.fromUuid(uuid));
     return postMapper.toFindPostsByTagResponseDto(posts);
   }
 
@@ -192,7 +193,7 @@ public class TagController {
     SaveTagResponseDto responseDto = tagMapper.toSaveTagResponseDto(savedTag);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/tags/{uuid}")
-      .buildAndExpand(savedTag.getUuid())
+      .buildAndExpand(savedTag.getTagUuid())
       .toUriString();
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -210,7 +211,7 @@ public class TagController {
     @ApiResponse(responseCode = "404", description = "Tag not found")
   })
   UpdateTagResponseDto updateName(@PathVariable UUID uuid, @RequestBody @Valid UpdateTagRequestDto tagDto, @AuthenticationPrincipal JwtUserDetails userDetails) {
-    var updateTagDto = tagMapper.toUpdateTagDto(uuid, tagDto, userMapper.toAuthenticatedUserDto(userDetails));
+    var updateTagDto = tagMapper.toUpdateTagDto(TagUuid.fromUuid(uuid), tagDto, userMapper.toAuthenticatedUserDto(userDetails));
     Tag updatedTag = updateTag.update(updateTagDto);
     return tagMapper.toUpdateTagResponseDto(updatedTag);
   }
@@ -226,6 +227,6 @@ public class TagController {
   })
   void deleteByUuid(@PathVariable UUID uuid, @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    deleteTag.delete(tagMapper.toDeleteTagDto(uuid, userMapper.toAuthenticatedUserDto(userDetails)));
+    deleteTag.delete(tagMapper.toDeleteTagDto(TagUuid.fromUuid(uuid), userMapper.toAuthenticatedUserDto(userDetails)));
   }
 }

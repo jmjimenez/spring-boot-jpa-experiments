@@ -3,9 +3,9 @@ package es.jmjg.experiments.application.tag;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.UserFactory;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,22 +34,22 @@ class DeleteTagTest {
   void deleteByUuid_WhenTagExistsAndNotInUse_ShouldDeleteTag() {
     // Given
     var adminUser = UserFactory.createAdminUser();
-    UUID uuid = UUID.randomUUID();
-    doNothing().when(tagRepository).deleteByUuid(uuid);
+    var uuid = TagUuid.randomUUID();
+    doNothing().when(tagRepository).deleteByTagUuid(uuid);
 
     // When
     deleteTag.delete(TagFactory.createDeleteTagDto(uuid, adminUser));
 
     // Then
-    verify(tagRepository).deleteByUuid(uuid);
+    verify(tagRepository).deleteByTagUuid(uuid);
   }
 
   @Test
   void deleteByUuid_WhenTagDoesNotExist_ShouldPropagateTagNotFound() {
     // Given
     var adminUser = UserFactory.createAdminUser();
-    UUID uuid = UUID.randomUUID();
-    doThrow(new TagNotFound(uuid)).when(tagRepository).deleteByUuid(uuid);
+    var uuid = TagUuid.randomUUID();
+    doThrow(new TagNotFound(uuid)).when(tagRepository).deleteByTagUuid(uuid);
 
     // When & Then
     assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(uuid, adminUser)))
@@ -61,9 +61,9 @@ class DeleteTagTest {
   void deleteByUuid_WhenTagIsUsedInPosts_ShouldPropagateTagInUseException() {
     // Given
     var adminUser = UserFactory.createAdminUser();
-    UUID uuid = UUID.randomUUID();
+    var uuid = TagUuid.randomUUID();
     doThrow(new TagInUseException("Cannot delete tag 'test-tag' because it is assigned to posts"))
-        .when(tagRepository).deleteByUuid(uuid);
+        .when(tagRepository).deleteByTagUuid(uuid);
 
     // When & Then
     assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(uuid, adminUser)))
@@ -75,9 +75,9 @@ class DeleteTagTest {
   void deleteByUuid_WhenTagIsUsedInUsers_ShouldPropagateTagInUseException() {
     // Given
     var adminUser = UserFactory.createAdminUser();
-    UUID uuid = UUID.randomUUID();
+    var uuid = TagUuid.randomUUID();
     doThrow(new TagInUseException("Cannot delete tag 'test-tag' because it is assigned to users"))
-        .when(tagRepository).deleteByUuid(uuid);
+        .when(tagRepository).deleteByTagUuid(uuid);
 
     // When & Then
     assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(uuid, adminUser)))

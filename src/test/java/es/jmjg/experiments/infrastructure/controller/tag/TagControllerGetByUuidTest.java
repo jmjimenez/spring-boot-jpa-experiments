@@ -9,13 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import es.jmjg.experiments.application.tag.FindTagByUuid;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,11 @@ class TagControllerGetByUuidTest extends BaseTagControllerTest {
   private FindTagByUuid findTagByUuid;
 
   private Tag testTag;
-  private UUID testUuid;
+  private TagUuid testUuid;
 
   @BeforeEach
   void setUp() {
-    testUuid = UUID.randomUUID();
+    testUuid = TagUuid.randomUUID();
     Integer testId = 1;
     testTag = TagFactory.createTag(testUuid, "test-tag");
     testTag.setId(testId);
@@ -50,7 +50,7 @@ class TagControllerGetByUuidTest extends BaseTagControllerTest {
     testTag.setUsers(List.of(user1, user2));
     testTag.setPosts(List.of(post1, post2));
 
-    when(findTagByUuid.findByUuid(testUuid)).thenReturn(testTag);
+    when(findTagByUuid.findByTagUuid(testUuid)).thenReturn(testTag);
 
     // When & Then
     mockMvc.perform(get("/api/tags/{uuid}", testUuid).header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
@@ -73,7 +73,7 @@ class TagControllerGetByUuidTest extends BaseTagControllerTest {
     testTag.setUsers(List.of());
     testTag.setPosts(List.of());
 
-    when(findTagByUuid.findByUuid(testUuid)).thenReturn(testTag);
+    when(findTagByUuid.findByTagUuid(testUuid)).thenReturn(testTag);
 
     // When & Then
     mockMvc.perform(get("/api/tags/{uuid}", testUuid).header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))

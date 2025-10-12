@@ -2,7 +2,7 @@ package es.jmjg.experiments.infrastructure.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class TagSchemaVerificationIntegrationTest extends BaseJpaIntegration {
   void shouldCreateAndSaveTagWithCorrectSchema() {
     // Given
     Tag tag = new Tag();
-    tag.setUuid(UUID.randomUUID());
+    tag.setTagUuid(TagUuid.randomUUID());
     tag.setName("test-tag-fix");
 
     // When
@@ -31,7 +31,7 @@ public class TagSchemaVerificationIntegrationTest extends BaseJpaIntegration {
     assertThat(savedTag).isNotNull();
     assertThat(savedTag.getId()).isNotNull();
     assertThat(savedTag.getName()).isEqualTo("test-tag-fix");
-    assertThat(savedTag.getUuid()).isNotNull();
+    assertThat(savedTag.getTagUuid()).isNotNull();
 
     // Verify we can retrieve it
     var foundTag = tagRepository.findById(savedTag.getId());
@@ -43,7 +43,7 @@ public class TagSchemaVerificationIntegrationTest extends BaseJpaIntegration {
   void shouldFindTagByNameAfterSchemaFix() {
     // Given
     Tag tag = new Tag();
-    tag.setUuid(UUID.randomUUID());
+    tag.setTagUuid(TagUuid.randomUUID());
     tag.setName("schema-fix-verification");
     tagRepository.save(tag);
 

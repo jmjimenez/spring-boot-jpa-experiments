@@ -39,13 +39,13 @@ class SaveTagTest {
     when(tagRepository.save(any(Tag.class))).thenReturn(tag);
 
     // When
-    Tag result = saveTag.save(TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), adminUser));
+    Tag result = saveTag.save(TagFactory.createSaveTagDto(tag.getTagUuid(), tag.getName(), adminUser));
 
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(tagId);
     assertThat(result.getName()).isEqualTo(tag.getName());
-    assertThat(result.getUuid()).isEqualTo(tag.getUuid());
+    assertThat(result.getTagUuid()).isEqualTo(tag.getTagUuid());
   }
 
   @Test
@@ -55,13 +55,13 @@ class SaveTagTest {
     Tag tag = TagFactory.createBasicTag();
     when(tagRepository.save(any(Tag.class)))
         .thenThrow(
-            new TagAlreadyExistsException("Tag with id '" + tag.getUuid() + "' already exists"));
+            new TagAlreadyExistsException("Tag with id '" + tag.getTagUuid() + "' already exists"));
 
     // When & Then
-    var saveTagDto = TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), user);
+    var saveTagDto = TagFactory.createSaveTagDto(tag.getTagUuid(), tag.getName(), user);
     assertThatThrownBy(() -> saveTag.save(saveTagDto))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with id '" + tag.getUuid() + "' already exists");
+        .hasMessage("Tag with id '" + tag.getTagUuid() + "' already exists");
   }
 
   @Test
@@ -71,13 +71,13 @@ class SaveTagTest {
     Tag tag = TagFactory.createTag("existing-tag");
     when(tagRepository.save(any(Tag.class)))
         .thenThrow(
-            new TagAlreadyExistsException("Tag with name '" + tag.getName() + "' and id '" + tag.getUuid() + "' already exists"));
+            new TagAlreadyExistsException("Tag with name '" + tag.getName() + "' and id '" + tag.getTagUuid() + "' already exists"));
 
     // When & Then
-    var saveTagDto = TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), user);
+    var saveTagDto = TagFactory.createSaveTagDto(tag.getTagUuid(), tag.getName(), user);
     assertThatThrownBy(() -> saveTag.save(saveTagDto))
         .isInstanceOf(TagAlreadyExistsException.class)
-        .hasMessage("Tag with name '" + tag.getName() + "' and id '" + tag.getUuid() + "' already exists");
+        .hasMessage("Tag with name '" + tag.getName() + "' and id '" + tag.getTagUuid() + "' already exists");
   }
 
   @Test
@@ -89,7 +89,7 @@ class SaveTagTest {
         .thenThrow(new TagAlreadyExistsException("Tag already exists"));
 
     // When & Then
-    var saveTagDto = TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), user);
+    var saveTagDto = TagFactory.createSaveTagDto(tag.getTagUuid(), tag.getName(), user);
     assertThatThrownBy(() -> saveTag.save(saveTagDto))
         .isInstanceOf(TagAlreadyExistsException.class)
         .hasMessage("Tag already exists");
@@ -104,7 +104,7 @@ class SaveTagTest {
         .thenThrow(new RuntimeException("Database error"));
 
     // When & Then
-    var saveTagDto = TagFactory.createSaveTagDto(tag.getUuid(), tag.getName(), user);
+    var saveTagDto = TagFactory.createSaveTagDto(tag.getTagUuid(), tag.getName(), user);
     assertThatThrownBy(() -> saveTag.save(saveTagDto))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Database error");

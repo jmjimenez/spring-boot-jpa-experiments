@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.shared.UserFactory;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,25 +38,25 @@ class UpdateTagTest {
     String updatedName = "updated-tag";
     Tag tag = TagFactory.createBasicTag();
 
-    when(tagRepository.findByUuid(tag.getUuid())).thenReturn(Optional.of(tag));
+    when(tagRepository.findByTagUuid(tag.getTagUuid())).thenReturn(Optional.of(tag));
     when(tagRepository.save(any(Tag.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    Tag result = updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), updatedName, UserFactory.createAdminUser()));
+    Tag result = updateTag.update(TagFactory.createUpdateTagDto(tag.getTagUuid(), updatedName, UserFactory.createAdminUser()));
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getUuid()).isEqualTo(tag.getUuid());
+    assertThat(result.getTagUuid()).isEqualTo(tag.getTagUuid());
     assertThat(result.getName()).isEqualTo(updatedName);
   }
 
   @Test
   void updateName_WhenTagDoesNotExist_ShouldThrowTagNotFound() {
     // Given
-    UUID uuid = UUID.randomUUID();
+    var uuid = TagUuid.randomUUID();
     String newName = "updated-tag";
 
-    when(tagRepository.findByUuid(uuid)).thenReturn(Optional.empty());
+    when(tagRepository.findByTagUuid(uuid)).thenReturn(Optional.empty());
 
     // When & Then
     assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(uuid, newName,UserFactory.createAdminUser())))
@@ -67,7 +67,7 @@ class UpdateTagTest {
   @Test
   void updateName_WhenNewNameIsEmpty_ShouldThrowIllegalArgumentException() {
     // Given
-    UUID uuid = UUID.randomUUID();
+    var uuid = TagUuid.randomUUID();
 
     // When & Then
     assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(uuid, "",UserFactory.createAdminUser())))
@@ -78,7 +78,7 @@ class UpdateTagTest {
   @Test
   void updateName_WhenNewNameIsWhitespace_ShouldThrowIllegalArgumentException() {
     // Given
-    UUID uuid = UUID.randomUUID();
+    var uuid = TagUuid.randomUUID();
 
     // When & Then
     assertThatThrownBy(() -> updateTag.update(TagFactory.createUpdateTagDto(uuid, "   ",UserFactory.createAdminUser())))
@@ -92,15 +92,15 @@ class UpdateTagTest {
     String updatedName = "  updated-tag  ";
     Tag tag = TagFactory.createBasicTag();
 
-    when(tagRepository.findByUuid(tag.getUuid())).thenReturn(Optional.of(tag));
+    when(tagRepository.findByTagUuid(tag.getTagUuid())).thenReturn(Optional.of(tag));
     when(tagRepository.save(any(Tag.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    Tag result = updateTag.update(TagFactory.createUpdateTagDto(tag.getUuid(), updatedName,UserFactory.createAdminUser()));
+    Tag result = updateTag.update(TagFactory.createUpdateTagDto(tag.getTagUuid(), updatedName,UserFactory.createAdminUser()));
 
     // Then
     assertThat(result).isNotNull();
-    assertThat(result.getUuid()).isEqualTo(tag.getUuid());
+    assertThat(result.getTagUuid()).isEqualTo(tag.getTagUuid());
     assertThat(result.getName()).isEqualTo(updatedName.trim());
   }
 }

@@ -2,11 +2,11 @@ package es.jmjg.experiments.application.tag.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.infrastructure.repository.UserRepositoryImpl;
 import es.jmjg.experiments.shared.TestDataSamples;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +40,10 @@ class DeleteTagByUuidIntegrationTest extends BaseIntegration {
     Tag existingTag = tagRepository.save(tag);
 
     // When
-    deleteTag.delete(TagFactory.createDeleteTagDto(existingTag.getUuid(), adminUser));
+    deleteTag.delete(TagFactory.createDeleteTagDto(existingTag.getTagUuid(), adminUser));
 
     // Then
-    Optional<Tag> foundTag = tagRepository.findByUuid(existingTag.getUuid());
+    Optional<Tag> foundTag = tagRepository.findByTagUuid(existingTag.getTagUuid());
     assertThat(foundTag).isEmpty();
   }
 
@@ -51,7 +51,7 @@ class DeleteTagByUuidIntegrationTest extends BaseIntegration {
   void deleteByUuid_WhenTagDoesNotExist_ShouldThrowTagNotFound() {
     // Given
     User adminUser = userRepository.findByUsername(TestDataSamples.ADMIN_USERNAME).orElseThrow();
-    UUID nonExistentUuid = UUID.randomUUID();
+    var nonExistentUuid = TagUuid.randomUUID();
 
     // When & Then
     assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(nonExistentUuid, adminUser)))
@@ -66,7 +66,7 @@ class DeleteTagByUuidIntegrationTest extends BaseIntegration {
     var javaTag = tagRepository.findByName(TestDataSamples.TAG_JAVA).orElseThrow();
 
     // When & Then
-    assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(javaTag.getUuid(), adminUser)))
+    assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(javaTag.getTagUuid(), adminUser)))
         .isInstanceOf(TagInUseException.class)
         .hasMessageContaining("Cannot delete tag 'java' because it is assigned to posts");
   }
@@ -78,7 +78,7 @@ class DeleteTagByUuidIntegrationTest extends BaseIntegration {
     var developerTag = tagRepository.findByName(TestDataSamples.TAG_DEVELOPER ).orElseThrow();
 
     // When & Then
-    assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(developerTag.getUuid(), adminUser)))
+    assertThatThrownBy(() -> deleteTag.delete(TagFactory.createDeleteTagDto(developerTag.getTagUuid(), adminUser)))
         .isInstanceOf(TagInUseException.class)
         .hasMessageContaining("Cannot delete tag 'developer' because it is assigned to users");
   }

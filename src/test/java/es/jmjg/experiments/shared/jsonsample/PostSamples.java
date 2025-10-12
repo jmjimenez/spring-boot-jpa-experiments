@@ -85,7 +85,7 @@ public final class PostSamples {
 
   public static String createFindPostByUuidJsonResponse(Post post) {
     String tags = post.getTags().stream()
-      .map(tag -> "{\"id\":\"%s\",\"name\":\"%s\"}".formatted(tag.getUuid(), tag.getName()))
+      .map(tag -> "{\"id\":\"%s\",\"name\":\"%s\"}".formatted(tag.getTagUuid(), tag.getName()))
       .reduce((a, b) -> a + "," + b)
       .orElse("");
 

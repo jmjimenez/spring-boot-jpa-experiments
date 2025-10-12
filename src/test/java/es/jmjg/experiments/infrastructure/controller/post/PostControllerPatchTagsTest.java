@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.shared.exception.Forbidden;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,8 +47,8 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
     User user = UserFactory.createBasicUser();
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
     Post post = PostFactory.createPost(user, PostUuid.randomUUID(), "Post title", "Post body");
-    Tag tag1 = TagFactory.createTag(UUID.randomUUID(), "tag1");
-    Tag tag2 = TagFactory.createTag(UUID.randomUUID(), "tag2");
+    Tag tag1 = TagFactory.createTag(TagUuid.randomUUID(), "tag1");
+    Tag tag2 = TagFactory.createTag(TagUuid.randomUUID(), "tag2");
     post.setTags(List.of(tag1, tag2));
     when(updatePostTags.update(any())).thenReturn(post);
 
@@ -67,7 +68,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
     User user = UserFactory.createBasicUser();
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
     UUID postUuid = UUID.randomUUID();
-    Tag tag = TagFactory.createTag(UUID.randomUUID(), "tagNotFound");
+    Tag tag = TagFactory.createTag(TagUuid.randomUUID(), "tagNotFound");
     when(updatePostTags.update(any())).thenThrow(new TagNotFound(tag.getName()));
 
     // When & Then
@@ -86,7 +87,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
     User user = UserFactory.createBasicUser();
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
     UUID postUuid = UUID.randomUUID();
-    Tag tag = TagFactory.createTag(UUID.randomUUID(), "tagName");
+    Tag tag = TagFactory.createTag(TagUuid.randomUUID(), "tagName");
     when(updatePostTags.update(any())).thenThrow(new PostNotFound(postUuid));
 
     // When & Then
@@ -105,7 +106,7 @@ class PostControllerPatchTagsTest extends BasePostControllerTest {
     User user = UserFactory.createBasicUser();
     JwtUserDetails userDetails = UserDetailsFactory.createJwtUserDetails(user);
     UUID postUuid = UUID.randomUUID();
-    Tag tag = TagFactory.createTag(UUID.randomUUID(), "tagName");
+    Tag tag = TagFactory.createTag(TagUuid.randomUUID(), "tagName");
     when(updatePostTags.update(any())).thenThrow(Forbidden.class);
 
     // When & Then

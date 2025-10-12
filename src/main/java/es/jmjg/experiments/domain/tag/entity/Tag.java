@@ -2,9 +2,9 @@ package es.jmjg.experiments.domain.tag.entity;
 
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.user.entity.User;
+import jakarta.persistence.Embedded;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,8 +31,9 @@ public class Tag {
   private Integer id;
 
   @NotNull
+  @Embedded
   @Column(name = "uuid", unique = true, nullable = false)
-  private UUID uuid;
+  private TagUuid tagUuid;
 
   @NotEmpty
   @Column(name = "tag", unique = true, nullable = false)

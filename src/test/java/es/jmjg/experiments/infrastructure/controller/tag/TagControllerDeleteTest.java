@@ -7,9 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import es.jmjg.experiments.application.tag.DeleteTag;
 import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +18,11 @@ class TagControllerDeleteTest extends BaseTagControllerTest {
   @Autowired
   private DeleteTag deleteTag;
 
-  private UUID testUuid;
+  private TagUuid testUuid;
 
   @BeforeEach
   void setUp() {
-    testUuid = UUID.randomUUID();
+    testUuid = TagUuid.randomUUID();
     Integer testId = 1;
     Tag testTag = TagFactory.createTag(testUuid, "test-tag");
     testTag.setId(testId);
