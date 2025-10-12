@@ -1,9 +1,9 @@
 package es.jmjg.experiments.infrastructure.repository;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.domain.tag.repository.TagRepository;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +22,13 @@ public class TagRepositoryImpl implements TagRepository {
   }
 
   @Override
-  public Optional<Tag> findByUuid(UUID uuid) {
-    return jpaTagRepository.findByUuid(uuid);
+  public Optional<Tag> findByTagUuid(TagUuid uuid) {
+    return jpaTagRepository.findByTagUuid(uuid);
   }
 
   @Override
   @Transactional
-  public void deleteByUuid(UUID uuid) {
+  public void deleteByTagUuid(TagUuid uuid) {
     jpaTagRepository.deleteByUuid(uuid);
   }
 

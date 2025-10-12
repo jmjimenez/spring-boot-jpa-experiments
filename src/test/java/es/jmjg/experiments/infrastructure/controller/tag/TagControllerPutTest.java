@@ -37,8 +37,8 @@ class TagControllerPutTest extends BaseTagControllerTest {
     when(updateTag.update(any())).thenReturn(updatedTag);
 
     // When & Then
-    UpdateTagRequestDto tagDto = new UpdateTagRequestDto(tag.getUuid(), updatedName);
-    mockMvc.perform(put("/api/tags/{uuid}", tag.getUuid())
+    UpdateTagRequestDto tagDto = new UpdateTagRequestDto(tag.getTagUuid(), updatedName);
+    mockMvc.perform(put("/api/tags/{uuid}", tag.getTagUuid())
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(tagDto))
         .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))

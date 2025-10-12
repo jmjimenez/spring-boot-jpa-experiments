@@ -18,6 +18,6 @@ public class DeleteTag {
 
   @Transactional
   public void delete(DeleteTagDto deleteTagDto) {
-    tagRepository.deleteByUuid(deleteTagDto.uuid());
+    tagRepository.deleteByTagUuid(deleteTagDto.uuid());
   }
 }

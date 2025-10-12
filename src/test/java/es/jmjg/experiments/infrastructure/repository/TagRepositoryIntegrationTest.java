@@ -3,10 +3,10 @@ package es.jmjg.experiments.infrastructure.repository;
 import static es.jmjg.experiments.shared.TestDataSamples.*;
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.domain.tag.exception.TagInUseException;
 import es.jmjg.experiments.shared.TestDataSamples;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,26 +29,26 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
     // Then
     assertThat(foundTag).isPresent();
     assertThat(foundTag.get().getName()).isEqualTo(TAG_TECHNOLOGY);
-    assertThat(foundTag.get().getUuid()).isEqualTo(TAG_TECHNOLOGY_UUID);
+    assertThat(foundTag.get().getTagUuid()).isEqualTo(TAG_TECHNOLOGY_UUID);
   }
 
   @Test
   void shouldFindTagByUuid() {
     // When
-    Optional<Tag> foundTag = tagRepository.findByUuid(TAG_JAVA_UUID);
+    Optional<Tag> foundTag = tagRepository.findByTagUuid(TAG_JAVA_UUID);
 
     // Then
     assertThat(foundTag).isPresent();
-    assertThat(foundTag.get().getUuid()).isEqualTo(TAG_JAVA_UUID);
+    assertThat(foundTag.get().getTagUuid()).isEqualTo(TAG_JAVA_UUID);
     assertThat(foundTag.get().getName()).isEqualTo(TestDataSamples.TAG_JAVA);
   }
 
   @Test
   void shouldFindMultipleTagsByUuid() {
     // When
-    Optional<Tag> springBootTag = tagRepository.findByUuid(TAG_SPRING_BOOT_UUID);
-    Optional<Tag> jpaTag = tagRepository.findByUuid(TAG_JPA_UUID);
-    Optional<Tag> databaseTag = tagRepository.findByUuid(TAG_DATABASE_UUID);
+    Optional<Tag> springBootTag = tagRepository.findByTagUuid(TAG_SPRING_BOOT_UUID);
+    Optional<Tag> jpaTag = tagRepository.findByTagUuid(TAG_JPA_UUID);
+    Optional<Tag> databaseTag = tagRepository.findByTagUuid(TAG_DATABASE_UUID);
 
     // Then
     assertThat(springBootTag).isPresent();
@@ -70,13 +70,13 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
 
     // Then
     assertThat(programmingTag).isPresent();
-    assertThat(programmingTag.get().getUuid()).isEqualTo(TAG_PROGRAMMING_UUID);
+    assertThat(programmingTag.get().getTagUuid()).isEqualTo(TAG_PROGRAMMING_UUID);
 
     assertThat(webDevelopmentTag).isPresent();
-    assertThat(webDevelopmentTag.get().getUuid()).isEqualTo(TAG_WEB_DEVELOPMENT_UUID);
+    assertThat(webDevelopmentTag.get().getTagUuid()).isEqualTo(TAG_WEB_DEVELOPMENT_UUID);
 
     assertThat(bestPracticesTag).isPresent();
-    assertThat(bestPracticesTag.get().getUuid()).isEqualTo(TAG_BEST_PRACTICES_UUID);
+    assertThat(bestPracticesTag.get().getTagUuid()).isEqualTo(TAG_BEST_PRACTICES_UUID);
   }
 
   @Test
@@ -91,7 +91,7 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldNotFindTagByNonExistentUuid() {
     // When
-    Optional<Tag> foundTag = tagRepository.findByUuid(UUID.randomUUID());
+    Optional<Tag> foundTag = tagRepository.findByTagUuid(TagUuid.randomUUID());
 
     // Then
     assertThat(foundTag).isEmpty();
@@ -104,7 +104,7 @@ public class TagRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(javaTag).isPresent();
 
     // When & Then - Should throw exception when trying to delete
-    assertThatThrownBy(() -> tagRepository.deleteByUuid(javaTag.get().getUuid()))
+    assertThatThrownBy(() -> tagRepository.deleteByTagUuid(javaTag.get().getTagUuid()))
         .isInstanceOf(TagInUseException.class)
         .hasMessageContaining("Cannot delete tag '" + TestDataSamples.TAG_JAVA + "' because it is assigned to posts");
   }

@@ -1,7 +1,6 @@
 package es.jmjg.experiments.application.tag;
 
-import java.util.Optional;
-import java.util.UUID;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,19 +19,11 @@ public class FindTagByUuid {
   }
 
   @Transactional(readOnly = true)
-  public Tag findByUuid(UUID uuid) {
+  public Tag findByTagUuid(TagUuid uuid) {
     if (uuid == null) {
       throw new IllegalArgumentException("UUID cannot be null");
     }
-    return tagRepository.findByUuid(uuid)
+    return tagRepository.findByTagUuid(uuid)
         .orElseThrow(() -> new TagNotFound(uuid));
-  }
-
-  @Transactional(readOnly = true)
-  public Optional<Tag> findByUuidOptional(UUID uuid) {
-    if (uuid == null) {
-      return Optional.empty();
-    }
-    return tagRepository.findByUuid(uuid);
   }
 }

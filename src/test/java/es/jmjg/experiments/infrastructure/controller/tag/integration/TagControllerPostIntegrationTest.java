@@ -2,11 +2,11 @@ package es.jmjg.experiments.infrastructure.controller.tag.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagRequestDto;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.SaveTagResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -17,7 +17,7 @@ class TagControllerPostIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldCreateNewTagWhenTagIsValid() {
     // Given
-    SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "new-tag");
+    SaveTagRequestDto tagDto = new SaveTagRequestDto(TagUuid.randomUUID(), "new-tag");
 
     // When
     HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -45,8 +45,8 @@ class TagControllerPostIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnConflictWhenCreatingTagWithDuplicateName() {
     // Given
-    SaveTagRequestDto tagDto1 = new SaveTagRequestDto(UUID.randomUUID(), "duplicate-tag");
-    SaveTagRequestDto tagDto2 = new SaveTagRequestDto(UUID.randomUUID(), "duplicate-tag");
+    SaveTagRequestDto tagDto1 = new SaveTagRequestDto(TagUuid.randomUUID(), "duplicate-tag");
+    SaveTagRequestDto tagDto2 = new SaveTagRequestDto(TagUuid.randomUUID(), "duplicate-tag");
 
     // Create first tag
     HttpEntity<SaveTagRequestDto> request1 = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -66,7 +66,7 @@ class TagControllerPostIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnConflictWhenCreatingTagWithExistingNameFromMigration() {
     // Given - Try to create a tag with a name that exists in migration data
-    SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "technology");
+    SaveTagRequestDto tagDto = new SaveTagRequestDto(TagUuid.randomUUID(), "technology");
 
     // When
     HttpEntity<SaveTagRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -81,7 +81,7 @@ class TagControllerPostIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnConflictWhenCreatingTagWithDuplicateUuid() {
     // Given
-    UUID duplicateUuid = UUID.randomUUID();
+    var duplicateUuid = TagUuid.randomUUID();
     SaveTagRequestDto tagDto1 = new SaveTagRequestDto(duplicateUuid, "first-tag");
     SaveTagRequestDto tagDto2 = new SaveTagRequestDto(duplicateUuid, "second-tag");
 
@@ -102,7 +102,7 @@ class TagControllerPostIntegrationTest extends BaseControllerIntegration {
   @Test
   void whenUnauthorized_shouldReturnUnauthorized() {
     // Given
-    SaveTagRequestDto tagDto = new SaveTagRequestDto(UUID.randomUUID(), "new-tag");
+    SaveTagRequestDto tagDto = new SaveTagRequestDto(TagUuid.randomUUID(), "new-tag");
 
     // When
     HttpEntity<SaveTagRequestDto> request = createUnauthenticatedRequest(tagDto);

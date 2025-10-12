@@ -1,9 +1,9 @@
 package es.jmjg.experiments.infrastructure.repository.jpa;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.domain.tag.exception.TagInUseException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,14 +16,14 @@ import es.jmjg.experiments.domain.tag.entity.Tag;
 public interface JpaTagRepository extends JpaRepository<Tag, Integer> {
 
   @Transactional(readOnly = true)
-  Optional<Tag> findByUuid(UUID uuid);
+  Optional<Tag> findByTagUuid(TagUuid uuid);
 
   @Transactional(readOnly = true)
   Optional<Tag> findByName(String name);
 
   @Transactional
-  default void deleteByUuid(UUID uuid) {
-    Tag tag = findByUuid(uuid)
+  default void deleteByUuid(TagUuid uuid) {
+    Tag tag = findByTagUuid(uuid)
         .orElseThrow(() -> new TagNotFound(uuid));
 
     if (isTagUsedInPosts(tag.getId())) {

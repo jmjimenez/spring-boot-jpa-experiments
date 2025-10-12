@@ -1,7 +1,7 @@
 package es.jmjg.experiments.application.tag;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +23,8 @@ public class FindUsersByTag {
   }
 
   @Transactional(readOnly = true)
-  public List<User> findByTagUuid(UUID tagUuid) {
-    var tag = tagRepository.findByUuid(tagUuid)
+  public List<User> findByTagUuid(TagUuid tagUuid) {
+    var tag = tagRepository.findByTagUuid(tagUuid)
         .orElseThrow(() -> new TagNotFound(tagUuid));
 
     return userRepository.findByTagId(tag.getId());

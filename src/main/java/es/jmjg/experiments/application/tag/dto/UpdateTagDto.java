@@ -1,13 +1,13 @@
 package es.jmjg.experiments.application.tag.dto;
 
 import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
-import java.util.UUID;
 
 public record UpdateTagDto(
   @NotNull
-  UUID uuid,
+  TagUuid uuid,
   @NotNull
   String tagName,
   @NotNull

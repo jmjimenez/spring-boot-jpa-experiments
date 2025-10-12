@@ -5,10 +5,10 @@ import es.jmjg.experiments.application.tag.dto.DeleteTagDto;
 import es.jmjg.experiments.application.tag.dto.SaveTagDto;
 import es.jmjg.experiments.application.tag.dto.UpdateTagDto;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
@@ -45,7 +45,7 @@ public class TagMapper {
       FindTagByUuidResponseDto::new);
   }
 
-  public DeleteTagDto toDeleteTagDto(UUID uuid, AuthenticatedUserDto authenticatedUser) {
+  public DeleteTagDto toDeleteTagDto(TagUuid uuid, AuthenticatedUserDto authenticatedUser) {
     return new DeleteTagDto(uuid, authenticatedUser);
   }
 
@@ -57,7 +57,7 @@ public class TagMapper {
     );
   }
 
-  public UpdateTagDto toUpdateTagDto(UUID tagUuid, UpdateTagRequestDto dto, AuthenticatedUserDto userDto) {
+  public UpdateTagDto toUpdateTagDto(TagUuid tagUuid, UpdateTagRequestDto dto, AuthenticatedUserDto userDto) {
     return new UpdateTagDto(
       tagUuid,
       dto.getName(),
@@ -67,7 +67,7 @@ public class TagMapper {
 
   @FunctionalInterface
   private interface TagDtoConstructor<T> {
-    T create(UUID uuid, String name, List<UUID> posts, List<UUID> users);
+    T create(TagUuid uuid, String name, List<PostUuid> posts, List<UserUuid> users);
   }
 
   private <T> T mapToResponseDto(Tag tag, List<Post> posts, List<User> users, TagDtoConstructor<T> dtoConstructor) {
@@ -75,16 +75,14 @@ public class TagMapper {
       return null;
     }
 
-    List<UUID> postUuids = posts.stream()
+    List<PostUuid> postUuids = posts.stream()
         .map(Post::getPostUuid)
-        .map(PostUuid::getUuid)
         .collect(Collectors.toList());
 
-    List<UUID> userUuids = users.stream()
+    List<UserUuid> userUuids = users.stream()
         .map(User::getUserUuid)
-        .map(UserUuid::getUuid)
         .collect(Collectors.toList());
 
-    return dtoConstructor.create(tag.getUuid(), tag.getName(), postUuids, userUuids);
+    return dtoConstructor.create(tag.getTagUuid(), tag.getName(), postUuids, userUuids);
   }
 }

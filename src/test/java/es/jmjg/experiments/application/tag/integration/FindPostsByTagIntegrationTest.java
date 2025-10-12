@@ -2,6 +2,7 @@ package es.jmjg.experiments.application.tag.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class FindPostsByTagIntegrationTest extends BaseIntegration {
     assertThat(technologyTag).isPresent();
 
     // When
-    List<Post> result = findPostsByTag.findByTagUuid(technologyTag.get().getUuid());
+    List<Post> result = findPostsByTag.findByTagUuid(technologyTag.get().getTagUuid());
 
     // Then
     assertThat(result).isNotNull();
@@ -39,7 +40,7 @@ class FindPostsByTagIntegrationTest extends BaseIntegration {
   @Test
   void findByTagUuid_WhenTagDoesNotExist_ShouldThrowTagNotFound() {
     // Given
-    var nonExistentUuid = java.util.UUID.randomUUID();
+    var nonExistentUuid = TagUuid.randomUUID();
 
     // When & Then
     assertThatThrownBy(() -> findPostsByTag.findByTagUuid(nonExistentUuid))

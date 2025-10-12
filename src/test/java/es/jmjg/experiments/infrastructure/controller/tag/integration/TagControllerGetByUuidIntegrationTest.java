@@ -17,7 +17,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldFindTagByUuid() {
     // Given
-    UUID tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
+    var tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -47,7 +47,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldFindTagByUuidWithNoRelations() {
     // Given
-    UUID tagUuid = TestDataSamples.TAG_NOT_USED_UUID;
+    var tagUuid = TestDataSamples.TAG_NOT_USED_UUID;
 
     // When
     HttpEntity<String> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -96,7 +96,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   @Test
   void whenRequestIsNotAuthenticated_shouldFindTagByUuid() {
     // Given
-    UUID tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
+    var tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(
@@ -124,7 +124,7 @@ class TagControllerGetByUuidIntegrationTest extends BaseControllerIntegration {
   @Test
   void whenUnauthorized_shouldFindTagByUuid() {
     // Given
-    UUID tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
+    var tagUuid = TestDataSamples.TAG_TECHNOLOGY_UUID;
 
     // When
     ResponseEntity<FindTagByUuidResponseDto> response = restTemplate.exchange(

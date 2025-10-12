@@ -9,13 +9,13 @@ import es.jmjg.experiments.application.tag.FindPostsByTag;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.tag.entity.Tag;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.TagFactory;
 import es.jmjg.experiments.shared.TestDataSamples;
 import es.jmjg.experiments.shared.UserFactory;
 import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,11 @@ class TagControllerGetPostsByTagUuidTest extends BaseTagControllerTest {
   @Autowired
   private FindPostsByTag findPostsByTag;
 
-  private UUID testUuid;
+  private TagUuid testUuid;
 
   @BeforeEach
   void setUp() {
-    testUuid = UUID.randomUUID();
+    testUuid = TagUuid.randomUUID();
     Integer testId = 1;
     Tag testTag = TagFactory.createTag(testUuid, "test-tag");
     testTag.setId(testId);

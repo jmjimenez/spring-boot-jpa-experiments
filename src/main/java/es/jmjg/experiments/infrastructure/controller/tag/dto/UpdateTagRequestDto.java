@@ -1,6 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.tag.dto;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,7 +14,7 @@ import lombok.Getter;
 public class UpdateTagRequestDto {
   @NotNull(message = "Identifier is required")
   @Schema(description = "Identifier for the tag", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID id;
+  private TagUuid id;
 
   @NotEmpty(message = "Name is required")
   @Schema(description = "New name for the tag", example = "spring-boot")

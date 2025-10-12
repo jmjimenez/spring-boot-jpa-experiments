@@ -29,7 +29,7 @@ public class UpdateTag {
       throw new Forbidden("Only admins can update tags");
     }
 
-    var tag = tagRepository.findByUuid(dto.uuid())
+    var tag = tagRepository.findByTagUuid(dto.uuid())
         .orElseThrow(() -> new TagNotFound(dto.uuid()));
 
     tag.setName(dto.tagName().trim());

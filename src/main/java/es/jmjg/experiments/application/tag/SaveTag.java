@@ -20,11 +20,11 @@ public class SaveTag {
 
   @Transactional
   public Tag save(SaveTagDto dto) {
-    tagRepository.findByUuid(dto.uuid()).ifPresent(t -> {
+    tagRepository.findByTagUuid(dto.uuid()).ifPresent(t -> {
       throw new TagAlreadyExistsException(dto.uuid());
     });
     tagRepository.findByName(dto.tagName()).ifPresent(t -> {
-      throw new TagAlreadyExistsException(dto.tagName(), t.getUuid());
+      throw new TagAlreadyExistsException(dto.tagName(), t.getTagUuid());
     });
 
     if (!dto.authenticatedUser().isAdmin()) {
@@ -32,7 +32,7 @@ public class SaveTag {
     }
 
     Tag tag = new Tag();
-    tag.setUuid(dto.uuid());
+    tag.setTagUuid(dto.uuid());
     tag.setName(dto.tagName());
     return tagRepository.save(tag);
   }

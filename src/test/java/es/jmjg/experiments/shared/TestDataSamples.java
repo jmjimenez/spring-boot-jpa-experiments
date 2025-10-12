@@ -1,6 +1,7 @@
 package es.jmjg.experiments.shared;
 
 import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.UUID;
 
@@ -15,16 +16,16 @@ public final class TestDataSamples {
   }
 
   // Sample tags from Flyway migration data
-  public static final UUID TAG_TECHNOLOGY_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440056");
-  public static final UUID TAG_JAVA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
-  public static final UUID TAG_DEVELOPER_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440071");
-  public static final UUID TAG_SPRING_BOOT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440059");
-  public static final UUID TAG_NOT_USED_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440072");
-  public static final UUID TAG_PROGRAMMING_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440057");
-  public static final UUID TAG_JPA_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440060");
-  public static final UUID TAG_DATABASE_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440061");
-  public static final UUID TAG_WEB_DEVELOPMENT_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440062");
-  public static final UUID TAG_BEST_PRACTICES_UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440064");
+  public static final TagUuid TAG_TECHNOLOGY_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440056");
+  public static final TagUuid TAG_JAVA_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440058");
+  public static final TagUuid TAG_DEVELOPER_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440071");
+  public static final TagUuid TAG_SPRING_BOOT_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440059");
+  public static final TagUuid TAG_NOT_USED_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440072");
+  public static final TagUuid TAG_PROGRAMMING_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440057");
+  public static final TagUuid TAG_JPA_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440060");
+  public static final TagUuid TAG_DATABASE_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440061");
+  public static final TagUuid TAG_WEB_DEVELOPMENT_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440062");
+  public static final TagUuid TAG_BEST_PRACTICES_UUID = TagUuid.fromString("550e8400-e29b-41d4-a716-446655440064");
 
   // Tag name constants for tests
   public static final String TAG_JAVA = "java";

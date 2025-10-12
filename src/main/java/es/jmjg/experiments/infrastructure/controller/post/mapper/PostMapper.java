@@ -114,7 +114,7 @@ public class PostMapper {
   public UpdatePostTagsResponseDto toUpdatePostTagsResponseDto(Post post) {
     List<TagDto> tags = post.getTags() != null
       ? post.getTags().stream()
-      .map(tag -> new TagDto(tag.getUuid(), tag.getName()))
+      .map(tag -> new TagDto(tag.getTagUuid(), tag.getName()))
       .collect(java.util.stream.Collectors.toList())
       : List.of();
 
@@ -284,8 +284,8 @@ public class PostMapper {
       return List.of();
     }
     return tags.stream()
-      .filter(tag -> tag != null && tag.getUuid() != null && tag.getName() != null)
-      .map(tag -> new PostTagResponseDto(tag.getUuid(), tag.getName()))
+      .filter(tag -> tag != null && tag.getTagUuid() != null && tag.getName() != null)
+      .map(tag -> new PostTagResponseDto(tag.getTagUuid(), tag.getName()))
       .collect(Collectors.toList());
   }
 
