@@ -38,7 +38,7 @@ public class PostCommentRepositoryIntegrationTest extends BaseJpaIntegration {
     postComment.setUuid(uuid);
     postComment.setComment("This is a test comment");
     postComment.setPost(postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow());
-    postComment.setUser(userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
+    postComment.setUser(userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
     postCommentRepository.save(postComment);
 
     LocalDateTime createdAt = postComment.getCreatedAt();
@@ -56,7 +56,7 @@ public class PostCommentRepositoryIntegrationTest extends BaseJpaIntegration {
     postComment.setUuid(UUID.randomUUID());
     postComment.setComment("This is a test comment");
     postComment.setPost(postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow());
-    postComment.setUser(userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
+    postComment.setUser(userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
     postCommentRepository.save(postComment);
 
     Post post = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
@@ -69,10 +69,10 @@ public class PostCommentRepositoryIntegrationTest extends BaseJpaIntegration {
     postComment.setUuid(UUID.randomUUID());
     postComment.setComment("This is a test comment");
     postComment.setPost(postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow());
-    postComment.setUser(userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
+    postComment.setUser(userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
     postCommentRepository.save(postComment);
 
-    User user = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User user = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     assertThat(user.getComments()).contains(postComment);
   }
 
@@ -84,7 +84,7 @@ public class PostCommentRepositoryIntegrationTest extends BaseJpaIntegration {
     postComment.setUuid(uuid);
     postComment.setComment("");
     postComment.setPost(postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow());
-    postComment.setUser(userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
+    postComment.setUser(userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow());
     assertThatThrownBy(() -> postCommentRepository.save(postComment))
         .isInstanceOf(ConstraintViolationException.class)
         .satisfies(ex -> {

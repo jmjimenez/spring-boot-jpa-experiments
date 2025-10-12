@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
   @Test
   void save_WhenUserIsValid_ShouldSaveAndReturnUser() {
     User userToSave = UserFactory.createUser("User 02", "user02@example.com", "user02");
-    UUID originalUuid = userToSave.getUuid();
+    var originalUuid = userToSave.getUserUuid();
 
     SaveUserDto saveUserDto = generateSaveUserDto(userToSave, authenticatedAdminUser);
 
@@ -55,14 +54,14 @@ class SaveUserIntegrationTest extends BaseIntegration {
     assertThat(result.getName()).isEqualTo(userToSave.getName());
     assertThat(result.getEmail()).isEqualTo(userToSave.getEmail());
     assertThat(result.getUsername()).isEqualTo(userToSave.getUsername());
-    assertThat(result.getUuid()).isEqualTo(originalUuid);
+    assertThat(result.getUserUuid()).isEqualTo(originalUuid);
 
     Optional<User> dbUser = userRepository.findById(result.getId());
     assertThat(dbUser).isPresent();
     assertThat(dbUser.get().getName()).isEqualTo(userToSave.getName());
     assertThat(dbUser.get().getEmail()).isEqualTo(userToSave.getEmail());
     assertThat(dbUser.get().getUsername()).isEqualTo(userToSave.getUsername());
-    assertThat(dbUser.get().getUuid()).isEqualTo(originalUuid);
+    assertThat(dbUser.get().getUserUuid()).isEqualTo(originalUuid);
   }
 
   @Test
@@ -86,14 +85,14 @@ class SaveUserIntegrationTest extends BaseIntegration {
 
     assertThat(result).isNotNull();
     assertThat(result.getId()).isNotNull();
-    assertThat(result.getUuid()).isNotNull();
+    assertThat(result.getUserUuid()).isNotNull();
     assertThat(result.getName()).isEqualTo(userToSave.getName());
     assertThat(result.getEmail()).isEqualTo(userToSave.getEmail());
     assertThat(result.getUsername()).isEqualTo(userToSave.getUsername());
 
     Optional<User> dbUser = userRepository.findById(result.getId());
     assertThat(dbUser).isPresent();
-    assertThat(dbUser.get().getUuid()).isNotNull();
+    assertThat(dbUser.get().getUserUuid()).isNotNull();
   }
 
   @Test
@@ -167,7 +166,7 @@ class SaveUserIntegrationTest extends BaseIntegration {
 
   private SaveUserDto generateSaveUserDto(User user, AuthenticatedUserDto authenticatedUser) {
     return new SaveUserDto(
-        user.getUuid(),
+        user.getUserUuid(),
         user.getName(),
         user.getEmail(),
         user.getUsername(),

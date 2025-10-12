@@ -5,6 +5,7 @@ import es.jmjg.experiments.application.tag.dto.DeleteTagDto;
 import es.jmjg.experiments.application.tag.dto.SaveTagDto;
 import es.jmjg.experiments.application.tag.dto.UpdateTagDto;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import es.jmjg.experiments.infrastructure.controller.tag.dto.UpdateTagRequestDto;
 import java.util.List;
 import java.util.UUID;
@@ -80,7 +81,8 @@ public class TagMapper {
         .collect(Collectors.toList());
 
     List<UUID> userUuids = users.stream()
-        .map(User::getUuid)
+        .map(User::getUserUuid)
+        .map(UserUuid::getUuid)
         .collect(Collectors.toList());
 
     return dtoConstructor.create(tag.getUuid(), tag.getName(), postUuids, userUuids);

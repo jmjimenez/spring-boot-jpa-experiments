@@ -1,5 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.user.dto;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.UUID;
@@ -10,7 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 abstract public class AbstractUserResponseDto {
   @Schema(description = "Identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID id;
+  private UserUuid id;
 
   @Schema(description = "Name of the user", example = "John Doe")
   private String name;
@@ -22,7 +24,7 @@ abstract public class AbstractUserResponseDto {
   private String username;
 
   @Schema(description = "List of post identifiers associated with the user")
-  private List<UUID> posts;
+  private List<PostUuid> posts;
 
   @Schema(description = "List of tag names associated with the user")
   private List<String> tags;

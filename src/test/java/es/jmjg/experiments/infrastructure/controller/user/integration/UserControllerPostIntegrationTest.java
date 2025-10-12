@@ -2,7 +2,7 @@ package es.jmjg.experiments.infrastructure.controller.user.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -22,7 +22,7 @@ class UserControllerPostIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldCreateNewUserWhenUserIsValid() {
     // when
-    SaveUserRequestDto userDto = new SaveUserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser",
+    SaveUserRequestDto userDto = new SaveUserRequestDto(UserUuid.randomUUID(), "New User", "new@example.com", "newuser",
         "password123");
 
     HttpEntity<SaveUserRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -62,7 +62,7 @@ class UserControllerPostIntegrationTest extends BaseControllerIntegration {
   @Test
   void shouldReturnUnauthorizedWhenNotAuthenticated() {
     // when
-    SaveUserRequestDto userDto = new SaveUserRequestDto(UUID.randomUUID(), "New User", "new@example.com", "newuser",
+    SaveUserRequestDto userDto = new SaveUserRequestDto(UserUuid.randomUUID(), "New User", "new@example.com", "newuser",
       "password123");
 
     HttpEntity<SaveUserRequestDto> request = createUnauthenticatedRequest(userDto);

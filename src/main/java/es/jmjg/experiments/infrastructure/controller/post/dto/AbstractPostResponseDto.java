@@ -1,20 +1,21 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
-import java.util.UUID;
 import lombok.Getter;
 
 @Getter
 @Schema(description = "Response DTO for post in paginated list")
 abstract public class AbstractPostResponseDto {
   @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
-  private final UUID id;
+  private final PostUuid id;
 
   @Schema(description = "Identifier of the user who created the post", example = "123e4567-e89b-12d3-a456-426614174001")
   @JsonProperty("user-id")
-  private final UUID userId;
+  private final UserUuid userId;
 
   @Schema(description = "Title of the post", example = "My First Post")
   private final String title;
@@ -29,7 +30,7 @@ abstract public class AbstractPostResponseDto {
   @JsonProperty("post-comments")
   private final List<PostCommentResponseDto> postComments;
 
-  public AbstractPostResponseDto(UUID id, UUID userId, String title, String body,
+  public AbstractPostResponseDto(PostUuid id, UserUuid userId, String title, String body,
       List<PostTagResponseDto> tags, List<PostCommentResponseDto> postComments) {
     this.id = id;
     this.userId = userId;

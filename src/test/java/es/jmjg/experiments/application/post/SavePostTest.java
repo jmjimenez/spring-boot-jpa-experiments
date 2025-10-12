@@ -49,7 +49,7 @@ class SavePostTest {
     // Given
     Post newPost = PostFactory.createBasicPost(testUser);
 
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(newPost);
     doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
@@ -62,7 +62,7 @@ class SavePostTest {
     assertThat(result.getId()).isEqualTo(newPost.getId());
     assertThat(result.getTitle()).isEqualTo(newPost.getTitle());
     assertThat(result.getBody()).isEqualTo(newPost.getBody());
-    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
+    verify(userRepository, times(1)).findByUserUuid(testUser.getUserUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
@@ -71,7 +71,7 @@ class SavePostTest {
     // Given
     Post newPost = PostFactory.createBasicPost(testUser);
 
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(newPost);
     doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
@@ -82,7 +82,7 @@ class SavePostTest {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(newPost.getId());
-    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
+    verify(userRepository, times(1)).findByUserUuid(testUser.getUserUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 
@@ -91,7 +91,7 @@ class SavePostTest {
     // Given
     Post newPost = PostFactory.createBasicPost(testUser);
 
-    when(userRepository.findByUuid(testUser.getUuid())).thenReturn(Optional.of(testUser));
+    when(userRepository.findByUserUuid(testUser.getUserUuid())).thenReturn(Optional.of(testUser));
     when(postRepository.save(any(Post.class))).thenReturn(newPost);
     doNothing().when(processPostTags).processTagsForPost(any(Post.class), anyList());
 
@@ -106,7 +106,7 @@ class SavePostTest {
     assertThat(result.getBody()).isEqualTo(newPost.getBody());
     assertThat(result.getUser()).isEqualTo(testUser);
 
-    verify(userRepository, times(1)).findByUuid(testUser.getUuid());
+    verify(userRepository, times(1)).findByUserUuid(testUser.getUserUuid());
     verify(postRepository, times(1)).save(any(Post.class));
   }
 }

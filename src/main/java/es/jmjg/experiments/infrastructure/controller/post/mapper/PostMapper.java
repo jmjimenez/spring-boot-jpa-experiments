@@ -91,7 +91,7 @@ public class PostMapper {
 
   public SavePostDto toSavePostDto(SavePostRequestDto postRequestDto, AuthenticatedUserDto authenticatedUser) {
     return new SavePostDto(
-      PostUuid.fromUuid(postRequestDto.getId()),
+      postRequestDto.getId(),
       postRequestDto.getTitle(),
       postRequestDto.getBody(),
       authenticatedUser,
@@ -118,14 +118,14 @@ public class PostMapper {
       .collect(java.util.stream.Collectors.toList())
       : List.of();
 
-    return new UpdatePostTagsResponseDto(post.getPostUuid().getUuid(), post.getTitle(), tags);
+    return new UpdatePostTagsResponseDto(post.getPostUuid(), post.getTitle(), tags);
   }
 
   public SavePostCommentResponseDto toSavePostCommentResponseDto(PostComment postComment) {
     return new SavePostCommentResponseDto(
       postComment.getUuid(),
-      postComment.getUser().getUuid(),
-      postComment.getPost().getPostUuid().getUuid(),
+      postComment.getUser().getUserUuid(),
+      postComment.getPost().getPostUuid(),
       postComment.getComment(),
       postComment.getCreatedAt()
     );
@@ -135,8 +135,8 @@ public class PostMapper {
     PostComment postComment) {
     return new FindPostCommentByUuidResponseDto(
       postComment.getUuid(),
-      postComment.getPost().getPostUuid().getUuid(),
-      postComment.getUser().getUuid(),
+      postComment.getUser().getUserUuid(),
+      postComment.getPost().getPostUuid(),
       postComment.getComment(),
       postComment.getCreatedAt()
     );
@@ -156,11 +156,10 @@ public class PostMapper {
   }
 
   private SavePostResponseDto createSavePostResponseDto(Post post) {
-    UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     return new SavePostResponseDto(
-      post.getPostUuid().getUuid(),
-      userUuid,
+      post.getPostUuid(),
+      post.getUser().getUserUuid(),
       post.getTitle(),
       post.getBody(),
       tags);
@@ -187,12 +186,11 @@ public class PostMapper {
   }
 
   private FindPostByUuidResponseDto buildFindPostByUuidResponseDto(Post post) {
-    UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
     return new FindPostByUuidResponseDto(
-      post.getPostUuid().getUuid(),
-      userUuid,
+      post.getPostUuid(),
+      post.getUser().getUserUuid(),
       post.getTitle(),
       post.getBody(),
       tags,
@@ -200,12 +198,11 @@ public class PostMapper {
   }
 
   private FindAllPostsResponseDto buildFindAllPostsResponseDto(Post post) {
-    UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
     return new FindAllPostsResponseDto(
-      post.getPostUuid().getUuid(),
-      userUuid,
+      post.getPostUuid(),
+      post.getUser().getUserUuid(),
       post.getTitle(),
       post.getBody(),
       tags,
@@ -213,12 +210,11 @@ public class PostMapper {
   }
 
   private FindPostByTagResponseDto buildFindPostByTagResponseDto(Post post) {
-    UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
     return new FindPostByTagResponseDto(
-      post.getPostUuid().getUuid(),
-      userUuid,
+      post.getPostUuid(),
+      post.getUser().getUserUuid(),
       post.getTitle(),
       post.getBody(),
       tags,
@@ -226,23 +222,21 @@ public class PostMapper {
   }
 
   private SearchPostsResponseDto buildSearchPostsResponseDto(Post post) {
-    UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     return new SearchPostsResponseDto(
-      post.getPostUuid().getUuid(),
-      userUuid,
+      post.getPostUuid(),
+      post.getUser().getUserUuid(),
       post.getTitle(),
       post.getBody(),
       tags);
   }
 
   private FindPostByTagNameResponseDto buildFindPostByTagNameResponseDto(Post post) {
-    UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     List<PostCommentResponseDto> comments = convertCommentsToPostCommentResponseDto(post.getComments());
     return new FindPostByTagNameResponseDto(
-      post.getPostUuid().getUuid(),
-      userUuid,
+      post.getPostUuid(),
+      post.getUser().getUserUuid(),
       post.getTitle(),
       post.getBody(),
       tags,
@@ -250,11 +244,10 @@ public class PostMapper {
   }
 
   private UpdatePostResponseDto buildUpdatePostResponseDto(Post post) {
-    UUID userUuid = post.getUser().getUuid();
     List<PostTagResponseDto> tags = convertTagsToPostTagResponseDto(post.getTags());
     return new UpdatePostResponseDto(
-      post.getPostUuid().getUuid(),
-      userUuid,
+      post.getPostUuid(),
+      post.getUser().getUserUuid(),
       post.getTitle(),
       post.getBody(),
       tags);

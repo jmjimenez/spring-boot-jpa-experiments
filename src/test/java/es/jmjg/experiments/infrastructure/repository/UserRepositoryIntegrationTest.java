@@ -2,9 +2,9 @@ package es.jmjg.experiments.infrastructure.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,19 +70,19 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldFindUserByUuid() {
     // When
-    Optional<User> foundUser = userRepository.findByUuid(TestDataSamples.CLEMENTINE_UUID);
+    Optional<User> foundUser = userRepository.findByUserUuid(TestDataSamples.CLEMENTINE_UUID);
 
     // Then
     assertThat(foundUser).isPresent();
-    assertThat(foundUser.get().getUuid()).isEqualTo(TestDataSamples.CLEMENTINE_UUID);
+    assertThat(foundUser.get().getUserUuid()).isEqualTo(TestDataSamples.CLEMENTINE_UUID);
     assertThat(foundUser.get().getName()).isEqualTo(TestDataSamples.CLEMENTINE_NAME);
   }
 
   @Test
   void shouldNotFindUserByNonExistentUuid() {
     // When
-    UUID nonExistentUuid = UUID.randomUUID();
-    Optional<User> foundUser = userRepository.findByUuid(nonExistentUuid);
+    var nonExistentUuid = UserUuid.randomUUID();
+    Optional<User> foundUser = userRepository.findByUserUuid(nonExistentUuid);
 
     // Then
     assertThat(foundUser).isEmpty();
@@ -91,7 +91,7 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
   @Test
   void shouldDeleteUserByUuid() {
     // Given - using existing user from migration data
-    User patricia = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
+    User patricia = userRepository.findByUserUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
     assertThat(patricia).isNotNull();
 
     // Assert that Patricia has posts
@@ -100,10 +100,10 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
     assertThat(patriciaPosts).hasSize(10);
 
     // When
-    userRepository.deleteByUuid(TestDataSamples.PATRICIA_UUID);
+    userRepository.deleteByUserUuid(TestDataSamples.PATRICIA_UUID);
 
     // Then
-    assertThat(userRepository.findByUuid(TestDataSamples.PATRICIA_UUID)).isEmpty();
+    assertThat(userRepository.findByUserUuid(TestDataSamples.PATRICIA_UUID)).isEmpty();
 
     // Assert that posts owned by Patricia have been deleted
     List<Post> remainingPatriciaPosts = postRepository.findByUserId(patricia.getId());
@@ -114,20 +114,20 @@ public class UserRepositoryIntegrationTest extends BaseJpaIntegration {
   void shouldSaveAndRetrieveUser() {
     // Given
     User newUser = UserFactory.createUser("New User", "newuser@example.com", "newuser");
-    UUID newUserUuid = newUser.getUuid();
+    var newUserUuid = newUser.getUserUuid();
 
     // When
     User savedUser = userRepository.save(newUser);
 
     // Then
     assertThat(savedUser.getId()).isNotNull();
-    assertThat(savedUser.getUuid()).isEqualTo(newUserUuid);
+    assertThat(savedUser.getUserUuid()).isEqualTo(newUserUuid);
     assertThat(savedUser.getName()).isEqualTo("New User");
     assertThat(savedUser.getEmail()).isEqualTo("newuser@example.com");
     assertThat(savedUser.getUsername()).isEqualTo("newuser");
 
     // Verify it can be retrieved
-    Optional<User> retrievedUser = userRepository.findByUuid(newUserUuid);
+    Optional<User> retrievedUser = userRepository.findByUserUuid(newUserUuid);
     assertThat(retrievedUser).isPresent();
     assertThat(retrievedUser.get().getId()).isEqualTo(savedUser.getId());
   }

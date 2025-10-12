@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,12 +30,12 @@ class UserControllerDeleteTest extends BaseUserControllerTest {
   private DeleteUser deleteUser;
 
   private User testUser;
-  private UUID testUuid;
+  private UserUuid testUuid;
 
   @BeforeEach
   void setUp() {
     testUser = UserFactory.createBasicUser();
-    testUuid = testUser.getUuid();
+    testUuid = testUser.getUserUuid();
 
     reset(deleteUser);
   }

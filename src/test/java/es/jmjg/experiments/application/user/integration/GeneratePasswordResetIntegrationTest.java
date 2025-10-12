@@ -28,7 +28,7 @@ class GeneratePasswordResetIntegrationTest extends BaseIntegration {
   @Test
   void whenUserExists_ShouldGeneratePasswordReset() {
     // Given
-    User user = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User user = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
 
     // When
     var dto = new GeneratePasswordResetDto(user.getUsername(), user.getEmail());

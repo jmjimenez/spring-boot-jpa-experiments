@@ -35,7 +35,7 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
   @Transactional
   void updateTags_shouldUpdateTagsSuccessfully() {
     // Given
-    User owner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User owner = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post post = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(owner);
     List<String> newTags = List.of(TestDataSamples.TAG_TECHNOLOGY, TestDataSamples.TAG_JAVA);
@@ -59,7 +59,7 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
   @Transactional
   void updateTags_WhenTagListIsEmpty_shouldUpdateTagsSuccessfully() {
     // Given
-    User owner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User owner = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post post = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(owner);
     List<String> newTags = List.of();
@@ -80,7 +80,7 @@ class UpdatePostTagsIntegrationTest extends BaseIntegration {
   @Transactional
   void updateTags_shouldThrowTagNotFound() {
     // Given
-    User owner = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User owner = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post post = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
     var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(owner);
     List<String> newTags = List.of(TestDataSamples.TAG_TECHNOLOGY, "notfound");

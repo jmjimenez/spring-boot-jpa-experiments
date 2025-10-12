@@ -3,7 +3,7 @@ package es.jmjg.experiments.application.user.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 
 import es.jmjg.experiments.domain.user.exception.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,14 +50,14 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(result.getName()).isEqualTo(TestDataSamples.LEANNE_NAME);
     assertThat(result.getEmail()).isEqualTo(TestDataSamples.LEANNE_EMAIL);
     assertThat(result.getUsername()).isEqualTo(TestDataSamples.LEANNE_USERNAME);
-    assertThat(result.getUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
+    assertThat(result.getUserUuid()).isEqualTo(TestDataSamples.LEANNE_UUID);
     assertThat(result.getId()).isEqualTo(TestDataSamples.LEANNE_ID);
   }
 
   @Test
   void findByUuid_WhenUserDoesNotExist_ShouldReturnEmpty() {
     // When
-    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UUID.randomUUID(), authenticatedAdminUser);
+    FindUserByUuidDto findUserByUuidDto = new FindUserByUuidDto(UserUuid.randomUUID(), authenticatedAdminUser);
     assertThatThrownBy(() -> findUserByUuid.findByUuid(findUserByUuidDto)).isInstanceOf(UserNotFound.class);
   }
 
@@ -80,7 +80,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
   @Test
   void findByUuid_WhenUserIsUpdated_ShouldReturnUpdatedUser() {
     // Given - User is already created by Flyway migration
-    User existingUser = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
+    User existingUser = userRepository.findByUserUuid(TestDataSamples.PATRICIA_UUID).orElseThrow();
 
     // Update the user
     existingUser.setName("Updated Patricia User");
@@ -95,7 +95,7 @@ class FindUserByUuidIntegrationTest extends BaseIntegration {
     assertThat(result.getName()).isEqualTo("Updated Patricia User");
     assertThat(result.getEmail()).isEqualTo("updated.patricia@example.com");
     assertThat(result.getUsername()).isEqualTo(TestDataSamples.PATRICIA_USERNAME);
-    assertThat(result.getUuid()).isEqualTo(TestDataSamples.PATRICIA_UUID);
+    assertThat(result.getUserUuid()).isEqualTo(TestDataSamples.PATRICIA_UUID);
   }
 
   @Test

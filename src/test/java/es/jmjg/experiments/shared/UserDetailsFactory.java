@@ -12,7 +12,7 @@ public class UserDetailsFactory {
 
   public static JwtUserDetails createJwtUserDetails(User user) {
     return new JwtUserDetails(
-        user.getUuid(),
+        user.getUserUuid(),
         user.getUsername(),
         user.getPassword(),
         user.getUsername().equals(TestDataSamples.ADMIN_USERNAME)

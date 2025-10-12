@@ -26,7 +26,7 @@ public class UpdatePostTags {
             .orElseThrow(() -> new PostNotFound("Post not found"));
 
         AuthenticatedUserDto user = dto.authenticatedUserDto();
-        boolean isOwner = post.getUser() != null && post.getUser().getUuid().equals(user.id());
+        boolean isOwner = post.getUser() != null && post.getUser().getUserUuid().equals(user.id());
         boolean isAdmin = user.isAdmin();
         if (!isOwner && !isAdmin) {
             throw new Forbidden("User is not authorized to update tags for this post");

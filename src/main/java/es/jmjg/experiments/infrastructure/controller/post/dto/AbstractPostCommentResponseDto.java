@@ -2,6 +2,8 @@ package es.jmjg.experiments.infrastructure.controller.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,11 +18,11 @@ public abstract class AbstractPostCommentResponseDto {
 
   @Schema(description = "Identifier of the user who created the comment", example = "123e4567-e89b-12d3-a456-426614174001")
   @JsonProperty("user-id")
-  private UUID userId;
+  private UserUuid userId;
 
   @Schema(description = "Identifier of the post to comment", example = "123e4567-e89b-12d3-a456-426614174001")
   @JsonProperty("post-id")
-  private UUID postId;
+  private PostUuid postId;
 
   @Schema(description = "Text of the comment", example = "My First Comment")
   private String comment;

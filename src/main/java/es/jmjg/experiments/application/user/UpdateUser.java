@@ -22,7 +22,7 @@ public class UpdateUser {
 
   @Transactional
   public User update(UpdateUserDto updateUserDto) {
-    Optional<User> existing = userRepository.findByUuid(updateUserDto.uuid());
+    Optional<User> existing = userRepository.findByUserUuid(updateUserDto.uuid());
     if (existing.isEmpty()) {
       throw new UserNotFound(updateUserDto.uuid());
     }

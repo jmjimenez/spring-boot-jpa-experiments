@@ -1,9 +1,9 @@
 package es.jmjg.experiments.infrastructure.repository;
 
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import es.jmjg.experiments.domain.user.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +25,8 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   @Transactional
-  public void deleteByUuid(UUID uuid) {
-    jpaUserRepository.deleteByUuid(uuid);
+  public void deleteByUserUuid(UserUuid userUuid) {
+    jpaUserRepository.deleteByUserUuid(userUuid);
   }
 
   @Override
@@ -50,8 +50,8 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<User> findByUuid(UUID uuid) {
-    return jpaUserRepository.findByUuid(uuid);
+  public Optional<User> findByUserUuid(UserUuid userUuid) {
+    return jpaUserRepository.findByUserUuid(userUuid);
   }
 
   @Override

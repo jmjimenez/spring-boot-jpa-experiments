@@ -1,7 +1,7 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
-import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -15,7 +15,7 @@ import lombok.Getter;
 public class SavePostRequestDto {
   @NotNull(message = "Identifier is required")
   @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID id;
+  private PostUuid id;
 
   @NotEmpty(message = "Title is required")
   @Schema(description = "Title of the post", example = "My First Post")

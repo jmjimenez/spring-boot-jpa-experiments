@@ -2,6 +2,7 @@ package es.jmjg.experiments.infrastructure.controller.post.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ class PostControllerPostIntegrationTest extends BaseControllerIntegration {
     final String postTitle = "101 Title";
     final String postBody = "101 Body";
 
-    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(),
+    SavePostRequestDto postDto = new SavePostRequestDto(PostUuid.randomUUID(),
         postTitle, postBody, List.of(existingTagName));
 
     final String accessToken = createAccessToken(TestDataSamples.LEANNE_USERNAME, TestDataSamples.USER_PASSWORD);
@@ -80,7 +81,7 @@ class PostControllerPostIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldNotCreateNewPostWhenUserIsNotAuthenticated() {
-    var postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), "", "", null);
+    var postDto = new SavePostRequestDto(PostUuid.randomUUID(), "", "", null);
     HttpEntity<SavePostRequestDto> request = createUnauthenticatedRequest(postDto);
 
     final ResponseEntity<SavePostResponseDto> response = restTemplate.exchange(
@@ -94,7 +95,7 @@ class PostControllerPostIntegrationTest extends BaseControllerIntegration {
 
   @Test
   void shouldNotCreateNewPostWhenValidationFails() {
-    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(), "",
+    SavePostRequestDto postDto = new SavePostRequestDto(PostUuid.randomUUID(), "",
         "", null);
 
     HttpEntity<SavePostRequestDto> request = createAuthenticatedRequest(TestDataSamples.ADMIN_USERNAME,
@@ -115,7 +116,7 @@ class PostControllerPostIntegrationTest extends BaseControllerIntegration {
     final String postTitle = "101 Title";
     final String postBody = "101 Body";
 
-    SavePostRequestDto postDto = new SavePostRequestDto(java.util.UUID.randomUUID(),
+    SavePostRequestDto postDto = new SavePostRequestDto(PostUuid.randomUUID(),
       postTitle, postBody, List.of(notExistingTagName));
 
     final String accessToken = createAccessToken(TestDataSamples.LEANNE_USERNAME, TestDataSamples.USER_PASSWORD);

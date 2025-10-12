@@ -1,7 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.user.dto;
 
-import java.util.UUID;
-
+import es.jmjg.experiments.domain.user.entity.UserUuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import lombok.Getter;
 @Schema(description = "Response DTO for created user")
 public class SaveUserResponseDto {
   @Schema(description = "Identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
-  private UUID id;
+  private UserUuid id;
 
   @Schema(description = "Name of the user", example = "John Doe")
   private String name;

@@ -56,7 +56,7 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
   @BeforeEach
   void setUp() {
     // Create test user and tags for tag assignment tests
-    leanneUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    leanneUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     technologyTag = tagRepository.findByUuid(TestDataSamples.TAG_TECHNOLOGY_UUID).orElseThrow();
     javaTag = tagRepository.findByUuid(TestDataSamples.TAG_JAVA_UUID).orElseThrow();
     springBootTag = tagRepository.findByUuid(TestDataSamples.TAG_SPRING_BOOT_UUID).orElseThrow();
@@ -420,13 +420,13 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
         .orElseThrow(() -> new RuntimeException("tag not found"));
     List<Tag> tags = Arrays.asList(tagTechnology, tagJava);
 
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID)
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID)
         .orElseThrow(() -> new RuntimeException("user not found"));
     Post testPost = PostFactory.createBasicPost(testUser);
     testPost.setTags(tags);
     postRepository.save(testPost);
 
-    User anotherUser = userRepository.findByUuid(TestDataSamples.PATRICIA_UUID)
+    User anotherUser = userRepository.findByUserUuid(TestDataSamples.PATRICIA_UUID)
         .orElseThrow(() -> new RuntimeException("user not found"));
     PostComment comment1 = PostFactory.createPostComment(anotherUser, testPost, "comment 1");
     // comment1.setPost(testPost);

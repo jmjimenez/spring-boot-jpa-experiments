@@ -55,7 +55,7 @@ class SaveUserTest {
 
     // When
     var saveUserDto = new SaveUserDto(
-        testUser.getUuid(),
+        testUser.getUserUuid(),
         testUser.getName(),
         testUser.getEmail(),
         testUser.getUsername(),
@@ -69,7 +69,7 @@ class SaveUserTest {
     assertThat(result.getName()).isEqualTo(testUser.getName());
     assertThat(result.getEmail()).isEqualTo(testUser.getEmail());
     assertThat(result.getUsername()).isEqualTo(testUser.getUsername());
-    assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
+    assertThat(result.getUserUuid()).isEqualTo(testUser.getUserUuid());
     verify(userRepository, times(1)).save(any(User.class));
   }
 
@@ -77,7 +77,7 @@ class SaveUserTest {
   void save_WhenAuthenticatedUserIsNotAdmin_ShouldThrowForbiddenException() {
     // When & Then
     var saveUserDto = new SaveUserDto(
-        testUser.getUuid(),
+        testUser.getUserUuid(),
         testUser.getName(),
         testUser.getEmail(),
         testUser.getUsername(),
@@ -95,7 +95,7 @@ class SaveUserTest {
 
     // When
     var saveUserDto = new SaveUserDto(
-        testUser.getUuid(),
+        testUser.getUserUuid(),
         testUser.getName(),
         testUser.getEmail(),
         testUser.getUsername(),
@@ -106,7 +106,7 @@ class SaveUserTest {
     // Then
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(testUser.getId());
-    assertThat(result.getUuid()).isEqualTo(testUser.getUuid());
+    assertThat(result.getUserUuid()).isEqualTo(testUser.getUserUuid());
     verify(userRepository, times(1)).save(any(User.class));
   }
 
@@ -118,7 +118,7 @@ class SaveUserTest {
 
     // When & Then
     var saveUserDto = new SaveUserDto(
-        testUser.getUuid(),
+        testUser.getUserUuid(),
         testUser.getName(),
         testUser.getEmail(),
         testUser.getUsername(),

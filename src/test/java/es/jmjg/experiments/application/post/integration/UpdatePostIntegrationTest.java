@@ -39,7 +39,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   @Transactional
   void update_ShouldUpdateAndReturnPost() {
     // Given
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     final String updatedTitle = "Updated Post Title";
@@ -74,7 +74,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   @Test
   void update_WithNonExistentPost_ShouldThrowPostNotFound() {
     // Given
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     final var nonExistentUuid = PostUuid.randomUUID();
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
@@ -92,7 +92,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   @Test
   void update_WithNonOwnerUser_ShouldThrowForbidden() {
     // Given
-    User nonOwner = userRepository.findByUuid(TestDataSamples.ERVIN_UUID).orElseThrow();
+    User nonOwner = userRepository.findByUserUuid(TestDataSamples.ERVIN_UUID).orElseThrow();
     Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     UpdatePostDto updatePostDto = PostFactory.createPostUpdateDto(
@@ -110,7 +110,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   @Test
   void update_WithAdminUser_ShouldUpdateSuccessfully() {
     // Given
-    User adminUser = userRepository.findByUuid(TestDataSamples.ADMIN_UUID).orElseThrow();
+    User adminUser = userRepository.findByUserUuid(TestDataSamples.ADMIN_UUID).orElseThrow();
     Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     final String updatedTitle = "Admin Updated Title";
@@ -141,7 +141,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   @Transactional
   void update_ShouldUpdatePostWithTags() {
     // Given
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     final String updatedTitle = "Updated Post Title With Tags";
@@ -181,7 +181,7 @@ class UpdatePostIntegrationTest extends BaseIntegration {
   @Transactional
   void update_WithNotFoundTag_ShouldThrowTagNotFound() {
     // Given
-    User testUser = userRepository.findByUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
+    User testUser = userRepository.findByUserUuid(TestDataSamples.LEANNE_UUID).orElseThrow();
     Post existingPost = postRepository.findByPostUuid(TestDataSamples.POST_1_UUID).orElseThrow();
 
     final String updatedTitle = "Updated Post Title With Tags";

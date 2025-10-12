@@ -25,7 +25,7 @@ public class DeletePost {
       throw new PostNotFound(deletePostDto.uuid().getUuid());
     }
 
-    if (!post.get().getUser().getUuid().equals(deletePostDto.authenticatedUser().id()) &&
+    if (!post.get().getUser().getUserUuid().equals(deletePostDto.authenticatedUser().id()) &&
         !deletePostDto.authenticatedUser().isAdmin()) {
       throw new Forbidden("You are not the owner of this post");
     }
