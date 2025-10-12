@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.controller.post;
 import es.jmjg.experiments.application.post.dto.DeletePostCommentDto;
 import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 import java.util.UUID;
@@ -229,7 +230,7 @@ public class PostController {
     PostComment result = savePostComment.save(savePostCommentDto);
 
     String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{id}/comments/{commentUuid}")
-      .buildAndExpand(result.getPost().getPostUuid(), result.getUuid())
+      .buildAndExpand(result.getPost().getPostUuid(), result.getCommentUuid())
       .toUriString();
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -249,7 +250,7 @@ public class PostController {
     @Parameter(description = "id of the post to retrieve") @PathVariable UUID postUuid,
     @Parameter(description = "id of the post comment to retrieve") @PathVariable UUID commentUuid) {
 
-    PostComment postComment = findPostCommentByUuid.findByUuid(PostUuid.fromUuid(postUuid), commentUuid);
+    PostComment postComment = findPostCommentByUuid.findByUuid(PostUuid.fromUuid(postUuid), PostCommentUuid.fromUuid(commentUuid));
     return postMapper.toFindPostCommentByUuidResponseDto(postComment);
   }
 
@@ -268,7 +269,7 @@ public class PostController {
     @Parameter(description = "Identifier of the post comment to delete") @PathVariable UUID commentUuid,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    var deletePostCommentDto = new DeletePostCommentDto(commentUuid, PostUuid.fromUuid(postUuid), userMapper.toAuthenticatedUserDto(userDetails));
+    var deletePostCommentDto = new DeletePostCommentDto(PostCommentUuid.fromUuid(commentUuid), PostUuid.fromUuid(postUuid), userMapper.toAuthenticatedUserDto(userDetails));
     deletePostComment.delete(deletePostCommentDto);
   }
 }

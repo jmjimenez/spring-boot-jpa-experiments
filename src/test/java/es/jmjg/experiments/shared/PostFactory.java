@@ -3,10 +3,10 @@ package es.jmjg.experiments.shared;
 import es.jmjg.experiments.application.post.dto.DeletePostCommentDto;
 import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import es.jmjg.experiments.application.post.dto.DeletePostDto;
 import es.jmjg.experiments.application.post.dto.SavePostDto;
@@ -47,7 +47,7 @@ public class PostFactory {
     PostComment postComment = new PostComment();
     postComment.setUser(user);
     postComment.setPost(post);
-    postComment.setUuid(UUID.randomUUID());
+    postComment.setCommentUuid(PostCommentUuid.randomUUID());
     postComment.setComment(comment);
     return postComment;
   }
@@ -100,7 +100,7 @@ public class PostFactory {
         AuthenticatedUserFactory.createAuthenticatedUserDto(authenticatedUser));
   }
 
-  public static SavePostCommentDto createSavePostCommentDto(User user, UUID uuid, Post post, String comment) {
+  public static SavePostCommentDto createSavePostCommentDto(User user, PostCommentUuid uuid, Post post, String comment) {
     return new SavePostCommentDto(
       post.getPostUuid(),
       uuid,
@@ -109,7 +109,7 @@ public class PostFactory {
     );
   }
 
-  public static DeletePostCommentDto createDeletePostCommentDto(PostUuid postUuid, UUID uuid,
+  public static DeletePostCommentDto createDeletePostCommentDto(PostUuid postUuid, PostCommentUuid uuid,
     User user) {
     return new DeletePostCommentDto(
       uuid,

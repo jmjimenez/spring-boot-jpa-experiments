@@ -49,7 +49,7 @@ class PostControllerPostCommentTest extends BasePostControllerTest {
             .content(requestBody)
             .with(user(userDetails)))
         .andExpect(status().isCreated())
-        .andExpect(header().string("Location", "/api/posts/" + post.getPostUuid() + "/comments/" + postComment.getUuid()))
+        .andExpect(header().string("Location", "/api/posts/" + post.getPostUuid() + "/comments/" + postComment.getCommentUuid()))
         .andExpect(content().json(expectedResponse));
   }
 

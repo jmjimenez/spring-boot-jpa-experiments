@@ -87,8 +87,8 @@ public class PostRepositoryIntegrationTest extends BaseJpaIntegration {
     assertTrue(clementinePost.isPresent(), "Clementine's post should be found");
 
     assertEquals(TestDataSamples.LEANNE_POST_UUID, leannePost.get().getPostUuid());
-    assertEquals(TestDataSamples.ERVIN_POST_UUID, ervinPost.get().getPostUuid().getUuid());
-    assertEquals(TestDataSamples.CLEMENTINE_POST_UUID, clementinePost.get().getPostUuid().getUuid());
+    assertEquals(TestDataSamples.ERVIN_POST_UUID, ervinPost.get().getPostUuid());
+    assertEquals(TestDataSamples.CLEMENTINE_POST_UUID, clementinePost.get().getPostUuid());
   }
 
   @Test

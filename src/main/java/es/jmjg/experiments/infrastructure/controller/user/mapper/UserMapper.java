@@ -4,6 +4,7 @@ import es.jmjg.experiments.application.user.dto.SaveUserDto;
 import es.jmjg.experiments.application.user.dto.UpdateUserDto;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
@@ -12,7 +13,6 @@ import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto
 import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserRequestDto;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -91,7 +91,7 @@ public class UserMapper {
 
   @FunctionalInterface
   private interface DtoConstructor<T> {
-    T create(UserUuid uuid, String name, String email, String username, List<PostUuid> posts, List<String> tags, List<UUID> comments);
+    T create(UserUuid uuid, String name, String email, String username, List<PostUuid> posts, List<String> tags, List<PostCommentUuid> comments);
   }
 
   private <T> T mapToResponseDto(User user, DtoConstructor<T> dtoConstructor) {
@@ -107,8 +107,8 @@ public class UserMapper {
         .map(Tag::getName)
         .collect(Collectors.toList()) : List.of();
 
-    List<UUID> commentUuids = user.getComments() != null ? user.getComments().stream()
-        .map(PostComment::getUuid)
+    List<PostCommentUuid> commentUuids = user.getComments() != null ? user.getComments().stream()
+        .map(PostComment::getCommentUuid)
         .collect(Collectors.toList()) : List.of();
 
     return dtoConstructor.create(

@@ -10,18 +10,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import es.jmjg.experiments.application.post.DeletePostComment;
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.shared.exception.Forbidden;
 import es.jmjg.experiments.shared.TestDataSamples;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class PostControllerDeleteCommentTest extends BasePostControllerTest {
   @Autowired
   private DeletePostComment deletePostComment;
-
-  private static final UUID NON_EXISTENT_POST_COMMENT_UUID = UUID.randomUUID();
 
   @Test
   void shouldDeletePostCommentWhenGivenValidUUIDAndValidOwner() throws Exception {
@@ -37,15 +36,18 @@ class PostControllerDeleteCommentTest extends BasePostControllerTest {
 
   @Test
   void shouldReturnNotFoundWhenPostUuidDoesNotExist() throws Exception {
-    doThrow(new PostNotFound(NON_EXISTENT_POST_COMMENT_UUID)).when(deletePostComment)
-        .delete(argThat(dto -> dto.uuid().equals(NON_EXISTENT_POST_COMMENT_UUID)));
+    final var postCommentUuid = PostCommentUuid.randomUUID();
+    final var notExistingPostUuid = PostUuid.randomUUID();
 
-    mockMvc.perform(delete("/api/posts/" + TestDataSamples.LEANNE_POST_UUID + "/comments/" + NON_EXISTENT_POST_COMMENT_UUID)
+    doThrow(new PostNotFound(notExistingPostUuid)).when(deletePostComment)
+        .delete(argThat(dto -> dto.uuid().equals(postCommentUuid)));
+
+    mockMvc.perform(delete("/api/posts/" + TestDataSamples.LEANNE_POST_UUID + "/comments/" + postCommentUuid)
         .header("Authorization", "Bearer " + TestDataSamples.ADMIN_USERNAME))
         .andExpect(status().isNotFound());
 
     verify(deletePostComment, times(1)).delete(argThat(dto -> dto.uuid().equals(
-      NON_EXISTENT_POST_COMMENT_UUID) &&
+      postCommentUuid) &&
         dto.authenticatedUser().username().equals(TestDataSamples.ADMIN_USERNAME)));
   }
 

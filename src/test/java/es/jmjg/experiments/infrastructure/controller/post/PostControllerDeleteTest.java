@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
   @Autowired
   private DeletePost deletePost;
 
-  private static final UUID NON_EXISTENT_POST_UUID = UUID.randomUUID();
+  private static final PostUuid NON_EXISTENT_POST_UUID = PostUuid.randomUUID();
 
   @Test
   void shouldDeletePostWhenGivenValidUUIDAndValidOwner() throws Exception {
@@ -35,7 +35,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
         .andExpect(status().isNoContent());
 
     verify(deletePost, times(1))
-        .delete(argThat(deletePostDto -> deletePostDto.uuid().getUuid().equals(TestDataSamples.POST_2_UUID) &&
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(TestDataSamples.POST_2_UUID) &&
             deletePostDto.authenticatedUser().id().equals(TestDataSamples.LEANNE_UUID) &&
             deletePostDto.authenticatedUser().username().equals(TestDataSamples.LEANNE_USERNAME)));
   }
@@ -47,7 +47,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
         .andExpect(status().isNoContent());
 
     verify(deletePost, times(1))
-        .delete(argThat(deletePostDto -> deletePostDto.uuid().getUuid().equals(TestDataSamples.POST_2_UUID) &&
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(TestDataSamples.POST_2_UUID) &&
             deletePostDto.authenticatedUser().id().equals(TestDataSamples.ADMIN_UUID) &&
             deletePostDto.authenticatedUser().username().equals(TestDataSamples.ADMIN_USERNAME)));
   }
@@ -57,13 +57,13 @@ class PostControllerDeleteTest extends BasePostControllerTest {
     User user = UserFactory.createBasicUser();
 
     doThrow(new PostNotFound(NON_EXISTENT_POST_UUID)).when(deletePost)
-        .delete(argThat(deletePostDto -> deletePostDto.uuid().getUuid().equals(NON_EXISTENT_POST_UUID)));
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(NON_EXISTENT_POST_UUID)));
 
     mockMvc.perform(delete("/api/posts/" + NON_EXISTENT_POST_UUID)
         .header("Authorization", "Bearer " + user.getUsername()))
         .andExpect(status().isNotFound());
 
-    verify(deletePost, times(1)).delete(argThat(deletePostDto -> deletePostDto.uuid().getUuid().equals(NON_EXISTENT_POST_UUID) &&
+    verify(deletePost, times(1)).delete(argThat(deletePostDto -> deletePostDto.uuid().equals(NON_EXISTENT_POST_UUID) &&
         deletePostDto.authenticatedUser().username().equals(user.getUsername())));
   }
 
@@ -73,7 +73,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
     var authenticatedUser = AuthenticatedUserFactory.createAuthenticatedUserDto(nonOwnerUser);
 
     doThrow(new Forbidden("You are not the owner of this post")).when(deletePost)
-        .delete(argThat(deletePostDto -> deletePostDto.uuid().getUuid().equals(TestDataSamples.POST_2_UUID) &&
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(TestDataSamples.POST_2_UUID) &&
             deletePostDto.authenticatedUser().username().equals(authenticatedUser.username())));
 
     mockMvc.perform(delete("/api/posts/" + TestDataSamples.POST_2_UUID)
@@ -81,7 +81,7 @@ class PostControllerDeleteTest extends BasePostControllerTest {
         .andExpect(status().isForbidden());
 
     verify(deletePost, times(1))
-        .delete(argThat(deletePostDto -> deletePostDto.uuid().getUuid().equals(TestDataSamples.POST_2_UUID) &&
+        .delete(argThat(deletePostDto -> deletePostDto.uuid().equals(TestDataSamples.POST_2_UUID) &&
             deletePostDto.authenticatedUser().username().equals(authenticatedUser.username())));
   }
 

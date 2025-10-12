@@ -90,7 +90,7 @@ public final class PostSamples {
       .orElse("");
 
     String comments = post.getComments().stream()
-      .map(comment -> "{\"id\":\"%s\"}".formatted(comment.getUuid()))
+      .map(comment -> "{\"id\":\"%s\"}".formatted(comment.getCommentUuid()))
       .reduce((a, b) -> a + "," + b)
       .orElse("");
 

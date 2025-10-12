@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -17,7 +16,7 @@ class PostControllerDeleteCommentIntegrationTest extends BaseControllerIntegrati
   @Test
   void shouldDeletePostCommentByUuid() {
     // Given
-    final UUID postCommentUuid = TestDataSamples.COMMENT_LEANNE_POST_BY_ERWIN_UUID;
+    final var postCommentUuid = TestDataSamples.COMMENT_LEANNE_POST_BY_ERWIN_UUID;
 
     // When
     final String accessToken = createAccessToken(TestDataSamples.ADMIN_USERNAME, TestDataSamples.ADMIN_PASSWORD);
@@ -45,7 +44,7 @@ class PostControllerDeleteCommentIntegrationTest extends BaseControllerIntegrati
   @Test
   void shouldNotDeletePostByUuid_WhenUserIsNotAuthorized() {
     // Given
-    final UUID postCommentUuid = TestDataSamples.COMMENT_LEANNE_POST_BY_CLEMENTINE_UUID;
+    final var postCommentUuid = TestDataSamples.COMMENT_LEANNE_POST_BY_CLEMENTINE_UUID;
 
     // When
     ResponseEntity<Void> deleteResponse = restTemplate.exchange(

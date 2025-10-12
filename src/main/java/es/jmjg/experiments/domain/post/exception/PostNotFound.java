@@ -1,6 +1,6 @@
 package es.jmjg.experiments.domain.post.exception;
 
-import java.util.UUID;
+import es.jmjg.experiments.domain.post.entity.PostUuid;
 
 /** Exception thrown when a post is not found in the application layer. */
 public class PostNotFound extends RuntimeException {
@@ -13,7 +13,7 @@ public class PostNotFound extends RuntimeException {
     super("Post not found with id: " + id);
   }
 
-  public PostNotFound(UUID uuid) {
+  public PostNotFound(PostUuid uuid) {
     super("Post not found with id: " + uuid);
   }
 }

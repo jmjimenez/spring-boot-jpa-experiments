@@ -8,13 +8,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import es.jmjg.experiments.application.post.FindPostCommentByUuid;
 import es.jmjg.experiments.domain.post.entity.Post;
 import es.jmjg.experiments.domain.post.entity.PostComment;
+import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.exception.PostNotFound;
 import es.jmjg.experiments.domain.user.entity.User;
 import es.jmjg.experiments.shared.jsonsample.PostCommentSamples;
 import es.jmjg.experiments.shared.PostFactory;
 import es.jmjg.experiments.shared.UserFactory;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,18 +29,18 @@ class PostControllerGetCommentByUuidTest extends BasePostControllerTest {
     Post post = PostFactory.createBasicPost(user);
     PostComment postComment = PostFactory.createPostComment(user, post, "Nice post!", LocalDateTime.now());
 
-    when(findPostCommentByUuid.findByUuid(post.getPostUuid(), postComment.getUuid())).thenReturn(postComment);
+    when(findPostCommentByUuid.findByUuid(post.getPostUuid(), postComment.getCommentUuid())).thenReturn(postComment);
     String json = PostCommentSamples.createFindPostCommentByUuidJsonResponse(postComment);
 
     mockMvc
-        .perform(get("/api/posts/" + post.getPostUuid() + "/comments/" + postComment.getUuid()))
+        .perform(get("/api/posts/" + post.getPostUuid() + "/comments/" + postComment.getCommentUuid()))
         .andExpect(status().isOk())
         .andExpect(content().json(json));
   }
 
   @Test
   void shouldThrowPostNotFoundExceptionWhenGivenInvalidUuid() throws Exception {
-    UUID uuid = UUID.randomUUID();
+    var uuid = PostCommentUuid.randomUUID();
     User user = UserFactory.createBasicUser();
     Post post = PostFactory.createBasicPost(user);
     when(findPostCommentByUuid.findByUuid(post.getPostUuid(), uuid)).thenThrow(new PostNotFound("Post Comment not found"));
