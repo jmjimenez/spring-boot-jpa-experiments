@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,7 +13,8 @@ import lombok.Getter;
 @Schema(description = "Request DTO for creating a new post comment")
 public class SavePostCommentRequestDto {
   @NotNull(message = "Identifier is required")
-  @Schema(description = "Identifier for the comment", example = "123e4567-e89b-12d3-a456-426614174000")
+  @Schema(description = "Id for the comment", example = "123e4567-e89b-12d3-a456-426614174000")
+  @JsonProperty("comment-id")
   private PostCommentUuid id;
 
   @NotEmpty(message = "Comment is required")

@@ -49,7 +49,7 @@ class TagControllerPostTest extends BaseTagControllerTest {
         .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", "/api/tags/" + testUuid.toString()))
-        .andExpect(jsonPath("$.id").value(testUuid.toString()))
+        .andExpect(jsonPath("$.tag-id").value(testUuid.toString()))
         .andExpect(jsonPath("$.name").value("test-tag"));
   }
 }

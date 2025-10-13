@@ -17,7 +17,7 @@ public final class UserSamples {
         {
             "content":[
                 {
-                    "id":"%s",
+                    "user-id":"%s",
                     "name":"Test User",
                     "email":"test@example.com",
                     "username":"testuser",
@@ -60,7 +60,7 @@ public final class UserSamples {
     String comments = buildCommentsJson(testUser);
     return """
         {
-            "id":"%s",
+            "user-id":"%s",
             "name":"%s",
             "email":"%s",
             "username":"%s",
@@ -77,7 +77,7 @@ public final class UserSamples {
     String comments = buildCommentsJson(testUser);
     return """
         {
-            "id":"%s",
+            "user-id":"%s",
             "name":"%s",
             "email":"%s",
             "username":"%s",
@@ -94,7 +94,7 @@ public final class UserSamples {
     String comments = buildCommentsJson(testUser);
     return """
         {
-            "id":"%s",
+            "user-id":"%s",
             "name":"%s",
             "email":"%s",
             "username":"%s",
@@ -108,7 +108,7 @@ public final class UserSamples {
   public static String createSaveUserRequestJson(UserUuid testUuid) {
     return """
         {
-            "id":"%s",
+            "user-id":"%s",
             "name":"Test User",
             "email":"test@example.com",
             "username":"testuser",
@@ -120,7 +120,7 @@ public final class UserSamples {
   public static String createSaveUserResponseJson(UserUuid testUuid) {
     return """
         {
-            "id":"%s",
+            "user-id":"%s",
             "name":"Test User",
             "email":"test@example.com",
             "username":"testuser"
@@ -131,7 +131,7 @@ public final class UserSamples {
   public static String createUpdateUserRequestJson(UserUuid testUuid) {
     return """
         {
-            "id":"%s",
+            "user-id":"%s",
             "name":"Updated User",
             "email":"updated@example.com",
             "username":"updateduser",
@@ -144,7 +144,7 @@ public final class UserSamples {
     String tags = buildTagsJson(testUser);
     return """
         {
-            "id":"%s",
+            "user-id":"%s",
             "name":"%s",
             "email":"%s",
             "username":"%s",

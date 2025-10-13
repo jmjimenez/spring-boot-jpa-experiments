@@ -13,14 +13,15 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public abstract class AbstractPostCommentResponseDto {
-  @Schema(description = "Identifier for the comment", example = "123e4567-e89b-12d3-a456-426614174000")
+  @Schema(description = "Id for the comment", example = "123e4567-e89b-12d3-a456-426614174000")
+  @JsonProperty("comment-id")
   private PostCommentUuid id;
 
-  @Schema(description = "Identifier of the user who created the comment", example = "123e4567-e89b-12d3-a456-426614174001")
+  @Schema(description = "Id of the user who created the comment", example = "123e4567-e89b-12d3-a456-426614174001")
   @JsonProperty("user-id")
   private UserUuid userId;
 
-  @Schema(description = "Identifier of the post to comment", example = "123e4567-e89b-12d3-a456-426614174001")
+  @Schema(description = "Id of the post to comment", example = "123e4567-e89b-12d3-a456-426614174001")
   @JsonProperty("post-id")
   private PostUuid postId;
 

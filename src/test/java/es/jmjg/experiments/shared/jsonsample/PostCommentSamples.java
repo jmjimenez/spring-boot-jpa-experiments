@@ -12,7 +12,7 @@ public final class PostCommentSamples {
   public static String createAddPostCommentRequestJson(PostComment postComment) {
     return """
         {
-            "id":"%s",
+            "comment-id":"%s",
             "comment":"%s"
         }
         """.formatted(postComment.getCommentUuid(), postComment.getComment());
@@ -21,7 +21,7 @@ public final class PostCommentSamples {
   public static String createAddPostCommentResponseJson(PostComment postComment) {
     return """
         {
-            "id":"%s",
+            "comment-id":"%s",
             "user-id":"%s",
             "post-id":"%s",
             "comment":"%s"
@@ -33,7 +33,7 @@ public final class PostCommentSamples {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     return """
         {
-            "id":"%s",
+            "comment-id":"%s",
             "user-id":"%s",
             "post-id":"%s",
             "comment":"%s",

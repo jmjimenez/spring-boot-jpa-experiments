@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import java.util.List;
 
@@ -13,8 +14,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Schema(description = "Request DTO for creating a new post")
 public class SavePostRequestDto {
-  @NotNull(message = "Identifier is required")
+  @NotNull(message = "Id is required")
   @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
+  @JsonProperty("post-id")
   private PostUuid id;
 
   @NotEmpty(message = "Title is required")
@@ -26,5 +28,6 @@ public class SavePostRequestDto {
   private String body;
 
   @Schema(description = "List of tag names to associate with the post", example = "[\"java\", \"spring-boot\"]")
+  @JsonProperty("tag-names")
   private List<String> tagNames;
 }

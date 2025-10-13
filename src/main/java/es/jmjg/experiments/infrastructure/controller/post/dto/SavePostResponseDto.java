@@ -12,10 +12,11 @@ import lombok.Getter;
 @Getter
 @Schema(description = "Response DTO for created post")
 public class SavePostResponseDto {
-  @Schema(description = "Identifier for the post", example = "123e4567-e89b-12d3-a456-426614174000")
+  @Schema(description = "Id for the post", example = "123e4567-e89b-12d3-a456-426614174000")
+  @JsonProperty("post-id")
   private final PostUuid id;
 
-  @Schema(description = "Identifier of the user who created the post", example = "123e4567-e89b-12d3-a456-426614174001")
+  @Schema(description = "Id of the user who created the post", example = "123e4567-e89b-12d3-a456-426614174001")
   @JsonProperty("user-id")
   private final UserUuid userId;
 

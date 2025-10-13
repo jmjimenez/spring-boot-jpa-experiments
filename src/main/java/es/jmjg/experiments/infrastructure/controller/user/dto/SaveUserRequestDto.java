@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +14,8 @@ import lombok.Getter;
 @Schema(description = "Request DTO for creating a new user")
 public class SaveUserRequestDto {
   @NotNull(message = "Identifiers is required")
-  @Schema(description = "Identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
+  @Schema(description = "Id for the user", example = "123e4567-e89b-12d3-a456-426614174000")
+  @JsonProperty("user-id")
   private UserUuid id;
 
   @NotEmpty(message = "Name is required")

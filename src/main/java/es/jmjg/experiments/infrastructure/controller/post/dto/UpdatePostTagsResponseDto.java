@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
@@ -10,9 +11,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class UpdatePostTagsResponseDto {
-
   @NotEmpty(message = "Identifier is required")
-  @Schema(description = "Identifier of the post", example = "123e4567-e89b-12d3-a456-426614174000")
+  @Schema(description = "Id of the post", example = "123e4567-e89b-12d3-a456-426614174000")
+  @JsonProperty("post-id")
   private PostUuid id;
 
   @NotEmpty(message = "Title is required")

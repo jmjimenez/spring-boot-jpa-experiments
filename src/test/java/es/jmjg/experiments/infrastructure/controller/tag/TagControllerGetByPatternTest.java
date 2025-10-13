@@ -58,7 +58,7 @@ class TagControllerGetByPatternTest extends BaseTagControllerTest {
         .param("pattern", pattern)
         .header("Authorization", "Bearer " + TestDataSamples.LEANNE_USERNAME))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].id").value(testUuid.toString()))
+        .andExpect(jsonPath("$[0].tag-id").value(testUuid.toString()))
         .andExpect(jsonPath("$[0].name").value("test-tag"))
         .andExpect(jsonPath("$[0].posts").isArray())
         .andExpect(jsonPath("$[0].posts").value(hasSize(2)))

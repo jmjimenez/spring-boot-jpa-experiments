@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,5 +13,6 @@ import lombok.Getter;
 public class UpdatePostTagsRequestDto {
     @NotEmpty(message = "Tag names are required")
     @Schema(description = "List of tag names to associate with the post", example = "[\"java\", \"spring-boot\", \"updated\"]")
+    @JsonProperty("tag-names")
     private List<String> tagNames;
 }

@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Schema(description = "Response DTO for created user")
 public class SaveUserResponseDto {
-  @Schema(description = "Identifier for the user", example = "123e4567-e89b-12d3-a456-426614174000")
+  @Schema(description = "Id for the user", example = "123e4567-e89b-12d3-a456-426614174000")
+  @JsonProperty("user-id")
   private UserUuid id;
 
   @Schema(description = "Name of the user", example = "John Doe")

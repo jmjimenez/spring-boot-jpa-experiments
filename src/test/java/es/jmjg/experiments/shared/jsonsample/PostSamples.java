@@ -20,14 +20,14 @@ public final class PostSamples {
         {
             "content":[
                 {
-                    "id":"%s",
+                    "post-id":"%s",
                     "user-id":"%s",
                     "title":"Hello, World!",
                     "body":"This is my first post.",
                     "tags":[]
                 },
                 {
-                    "id":"%s",
+                    "post-id":"%s",
                     "user-id":"%s",
                     "title":"Second Post",
                     "body":"This is my second post.",
@@ -51,7 +51,7 @@ public final class PostSamples {
         {
             "content":[
                 {
-                    "id":"%s",
+                    "post-id":"%s",
                     "user-id":"%s",
                     "title":"Hello, World!",
                     "body":"This is my first post.",
@@ -85,18 +85,18 @@ public final class PostSamples {
 
   public static String createFindPostByUuidJsonResponse(Post post) {
     String tags = post.getTags().stream()
-      .map(tag -> "{\"id\":\"%s\",\"name\":\"%s\"}".formatted(tag.getTagUuid(), tag.getName()))
+      .map(tag -> "{\"tag-id\":\"%s\",\"name\":\"%s\"}".formatted(tag.getTagUuid(), tag.getName()))
       .reduce((a, b) -> a + "," + b)
       .orElse("");
 
     String comments = post.getComments().stream()
-      .map(comment -> "{\"id\":\"%s\"}".formatted(comment.getCommentUuid()))
+      .map(comment -> "{\"comment-id\":\"%s\"}".formatted(comment.getCommentUuid()))
       .reduce((a, b) -> a + "," + b)
       .orElse("");
 
     return """
         {
-            "id":"%s",
+            "post-id":"%s",
             "user-id":"%s",
             "title":"%s",
             "body":"%s",
@@ -116,7 +116,7 @@ public final class PostSamples {
   public static String createCreatePostRequestJson(Post post) {
     return """
         {
-            "id":"%s",
+            "post-id":"%s",
             "title":"%s",
             "body":"%s"
         }
@@ -127,7 +127,7 @@ public final class PostSamples {
   public static String createCreatePostResponseJson(Post post) {
     return """
         {
-            "id":"%s",
+            "post-id":"%s",
             "user-id":"%s",
             "title":"%s",
             "body":"%s",
@@ -144,7 +144,7 @@ public final class PostSamples {
   public static String createUpdatePostRequestJson(Post post) {
     return """
         {
-            "id":"%s",
+            "post-id":"%s",
             "title":"%s",
             "body":"%s"
         }
@@ -159,13 +159,13 @@ public final class PostSamples {
     return """
         [
             {
-                "id":"%s",
+                "post-id":"%s",
                 "title":"%s",
                 "body":"%s",
                 "tags":[]
             },
             {
-                "id":"%s",
+                "post-id":"%s",
                 "title":"%s",
                 "body":"%s",
                 "tags":[]

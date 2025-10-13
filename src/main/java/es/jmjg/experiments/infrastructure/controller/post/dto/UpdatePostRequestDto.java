@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,5 +21,6 @@ public class UpdatePostRequestDto {
   private String body;
 
   @Schema(description = "List of tag names to associate with the post", example = "[\"java\", \"spring-boot\", \"updated\"]")
+  @JsonProperty("tag-names")
   private List<String> tagNames;
 }
