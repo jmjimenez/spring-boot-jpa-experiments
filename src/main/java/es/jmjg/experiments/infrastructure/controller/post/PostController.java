@@ -97,7 +97,7 @@ public class PostController {
     return postMapper.toPagedResponseDto(postsPage);
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/{post-id}")
   @Transactional(readOnly = true)
   @Operation(summary = "Get post by id", description = "Retrieves a specific post by its id")
   @ApiResponses(value = {
@@ -106,7 +106,7 @@ public class PostController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   FindPostByUuidResponseDto findByUuid(
-    @Parameter(description = "UUID of the post to retrieve") @PathVariable UUID id) {
+    @Parameter(name = "post-id", description = "id of the post to retrieve") @PathVariable(name = "post-id") UUID id) {
 
     Post post = findPostByUuid.findByUuid(PostUuid.fromUuid(id));
     return postMapper.toFindByUuidResponseDto(post);
@@ -144,7 +144,7 @@ public class PostController {
     Post savedPost = savePost.save(savePostDto);
     SavePostResponseDto responseDto = postMapper.toSavePostResponseDto(savedPost);
 
-    String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{id}")
+    String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{post-id}")
       .buildAndExpand(savedPost.getPostUuid())
       .toUriString();
 
@@ -174,7 +174,7 @@ public class PostController {
     return postMapper.toUpdatePostResponseDto(updatedPost);
   }
 
-  @PatchMapping("/{id}/tags")
+  @PatchMapping("/{post-id}/tags")
   @Transactional
   @Operation(summary = "Update tags of post", description = "Updates tags linked to existing post")
   @ApiResponses(value = {
@@ -186,8 +186,8 @@ public class PostController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   UpdatePostTagsResponseDto updateTags(
-    @Parameter(description = "UUID of the post to update") @PathVariable UUID id,
-    @Parameter(description = "Updated tags lis", required = true) @RequestBody @Valid UpdatePostTagsRequestDto postDto,
+    @Parameter(name = "post-id", description = "id of the post to update") @PathVariable(name = "post-id") UUID id,
+    @Parameter(description = "Updated tags list", required = true) @RequestBody @Valid UpdatePostTagsRequestDto postDto,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
 
     var updatePostTagsDto = postMapper.toUpdatePostTagsDto(postDto, id, userMapper.toAuthenticatedUserDto(userDetails));
@@ -196,9 +196,9 @@ public class PostController {
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/{post-id}")
   @Transactional
-  @Operation(summary = "Delete a post", description = "Deletes a post by its UUID")
+  @Operation(summary = "Delete a post", description = "Deletes a post by its id")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "204", description = "Post deleted successfully"),
     @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
@@ -206,30 +206,30 @@ public class PostController {
     @ApiResponse(responseCode = "404", description = "Post not found"),
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
-  void delete(@Parameter(description = "UUID of the post to delete") @PathVariable UUID id,
+  void delete(@Parameter(name="post-id", description = "id of the post to delete") @PathVariable(name = "post-id") UUID postId,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    var deletePostDto = new DeletePostDto(PostUuid.fromUuid(id), userMapper.toAuthenticatedUserDto(userDetails));
+    var deletePostDto = new DeletePostDto(PostUuid.fromUuid(postId), userMapper.toAuthenticatedUserDto(userDetails));
     deletePost.delete(deletePostDto);
   }
 
-  @PostMapping("/{id}/comments")
+  @PostMapping("/{post-id}/comments")
   @Transactional
-  @Operation(summary = "Adds a comment", description = "Adds a comment")
+  @Operation(summary = "Adds a comment", description = "Adds a comment to a post")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Post comment added successfully"),
     @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
     @ApiResponse(responseCode = "404", description = "Post or User not found"),
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
-  ResponseEntity<SavePostCommentResponseDto> addComment(@Parameter(description = "id of the post") @PathVariable UUID id,
+  ResponseEntity<SavePostCommentResponseDto> addComment(@Parameter(name = "post-id", description = "id of the post") @PathVariable(name = "post-id") UUID id,
     @Parameter(description = "Post comment data to create", required = true) @RequestBody @Valid SavePostCommentRequestDto requestDto,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
 
     SavePostCommentDto savePostCommentDto = postMapper.toAddCommentDto(requestDto, PostUuid.fromUuid(id), userMapper.toAuthenticatedUserDto(userDetails));
     PostComment result = savePostComment.save(savePostCommentDto);
 
-    String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{id}/comments/{commentUuid}")
+    String locationUrl = UriComponentsBuilder.fromPath("/api/posts/{post-id}/comments/{comment-id}")
       .buildAndExpand(result.getPost().getPostUuid(), result.getCommentUuid())
       .toUriString();
 
@@ -238,26 +238,26 @@ public class PostController {
       .body(postMapper.toSavePostCommentResponseDto(result));
   }
 
-  @GetMapping("/{postUuid}/comments/{commentUuid}")
+  @GetMapping("/{post-id}/comments/{comment-id}")
   @Transactional(readOnly = true)
-  @Operation(summary = "Get post comment by id", description = "Retrieves a specific post comment by its identifier")
+  @Operation(summary = "Get post comment by id", description = "Retrieves a specific post comment by its id")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved post comment", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostCommentByUuidResponseDto.class))),
     @ApiResponse(responseCode = "404", description = "Post or Post Comment not found"),
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   FindPostCommentByUuidResponseDto findByUuid(
-    @Parameter(description = "id of the post to retrieve") @PathVariable UUID postUuid,
-    @Parameter(description = "id of the post comment to retrieve") @PathVariable UUID commentUuid) {
+    @Parameter(name = "post-id", description = "id of the post to retrieve") @PathVariable(name = "post-id") UUID postUuid,
+    @Parameter(name = "comment-id", description = "id of the post comment to retrieve") @PathVariable(name = "comment-id") UUID commentUuid) {
 
     PostComment postComment = findPostCommentByUuid.findByUuid(PostUuid.fromUuid(postUuid), PostCommentUuid.fromUuid(commentUuid));
     return postMapper.toFindPostCommentByUuidResponseDto(postComment);
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping("/{postUuid}/comments/{commentUuid}")
+  @DeleteMapping("/{post-id}/comments/{comment-id}")
   @Transactional
-  @Operation(summary = "Delete a post comment", description = "Deletes a post comment by its identifier")
+  @Operation(summary = "Delete a post comment", description = "Deletes a post comment by its id")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "204", description = "Post comment deleted successfully"),
     @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
@@ -265,11 +265,12 @@ public class PostController {
     @ApiResponse(responseCode = "404", description = "Post not found"),
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
-  void deleteComment(@Parameter(description = "Identifier of the post") @PathVariable UUID postUuid,
-    @Parameter(description = "Identifier of the post comment to delete") @PathVariable UUID commentUuid,
+  void deleteComment(@Parameter(name="post-id", description = "id of the post") @PathVariable(name = "post-id") UUID postId,
+    @Parameter(name="comment-id", description = "id of the post comment to delete") @PathVariable(name = "comment-id") UUID commentId,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-    var deletePostCommentDto = new DeletePostCommentDto(PostCommentUuid.fromUuid(commentUuid), PostUuid.fromUuid(postUuid), userMapper.toAuthenticatedUserDto(userDetails));
+    var deletePostCommentDto = new DeletePostCommentDto(PostCommentUuid.fromUuid(commentId), PostUuid.fromUuid(
+      postId), userMapper.toAuthenticatedUserDto(userDetails));
     deletePostComment.delete(deletePostCommentDto);
   }
 }
