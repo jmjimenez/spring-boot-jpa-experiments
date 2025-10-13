@@ -1,9 +1,11 @@
 package es.jmjg.experiments.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import es.jmjg.experiments.infrastructure.config.jackson.user.UserUuidDeserializer;
 import es.jmjg.experiments.infrastructure.config.jackson.user.UserUuidSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
 import java.util.UUID;
@@ -13,7 +15,9 @@ import lombok.Getter;
 @Embeddable
 @JsonSerialize(using = UserUuidSerializer.class)
 @JsonDeserialize(using = UserUuidDeserializer.class)
+@Schema(name = "UserId")
 public class UserUuid {
+  @JsonProperty("user-id")
   private UUID uuid;
 
   public static UserUuid randomUUID() {

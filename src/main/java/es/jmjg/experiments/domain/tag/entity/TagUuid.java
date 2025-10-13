@@ -1,9 +1,11 @@
 package es.jmjg.experiments.domain.tag.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import es.jmjg.experiments.infrastructure.config.jackson.tag.TagUuidDeserializer;
 import es.jmjg.experiments.infrastructure.config.jackson.tag.TagUuidSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
 import java.util.UUID;
@@ -13,7 +15,9 @@ import lombok.Getter;
 @Embeddable
 @JsonSerialize(using = TagUuidSerializer.class)
 @JsonDeserialize(using = TagUuidDeserializer.class)
+@Schema(name = "TagId")
 public final class TagUuid {
+  @JsonProperty("tag-id")
   private UUID uuid;
 
   public static TagUuid randomUUID() {

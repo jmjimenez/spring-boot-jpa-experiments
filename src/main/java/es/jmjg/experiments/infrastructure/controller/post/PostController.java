@@ -5,6 +5,8 @@ import es.jmjg.experiments.application.post.dto.SavePostCommentDto;
 import es.jmjg.experiments.domain.post.entity.PostComment;
 import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
+import es.jmjg.experiments.infrastructure.controller.shared.paged.PagedResponseDto;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import java.util.List;
 import java.util.UUID;
 
@@ -84,8 +86,8 @@ public class PostController {
   @Transactional(readOnly = true)
   @Operation(summary = "Get all posts", description = "Retrieves a paginated list of all posts")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagedResponseDto.class))),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllPostsPagedResponseDto.class))),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   PagedResponseDto<FindAllPostsResponseDto> findAll(
     @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
@@ -102,8 +104,8 @@ public class PostController {
   @Operation(summary = "Get post by id", description = "Retrieves a specific post by its id")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved post", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostByUuidResponseDto.class))),
-    @ApiResponse(responseCode = "404", description = "Post not found"),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "404", description = "Post not found", content = @Content),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   FindPostByUuidResponseDto findByUuid(
     @Parameter(name = "post-id", description = "id of the post to retrieve") @PathVariable(name = "post-id") UUID id) {
@@ -116,8 +118,9 @@ public class PostController {
   @Transactional(readOnly = true)
   @Operation(summary = "Search posts by content", description = "Finds posts containing specified words")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SearchPostsResponseDto.class))),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved matching posts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema =
+    @Schema(implementation = SearchPostsResponseDto.class)))),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   List<SearchPostsResponseDto> searchPosts(
     @Parameter(description = "Search terms to find in post content") @RequestParam String q,
@@ -132,9 +135,9 @@ public class PostController {
   @Operation(summary = "Create a new post", description = "Creates a new post with the provided data")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Post created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SavePostResponseDto.class))),
-    @ApiResponse(responseCode = "400", description = "Invalid input data"),
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required", content = @Content),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   ResponseEntity<SavePostResponseDto> save(
     @Parameter(description = "Post data to create", required = true) @RequestBody @Valid SavePostRequestDto postDto,
@@ -158,11 +161,11 @@ public class PostController {
   @Operation(summary = "Update a post", description = "Updates an existing post with the provided data")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Post updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdatePostResponseDto.class))),
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
-    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to update this post"),
-    @ApiResponse(responseCode = "404", description = "Post not found"),
-    @ApiResponse(responseCode = "400", description = "Invalid input data"),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to update this post", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Post not found", content = @Content),
+    @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   UpdatePostResponseDto update(
     @Parameter(description = "UUID of the post to update") @PathVariable UUID id,
@@ -179,11 +182,11 @@ public class PostController {
   @Operation(summary = "Update tags of post", description = "Updates tags linked to existing post")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Post updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdatePostTagsResponseDto.class))),
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
-    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to update this post"),
-    @ApiResponse(responseCode = "404", description = "Post or tag not found"),
-    @ApiResponse(responseCode = "400", description = "Invalid input data"),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to update this post", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Post or tag not found", content = @Content),
+    @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   UpdatePostTagsResponseDto updateTags(
     @Parameter(name = "post-id", description = "id of the post to update") @PathVariable(name = "post-id") UUID id,
@@ -200,11 +203,11 @@ public class PostController {
   @Transactional
   @Operation(summary = "Delete a post", description = "Deletes a post by its id")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "204", description = "Post deleted successfully"),
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
-    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete this post"),
-    @ApiResponse(responseCode = "404", description = "Post not found"),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "204", description = "Post deleted successfully", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete this post", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Post not found", content = @Content),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   void delete(@Parameter(name="post-id", description = "id of the post to delete") @PathVariable(name = "post-id") UUID postId,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
@@ -218,9 +221,9 @@ public class PostController {
   @Operation(summary = "Adds a comment", description = "Adds a comment to a post")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Post comment added successfully"),
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
-    @ApiResponse(responseCode = "404", description = "Post or User not found"),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Post or User not found", content = @Content),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   ResponseEntity<SavePostCommentResponseDto> addComment(@Parameter(name = "post-id", description = "id of the post") @PathVariable(name = "post-id") UUID id,
     @Parameter(description = "Post comment data to create", required = true) @RequestBody @Valid SavePostCommentRequestDto requestDto,
@@ -243,8 +246,8 @@ public class PostController {
   @Operation(summary = "Get post comment by id", description = "Retrieves a specific post comment by its id")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved post comment", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostCommentByUuidResponseDto.class))),
-    @ApiResponse(responseCode = "404", description = "Post or Post Comment not found"),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "404", description = "Post or Post Comment not found", content = @Content),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   FindPostCommentByUuidResponseDto findByUuid(
     @Parameter(name = "post-id", description = "id of the post to retrieve") @PathVariable(name = "post-id") UUID postUuid,
@@ -259,11 +262,11 @@ public class PostController {
   @Transactional
   @Operation(summary = "Delete a post comment", description = "Deletes a post comment by its id")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "204", description = "Post comment deleted successfully"),
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
-    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete this post"),
-    @ApiResponse(responseCode = "404", description = "Post not found"),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "204", description = "Post comment deleted successfully", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete this post", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Post not found", content = @Content),
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
   })
   void deleteComment(@Parameter(name="post-id", description = "id of the post") @PathVariable(name = "post-id") UUID postId,
     @Parameter(name="comment-id", description = "id of the post comment to delete") @PathVariable(name = "comment-id") UUID commentId,

@@ -1,9 +1,11 @@
 package es.jmjg.experiments.domain.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import es.jmjg.experiments.infrastructure.config.jackson.post.PostCommentUuidDeserializer;
 import es.jmjg.experiments.infrastructure.config.jackson.post.PostCommentUuidSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Embeddable;
 import java.util.Objects;
 import java.util.UUID;
@@ -13,7 +15,9 @@ import lombok.Getter;
 @Embeddable
 @JsonSerialize(using = PostCommentUuidSerializer.class)
 @JsonDeserialize(using = PostCommentUuidDeserializer.class)
+@Schema(name = "PostCommentId")
 public final class PostCommentUuid {
+  @JsonProperty("comment-id")
   private UUID uuid;
 
   public static PostCommentUuid randomUUID() {

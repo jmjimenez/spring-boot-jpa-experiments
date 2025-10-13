@@ -1,4 +1,4 @@
-package es.jmjg.experiments.infrastructure.controller.post.dto;
+package es.jmjg.experiments.infrastructure.controller.shared.paged;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@Schema(description = "Generic paginated response wrapper")
+@Schema(description = "Generic paginated posts response wrapper")
 public class PagedResponseDto<T> {
-  @Schema(description = "List of items in the current page")
+  @Schema(description = "List of posts in the current page")
   private List<T> content;
 
   @Schema(description = "Current page number (0-based)", example = "0")

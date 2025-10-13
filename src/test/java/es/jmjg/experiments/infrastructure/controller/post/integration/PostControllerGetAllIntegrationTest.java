@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
+import es.jmjg.experiments.infrastructure.controller.shared.paged.PagedResponseDto;
 import es.jmjg.experiments.shared.BaseControllerIntegration;
 import es.jmjg.experiments.shared.TestDataSamples;
 

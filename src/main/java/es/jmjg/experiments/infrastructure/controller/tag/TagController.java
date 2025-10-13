@@ -3,6 +3,7 @@ package es.jmjg.experiments.infrastructure.controller.tag;
 import es.jmjg.experiments.application.tag.DeleteTag;
 import es.jmjg.experiments.domain.tag.entity.TagUuid;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetails;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import java.util.List;
 import java.util.UUID;
 
@@ -96,7 +97,7 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find tags by pattern", description = "Finds tags by name pattern")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved tags", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindTagByPatternResponseDto.class)))
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved tags", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = FindTagByPatternResponseDto.class))))
   })
   List<FindTagByPatternResponseDto> findByPattern(
     @Parameter(description = "Pattern to search for in tag names") @RequestParam String pattern) {
@@ -112,7 +113,7 @@ public class TagController {
   @Operation(summary = "Get tag by id", description = "Retrieves a specific tag by its id")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved tag", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindTagByUuidResponseDto.class))),
-    @ApiResponse(responseCode = "404", description = "Tag not found")
+    @ApiResponse(responseCode = "404", description = "Tag not found", content = @Content)
   })
   FindTagByUuidResponseDto findByUuid(
     @Parameter(name = "tag-id", description = "id of the tag to retrieve") @PathVariable(name = "tag-id") UUID uuid) {
@@ -125,8 +126,8 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find users by tag id", description = "Finds all users associated with a specific tag id")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class, type = "array"))),
-    @ApiResponse(responseCode = "404", description = "Tag not found")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = FindAllUsersResponseDto.class)))),
+    @ApiResponse(responseCode = "404", description = "Tag not found", content = @Content)
   })
   List<FindAllUsersResponseDto> findUsersByTag(
     @Parameter(name = "tag-id", description = "id of the tag") @PathVariable(name = "tag-id") UUID uuid) {
@@ -139,8 +140,8 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find posts by tag id", description = "Finds all posts associated with a specific tag id")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostByTagResponseDto.class, type = "array"))),
-    @ApiResponse(responseCode = "404", description = "Tag not found")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = FindPostByTagResponseDto.class)))),
+    @ApiResponse(responseCode = "404", description = "Tag not found", content = @Content)
   })
   List<FindPostByTagResponseDto> findPostsByTag(
     @Parameter(name = "tag_id", description = "id of the tag") @PathVariable(name = "tag-id") UUID uuid) {
@@ -153,8 +154,8 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find users by tag name", description = "Finds all users associated with a tag by name")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindAllUsersResponseDto.class, type = "array"))),
-    @ApiResponse(responseCode = "404", description = "Tag not found")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = FindAllUsersResponseDto.class)))),
+    @ApiResponse(responseCode = "404", description = "Tag not found", content = @Content)
   })
   List<FindAllUsersResponseDto> findUsersByTagName(
     @Parameter(description = "Name of the tag") @RequestParam String name) {
@@ -167,8 +168,8 @@ public class TagController {
   @Transactional(readOnly = true)
   @Operation(summary = "Find posts by tag name", description = "Finds all posts associated with a tag by name")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FindPostByTagNameResponseDto.class, type = "array"))),
-    @ApiResponse(responseCode = "404", description = "Tag not found")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved posts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = FindPostByTagNameResponseDto.class)))),
+    @ApiResponse(responseCode = "404", description = "Tag not found", content = @Content)
   })
   List<FindPostByTagNameResponseDto> findPostsByTagName(
     @Parameter(description = "Name of the tag") @RequestParam String name) {
@@ -181,9 +182,9 @@ public class TagController {
   @Operation(summary = "Create a new tag", description = "Creates a new tag with the provided data")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Tag created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveTagResponseDto.class))),
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
-    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete tags"),
-    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete tags", content = @Content),
+    @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
   })
   ResponseEntity<SaveTagResponseDto> save(@RequestBody @Valid SaveTagRequestDto tagDto,
     @AuthenticationPrincipal JwtUserDetails userDetails) {
@@ -205,10 +206,10 @@ public class TagController {
   @Operation(summary = "Update a tag name", description = "Updates an existing tag id")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Tag updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateTagResponseDto.class))),
-    @ApiResponse(responseCode = "400", description = "Invalid input data"),
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
-    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete tags"),
-    @ApiResponse(responseCode = "404", description = "Tag not found")
+    @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete tags", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Tag not found", content = @Content)
   })
   UpdateTagResponseDto updateName(@PathVariable(name = "tag-id") UUID uuid, @RequestBody @Valid UpdateTagRequestDto tagDto, @AuthenticationPrincipal JwtUserDetails userDetails) {
     var updateTagDto = tagMapper.toUpdateTagDto(TagUuid.fromUuid(uuid), tagDto, userMapper.toAuthenticatedUserDto(userDetails));
@@ -220,10 +221,10 @@ public class TagController {
   @DeleteMapping("/{tag-id}")
   @Operation(summary = "Delete a tag by id", description = "Deletes a tag by its id")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "204", description = "Tag deleted successfully"),
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
-    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete tags"),
-    @ApiResponse(responseCode = "404", description = "Tag not found")
+    @ApiResponse(responseCode = "204", description = "Tag deleted successfully", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete tags", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Tag not found", content = @Content)
   })
   void deleteByUuid(@PathVariable(name = "tag-id") UUID uuid, @AuthenticationPrincipal JwtUserDetails userDetails) {
 

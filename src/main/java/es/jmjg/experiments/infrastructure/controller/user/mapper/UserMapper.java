@@ -8,6 +8,8 @@ import es.jmjg.experiments.domain.post.entity.PostCommentUuid;
 import es.jmjg.experiments.domain.post.entity.PostUuid;
 import es.jmjg.experiments.domain.tag.entity.Tag;
 import es.jmjg.experiments.domain.user.entity.UserUuid;
+import es.jmjg.experiments.infrastructure.controller.shared.paged.PagedResponseDto;
+import es.jmjg.experiments.infrastructure.controller.shared.paged.PagedResponseMapper;
 import es.jmjg.experiments.infrastructure.controller.user.dto.PasswordResetResponseDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.SaveUserRequestDto;
 import es.jmjg.experiments.infrastructure.controller.user.dto.UpdateUserRequestDto;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import es.jmjg.experiments.application.user.dto.AuthenticatedUserDto;
@@ -87,6 +90,10 @@ public class UserMapper {
   public @NotNull AuthenticatedUserDto toAuthenticatedUserDto(JwtUserDetails userDetails) {
     return new AuthenticatedUserDto(userDetails.id, userDetails.getUsername(), userDetails.getPassword(),
       userDetails.getAuthorities());
+  }
+
+  public PagedResponseDto<FindAllUsersResponseDto> toPagedResponseDto(Page<User> users) {
+    return PagedResponseMapper.createPagedResponse(users, this::toFindAllUsersResponseDto);
   }
 
   @FunctionalInterface

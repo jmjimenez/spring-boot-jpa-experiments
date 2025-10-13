@@ -9,6 +9,7 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.PostCommentRespons
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostCommentResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.TagDto;
+import es.jmjg.experiments.infrastructure.controller.shared.paged.PagedResponseMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -32,7 +33,7 @@ import es.jmjg.experiments.infrastructure.controller.post.dto.FindAllPostsRespon
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagNameResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByTagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.FindPostByUuidResponseDto;
-import es.jmjg.experiments.infrastructure.controller.post.dto.PagedResponseDto;
+import es.jmjg.experiments.infrastructure.controller.shared.paged.PagedResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.PostTagResponseDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostRequestDto;
 import es.jmjg.experiments.infrastructure.controller.post.dto.SavePostResponseDto;
@@ -86,7 +87,7 @@ public class PostMapper {
   }
 
   public PagedResponseDto<FindAllPostsResponseDto> toPagedResponseDto(Page<Post> page) {
-    return createPagedResponse(page, this::toFindAllPostsResponseDto);
+    return PagedResponseMapper.createPagedResponse(page, this::toFindAllPostsResponseDto);
   }
 
   public SavePostDto toSavePostDto(SavePostRequestDto postRequestDto, AuthenticatedUserDto authenticatedUser) {
@@ -258,25 +259,6 @@ public class PostMapper {
       return null;
     }
     return dtoCreator.apply(post);
-  }
-
-  private <T> PagedResponseDto<T> createPagedResponse(Page<Post> page, Function<Post, T> converter) {
-    if (page == null) {
-      return new PagedResponseDto<>(List.of(), 0, 0, 0, 0, false, false);
-    }
-
-    List<T> content = page.getContent().stream()
-      .map(converter)
-      .collect(Collectors.toList());
-
-    return new PagedResponseDto<>(
-      content,
-      page.getNumber(),
-      page.getSize(),
-      page.getTotalElements(),
-      page.getTotalPages(),
-      page.hasNext(),
-      page.hasPrevious());
   }
 
   private List<PostTagResponseDto> convertTagsToPostTagResponseDto(List<Tag> tags) {

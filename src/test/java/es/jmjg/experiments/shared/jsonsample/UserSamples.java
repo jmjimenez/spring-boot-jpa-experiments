@@ -25,31 +25,12 @@ public final class UserSamples {
                     "tags":["technology","java"]
                 }
             ],
-            "pageable":{
-                "sort":{
-                    "empty":true,
-                    "sorted":false,
-                    "unsorted":true
-                },
-                "offset":0,
-                "pageNumber":0,
-                "pageSize":10,
-                "paged":true,
-                "unpaged":false
-            },
-            "last":true,
+            "pageNumber":0,
+            "pageSize":10,
             "totalElements":1,
             "totalPages":1,
-            "size":10,
-            "number":0,
-            "sort":{
-                "empty":true,
-                "sorted":false,
-                "unsorted":true
-            },
-            "first":true,
-            "numberOfElements":1,
-            "empty":false
+            "hasNext":false,
+            "hasPrevious":false
         }
         """.formatted(testUuid, testPosts.get(0).getPostUuid(), testPosts.get(1).getPostUuid());
   }
@@ -164,34 +145,16 @@ public final class UserSamples {
 
   public static String createFindAllUsersEmptyJsonResponse() {
     return """
-      {
-        "content": [],
-        "pageable": {
-          "sort": {
-            "empty": true,
-            "sorted": false,
-            "unsorted": true
-          },
-          "offset": 0,
-          "pageNumber": 0,
-          "pageSize": 10,
-          "paged": true,
-          "unpaged": false
-        },
-        "last": true,
-        "totalElements": 0,
-        "totalPages": 0,
-        "size": 10,
-        "number": 0,
-        "sort": {
-          "empty": true,
-          "sorted": false,
-          "unsorted": true
-        },
-        "numberOfElements": 0,
-        "first": true,
-        "empty": true
-      }""";
+        {
+            "content":[],
+            "pageNumber":0,
+            "pageSize":10,
+            "totalElements":0,
+            "totalPages":0,
+            "hasNext":false,
+            "hasPrevious":false
+        }
+        """;
   }
 
   private static String buildPostsJson(User user) {

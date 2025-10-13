@@ -17,6 +17,7 @@ public class UpdatePostResponseDto {
   private final PostUuid id;
 
   @Schema(description = "Id of the user who updated the post", example = "123e4567-e89b-12d3-a456-426614174001")
+  @JsonProperty("user-id")
   private final UserUuid userId;
 
   @Schema(description = "Updated title of the post", example = "Updated Post Title")
