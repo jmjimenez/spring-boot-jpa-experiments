@@ -57,7 +57,7 @@ class GlobalExceptionHandlerIntegrationTest extends BaseControllerIntegration {
     assertThat(responseBody).isNotNull().satisfies(errorResponse -> {
     assertThat(errorResponse.getStatus()).isEqualTo(400);
       assertThat(errorResponse.getError()).isEqualTo("Bad Request");
-      assertThat(errorResponse.getMessage()).contains("Invalid parameter: id");
+      assertThat(errorResponse.getMessage()).contains("Invalid parameter: post-id");
       assertThat(errorResponse.getPath()).isEqualTo("uri=/api/posts/invalid-id-format");
     });
   }
