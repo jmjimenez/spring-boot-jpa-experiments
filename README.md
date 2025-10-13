@@ -227,13 +227,13 @@ curl -X GET http://localhost:8080/api/users \
 
 The application includes test users with the following credentials:
 
-| Username | Password | Email |
-|----------|----------|-------|
-| `leanne_graham` | `password` | `leanne.graham@example.com` |
-| `ervin_howell` | `password` | `ervin.howell@example.com` |
-| `clementine_bauch` | `password` | `clementine.bauch@example.com` |
-| `patricia_lebsack` | `password` | `patricia.lebsack@example.com` |
-| `chelsey_dietrich` | `password` | `chelsey.dietrich@example.com` |
+| Username | Password   | Email |
+|----------|------------|-------|
+| `leanne_graham` | `testpass` | `leanne.graham@example.com` |
+| `ervin_howell` | `testpass` | `ervin.howell@example.com` |
+| `clementine_bauch` | `testpass` | `clementine.bauch@example.com` |
+| `patricia_lebsack` | `testpass` | `patricia.lebsack@example.com` |
+| `chelsey_dietrich` | `testpass` | `chelsey.dietrich@example.com` |
 
 ### Security Features
 
