@@ -1,5 +1,6 @@
 package es.jmjg.experiments.infrastructure.controller.authentication;
 
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import es.jmjg.experiments.infrastructure.config.security.JwtUserDetailsService;
 import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationRequestDto;
 import es.jmjg.experiments.infrastructure.controller.authentication.dto.AuthenticationResponseDto;
+import es.jmjg.experiments.infrastructure.controller.authentication.dto.ErrorResponseDto;
 import es.jmjg.experiments.infrastructure.controller.authentication.mapper.AuthenticationMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,8 +40,8 @@ public class AuthenticationController {
   @Operation(summary = "Authenticate user", description = "Authenticates a user and returns a JWT token. Use this endpoint to get a token for accessing protected API endpoints.")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
-    @ApiResponse(responseCode = "400", description = "Missing credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
-    @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class), examples = {@ExampleObject(value = "{\"error\": \"Bad request\", \"status\": 400}")})),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class), examples = {@ExampleObject(value = "{\"error\": \"Unauthorized\", \"status\": 401}")}))
   })
   public AuthenticationResponseDto authenticate(
     @Parameter(description = "User credentials", required = true) @RequestBody @Valid final AuthenticationRequestDto authenticationRequest) {
@@ -54,8 +56,8 @@ public class AuthenticationController {
   @Operation(summary = "Authenticate user (OAuth2)", description = "OAuth2 password flow endpoint for authentication")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
-    @ApiResponse(responseCode = "400", description = "Missing credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponseDto.class))),
-    @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class), examples = {@ExampleObject(value = "{\"error\": \"Bad Request\", \"status\": 400}")})),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class), examples = {@ExampleObject(value = "{\"error\": \"Unauthorized\", \"status\": 401}")}))
   })
   public AuthenticationResponseDto authenticateOAuth2(
     @Parameter(description = "Username for authentication", required = true) @RequestParam("username") String username,
